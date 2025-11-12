@@ -1,82 +1,230 @@
 <nav class="sidebar sidebar-offcanvas" id="sidebar">
   <div class="text-center sidebar-brand-wrapper d-flex align-items-center">
-    <a class="sidebar-brand brand-logo" href="index.html"><img src="https://www.bhattsquare.com/BhattSq.jpeg" alt="logo" /></a>
-    <a class="sidebar-brand brand-logo-mini pl-4 pt-3" href="index.html"><img src="assets/images/logo-mini.svg" alt="logo" /></a>
+    <a class="sidebar-brand brand-logo" href="index.html">
+      <img src="https://www.bhattsquare.com/BhattSq.jpeg" alt="BhattSquare Logo" />
+    </a>
+    <a class="sidebar-brand brand-logo-mini pl-4 pt-3" href="index.html">
+      <img src="assets/images/logo-mini.svg" alt="Mini Logo" />
+    </a>
   </div>
+
   <ul class="nav">
-    
+
+    <!-- 1. Dashboard -->
     <li class="nav-item active">
-        <a class="nav-link" href="index.html">
-            <i class="mdi mdi-home menu-icon"></i>
-            <span class="menu-title">Dashboard</span>
-        </a>
+      <a class="nav-link" href="index.html">
+        <i class="mdi mdi-home menu-icon"></i>
+        <span class="menu-title">Dashboard</span>
+      </a>
     </li>
+
+    <!-- 2. Enquiry -->
     <li class="nav-item">
-        <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
-            <i class="mdi mdi-account-multiple menu-icon"></i>
-            <span class="menu-title">Members</span>
-            <i class="menu-arrow"></i>
-        </a>
-        <div class="collapse" id="ui-basic">
-            <ul class="nav flex-column sub-menu">
-                <li class="nav-item">
-                    <a class="nav-link" href="#">All Members</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Add Member</a>
-                </li>
-            </ul>
-        </div>
+      <a class="nav-link" data-toggle="collapse" href="#enquiry" aria-expanded="false" aria-controls="enquiry">
+        <i class="mdi mdi-comment-question-outline menu-icon"></i>
+        <span class="menu-title">Enquiry</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse" id="enquiry">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"><a class="nav-link" href="pages/enquiry/all.html">All Enquiries</a></li>
+          <li class="nav-item"><a class="nav-link" href="pages/enquiry/add.html">Add Enquiry</a></li>
+          <li class="nav-item"><a class="nav-link" href="pages/enquiry/followup.html">Follow-ups</a></li>
+        </ul>
+      </div>
     </li>
+
+    <!-- 3. Registration -->
     <li class="nav-item">
-        <a class="nav-link" data-toggle="collapse" href="#trainers" aria-expanded="false" aria-controls="trainers">
-            <i class="mdi mdi-human-male-female menu-icon"></i>
-            <span class="menu-title">Trainers</span>
-            <i class="menu-arrow"></i>
-        </a>
-        <div class="collapse" id="trainers">
-            <ul class="nav flex-column sub-menu">
-                <li class="nav-item">
-                    <a class="nav-link" href="#">All Trainers</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Add Trainer</a>
-                </li>
-            </ul>
-        </div>
+      <a class="nav-link" data-toggle="collapse" href="#registration" aria-expanded="false" aria-controls="registration">
+        <i class="mdi mdi-account-plus menu-icon"></i>
+        <span class="menu-title">Registration</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse" id="registration">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"><a class="nav-link" href="pages/registration/all.html">All Registrations</a></li>
+          <li class="nav-item"><a class="nav-link" href="pages/registration/new.html">New Registration</a></li>
+        </ul>
+      </div>
     </li>
+
+    <!-- 4. Members -->
     <li class="nav-item">
-        <a class="nav-link" href="#">
-            <i class="mdi mdi-run-fast menu-icon"></i>
-            <span class="menu-title">Classes</span>
-        </a>
+      <a class="nav-link" data-toggle="collapse" href="#members" aria-expanded="false" aria-controls="members">
+        <i class="mdi mdi-account-multiple menu-icon"></i>
+        <span class="menu-title">Members</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse" id="members">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"><a class="nav-link" href="pages/members/all.html">All Members</a></li>
+          <li class="nav-item"><a class="nav-link" href="pages/members/add.html">Add Member</a></li>
+          <li class="nav-item"><a class="nav-link" href="pages/members/expiring.html">Expiring Soon</a></li>
+        </ul>
+      </div>
     </li>
+
+    <!-- 5. My Clients (For Trainers) -->
     <li class="nav-item">
-        <a class="nav-link" href="#">
-            <i class="mdi mdi-calendar-clock menu-icon"></i>
-            <span class="menu-title">Schedule</span>
-        </a>
+      <a class="nav-link" data-toggle="collapse" href="#my-clients" aria-expanded="false" aria-controls="my-clients">
+        <i class="mdi mdi-account-group menu-icon"></i>
+        <span class="menu-title">My Clients</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse" id="my-clients">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"><a class="nav-link" href="pages/clients/list.html">Client List</a></li>
+          <li class="nav-item"><a class="nav-link" href="pages/clients/progress.html">Progress Tracking</a></li>
+        </ul>
+      </div>
     </li>
+
+    <!-- 6. Trainers -->
     <li class="nav-item">
-        <a class="nav-link" href="#">
-            <i class="mdi mdi-currency-usd menu-icon"></i>
-            <span class="menu-title">Billing</span>
-        </a>
+      <a class="nav-link" data-toggle="collapse" href="#trainers" aria-expanded="false" aria-controls="trainers">
+        <i class="mdi mdi-human-male-female menu-icon"></i>
+        <span class="menu-title">Trainers</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse" id="trainers">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"><a class="nav-link" href="pages/trainers/all.html">All Trainers</a></li>
+          <li class="nav-item"><a class="nav-link" href="pages/trainers/add.html">Add Trainer</a></li>
+        </ul>
+      </div>
     </li>
+
+    <!-- 7. Classes -->
     <li class="nav-item">
-        <a class="nav-link" href="#">
-            <i class="mdi mdi-chart-bar menu-icon"></i>
-            <span class="menu-title">Reports</span>
-        </a>
+      <a class="nav-link" href="pages/classes.html">
+        <i class="mdi mdi-run-fast menu-icon"></i>
+        <span class="menu-title">Classes</span>
+      </a>
     </li>
+
+    <!-- 8. Schedule -->
+    <li class="nav-item">
+      <a class="nav-link" href="pages/schedule.html">
+        <i class="mdi mdi-calendar-clock menu-icon"></i>
+        <span class="menu-title">Schedule</span>
+      </a>
+    </li>
+
+    <!-- 9. Attendance -->
+    <li class="nav-item">
+      <a class="nav-link" data-toggle="collapse" href="#attendance" aria-expanded="false" aria-controls="attendance">
+        <i class="mdi mdi-calendar-check menu-icon"></i>
+        <span class="menu-title">Attendance</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse" id="attendance">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"><a class="nav-link" href="pages/attendance/members.html">Member Attendance</a></li>
+          <li class="nav-item"><a class="nav-link" href="pages/attendance/trainers.html">Trainer Attendance</a></li>
+          <li class="nav-item"><a class="nav-link" href="pages/attendance/report.html">Attendance Report</a></li>
+        </ul>
+      </div>
+    </li>
+
+    <!-- 10. Events -->
+    <li class="nav-item">
+      <a class="nav-link" data-toggle="collapse" href="#events" aria-expanded="false" aria-controls="events">
+        <i class="mdi mdi-calendar-star menu-icon"></i>
+        <span class="menu-title">Events</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse" id="events">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"><a class="nav-link" href="pages/events/all.html">All Events</a></li>
+          <li class="nav-item"><a class="nav-link" href="pages/events/add.html">Create Event</a></li>
+        </ul>
+      </div>
+    </li>
+
+    <!-- 11. Billing -->
+    <li class="nav-item">
+      <a class="nav-link" data-toggle="collapse" href="#billing" aria-expanded="false" aria-controls="billing">
+        <i class="mdi mdi-receipt menu-icon"></i>
+        <span class="menu-title">Billing</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse" id="billing">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"><a class="nav-link" href="pages/billing/invoices.html">Invoices</a></li>
+          <li class="nav-item"><a class="nav-link" href="pages/billing/payments.html">Payments</a></li>
+          <li class="nav-item"><a class="nav-link" href="pages/billing/plans.html">Membership Plans</a></li>
+        </ul>
+      </div>
+    </li>
+
+    <!-- 12. Expenses -->
+    <li class="nav-item">
+      <a class="nav-link" data-toggle="collapse" href="#expenses" aria-expanded="false" aria-controls="expenses">
+        <i class="mdi mdi-cash-multiple menu-icon"></i>
+        <span class="menu-title">Expenses</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse" id="expenses">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"><a class="nav-link" href="pages/expenses/all.html">All Expenses</a></li>
+          <li class="nav-item"><a class="nav-link" href="pages/expenses/add.html">Add Expense</a></li>
+          <li class="nav-item"><a class="nav-link" href="pages/expenses/categories.html">Categories</a></li>
+        </ul>
+      </div>
+    </li>
+
+    <!-- 13. Inventory -->
+    <li class="nav-item">
+      <a class="nav-link" data-toggle="collapse" href="#inventory" aria-expanded="false" aria-controls="inventory">
+        <i class="mdi mdi-package-variant menu-icon"></i>
+        <span class="menu-title">Inventory</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse" id="inventory">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"><a class="nav-link" href="pages/inventory/items.html">All Items</a></li>
+          <li class="nav-item"><a class="nav-link" href="pages/inventory/add.html">Add Item</a></li>
+          <li class="nav-item"><a class="nav-link" href="pages/inventory/low-stock.html">Low Stock</a></li>
+        </ul>
+      </div>
+    </li>
+
+    <!-- 14. Reports -->
+    <li class="nav-item">
+      <a class="nav-link" href="pages/reports.html">
+        <i class="mdi mdi-chart-bar menu-icon"></i>
+        <span class="menu-title">Reports</span>
+      </a>
+    </li>
+
+    <!-- 15. Notifications -->
+    <li class="nav-item">
+      <a class="nav-link" href="pages/notifications.html">
+        <i class="mdi mdi-bell menu-icon"></i>
+        <span class="menu-title">Notifications</span>
+        <span class="badge badge-pill badge-danger ml-auto">5</span>
+      </a>
+    </li>
+
+    <!-- 16. Settings -->
+    <li class="nav-item">
+      <a class="nav-link" href="pages/settings.html">
+        <i class="mdi mdi-cog menu-icon"></i>
+        <span class="menu-title">Settings</span>
+      </a>
+    </li>
+
+    <!-- 17. Sign Out -->
     <li class="nav-item sidebar-actions">
-        <div class="nav-link">
-            <div class="mt-4">
-                <ul class="mt-4 pl-0">
-                    <li>Sign Out</li>
-                </ul>
-            </div>
+      <div class="nav-link">
+        <div class="mt-4">
+          <a href="logout.html" class="btn btn-block btn-outline-danger btn-lg font-weight-medium">
+            <i class="mdi mdi-logout"></i> Sign Out
+          </a>
         </div>
+      </div>
     </li>
-</ul>
+
+  </ul>
 </nav>
