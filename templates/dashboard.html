@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container-scroller">
+    {% include "includes/sidebar.html" %}
+    <div class="container-fluid page-body-wrapper">
+        {% include "includes/theme-settings.html" %}
+        {% include "includes/top-nav.html" %}
+        <!-- main-panel starts -->
+        <div class="main-panel">
+            <div class="content-wrapper pb-0">
+                <div class="page-header flex-wrap">
+                    <h3 class="mb-0"> Hi, welcome back! <span class="pl-0 h6 pl-sm-2 text-muted d-inline-block">Your gym analytics dashboard.</span>
+                    </h3>
+                    <div class="d-flex">
+                        <button type="button" class="btn btn-sm ml-3 btn-success"> Add Member </button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xl-3 col-lg-12 stretch-card grid-margin">
+                        <div class="row">
+                            <div class="col-xl-12 col-md-6 stretch-card grid-margin grid-margin-sm-0 pb-sm-3">
+                                <div class="card bg-warning">
+                                    <div class="card-body px-3 py-4">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div class="color-card">
+                                                <p class="mb-0 color-card-head">Total Members</p>
+                                                <h2 class="text-white"> 1,234
+                                                </h2>
+                                            </div>
+                                            <i class="card-icon-indicator mdi mdi-account-multiple-plus text-white"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-12 col-md-6 stretch-card grid-margin grid-margin-sm-0 pb-sm-3">
+                                <div class="card bg-danger">
+                                    <div class="card-body px-3 py-4">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div class="color-card">
+                                                <p class="mb-0 color-card-head">Active Trainers</p>
+                                                <h2 class="text-white"> 56
+                                                </h2>
+                                            </div>
+                                            <i class="card-icon-indicator mdi mdi-human-male-female text-white"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-12 col-md-6 stretch-card pb-sm-3 pb-lg-0">
+                                <div class="card bg-success">
+                                    <div class="card-body px-3 py-4">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div class="color-card">
+                                                <p class="mb-0 color-card-head">Upcoming Classes</p>
+                                                <h2 class="text-white">12</h2>
+                                            </div>
+                                            <i class="card-icon-indicator mdi mdi-run-fast text-white"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-9 stretch-card grid-margin">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-sm-7">
+                                        <h5>Member Growth</h5>
+                                        <p class="text-muted"> Show monthly member growth </p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <canvas id="member-growth-chart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xl-8 col-sm-6 grid-margin stretch-card">
+                        <div class="card">
+                            <div class="card-body px-0 overflow-auto">
+                                <h4 class="card-title pl-4">Member's Attendance</h4>
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead class="bg-light">
+                                            <tr>
+                                                <th>Member</th>
+                                                <th>Check-in Time</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        <img src="assets/images/faces/face1.jpg" alt="image">
+                                                        <div class="table-user-name ml-3">
+                                                            <p class="mb-0 font-weight-medium"> John Doe </p>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>08:15 AM</td>
+                                                <td>
+                                                    <div class="badge badge-inverse-success"> Present </div>
+                                                </td>
+                                            </tr>
+                                            <!-- Add more members as needed -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <a class="text-black d-block pl-4 pt-2 pb-2 pb-lg-0 font-weight-bold" href="#">Show more</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-sm-6 grid-margin stretch-card">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title">Class Schedule</h4>
+                                <div class="d-flex flex-wrap border-bottom py-2 border-top justify-content-between">
+                                    <div class="pt-2">
+                                        <h5 class="mb-0">Yoga</h5>
+                                        <p class="mb-0 text-muted">10:00 AM - 11:00 AM</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex flex-wrap border-bottom py-2 justify-content-between">
+                                    <div class="pt-2">
+                                        <h5 class="mb-0">Zumba</h5>
+                                        <p class="mb-0 text-muted">05:00 PM - 06:00 PM</p>
+                                    </div>
+                                </div>
+                                <a class="text-black mt-3 d-block font-weight-medium h6" href="#">View all classes</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- content-wrapper ends -->
+            <footer class="footer">
+                <div class="d-sm-flex justify-content-center justify-content-sm-between">
+                    <span class="text-muted d-block text-center text-sm-left d-sm-inline-block">Copyright © bootstrapdash.com 2020</span>
+                    <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center"> Free <a href="https://www.bootstrapdash.com/" target="_blank">Bootstrap dashboard templates</a> from Bootstrapdash.com</span>
+                </div>
+            </footer>
+        </div>
+        <!-- main-panel ends -->
+    </div>
+    <!-- page-body-wrapper ends -->
+</div>
+{% endblock %}
