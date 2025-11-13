@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/customstyle.css' %}">
+<!-- Compact Breadcrumb Navigation -->
+<nav aria-label="breadcrumb" class="custom-breadcrumb mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{% url 'dashboard' %}" class="text-decoration-none">
+                <i class="mdi mdi-home-outline mdi-18px"></i> Dashboard
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <i class="mdi mdi-comment-question-outline mdi-18px"></i> Enquiries
+        </li>
+    </ol>
+</nav>
+
+<div class="container">
+    <div class="card">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">Enquiry List</h4>
+            <a href="{% url 'add_new_enquiry' %}" class="btn btn-light btn-sm">
+                <i class="mdi mdi-plus"></i> Add Enquiry
+            </a>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Contact Number</th>
+                            <th>Email</th>
+                            <th>Gender</th>
+                            <th>Interested In</th>
+                            <th>Status</th>
+                            <th>Assigned To</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for enquiry in enquiries %}
+                        <tr>
+                            <td>{{ enquiry.id }}</td>
+                            <td>{{ enquiry.name }}</td>
+                            <td>{{ enquiry.contact_number }}</td>
+                            <td>{{ enquiry.email }}</td>
+                            <td>{{ enquiry.get_gender_display }}</td>
+                            <td>{{ enquiry.get_interested_in_display }}</td>
+                            <td>{{ enquiry.get_status_display }}</td>
+                            <td>{{ enquiry.assigned_to }}</td>
+                            <td>
+                                <a href="{% url 'edit_enquiry' enquiry.id %}" class="btn btn-primary btn-sm">Edit</a>
+                                <a href="{% url 'delete_enquiry' enquiry.id %}" class="btn btn-danger btn-sm">Delete</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

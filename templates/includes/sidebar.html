@@ -20,17 +20,16 @@
     </li>
 
     <!-- 2. Enquiry -->
-    <li class="nav-item">
-      <a class="nav-link" data-toggle="collapse" href="#enquiry" aria-expanded="false" aria-controls="enquiry">
+    <li class="nav-item {% if request.resolver_match.url_name == 'enquiry_list' or request.resolver_match.url_name == 'add_new_enquiry' or request.resolver_match.url_name == 'edit_enquiry' %}active{% endif %}">
+      <a class="nav-link" data-toggle="collapse" href="#enquiry" aria-expanded="{% if request.resolver_match.url_name == 'enquiry_list' or request.resolver_match.url_name == 'add_new_enquiry' or request.resolver_match.url_name == 'edit_enquiry' %}true{% else %}false{% endif %}" aria-controls="enquiry">
         <i class="mdi mdi-comment-question-outline menu-icon"></i>
         <span class="menu-title">Enquiry</span>
         <i class="menu-arrow"></i>
       </a>
-      <div class="collapse" id="enquiry">
+      <div class="collapse {% if request.resolver_match.url_name == 'enquiry_list' or request.resolver_match.url_name == 'add_new_enquiry' or request.resolver_match.url_name == 'edit_enquiry' %}show{% endif %}" id="enquiry">
         <ul class="nav flex-column sub-menu">
-          <li class="nav-item"><a class="nav-link" href="pages/enquiry/all.html">All Enquiries</a></li>
-          <li class="nav-item"><a class="nav-link" href="pages/enquiry/add.html">Add Enquiry</a></li>
-          <li class="nav-item"><a class="nav-link" href="pages/enquiry/followup.html">Follow-ups</a></li>
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'enquiry_list' %}active{% endif %}" href="{% url 'enquiry_list' %}">All Enquiries</a></li>
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'add_new_enquiry' %}active{% endif %}" href="{% url 'add_new_enquiry' %}">Add Enquiry</a></li>
         </ul>
       </div>
     </li>

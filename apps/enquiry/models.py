@@ -1,0 +1,49 @@
+from django.db import models
+from django.contrib.auth.models import User
+
+class Enquiry(models.Model):
+    GENDER_CHOICES = [
+        ('M', 'Male'),
+        ('F', 'Female'),
+        ('O', 'Other'),
+    ]
+
+    SOURCE_CHOICES = [
+        ('walk_in', 'Walk-in'),
+        ('website', 'Website'),
+        ('referral', 'Referral'),
+        ('social_media', 'Social Media'),
+        ('other', 'Other'),
+    ]
+
+    INTERESTED_IN_CHOICES = [
+        ('gym', 'Gym'),
+        ('zumba', 'Zumba'),
+        ('personal_training', 'Personal Training'),
+        ('yoga', 'Yoga'),
+        ('crossfit', 'CrossFit'),
+    ]
+
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('follow_up', 'Follow-up'),
+        ('converted', 'Converted'),
+        ('lost', 'Lost'),
+    ]
+
+    name = models.CharField(max_length=100)
+    contact_number = models.CharField(max_length=15)
+    email = models.EmailField(blank=True, null=True)
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=True, null=True)
+    date_of_birth = models.DateField(blank=True, null=True)
+    address = models.TextField(blank=True, null=True)
+    enquiry_date = models.DateField(auto_now_add=True)
+    source = models.CharField(max_length=20, choices=SOURCE_CHOICES, default='walk_in')
+    interested_in = models.CharField(max_length=20, choices=INTERESTED_IN_CHOICES, default='gym')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    next_follow_up_date = models.DateField(blank=True, null=True)
+    assigned_to = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, related_name='enquiries')
+    enquiry_note = models.TextField()
+
+    def __str__(self):
+        return self.name
