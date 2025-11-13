@@ -1,1 +1,19 @@
 Update Dashboard
+
+In All Forms Add Validation 
+   Like in contect Input enter ony 12 numbers, ender only numbers
+   
+
+
+
+- Login page
+-Sidebar
+- Members
+     -- All Members
+     -- Add Members
+     -- Edit Members
+     -- Member Profile
+- Enquiry
+     -- All Enquiry
+     -- Add Enquiry
+     -- Edit Enquiry
