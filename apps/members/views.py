@@ -43,15 +43,55 @@ def member_profile(request, member_id):
 
 
 def edit_member(request, member_id):
-    member = Member.objects.get(id=member_id)
+    member = get_object_or_404(Member, id=member_id)
+    try:
+        emergency_contact = member.emergency_contact
+    except EmergencyContact.DoesNotExist:
+        emergency_contact = None
+
+    MedicalHistoryFormSet = modelformset_factory(MedicalHistory, form=MedicalHistoryForm, extra=1, can_delete=True)
+
     if request.method == 'POST':
-        form = MemberForm(request.POST, instance=member)
-        if form.is_valid():
+        form = MemberForm(request.POST, request.FILES, instance=member)
+        medical_formset = MedicalHistoryFormSet(request.POST, request.FILES, queryset=MedicalHistory.objects.filter(member=member), prefix='medical')
+        emergency_form = EmergencyContactForm(request.POST, instance=emergency_contact, prefix='emergency')
+
+        if form.is_valid() and medical_formset.is_valid() and emergency_form.is_valid():
             form.save()
+            
+            instances = medical_formset.save(commit=False)
+            for instance in instances:
+                instance.member = member
+                instance.save()
+            
+            # Handle deletion of forms
+            for form_in_formset in medical_formset.deleted_forms:
+                if form_in_formset.instance.pk:
+                    form_in_formset.instance.delete()
+
+            emergency_contact_instance = emergency_form.save(commit=False)
+            emergency_contact_instance.member = member
+            emergency_contact_instance.save()
+            
+            messages.success(request, 'Member details updated successfully!')
             return redirect('member_list')
+        else:
+            # For debugging purposes
+            print("Member form errors:", form.errors)
+            print("Medical formset errors:", medical_formset.errors)
+            print("Emergency form errors:", emergency_form.errors)
+
     else:
         form = MemberForm(instance=member)
-    return render(request, 'members/edit_member.html', {'form': form})
+        medical_formset = MedicalHistoryFormSet(queryset=MedicalHistory.objects.filter(member=member), prefix='medical')
+        emergency_form = EmergencyContactForm(instance=emergency_contact, prefix='emergency')
+
+    return render(request, 'members/edit_member.html', {
+        'form': form,
+        'medical_formset': medical_formset,
+        'emergency_form': emergency_form,
+        'member': member
+    })
 
 from django.core.paginator import Paginator
 

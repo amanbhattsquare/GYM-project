@@ -1,87 +1,267 @@
 {% extends 'base.html' %}
+{% load form_tags %}
 
 {% block content %}
-<div class="col-12 grid-margin stretch-card">
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/customstyle.css' %}">
+<!-- Compact Breadcrumb Navigation -->
+<nav aria-label="breadcrumb" class="custom-breadcrumb mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{% url 'dashboard' %}" class="text-decoration-none">
+                <i class="mdi mdi-home-outline mdi-18px"></i> Dashboard
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{% url 'member_list' %}" class="text-decoration-none">
+                <i class="mdi mdi-account-multiple-outline mdi-18px"></i> Members
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <i class="mdi mdi-account-plus-outline mdi-18px"></i> Edit Member
+        </li>
+    </ol>
+</nav>
+
+<div class="container">
     <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Edit Member</h4>
+        </div>
         <div class="card-body">
-            <h4 class="card-title">Edit Member</h4>
-            <p class="card-description"> Basic form elements </p>
-            <form method="post" enctype="multipart/form-data" class="forms-sample">
+            <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
                 {% csrf_token %}
-                <div class="form-group">
-                    <label for="id_first_name">First Name</label>
-                    {{ form.first_name }}
+                
+                <fieldset class="border p-4 rounded mb-4">
+                    <legend class="w-auto px-2 h5">Personal Info</legend>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="id_first_name" class="form-label">First Name</label>
+                            {{ form.first_name|attr:"required:true" }}
+                            {% for error in form.first_name.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                            <div class="invalid-feedback">
+                                Please enter a first name.
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="id_last_name" class="form-label">Last Name</label>
+                            {{ form.last_name|attr:"required:true" }}
+                            {% for error in form.last_name.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                            <div class="invalid-feedback">
+                                Please enter a last name.
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="id_gender" class="form-label">Gender</label>
+                            {{ form.gender|attr:"required:true" }}
+                            {% for error in form.gender.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                            <div class="invalid-feedback">
+                                Please select a gender.
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="id_date_of_birth" class="form-label">Date of Birth</label>
+                            {{ form.date_of_birth|attr:"required:true" }}
+                            {% for error in form.date_of_birth.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                            <div class="invalid-feedback">
+                                Please enter a date of birth.
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="id_age" class="form-label">Age</label>
+                            {{ form.age|attr:"required:true" }}
+                            {% for error in form.age.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                            <div class="invalid-feedback">
+                                Please enter an age.
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="id_profession" class="form-label">Profession</label>
+                            {{ form.profession|attr:"required:true" }}
+                            {% for error in form.profession.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                            <div class="invalid-feedback">
+                                Please enter a profession.
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset class="border p-4 rounded mb-4">
+                    <legend class="w-auto px-2 h5">Contact Details</legend>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="id_mobile_number" class="form-label">Mobile Number</label>
+                            {{ form.mobile_number|attr:"required:true" }}
+                            {% for error in form.mobile_number.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                            <div class="invalid-feedback">
+                                Please enter a mobile number.
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="id_email" class="form-label">Email</label>
+                            {{ form.email|attr:"required:true" }}
+                            {% for error in form.email.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                            <div class="invalid-feedback">
+                                Please enter a valid email address.
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="id_address" class="form-label">Address</label>
+                            {{ form.address|attr:"required:true" }}
+                            {% for error in form.address.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                            <div class="invalid-feedback">
+                                Please enter an address.
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="id_area" class="form-label">Area</label>
+                            {{ form.area|attr:"required:true" }}
+                            {% for error in form.area.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                            <div class="invalid-feedback">
+                                Please enter an area.
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="id_city" class="form-label">City</label>
+                            {{ form.city|attr:"required:true" }}
+                            {% for error in form.city.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                            <div class="invalid-feedback">
+                                Please enter a city.
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="id_state" class="form-label">State</label>
+                            {{ form.state|attr:"required:true" }}
+                            {% for error in form.state.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                            <div class="invalid-feedback">
+                                Please enter a state.
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="id_pincode" class="form-label">Pincode</label>
+                            {{ form.pincode|attr:"required:true" }}
+                            {% for error in form.pincode.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                            <div class="invalid-feedback">
+                                Please enter a pincode.
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset class="border p-4 rounded mb-4">
+                    <legend class="w-auto px-2 h5">Medical History</legend>
+                    {{ medical_formset.management_form }}
+                    {% for form in medical_formset %}
+                        <div class="row medical-formset-row">
+                            {{ form.id }}
+                            <div class="col-md-4 mb-3">
+                                <label for="{{ form.condition.id_for_label }}" class="form-label">Condition</label>
+                                {{ form.condition }}
+                                <div class="invalid-feedback">
+                                    Please enter a condition.
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="{{ form.type.id_for_label }}" class="form-label">Type</label>
+                                {{ form.type }}
+                                <div class="invalid-feedback">
+                                    Please enter a type.
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="{{ form.since.id_for_label }}" class="form-label">Since</label>
+                                {{ form.since }}
+                                <div class="invalid-feedback">
+                                    Please enter a date.
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </fieldset>
+
+                <fieldset class="border p-4 rounded mb-4">
+                    <legend class="w-auto px-2 h5">Emergency Contact</legend>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="{{ emergency_form.name.id_for_label }}" class="form-label">Name</label>
+                            {{ emergency_form.name|attr:"required:true" }}
+                            <div class="invalid-feedback">
+                                Please enter an emergency contact name.
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="{{ emergency_form.mobile.id_for_label }}" class="form-label">Mobile</label>
+                            {{ emergency_form.mobile|attr:"required:true" }}
+                            <div class="invalid-feedback">
+                                Please enter an emergency contact mobile number.
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="{{ emergency_form.relation.id_for_label }}" class="form-label">Relation</label>
+                            {{ emergency_form.relation|attr:"required:true" }}
+                            <div class="invalid-feedback">
+                                Please enter the emergency contact's relation.
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary me-2">Submit</button>
+                    <a href="{% url 'member_list' %}" class="btn btn-light">Cancel</a>
                 </div>
-                <div class="form-group">
-                    <label for="id_last_name">Last Name</label>
-                    {{ form.last_name }}
-                </div>
-                <div class="form-group">
-                    <label for="id_email">Email address</label>
-                    {{ form.email }}
-                </div>
-                <div class="form-group">
-                    <label for="id_mobile_number">Mobile Number</label>
-                    {{ form.mobile_number }}
-                </div>
-                <div class="form-group">
-                    <label for="id_age">Age</label>
-                    {{ form.age }}
-                </div>
-                <div class="form-group">
-                    <label for="id_gender">Gender</label>
-                    {{ form.gender }}
-                </div>
-                <div class="form-group">
-                    <label for="id_date_of_birth">Date of Birth</label>
-                    {{ form.date_of_birth }}
-                </div>
-                <div class="form-group">
-                    <label for="id_address">Address</label>
-                    {{ form.address }}
-                </div>
-                <div class="form-group">
-                    <label for="id_area">Area</label>
-                    {{ form.area }}
-                </div>
-                <div class="form-group">
-                    <label for="id_city">City</label>
-                    {{ form.city }}
-                </div>
-                <div class="form-group">
-                    <label for="id_state">State</label>
-                    {{ form.state }}
-                </div>
-                <div class="form-group">
-                    <label for="id_pincode">Pincode</label>
-                    {{ form.pincode }}
-                </div>
-                <div class="form-group">
-                    <label for="id_profession">Profession</label>
-                    {{ form.profession }}
-                </div>
-                <div class="form-group">
-                    <label>Profile Picture</label>
-                    {{ form.profile_picture }}
-                </div>
-                <div class="form-group">
-                    <label>Signature</label>
-                    {{ form.sign }}
-                </div>
-                <div class="form-group">
-                    <label for="id_identity_type">Identity Type</label>
-                    {{ form.identity_type }}
-                </div>
-                <div class="form-group">
-                    <label for="id_identity_no">Identity Number</label>
-                    {{ form.identity_no }}
-                </div>
-                <div class="form-group">
-                    <label>Identity Document</label>
-                    {{ form.identity_document_image }}
-                </div>
-                <button type="submit" class="btn btn-primary mr-2"> Submit </button>
-                <button class="btn btn-light">Cancel</button>
             </form>
         </div>
     </div>
