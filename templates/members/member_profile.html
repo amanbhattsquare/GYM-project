@@ -1,51 +1,158 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
-<div class="col-12 grid-margin stretch-card">
-    <div class="card">
-        <div class="card-body">
-            <h4 class="card-title">{{ member.first_name }} {{ member.last_name }}</h4>
-            <div class="row">
-                <div class="col-md-6">
-                    <p><strong>Email:</strong> {{ member.email }}</p>
-                    <p><strong>Mobile:</strong> {{ member.mobile_number }}</p>
-                    <p><strong>Age:</strong> {{ member.age }}</p>
-                    <p><strong>Gender:</strong> {{ member.gender }}</p>
-                    <p><strong>Date of Birth:</strong> {{ member.date_of_birth }}</p>
-                    <p><strong>Address:</strong> {{ member.address }}</p>
-                    <p><strong>Area:</strong> {{ member.area }}</p>
-                    <p><strong>State:</strong> {{ member.state }}</p>
-                    <p><strong>City:</strong> {{ member.city }}</p>
-                    <p><strong>Pincode:</strong> {{ member.pincode }}</p>
-                    <p><strong>Profession:</strong> {{ member.profession }}</p>
-                </div>
-                <div class="col-md-6">
-                    {% if member.profile_picture %}
-                        <img src="{{ member.profile_picture.url }}" alt="Profile Picture" class="img-fluid">
-                    {% endif %}
-                    {% if member.sign %}
-                        <img src="{{ member.sign.url }}" alt="Signature" class="img-fluid">
-                    {% endif %}
-                    {% if member.identity_document_image %}
-                        <img src="{{ member.identity_document_image.url }}" alt="Identity Document" class="img-fluid">
-                    {% endif %}
+
+<!-- Compact Breadcrumb Navigation -->
+<nav aria-label="breadcrumb" class="custom-breadcrumb mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{% url 'dashboard' %}" class="text-decoration-none">
+                <i class="mdi mdi-home-outline mdi-18px"></i> Dashboard
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{% url 'member_list' %}" class="text-decoration-none">
+                <i class="mdi mdi-account-multiple-outline mdi-18px"></i> Members List
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <i class="mdi mdi-account-multiple-outline mdi-18px"></i> Member Profile 
+        </li>
+    </ol>
+</nav>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h2 class="mb-0">Member Profile</h2>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="border-bottom text-center pb-4">
+                            {% if member.profile_picture %}
+                                <img src="{{ member.profile_picture.url }}" alt="profile" class="img-lg rounded-circle mb-3"/>
+                            {% else %}
+                                <img src="{% static 'images/gym-guy.jpg' %}" alt="profile" class="img-lg rounded-circle mb-3"/>
+                            {% endif %}
+                            <h4>{{ member.first_name }} {{ member.last_name }}</h4>
+                            <div class="d-flex justify-content-center">
+                                <a href="{% url 'edit_member' member.id %}" class="btn btn-primary mr-2">Edit</a>
+                                <a href="{% url 'member_list' %}" class="btn btn-secondary">Back to List</a>
+                            </div>
+                        </div>
+                        <div class="py-4">
+                            <p class="clearfix">
+                                <span class="float-left">Status</span>
+                                <span class="float-right text-muted">
+                                    {% if member.is_active %}
+                                        <span class="badge badge-success">Active</span>
+                                    {% else %}
+                                        <span class="badge badge-danger">Inactive</span>
+                                    {% endif %}
+                                </span>
+                            </p>
+                            <p class="clearfix">
+                                <span class="float-left">Phone</span>
+                                <span class="float-right text-muted">{{ member.mobile_number }}</span>
+                            </p>
+                            <p class="clearfix">
+                                <span class="float-left">Mail</span>
+                                <span class="float-right text-muted">{{ member.email }}</span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-lg-8">
+                        <div class="mt-4 py-2">
+                            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" id="personal-tab" data-toggle="tab" href="#personal" role="tab" aria-controls="personal" aria-selected="true">Personal Details</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="documents-tab" data-toggle="tab" href="#documents" role="tab" aria-controls="documents" aria-selected="false">Documents</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="medical-tab" data-toggle="tab" href="#medical" role="tab" aria-controls="medical" aria-selected="false">Medical History</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="emergency-tab" data-toggle="tab" href="#emergency" role="tab" aria-controls="emergency" aria-selected="false">Emergency Contact</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content" id="myTabContent">
+                                <div class="tab-pane fade show active" id="personal" role="tabpanel" aria-labelledby="personal-tab">
+                                    <div class="py-3">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <p><strong>Age:</strong> {{ member.age }}</p>
+                                                <p><strong>Gender:</strong> {{ member.gender }}</p>
+                                                <p><strong>Date of Birth:</strong> {{ member.date_of_birth }}</p>
+                                                <p><strong>Profession:</strong> {{ member.profession }}</p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p><strong>Address:</strong> {{ member.address }}</p>
+                                                <p><strong>Area:</strong> {{ member.area }}</p>
+                                                <p><strong>City:</strong> {{ member.city }}</p>
+                                                <p><strong>State:</strong> {{ member.state }}</p>
+                                                <p><strong>Pincode:</strong> {{ member.pincode }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="documents" role="tabpanel" aria-labelledby="documents-tab">
+                                    <div class="py-3">
+                                        <div class="row">
+                                            <div class="col-md-4 text-center">
+                                                <h5>Signature</h5>
+                                                {% if member.sign %}
+                                                    <img src="{{ member.sign.url }}" alt="Signature" class="img-fluid">
+                                                {% else %}
+                                                    <p class="text-muted">Not Provided</p>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-md-4 text-center">
+                                                <h5>Identity Document</h5>
+                                                {% if member.identity_document_image %}
+                                                    <img src="{{ member.identity_document_image.url }}" alt="Identity Document" class="img-fluid">
+                                                {% else %}
+                                                    <p class="text-muted">Not Provided</p>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="medical" role="tabpanel" aria-labelledby="medical-tab">
+                                    <div class="py-3">
+                                        {% if member.medical_history.all %}
+                                            <ul class="list-group">
+                                                {% for history in member.medical_history.all %}
+                                                    <li class="list-group-item">
+                                                        <strong>{{ history.condition }}</strong> ({{ history.type }}) - Since: {{ history.since }}
+                                                    </li>
+                                                {% endfor %}
+                                            </ul>
+                                        {% else %}
+                                            <p class="text-muted">No medical history provided.</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="emergency" role="tabpanel" aria-labelledby="emergency-tab">
+                                    <div class="py-3">
+                                        {% if member.emergency_contact %}
+                                            <p><strong>Name:</strong> {{ member.emergency_contact.name }}</p>
+                                            <p><strong>Mobile:</strong> {{ member.emergency_contact.mobile }}</p>
+                                            <p><strong>Relation:</strong> {{ member.emergency_contact.relation }}</p>
+                                        {% else %}
+                                            <p class="text-muted">No emergency contact provided.</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-
-            <h3>Medical History</h3>
-            <ul>
-            {% for history in member.medical_history.all %}
-                <li>{{ history.condition }} ({{ history.type }}) - Since: {{ history.since }}</li>
-            {% endfor %}
-            </ul>
-
-            <h3>Emergency Contact</h3>
-            <p><strong>Name:</strong> {{ member.emergency_contact.name }}</p>
-            <p><strong>Mobile:</strong> {{ member.emergency_contact.mobile }}</p>
-            <p><strong>Relation:</strong> {{ member.emergency_contact.relation }}</p>
-
-            <a href="{% url 'edit_member' member.id %}" class="btn btn-primary">Edit</a>
-            <a href="{% url 'member_list' %}" class="btn btn-secondary">Back to List</a>
         </div>
     </div>
 </div>
