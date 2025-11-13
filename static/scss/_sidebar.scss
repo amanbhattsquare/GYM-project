@@ -376,3 +376,63 @@
     }
   }
 }
+
+/* Professional Sign Out Button Styling */
+.btn-signout {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+  border: none;
+  color: $white;
+  font-weight: 500;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(238, 90, 36, 0.3);
+  position: relative;
+  overflow: hidden;
+  
+  &:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+  }
+  
+  &:hover {
+    background: linear-gradient(135deg, #ee5a24 0%, #ff6b6b 100%);
+    color: $white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(238, 90, 36, 0.4);
+    
+    &:before {
+      left: 100%;
+    }
+  }
+  
+  &:focus {
+    box-shadow: 0 0 0 3px rgba(238, 90, 36, 0.3);
+  }
+  
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(238, 90, 36, 0.3);
+  }
+  
+  i {
+    margin-right: 0.5rem;
+    font-size: 1.1rem;
+    vertical-align: middle;
+  }
+}
+
+/* Dark sidebar sign out button */
+.sidebar-dark .btn-signout {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+  
+  &:hover {
+    background: linear-gradient(135deg, #ee5a24 0%, #ff6b6b 100%);
+  }
+}
