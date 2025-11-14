@@ -103,6 +103,7 @@
                 <table class="table table-hover table-sm table-stack-on-mobile">
                     <thead class="text-white">
                         <tr>
+                            <th class="font-weight-semibold py-2"> SR. No.</th>
                             <th class="font-weight-semibold py-2"><i class="mdi mdi-pound mr-1"></i> ID</th>
                             <th class="font-weight-semibold py-2"><i class="mdi mdi-account-circle-outline mr-1"></i> Profile</th>
                             <th class="font-weight-semibold py-2"><i class="mdi mdi-account-outline mr-1"></i> Name</th>
@@ -114,6 +115,8 @@
                     <tbody>
                         {% for member in members %}
                         <tr>
+                            <td data-label="SR. No." class="py-2">
+                                <div class="text-dark small">{{ forloop.counter0|add:members.start_index }}</div>
                             <td data-label="ID" class="py-2">
                                 <span class="badge badge-light">#{{ member.id }}</span>
                             </td>
