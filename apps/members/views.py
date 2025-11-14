@@ -3,6 +3,10 @@ from .forms import MemberForm, MedicalHistoryForm, EmergencyContactForm
 from .models import Member, MedicalHistory, EmergencyContact
 from django.forms import modelformset_factory
 from django.contrib import messages
+from django.core.paginator import Paginator
+from django.db.models import Q
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
 
 def add_new_member(request):
     MedicalHistoryFormSet = modelformset_factory(MedicalHistory, form=MedicalHistoryForm, extra=1)
@@ -93,10 +97,7 @@ def edit_member(request, member_id):
         'member': member
     })
 
-from django.core.paginator import Paginator
 
-
-from django.db.models import Q
 
 def member_list(request):
     member_list = Member.objects.all()
@@ -115,7 +116,13 @@ def member_list(request):
     members = paginator.get_page(page_number)
     return render(request, 'members/member_list.html', {'members': members})
 
+@require_POST
 def delete_member(request, member_id):
     member = get_object_or_404(Member, id=member_id)
-    member.delete()
-    return redirect('member_list')
+    try:
+        member.delete()
+        messages.success(request, 'Member has been deleted successfully.')
+        return JsonResponse({'status': 'success', 'message': 'Member deleted successfully.'})
+    except Exception as e:
+        messages.error(request, f'An error occurred: {e}')
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)

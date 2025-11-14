@@ -72,6 +72,7 @@
 <div class="col-lg-12 grid-margin stretch-card">
     <div class="card">
         <div class="card-body">
+            {% csrf_token %}
             <!-- Search and Add Member Section -->
             <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
                 <form method="get" action="{% url 'member_list' %}" class="form-inline mb-2 mb-md-0">
@@ -234,6 +235,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Professional delete confirmation
 function confirmDelete(memberId, memberName) {
+    console.log('confirmDelete called for memberId:', memberId);
     Swal.fire({
         title: 'Are you sure?',
         text: `You are about to delete ${memberName}. This action cannot be undone.`,
@@ -251,34 +253,52 @@ function confirmDelete(memberId, memberName) {
         }
     }).then((result) => {
         if (result.isConfirmed) {
-            // Add loading state
-            Swal.fire({
-                title: 'Processing...',
-                text: 'Please wait while we delete the member.',
-                icon: 'info',
-                showConfirmButton: false,
-                allowOutsideClick: false,
-                willOpen: () => {
-                    Swal.showLoading();
+            const url = `/members/member/${memberId}/delete/`;
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+            console.log('URL:', url);
+            console.log('CSRF Token:', csrfToken);
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
                 }
-            });
-            
-            // Simulate delete action (replace with actual AJAX call)
-            setTimeout(() => {
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                return response.json();
+            })
+            .then(data => {
+                console.log('Response data:', data);
+                if (data.status === 'success') {
+                    Swal.fire({
+                        title: 'Deleted!',
+                        text: `${memberName} has been successfully deleted.`,
+                        icon: 'success',
+                        confirmButtonColor: '#4599cd'
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: data.message || 'An unexpected error occurred.',
+                        icon: 'error',
+                        confirmButtonColor: '#4599cd'
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
                 Swal.fire({
-                    title: 'Deleted!',
-                    text: `${memberName} has been successfully deleted.`,
-                    icon: 'success',
-                    confirmButtonColor: '#4599cd',
-                    customClass: {
-                        popup: 'border-radius-12',
-                        title: 'text-dark font-weight-bold'
-                    }
-                }).then(() => {
-                    // Reload page or update table
-                    window.location.reload();
+                    title: 'Error!',
+                    text: 'An error occurred while deleting the member. Check the console for details.',
+                    icon: 'error',
+                    confirmButtonColor: '#4599cd'
                 });
-            }, 1500);
+            });
         }
     });
 }

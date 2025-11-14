@@ -17,7 +17,7 @@
     background $action-transition-duration $action-transition-timing-function;
   .sidebar-brand-wrapper {
     width: auto;
-    height: $navbar-height;
+    // height: $navbar-height;
 
     .sidebar-brand {
       padding: 2.25rem 0 0.25rem 40px;
@@ -27,9 +27,9 @@
       }
 
       img {
-        width: calc(#{$sidebar-width-lg} - 130px);
+        width: calc(#{$sidebar-width-lg} - 150px);
         max-width: 100%;
-        height: 78px;
+        height: 100px;
         margin: auto;
         vertical-align: middle;
       }
