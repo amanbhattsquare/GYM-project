@@ -27,7 +27,7 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-hover">
+                <table class="table table-hover table-stack-on-mobile">
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -44,15 +44,15 @@
                     <tbody>
                         {% for enquiry in enquiries %}
                         <tr>
-                            <td>{{ enquiry.id }}</td>
-                            <td>{{ enquiry.name }}</td>
-                            <td>{{ enquiry.contact_number }}</td>
-                            <td>{{ enquiry.email }}</td>
-                            <td>{{ enquiry.get_gender_display }}</td>
-                            <td>{{ enquiry.get_interested_in_display }}</td>
-                            <td>{{ enquiry.get_status_display }}</td>
-                            <td>{{ enquiry.assigned_to }}</td>
-                            <td>
+                            <td data-label="ID">{{ enquiry.id }}</td>
+                            <td data-label="Name">{{ enquiry.name }}</td>
+                            <td data-label="Contact Number">{{ enquiry.contact_number }}</td>
+                            <td data-label="Email">{{ enquiry.email }}</td>
+                            <td data-label="Gender">{{ enquiry.get_gender_display }}</td>
+                            <td data-label="Interested In">{{ enquiry.get_interested_in_display }}</td>
+                            <td data-label="Status">{{ enquiry.get_status_display }}</td>
+                            <td data-label="Assigned To">{{ enquiry.assigned_to }}</td>
+                            <td data-label="Actions">
                                 <a href="{% url 'edit_enquiry' enquiry.id %}" class="btn btn-primary btn-sm">Edit</a>
                                 <a href="{% url 'delete_enquiry' enquiry.id %}" class="btn btn-danger btn-sm">Delete</a>
                             </td>

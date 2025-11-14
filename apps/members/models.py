@@ -19,6 +19,7 @@ class Member(models.Model):
     identity_type = models.CharField(max_length=50, null=True, blank=True)
     identity_no = models.CharField(max_length=50, null=True, blank=True)
     identity_document_image = models.ImageField(upload_to='identity_docs/', blank=True, null=True)
+    status = models.CharField(max_length=10, choices=[('active', 'Active'), ('inactive', 'Inactive')], default='active')
 
     def __str__(self):
         return f'{self.first_name} {self.last_name}'

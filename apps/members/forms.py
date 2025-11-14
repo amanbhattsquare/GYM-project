@@ -24,6 +24,7 @@ class MemberForm(forms.ModelForm):
             'identity_type': forms.TextInput(attrs={'class': 'form-control'}),
             'identity_no': forms.TextInput(attrs={'class': 'form-control'}),
             'identity_document_image': forms.FileInput(attrs={'class': 'form-control'}),
+            'status': forms.Select(attrs={'class': 'form-select'}),
         }
     def __init__(self, *args, **kwargs):
         super(MemberForm, self).__init__(*args, **kwargs)
