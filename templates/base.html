@@ -25,23 +25,6 @@
       {% include 'includes/top-nav.html' %}
       <div class="main-panel">
         <div class="content-wrapper">
-          {% if messages %}
-            <div class="container mt-4">
-                {% for message in messages %}
-                    <script>
-                        Swal.fire({
-                            title: '{{ message }}',
-                            icon: '{{ message.tags }}',
-                            toast: true,
-                            position: 'top-end',
-                            showConfirmButton: false,
-                            timer: 3000,
-                            timerProgressBar: true,
-                        });
-                    </script>
-                {% endfor %}
-            </div>
-          {% endif %}
           {% block content %}
 
           {% endblock content %}
@@ -77,7 +60,23 @@
   <script src="{% static 'js/validation.js' %}"></script>
   <!-- End custom js for this page-->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  {% block scripts %}{% endblock scripts %}
+  {% block javascript %}
+  {% if messages %}
+    {% for message in messages %}
+      <script>
+        Swal.fire({
+          title: '{{ message }}',
+          icon: '{{ message.tags }}',
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+        });
+      </script>
+    {% endfor %}
+  {% endif %}
+  {% endblock javascript %}
 </body>
 
 </html>

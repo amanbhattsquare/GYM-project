@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/customstyle.css' %}">
+<!-- Compact Breadcrumb Navigation -->
+<nav aria-label="breadcrumb" class="custom-breadcrumb mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{% url 'dashboard' %}" class="text-decoration-none">
+                <i class="mdi mdi-home-outline mdi-18px"></i> Dashboard
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <i class="mdi mdi-account-multiple-outline mdi-18px"></i> Trainers
+        </li>
+    </ol>
+</nav>
+
+<div class="container">
+    <div class="card">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">Trainer List</h4>
+            <a href="{% url 'add_trainer' %}" class="btn btn-light btn-sm">
+                <i class="mdi mdi-plus"></i> Add Trainer
+            </a>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+               <table class="table table-hover table-sm table-stack-on-mobile">
+                    <thead>
+                        <tr>
+                            <th class="font-weight-semibold py-2"> SR. No.</th>
+                            <th class="font-weight-semibold py-2">Name</th>
+                            <th class="font-weight-semibold py-2">Email</th>
+                            <th class="font-weight-semibold py-2">Phone</th>
+                            <th class="font-weight-semibold py-2">Specialization</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for trainer in trainers %}
+                        <tr>
+                            <td data-label="SR. No.">{{ forloop.counter }}</td>
+                            <td data-label="Name">{{ trainer.name }}</td>
+                            <td data-label="Email">{{ trainer.email }}</td>
+                            <td data-label="Phone">{{ trainer.phone }}</td>
+                            <td data-label="Specialization">{{ trainer.specialization }}</td>
+                            <td data-label="Actions">
+                                <a href="{% url 'edit_trainer' trainer.id %}" class="btn btn-primary btn-sm">Edit</a>
+                                <a href="#" class="btn btn-danger btn-sm" onclick="confirmDelete('{{ trainer.id }}')">Delete</a>
+                                <form id="delete-form-{{ trainer.id }}" action="{% url 'delete_trainer' trainer.id %}" method="POST" style="display: none;">
+                                    {% csrf_token %}
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block javascript %}
+<script>
+function confirmDelete(trainerId) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.getElementById('delete-form-' + trainerId).submit();
+        }
+    })
+}
+</script>
+{% endblock %}
