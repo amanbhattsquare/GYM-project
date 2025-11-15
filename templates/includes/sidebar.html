@@ -175,17 +175,17 @@
       </a>
     </li>
 <!-- 16. management -->
-    <li class="nav-item">
-      <a class="nav-link" data-toggle="collapse" href="#management" aria-expanded="false" aria-controls="inventory">
+    <li class="nav-item {% if request.resolver_match.url_name == 'package_plans' or request.resolver_match.url_name == 'diet_plans' or request.resolver_match.url_name == 'workout_plans' %}active{% endif %}">
+      <a class="nav-link" data-toggle="collapse" href="#management" aria-expanded="{% if request.resolver_match.url_name == 'package_plans' or request.resolver_match.url_name == 'diet_plans' or request.resolver_match.url_name == 'workout_plans' %}true{% else %}false{% endif %}" aria-controls="management">
         <i class="mdi mdi-package-variant menu-icon"></i>
         <span class="menu-title">Management</span>
         <i class="menu-arrow"></i>
       </a>
-      <div class="collapse" id="management">
+      <div class="collapse {% if request.resolver_match.url_name == 'package_plans' or request.resolver_match.url_name == 'diet_plans' or request.resolver_match.url_name == 'workout_plans' %}show{% endif %}" id="management">
         <ul class="nav flex-column sub-menu">
-          <li class="nav-item"><a class="nav-link" href="{% url 'package_plans' %}">Package Plans</a></li>
-          <li class="nav-item"><a class="nav-link" href="{% url 'diet_plans' %}">Diet Plans</a></li>
-          <li class="nav-item"><a class="nav-link" href="{% url 'workout_plans' %}">Workout Plans</a></li>
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'package_plans' %}active{% endif %}" href="{% url 'package_plans' %}">Package Plans</a></li>
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'diet_plans' %}active{% endif %}" href="{% url 'diet_plans' %}">Diet Plans</a></li>
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'workout_plans' %}active{% endif %}" href="{% url 'workout_plans' %}">Workout Plans</a></li>
         </ul>
       </div>
     </li>

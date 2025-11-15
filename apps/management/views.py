@@ -1,17 +1,22 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
 from .models import PackagePlan
 from .forms import PackagePlanForm
+from django.http import JsonResponse
+
+from django.contrib import messages
 
 def package_plans(request):
     if request.method == 'POST':
         form = PackagePlanForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request, 'Package plan created successfully.')
             return redirect('package_plans')
     else:
         form = PackagePlanForm()
     plans = PackagePlan.objects.all()
-    return render(request, 'management/package_plans.html', {'form': form, 'plans': plans})
+    return render(request, 'management/PackagePlans/package_plans.html', {'form': form, 'plans': plans})
 
 def edit_package_plan(request, pk):
     plan = get_object_or_404(PackagePlan, pk=pk)
@@ -19,6 +24,7 @@ def edit_package_plan(request, pk):
         form = PackagePlanForm(request.POST, instance=plan)
         if form.is_valid():
             form.save()
+            messages.success(request, 'Package plan updated successfully.')
             return redirect('package_plans')
     else:
         form = PackagePlanForm(instance=plan)
@@ -26,8 +32,13 @@ def edit_package_plan(request, pk):
 
 def delete_package_plan(request, pk):
     plan = get_object_or_404(PackagePlan, pk=pk)
-    plan.delete()
-    return redirect('package_plans')
+    if request.method == 'POST':
+        try:
+            plan.delete()
+            return JsonResponse({'status': 'success', 'message': 'Package plan deleted successfully.'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method.'})
 
 def diet_plans(request):
     return render(request, 'management/diet_plans.html')
