@@ -14,3 +14,35 @@ In All Forms Add Validation
      -- All Enquiry
      -- Add Enquiry
      -- Edit Enquiry
+
+
+     
+PLANS & PACKAGES
+  - All Plans
+  - Create Plan
+  - Diet Plans
+  - Workout Plans
+
+DIET & WORKOUT
+  - Diet Library
+  - Workout Library
+  - Assign Diet
+  - Assign Workout
+
+Master Management
+  - Package plans
+        - All Package
+        - Create Package
+  - Diet Plans
+          - Diet Library
+          - Assign Diet
+  - Workout Plans
+          - Workout Library 
+          - Assign Workout
+
+
+SETTINGS
+  - Profile
+  - Roles & Permissions
+  - App Settings
+
