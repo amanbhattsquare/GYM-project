@@ -1,5 +1,17 @@
 from django import forms
-from .models import DietPlan, PackagePlan
+from .models import DietPlan, PackagePlan, WorkoutPlan
+
+class WorkoutPlanForm(forms.ModelForm):
+    class Meta:
+        model = WorkoutPlan
+        fields = '__all__'
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'duration_minutes': forms.NumberInput(attrs={'class': 'form-control'}),
+            'difficulty': forms.Select(attrs={'class': 'form-control'}),
+        }
+
 
 class PackagePlanForm(forms.ModelForm):
     class Meta:

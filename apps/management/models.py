@@ -26,3 +26,18 @@ class DietPlan(models.Model):
 
     def __str__(self):
         return self.name
+
+class WorkoutPlan(models.Model):
+    DIFFICULTY_CHOICES = [
+        ('beginner', 'Beginner'),
+        ('intermediate', 'Intermediate'),
+        ('advanced', 'Advanced'),
+    ]
+
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True)
+    duration_minutes = models.PositiveIntegerField(default=30)
+    difficulty = models.CharField(max_length=20, choices=DIFFICULTY_CHOICES, default='beginner')
+
+    def __str__(self):
+        return self.name

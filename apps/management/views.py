@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from .models import DietPlan, PackagePlan
-from .forms import DietPlanForm, PackagePlanForm
+from .models import DietPlan, PackagePlan, WorkoutPlan
+from .forms import DietPlanForm, PackagePlanForm, WorkoutPlanForm
 from django.http import JsonResponse
 
 from django.contrib import messages
@@ -75,4 +75,13 @@ def delete_diet_plan(request, pk):
     return JsonResponse({'status': 'error', 'message': 'Invalid request method.'})
 
 def workout_plans(request):
-    return render(request, 'management/WorkoutPlans/workout_plans.html')
+    if request.method == 'POST':
+        form = WorkoutPlanForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Workout plan created successfully.')
+            return redirect('workout_plans')
+    else:
+        form = WorkoutPlanForm()
+    plans = WorkoutPlan.objects.all()
+    return render(request, 'management/WorkoutPlans/workout_plans.html', {'form': form, 'plans': plans})

@@ -42,12 +42,12 @@
                         {% for plan in plans %}
                         <tr>
                             <td data-label="SR. No.">{{ forloop.counter }}</td>
-                            <td data-label="Name">{{ plan.name }}</td>
+                            <td data-label="Name">{{ plan.title }}</td>
                             <td data-label="Price">{{ plan.price }}</td>
                             <td data-label="Duration">{{ plan.duration_in_months }}</td>
                             <td data-label="Actions">
-                                <a href="{% url 'edit_package_plan' plan.id %}" class="btn btn-primary btn-sm">Edit</a>
-                                <a href="#" class="btn btn-danger btn-sm" onclick="confirmDelete('{{ plan.id }}')">Delete</a>
+                                <a href="{% url 'edit_package_plan' plan.id %}" class="btn btn-primary btn-sm"> <i class="mdi mdi-pencil-outline"></i></a>
+                                <a href="#" class="btn btn-danger btn-sm" onclick="confirmDelete('{{ plan.id }}')"> <i class="mdi mdi-delete-outline"></i></a>
                                 <form id="delete-form-{{ plan.id }}" action="{% url 'delete_package_plan' plan.id %}" method="POST" style="display: none;">
                                     {% csrf_token %}
                                 </form>
@@ -75,19 +75,28 @@
         <form method="post" action="{% url 'package_plans' %}">
             {% csrf_token %}
             {% load form_tags %}
-            {% for field in form %}
-                <div class="form-group">
-                    {{ field.label_tag }}
-                    {{ field|attr:"class:form-control" }}
-                    {% if field.errors %}
-                        <div class="invalid-feedback d-block">
-                            {% for error in field.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
+            <div class="form-group">
+                {{ form.title.label_tag }}
+                {{ form.title|attr:"class:form-control" }}
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form.price.label_tag }}
+                        {{ form.price|attr:"class:form-control" }}
+                    </div>
                 </div>
-            {% endfor %}
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form.duration_in_months.label_tag }}
+                        {{ form.duration_in_months|attr:"class:form-control" }}
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                {{ form.description.label_tag }}
+                {{ form.description|attr:"class:form-control" }}
+            </div>
             <button type="submit" class="btn btn-primary">Add Plan</button>
         </form>
       </div>
