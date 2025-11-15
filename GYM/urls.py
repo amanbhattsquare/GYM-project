@@ -21,13 +21,14 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('members/', include('apps.members.urls')),
-    path('enquiry/', include('apps.enquiry.urls')),
-    path('trainers/', include('apps.trainers.urls')),
     path('admin/', admin.site.urls),
     path('', views.user_login, name='login'),
     path('dashboard', views.dashboard, name="dashboard"),
     path('logout', views.user_logout, name='logout'),
+    path('members/', include('apps.members.urls')),
+    path('trainers/', include('apps.trainers.urls')),
+    path('enquiry/', include('apps.enquiry.urls')),
+    path('management/', include('apps.management.urls')),
 ]
 
 if settings.DEBUG:

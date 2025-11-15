@@ -174,8 +174,22 @@
         <span class="badge badge-pill badge-danger ml-auto">5</span>
       </a>
     </li>
-
-    <!-- 16. Settings -->
+<!-- 16. management -->
+    <li class="nav-item">
+      <a class="nav-link" data-toggle="collapse" href="#management" aria-expanded="false" aria-controls="inventory">
+        <i class="mdi mdi-package-variant menu-icon"></i>
+        <span class="menu-title">Management</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse" id="management">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"><a class="nav-link" href="{% url 'package_plans' %}">Package Plans</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'diet_plans' %}">Diet Plans</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'workout_plans' %}">Workout Plans</a></li>
+        </ul>
+      </div>
+    </li>
+    <!-- 17. Settings -->
     <li class="nav-item">
       <a class="nav-link" href="pages/settings.html">
         <i class="mdi mdi-settings menu-icon"></i>
