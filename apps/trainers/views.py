@@ -4,10 +4,19 @@ from django.contrib import messages
 from .models import Trainer
 from .forms import TrainerForm
 
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
+
+
+
+@never_cache
+@login_required(login_url='login')
 def trainer_list(request):
     trainers = Trainer.objects.all()
     return render(request, 'trainers/trainer_list.html', {'trainers': trainers})
 
+@never_cache
+@login_required(login_url='login')
 def add_trainer(request):
     if request.method == 'POST':
         form = TrainerForm(request.POST, request.FILES)
@@ -19,6 +28,8 @@ def add_trainer(request):
         form = TrainerForm()
     return render(request, 'trainers/add_trainer.html', {'form': form})
 
+@never_cache
+@login_required(login_url='login')
 def edit_trainer(request, trainer_id):
     trainer = get_object_or_404(Trainer, id=trainer_id)
     if request.method == 'POST':
@@ -32,7 +43,8 @@ def edit_trainer(request, trainer_id):
     return render(request, 'trainers/edit_trainer.html', {'form': form})
 
 from django.views.decorators.http import require_POST
-
+@never_cache
+@login_required(login_url='login')
 @require_POST
 def delete_trainer(request, trainer_id):
     trainer = get_object_or_404(Trainer, id=trainer_id)

@@ -8,6 +8,12 @@ from django.db.models import Q
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
+
+
+@never_cache
+@login_required(login_url='login')
 def add_new_member(request):
     MedicalHistoryFormSet = modelformset_factory(MedicalHistory, form=MedicalHistoryForm, extra=1)
     if request.method == 'POST':
@@ -40,12 +46,16 @@ def add_new_member(request):
         'emergency_form': emergency_form
     })
 
+@never_cache
+@login_required(login_url='login')
 def member_profile(request, member_id):
     member = Member.objects.get(id=member_id)
     return render(request, 'members/member_profile.html', {'member': member})
 
 
 
+@never_cache
+@login_required(login_url='login')
 def edit_member(request, member_id):
     member = get_object_or_404(Member, id=member_id)
     try:
@@ -98,7 +108,8 @@ def edit_member(request, member_id):
     })
 
 
-
+@never_cache
+@login_required(login_url='login') 
 def member_list(request):
     member_list = Member.objects.all()
     query = request.GET.get('q')
