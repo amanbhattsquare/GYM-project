@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from .models import PackagePlan
-from .forms import PackagePlanForm
+from .models import DietPlan, PackagePlan
+from .forms import DietPlanForm, PackagePlanForm
 from django.http import JsonResponse
 
 from django.contrib import messages
@@ -28,7 +28,7 @@ def edit_package_plan(request, pk):
             return redirect('package_plans')
     else:
         form = PackagePlanForm(instance=plan)
-    return render(request, 'management/edit_package_plan.html', {'form': form})
+    return render(request, 'management/PackagePlans/edit_package_plan.html', {'form': form})
 
 def delete_package_plan(request, pk):
     plan = get_object_or_404(PackagePlan, pk=pk)
@@ -41,7 +41,38 @@ def delete_package_plan(request, pk):
     return JsonResponse({'status': 'error', 'message': 'Invalid request method.'})
 
 def diet_plans(request):
-    return render(request, 'management/diet_plans.html')
+    if request.method == 'POST':
+        form = DietPlanForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Diet plan created successfully.')
+            return redirect('diet_plans')
+    else:
+        form = DietPlanForm()
+    plans = DietPlan.objects.all()
+    return render(request, 'management/DietPlans/diet_plans.html', {'form': form, 'plans': plans})
+
+def edit_diet_plan(request, pk):
+    plan = get_object_or_404(DietPlan, pk=pk)
+    if request.method == 'POST':
+        form = DietPlanForm(request.POST, instance=plan)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Diet plan updated successfully.')
+            return redirect('diet_plans')
+    else:
+        form = DietPlanForm(instance=plan)
+    return render(request, 'management/DietPlans/edit_diet_plan.html', {'form': form})
+
+def delete_diet_plan(request, pk):
+    plan = get_object_or_404(DietPlan, pk=pk)
+    if request.method == 'POST':
+        try:
+            plan.delete()
+            return JsonResponse({'status': 'success', 'message': 'Diet plan deleted successfully.'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method.'})
 
 def workout_plans(request):
-    return render(request, 'management/workout_plans.html')
+    return render(request, 'management/WorkoutPlans/workout_plans.html')
