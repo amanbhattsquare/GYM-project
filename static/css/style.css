@@ -13330,8 +13330,7 @@ select.tt-hint {
     .table.table-borderless th {
       border: none; }
 
-.table-responsive {
-  display: inline-table; }
+
   @media (max-width: 767px) {
     .table-responsive {
       display: block; } }
