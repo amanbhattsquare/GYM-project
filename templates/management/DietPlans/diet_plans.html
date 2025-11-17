@@ -30,20 +30,24 @@
                 <table class="table table-hover table-sm table-stack-on-mobile">
                     <thead>
                         <tr>
+                            <th class="font-weight-semibold py-2">Sr. No</th>
                             <th class="font-weight-semibold py-2">Name</th>
                             <th class="font-weight-semibold py-2">Target</th>
                             <th class="font-weight-semibold py-2">Daily Calories</th>
                             <th class="font-weight-semibold py-2">Duration (Weeks)</th>
+                            <th class="font-weight-semibold py-2">Description</th>
                             <th class="font-weight-semibold py-2">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for plan in plans %}
                         <tr>
+                            <td data-label="Sr. No">{{ forloop.counter }}</td>
                             <td data-label="Name">{{ plan.name }}</td>
                             <td data-label="Target">{{ plan.get_target_display }}</td>
                             <td data-label="Daily Calories">{{ plan.daily_calories }}</td>
                             <td data-label="Duration (Weeks)">{{ plan.duration_weeks }}</td>
+                            <td data-label="Description">{{ plan.description }}</td>
                             <td data-label="Actions">
                                 <a href="{% url 'edit_diet_plan' plan.pk %}" class="btn btn-primary btn-sm"> <i class="mdi mdi-pencil-outline"></i></a>
                                 <button class="btn btn-danger btn-sm delete-plan" data-id="{{ plan.pk }}"> <i class="mdi mdi-delete-outline"></i></button>
