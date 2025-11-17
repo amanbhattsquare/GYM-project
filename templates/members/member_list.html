@@ -61,7 +61,7 @@
                             <td data-label="Actions" class="text-center">
                                 <a href="{% url 'member_profile' member.id %}" class="btn btn-info btn-sm" data-toggle="tooltip" title="View"><i class="mdi mdi-eye-outline"></i></a>
                                 <a href="{% url 'edit_member' member.id %}" class="btn btn-primary btn-sm" data-toggle="tooltip" title="Edit"><i class="mdi mdi-pencil-outline"></i></a>
-                                <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete({{ member.id }}, '{{ member.first_name }} {{ member.last_name }}')" data-toggle="tooltip" title="Delete"><i class="mdi mdi-delete-outline"></i></button>
+                                <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete('{{ member.id }}', '{{ member.first_name }} {{ member.last_name }}', '{% url 'delete_member' member.id %}')" data-toggle="tooltip" title="Delete"><i class="mdi mdi-delete-outline"></i></button>
                             </td>
                         </tr>
                         {% empty %}
@@ -123,76 +123,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// Professional delete confirmation
-function confirmDelete(memberId, memberName) {
-    console.log('confirmDelete called for memberId:', memberId);
-    Swal.fire({
-        title: 'Are you sure?',
-        text: `You are about to delete ${memberName}. This action cannot be undone.`,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#ff3ca6',
-        cancelButtonColor: '#6c7293',
-        confirmButtonText: 'Yes, delete it!',
-        cancelButtonText: 'Cancel',
-        background: '#fff',
-        customClass: {
-            popup: 'border-radius-12',
-            title: 'text-dark font-weight-bold',
-            content: 'text-muted'
-        }
-    }).then((result) => {
-        if (result.isConfirmed) {
-            const url = `/members/member/${memberId}/delete/`;
-            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-
-            console.log('URL:', url);
-            console.log('CSRF Token:', csrfToken);
-
-            fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': csrfToken
-                }
-            })
-            .then(response => {
-                console.log('Response status:', response.status);
-                return response.json();
-            })
-            .then(data => {
-                console.log('Response data:', data);
-                if (data.status === 'success') {
-                    Swal.fire({
-                        title: 'Deleted!',
-                        text: `${memberName} has been successfully deleted.`,
-                        icon: 'success',
-                        confirmButtonColor: '#4599cd'
-                    }).then(() => {
-                        window.location.reload();
-                    });
-                } else {
-                    Swal.fire({
-                        title: 'Error!',
-                        text: data.message || 'An unexpected error occurred.',
-                        icon: 'error',
-                        confirmButtonColor: '#4599cd'
-                    });
-                }
-            })
-            .catch(error => {
-                console.error('Fetch error:', error);
-                Swal.fire({
-                    title: 'Error!',
-                    text: 'An error occurred while deleting the member. Check the console for details.',
-                    icon: 'error',
-                    confirmButtonColor: '#4599cd'
-                });
-            });
-        }
-    });
-}
-
 // Add loading animation to table
 function showTableLoading() {
     const tableBody = document.querySelector('table tbody');
@@ -210,7 +140,7 @@ function showTableLoading() {
             </tr>
         `;
     }
-}
+}   
 
 // Add smooth scrolling to pagination
 function smoothScrollToTop() {

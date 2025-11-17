@@ -8,6 +8,7 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 
 
+
 @never_cache
 @login_required(login_url='login')
 def add_new_enquiry(request):
@@ -54,10 +55,18 @@ def edit_enquiry(request, enquiry_id):
     else:
         form = EnquiryForm(instance=enquiry)
     return render(request, 'enquiry/edit_enquiry.html', {'form': form})
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+
 @never_cache
 @login_required(login_url='login')
+@require_POST
 def delete_enquiry(request, enquiry_id):
     enquiry = get_object_or_404(Enquiry, id=enquiry_id)
-    enquiry.delete()
-    messages.success(request, 'Enquiry deleted successfully!')
-    return redirect('enquiry_list')
+    try:
+        enquiry.delete()
+        messages.success(request, 'Enquiry has been deleted successfully.')
+        return JsonResponse({'status': 'success', 'message': 'Enquiry deleted successfully.'})
+    except Exception as e:
+        messages.error(request, f'An error occurred: {e}')
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)

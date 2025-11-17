@@ -26,6 +26,7 @@
             </a>
         </div>
         <div class="card-body">
+            {% csrf_token %}
             <!-- Search form -->
             {% include 'includes/search_form.html' %}
 
@@ -51,10 +52,7 @@
                             <td data-label="Specialization">{{ trainer.specialization }}</td>
                             <td data-label="Actions">
                                 <a href="{% url 'edit_trainer' trainer.id %}" class="btn btn-primary btn-sm">Edit</a>
-                                <a href="#" class="btn btn-danger btn-sm" onclick="confirmDelete('{{ trainer.id }}')">Delete</a>
-                                <form id="delete-form-{{ trainer.id }}" action="{% url 'delete_trainer' trainer.id %}" method="POST" style="display: none;">
-                                    {% csrf_token %}
-                                </form>
+                                <a href="#" class="btn btn-danger btn-sm" onclick="confirmDelete('{{ trainer.id }}', '{{ trainer.name }}', '{% url 'delete_trainer' trainer.id %}')">Delete</a>
                             </td>
                         </tr>
                         {% endfor %}
@@ -70,24 +68,4 @@
     </div>
 </div>
 
-{% endblock %}
-
-{% block javascript %}
-<script>
-function confirmDelete(trainerId) {
-    Swal.fire({
-        title: 'Are you sure?',
-        text: "You won't be able to revert this!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete it!'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            document.getElementById('delete-form-' + trainerId).submit();
-        }
-    })
-}
-</script>
 {% endblock %}

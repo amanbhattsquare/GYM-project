@@ -26,6 +26,7 @@
             </a>
         </div>
         <div class="card-body">
+            {% csrf_token %}
             <!-- Search form -->
             {% include 'includes/search_form.html' %}
 
@@ -57,7 +58,7 @@
                             <td data-label="Assigned To">{{ enquiry.assigned_to }}</td>
                             <td data-label="Actions">
                                 <a href="{% url 'edit_enquiry' enquiry.id %}" class="btn btn-primary btn-sm">Edit</a>
-                                <a href="{% url 'delete_enquiry' enquiry.id %}" class="btn btn-danger btn-sm">Delete</a>
+                                <a href="#" class="btn btn-danger btn-sm" onclick="confirmDelete('{{ enquiry.id }}', '{{ enquiry.name }}', '{% url 'delete_enquiry' enquiry.id %}')">Delete</a>
                             </td>
                         </tr>
                         {% endfor %}

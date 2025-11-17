@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="{% static 'vendors/bootstrap-datepicker/bootstrap-datepicker.min.css' %}" /> 
   <link rel="stylesheet" href="{% static 'css/style.css' %}" /> 
   <link rel="stylesheet" href="{% static 'css/login.css' %}" /> 
-  <link rel="stylesheet" href="{% static 'css/customstyle.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/customstyle.css' %}" /> 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
   <link rel="shortcut icon" href="{% static 'images/favicon.png' %}" />
 </head>
@@ -58,25 +58,13 @@
   <script src="{% static 'js/typeahead.js' %}"></script>
   <script src="{% static 'js/select2.js' %}"></script>
   <script src="{% static 'js/validation.js' %}"></script>
+  <script src="{% static 'js/delete_confirmation.js' %}"></script>
   <!-- End custom js for this page-->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   {% block javascript %}
-  {% if messages %}
-    {% for message in messages %}
-      <script>
-        Swal.fire({
-          title: '{{ message }}',
-          icon: '{{ message.tags }}',
-          toast: true,
-          position: 'top-end',
-          showConfirmButton: false,
-          timer: 3000,
-          timerProgressBar: true,
-        });
-      </script>
-    {% endfor %}
-  {% endif %}
+  {% include 'includes/swal_messages.html' %}
   {% endblock javascript %}
-</body>
+<script src="{% static 'js/delete_confirmation.js' %}"></script>
+  </body>
 
 </html>

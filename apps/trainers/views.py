@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.db.models import Q
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.http import JsonResponse
 
 from .models import Trainer
 from .forms import TrainerForm
@@ -67,11 +68,16 @@ def edit_trainer(request, trainer_id):
     return render(request, 'trainers/edit_trainer.html', {'form': form})
 
 from django.views.decorators.http import require_POST
+
 @never_cache
 @login_required(login_url='login')
 @require_POST
 def delete_trainer(request, trainer_id):
     trainer = get_object_or_404(Trainer, id=trainer_id)
-    trainer.delete()
-    messages.success(request, 'Trainer deleted successfully!')
-    return redirect('trainer_list')
+    try:
+        trainer.delete()
+        messages.success(request, 'Trainer has been deleted successfully.')
+        return JsonResponse({'status': 'success', 'message': 'Trainer deleted successfully.'})
+    except Exception as e:
+        messages.error(request, f'An error occurred: {e}')
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)

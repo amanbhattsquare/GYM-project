@@ -131,3 +131,13 @@ def workout_plans(request):
     plans = paginator.get_page(page_number)
 
     return render(request, 'management/WorkoutPlans/workout_plans.html', {'form': form, 'plans': plans})
+
+def delete_workout_plan(request, pk):
+    plan = get_object_or_404(WorkoutPlan, pk=pk)
+    if request.method == 'POST':
+        try:
+            plan.delete()
+            return JsonResponse({'status': 'success', 'message': 'Workout plan deleted successfully.'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method.'})
