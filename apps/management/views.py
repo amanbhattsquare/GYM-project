@@ -5,8 +5,11 @@ from .forms import DietPlanForm, PackagePlanForm, WorkoutPlanForm
 from django.http import JsonResponse
 from django.core.paginator import Paginator
 from django.db.models import Q
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
 
-
+@never_cache
+@login_required(login_url='login')
 def package_plans(request):
     if request.method == 'POST':
         form = PackagePlanForm(request.POST)
@@ -34,6 +37,9 @@ def package_plans(request):
 
     return render(request, 'management/PackagePlans/package_plans.html', {'form': form, 'plans': plans})
 
+
+@never_cache
+@login_required(login_url='login')
 def edit_package_plan(request, pk):
     plan = get_object_or_404(PackagePlan, pk=pk)
     if request.method == 'POST':
@@ -46,6 +52,9 @@ def edit_package_plan(request, pk):
         form = PackagePlanForm(instance=plan)
     return render(request, 'management/PackagePlans/edit_package_plan.html', {'form': form})
 
+
+@never_cache
+@login_required(login_url='login')
 def delete_package_plan(request, pk):
     plan = get_object_or_404(PackagePlan, pk=pk)
     if request.method == 'POST':
@@ -56,6 +65,9 @@ def delete_package_plan(request, pk):
             return JsonResponse({'status': 'error', 'message': str(e)})
     return JsonResponse({'status': 'error', 'message': 'Invalid request method.'})
 
+
+@never_cache
+@login_required(login_url='login')  
 def diet_plans(request):
     if request.method == 'POST':
         form = DietPlanForm(request.POST)
@@ -83,6 +95,10 @@ def diet_plans(request):
 
     return render(request, 'management/DietPlans/diet_plans.html', {'form': form, 'plans': plans})
 
+
+        
+@never_cache
+@login_required(login_url='login')
 def edit_diet_plan(request, pk):
     plan = get_object_or_404(DietPlan, pk=pk)
     if request.method == 'POST':
@@ -95,6 +111,10 @@ def edit_diet_plan(request, pk):
         form = DietPlanForm(instance=plan)
     return render(request, 'management/DietPlans/edit_diet_plan.html', {'form': form})
 
+
+
+@never_cache    
+@login_required(login_url='login')
 def delete_diet_plan(request, pk):
     plan = get_object_or_404(DietPlan, pk=pk)
     if request.method == 'POST':
@@ -105,6 +125,8 @@ def delete_diet_plan(request, pk):
             return JsonResponse({'status': 'error', 'message': str(e)})
     return JsonResponse({'status': 'error', 'message': 'Invalid request method.'})
 
+@never_cache
+@login_required(login_url='login')
 def workout_plans(request):
     if request.method == 'POST':
         form = WorkoutPlanForm(request.POST)
@@ -132,6 +154,22 @@ def workout_plans(request):
 
     return render(request, 'management/WorkoutPlans/workout_plans.html', {'form': form, 'plans': plans})
 
+@never_cache
+@login_required(login_url='login')
+def edit_workout_plan(request, pk):
+    plan = get_object_or_404(WorkoutPlan, pk=pk)
+    if request.method == 'POST':
+        form = WorkoutPlanForm(request.POST, instance=plan)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Workout plan updated successfully.')
+            return redirect('workout_plans')
+    else:
+        form = WorkoutPlanForm(instance=plan)
+    return render(request, 'management/WorkoutPlans/edit_workout_plan.html', {'form': form})
+
+@never_cache
+@login_required(login_url='login')
 def delete_workout_plan(request, pk):
     plan = get_object_or_404(WorkoutPlan, pk=pk)
     if request.method == 'POST':

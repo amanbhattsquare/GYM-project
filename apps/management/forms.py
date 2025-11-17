@@ -17,6 +17,12 @@ class PackagePlanForm(forms.ModelForm):
     class Meta:
         model = PackagePlan
         fields = '__all__'
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control'}),
+            'price': forms.NumberInput(attrs={'class': 'form-control'}),
+            'duration_in_months': forms.NumberInput(attrs={'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        }
 
 class DietPlanForm(forms.ModelForm):
     class Meta:

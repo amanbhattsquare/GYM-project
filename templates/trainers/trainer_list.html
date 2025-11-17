@@ -51,8 +51,8 @@
                             <td data-label="Phone">{{ trainer.phone }}</td>
                             <td data-label="Specialization">{{ trainer.specialization }}</td>
                             <td data-label="Actions">
-                                <a href="{% url 'edit_trainer' trainer.id %}" class="btn btn-primary btn-sm">Edit</a>
-                                <a href="#" class="btn btn-danger btn-sm" onclick="confirmDelete('{{ trainer.id }}', '{{ trainer.name }}', '{% url 'delete_trainer' trainer.id %}')">Delete</a>
+                                <a href="{% url 'edit_trainer' trainer.id %}" class="btn btn-primary btn-sm"><i class="mdi mdi-pencil-outline"></i></a>
+                                <a href="#" class="btn btn-danger btn-sm" onclick="confirmDelete('{{ trainer.id }}', '{{ trainer.name }}', '{% url 'delete_trainer' trainer.id %}')"><i class="mdi mdi-delete-outline"></i></a>
                             </td>
                         </tr>
                         {% endfor %}

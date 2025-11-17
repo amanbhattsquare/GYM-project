@@ -57,8 +57,8 @@
                             <td data-label="Status">{{ enquiry.get_status_display }}</td>
                             <td data-label="Assigned To">{{ enquiry.assigned_to }}</td>
                             <td data-label="Actions">
-                                <a href="{% url 'edit_enquiry' enquiry.id %}" class="btn btn-primary btn-sm">Edit</a>
-                                <a href="#" class="btn btn-danger btn-sm" onclick="confirmDelete('{{ enquiry.id }}', '{{ enquiry.name }}', '{% url 'delete_enquiry' enquiry.id %}')">Delete</a>
+                                <a href="{% url 'edit_enquiry' enquiry.id %}" class="btn btn-primary btn-sm"><i class="mdi mdi-pencil-outline"></i></a>
+                                <a href="#" class="btn btn-danger btn-sm" onclick="confirmDelete('{{ enquiry.id }}', '{{ enquiry.name }}', '{% url 'delete_enquiry' enquiry.id %}')"><i class="mdi mdi-delete-outline"></i></a>
                             </td>
                         </tr>
                         {% endfor %}
