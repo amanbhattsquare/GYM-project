@@ -3,8 +3,9 @@ from django.contrib import messages
 from .models import DietPlan, PackagePlan, WorkoutPlan
 from .forms import DietPlanForm, PackagePlanForm, WorkoutPlanForm
 from django.http import JsonResponse
+from django.core.paginator import Paginator
+from django.db.models import Q
 
-from django.contrib import messages
 
 def package_plans(request):
     if request.method == 'POST':
@@ -15,7 +16,22 @@ def package_plans(request):
             return redirect('package_plans')
     else:
         form = PackagePlanForm()
+    
     plans = PackagePlan.objects.all()
+    
+    # Search functionality
+    query = request.GET.get('q')
+    if query:
+        plans = plans.filter(
+            Q(title__icontains=query) |
+            Q(description__icontains=query)
+        ).distinct()
+
+    # Pagination
+    paginator = Paginator(plans, 10)  # Show 10 plans per page
+    page_number = request.GET.get('page')
+    plans = paginator.get_page(page_number)
+
     return render(request, 'management/PackagePlans/package_plans.html', {'form': form, 'plans': plans})
 
 def edit_package_plan(request, pk):
@@ -49,7 +65,22 @@ def diet_plans(request):
             return redirect('diet_plans')
     else:
         form = DietPlanForm()
+    
     plans = DietPlan.objects.all()
+    
+    # Search functionality
+    query = request.GET.get('q')
+    if query:
+        plans = plans.filter(
+            Q(name__icontains=query) |
+            Q(description__icontains=query)
+        ).distinct()
+
+    # Pagination
+    paginator = Paginator(plans, 10)  # Show 10 plans per page
+    page_number = request.GET.get('page')
+    plans = paginator.get_page(page_number)
+
     return render(request, 'management/DietPlans/diet_plans.html', {'form': form, 'plans': plans})
 
 def edit_diet_plan(request, pk):
@@ -83,5 +114,20 @@ def workout_plans(request):
             return redirect('workout_plans')
     else:
         form = WorkoutPlanForm()
+    
     plans = WorkoutPlan.objects.all()
+    
+    # Search functionality
+    query = request.GET.get('q')
+    if query:
+        plans = plans.filter(
+            Q(name__icontains=query) |
+            Q(description__icontains=query)
+        ).distinct()
+
+    # Pagination
+    paginator = Paginator(plans, 10)  # Show 10 plans per page
+    page_number = request.GET.get('page')
+    plans = paginator.get_page(page_number)
+
     return render(request, 'management/WorkoutPlans/workout_plans.html', {'form': form, 'plans': plans})

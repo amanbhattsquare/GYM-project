@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from django.db.models import Q
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from .models import Trainer
 from .forms import TrainerForm
@@ -12,7 +14,29 @@ from django.views.decorators.cache import never_cache
 @never_cache
 @login_required(login_url='login')
 def trainer_list(request):
-    trainers = Trainer.objects.all()
+    trainers_list = Trainer.objects.all()
+
+    query = request.GET.get('q')
+    if query:
+        trainers_list = trainers_list.filter(
+            Q(name__icontains=query) |
+            Q(email__icontains=query) |
+            Q(phone__icontains=query) |
+            Q(specialization__icontains=query)
+        ).distinct()
+
+    paginator = Paginator(trainers_list, 10)  # Show 10 trainers per page
+    page = request.GET.get('page')
+
+    try:
+        trainers = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        trainers = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        trainers = paginator.page(paginator.num_pages)
+
     return render(request, 'trainers/trainer_list.html', {'trainers': trainers})
 
 @never_cache

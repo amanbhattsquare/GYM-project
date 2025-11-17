@@ -17,142 +17,61 @@
     </ol>
 </nav>
 
-<!-- Statistics Cards -->
-<div class="row mb-3">
-    <div class="col-lg-3 col-md-6 mb-3">
-        <div class="card bg-primary text-white stats-card h-100">
-            <div class="card-body text-center d-flex flex-column justify-content-center py-3">
-                <div class="stats-icon mb-2">
-                    <i class="mdi mdi-account-multiple mdi-24px"></i>
-                </div>
-                <h4 class="font-weight-bold mb-1">{{ members.paginator.count }}</h4>
-                <p class="mb-0 small font-weight-medium">Total Members</p>
-                <small class="opacity-75">All members</small>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-3 col-md-6 mb-3">
-        <div class="card bg-success text-white stats-card h-100">
-            <div class="card-body text-center d-flex flex-column justify-content-center py-3">
-                <div class="stats-icon mb-2">
-                    <i class="mdi mdi-account-check mdi-24px"></i>
-                </div>
-                <h4 class="font-weight-bold mb-1">{{ members.paginator.count }}</h4>
-                <p class="mb-0 small font-weight-medium">Active</p>
-                <small class="opacity-75">Currently active</small>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-3 col-md-6 mb-3">
-        <div class="card bg-info text-white stats-card h-100">
-            <div class="card-body text-center d-flex flex-column justify-content-center py-3">
-                <div class="stats-icon mb-2">
-                    <i class="mdi mdi-calendar-today mdi-24px"></i>
-                </div>
-                <h4 class="font-weight-bold mb-1">{{ members|length }}</h4>
-                <p class="mb-0 small font-weight-medium">Showing</p>
-                <small class="opacity-75">This page</small>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-3 col-md-6 mb-3">
-        <div class="card bg-warning text-white stats-card h-100">
-            <div class="card-body text-center d-flex flex-column justify-content-center py-3">
-                <div class="stats-icon mb-2">
-                    <i class="mdi mdi-trending-up mdi-24px"></i>
-                </div>
-                <h4 class="font-weight-bold mb-1">+{{ members|length }}</h4>
-                <p class="mb-0 small font-weight-medium">Page Results</p>
-                <small class="opacity-75">Current view</small>
-            </div>
-        </div>
-    </div>
-</div>
+
 
 <div class="col-lg-12 grid-margin stretch-card">
     <div class="card">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">Member List</h4>
+            <a href="{% url 'add_new_member' %}" class="btn btn-light btn-sm">
+                <i class="mdi mdi-plus"></i> Add Member
+            </a>
+        </div>
         <div class="card-body">
             {% csrf_token %}
-            <!-- Search and Add Member Section -->
-            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
-                <form method="get" action="{% url 'member_list' %}" class="form-inline mb-2 mb-md-0">
-                    <div class="input-group" style="max-width: 400px;">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text bg-white border-0">
-                                <i class="mdi mdi-magnify text-muted mdi-18px"></i>
-                            </span>
-                        </div>
-                        <input type="text" name="search" class="form-control border-0 form-control-sm" placeholder="Search members..." value="{{ request.GET.search }}">
-                        <div class="input-group-append">
-                            <button type="submit" class="btn btn-gradient-primary btn-sm px-3">
-                                <i class="mdi mdi-magnify"></i>
-                            </button>
-                            {% if request.GET.search %}
-                            <a href="{% url 'member_list' %}" class="btn btn-outline-secondary btn-sm px-2">
-                                <i class="mdi mdi-close"></i>
-                            </a>
-                            {% endif %}
-                        </div>
-                    </div>
-                </form>
-                <a href="{% url 'add_new_member' %}" class="btn btn-gradient-primary btn-sm">
-                    <i class="mdi mdi-plus"></i> Add Member
-                </a>
-            </div>
+            <!-- Search form -->
+            <form method="get" class="mb-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" name="q" placeholder="Search..." value="{{ request.GET.q }}">
+                    <button class="btn btn-inverse-primary" type="submit">Search</button>
+                </div>
+            </form>
             <div class="table-responsive">
                 <table class="table table-hover table-sm table-stack-on-mobile">
-                    <thead class="text-white">
+                    <thead>
                         <tr>
                             <th class="font-weight-semibold py-2"> SR. No.</th>
-                            <th class="font-weight-semibold py-2"><i class="mdi mdi-pound mr-1"></i> ID</th>
-                            <th class="font-weight-semibold py-2"><i class="mdi mdi-account-circle-outline mr-1"></i> Profile</th>
-                            <th class="font-weight-semibold py-2"><i class="mdi mdi-account-outline mr-1"></i> Name</th>
-                            <th class="font-weight-semibold py-2"><i class="mdi mdi-email-outline mr-1"></i> Email</th>
-                            <th class="font-weight-semibold py-2"><i class="mdi mdi-phone-outline mr-1"></i> Mobile</th>
-                            <th class="font-weight-semibold text-center py-2"><i class="mdi mdi-cog-outline mr-1"></i> Actions</th>
+                            <th class="font-weight-semibold py-2">ID</th>
+                            <th class="font-weight-semibold py-2">Profile</th>
+                            <th class="font-weight-semibold py-2">Name</th>
+                            <th class="font-weight-semibold py-2">Email</th>
+                            <th class="font-weight-semibold py-2">Mobile</th>
+                            <th class="font-weight-semibold text-center py-2">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for member in members %}
                         <tr>
-                            <td data-label="SR. No." class="py-2">
-                                <div class="text-dark small">{{ forloop.counter0|add:members.start_index }}</div>
-                            <td data-label="ID" class="py-2">
-                                <span class="badge badge-light">#{{ member.id }}</span>
-                            </td>
-                            <td data-label="Profile" class="py-2">
+                            <td data-label="SR. No.">{{ forloop.counter0|add:members.start_index }}</td>
+                            <td data-label="ID">#{{ member.id }}</td>
+                            <td data-label="Profile">
                                 <img src="{% if member.profile_picture %}{{ member.profile_picture.url }}{% else %}https://via.placeholder.com/40{% endif %}" 
                                      class="rounded-circle border" 
                                      style="width: 40px; height: 40px; object-fit: cover;" 
                                      alt="{{ member.first_name }} {{ member.last_name }}">
                             </td>
-                            <td data-label="Name" class="py-2">
-                                <div class="font-weight-semibold text-dark small">{{ member.first_name }} {{ member.last_name }}</div>
-                                <div class="text-muted small">#{{ member.id }}</div>
-                            </td>
-                            <td data-label="Email" class="py-2">
-                                <div class="text-dark small">{{ member.email }}</div>
-                            </td>
-                            <td data-label="Mobile" class="py-2">
-                                <div class="text-dark small">{{ member.mobile_number }}</div>
-                            </td>
-                            <td data-label="Actions" class="text-center py-2">
-                                <div class="btn-group btn-group-xs" role="group">
-                                    <a href="{% url 'member_profile' member.id %}" class="btn btn-outline-info btn-rounded btn-sm" data-toggle="tooltip" title="View">
-                                        <i class="mdi mdi-eye-outline"></i>
-                                    </a>
-                                    <a href="{% url 'edit_member' member.id %}" class="btn btn-outline-primary btn-rounded btn-sm" data-toggle="tooltip" title="Edit">
-                                        <i class="mdi mdi-pencil-outline"></i>
-                                    </a>
-                                    <button type="button" class="btn btn-outline-danger btn-rounded btn-sm" onclick="confirmDelete({{ member.id }}, '{{ member.first_name }} {{ member.last_name }}')" data-toggle="tooltip" title="Delete">
-                                        <i class="mdi mdi-delete-outline"></i>
-                                    </button>
-                                </div>
+                            <td data-label="Name">{{ member.first_name }} {{ member.last_name }}</td>
+                            <td data-label="Email">{{ member.email }}</td>
+                            <td data-label="Mobile">{{ member.mobile_number }}</td>
+                            <td data-label="Actions" class="text-center">
+                                <a href="{% url 'member_profile' member.id %}" class="btn btn-info btn-sm" data-toggle="tooltip" title="View"><i class="mdi mdi-eye-outline"></i></a>
+                                <a href="{% url 'edit_member' member.id %}" class="btn btn-primary btn-sm" data-toggle="tooltip" title="Edit"><i class="mdi mdi-pencil-outline"></i></a>
+                                <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete({{ member.id }}, '{{ member.first_name }} {{ member.last_name }}')" data-toggle="tooltip" title="Delete"><i class="mdi mdi-delete-outline"></i></button>
                             </td>
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="6" class="text-center py-4">
+                            <td colspan="7" class="text-center py-4">
                                 <div class="text-muted">
                                     <i class="mdi mdi-account-question-outline mdi-36px mb-2"></i>
                                     <h6 class="mb-2">No members found</h6>
@@ -169,37 +88,24 @@
                     </tbody>
                 </table>
             </div>
-            <!-- Custom Pagination -->
-            <div class="custom-pagination">
-                <div class="pagination-info">
-                    <span class="text-muted">
-                        Showing {{ members.start_index }} to {{ members.end_index }} of {{ members.paginator.count }} members
-                    </span>
-                </div>
-                <div class="pagination-links">
+            <!-- Pagination -->
+            {% if members.has_other_pages %}
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
                     {% if members.has_previous %}
-                        <a href="?page=1" class="pagination-link" title="First Page">
-                            <i class="mdi mdi-page-first"></i>
-                        </a>
-                        <a href="?page={{ members.previous_page_number }}" class="pagination-link" title="Previous Page">
-                            <i class="mdi mdi-chevron-left"></i>
-                        </a>
+                        <li class="page-item"><a class="page-link" href="?page=1{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">&laquo; first</a></li>
+                        <li class="page-item"><a class="page-link" href="?page={{ members.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">previous</a></li>
                     {% endif %}
 
-                    <span class="pagination-current">
-                        Page {{ members.number }} of {{ members.paginator.num_pages }}
-                    </span>
+                    <li class="page-item disabled"><a class="page-link" href="#">Page {{ members.number }} of {{ members.paginator.num_pages }}.</a></li>
 
                     {% if members.has_next %}
-                        <a href="?page={{ members.next_page_number }}" class="pagination-link" title="Next Page">
-                            <i class="mdi mdi-chevron-right"></i>
-                        </a>
-                        <a href="?page={{ members.paginator.num_pages }}" class="pagination-link" title="Last Page">
-                            <i class="mdi mdi-page-last"></i>
-                        </a>
+                        <li class="page-item"><a class="page-link" href="?page={{ members.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">next</a></li>
+                        <li class="page-item"><a class="page-link" href="?page={{ members.paginator.num_pages }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">last &raquo;</a></li>
                     {% endif %}
-                </div>
-            </div>
+                </ul>
+            </nav>
+            {% endif %}
         </div>
     </div>
 </div>
