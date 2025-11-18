@@ -37,7 +37,8 @@
                             <th class="font-weight-semibold py-2"> SR. No.</th>
                             <th class="font-weight-semibold py-2">Name</th>
                             <th class="font-weight-semibold py-2">Price</th>
-                            <th class="font-weight-semibold py-2">Duration (Months)</th>
+                            <th class="font-weight-semibold py-2">Duration</th>
+                            <th class="font-weight-semibold py-2">Description</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -47,7 +48,8 @@
                             <td data-label="SR. No.">{{ forloop.counter0|add:plans.start_index }}</td>
                             <td data-label="Name">{{ plan.title }}</td>
                             <td data-label="Price">{{ plan.price }}</td>
-                            <td data-label="Duration">{{ plan.duration_in_months }}</td>
+                            <td data-label="Duration">{{ plan.get_duration_display }}</td>
+                            <td data-label="Description">{{ plan.description }}</td>
                             <td data-label="Actions">
                                 <a href="{% url 'edit_package_plan' plan.id %}" class="btn btn-primary btn-sm"> <i class="mdi mdi-pencil-outline"></i></a>
                                 <a href="#" class="btn btn-danger btn-sm" onclick="confirmDelete('{{ plan.id }}', '{{ plan.title }}', '{% url 'delete_package_plan' plan.id %}')"> <i class="mdi mdi-delete-outline"></i></a>
@@ -93,8 +95,8 @@
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        {{ form.duration_in_months.label_tag }}
-                        {{ form.duration_in_months|attr:"class:form-control" }}
+                        {{ form.duration.label_tag }}
+                        {{ form.duration|attr:"class:form-control" }}
                     </div>
                 </div>
             </div>

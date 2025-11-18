@@ -1,9 +1,20 @@
 from django.db import models
 
 class PackagePlan(models.Model):
+    DURATION_CHOICES = [
+        ('1_day', '1 Day'),
+        ('1_week', '1 Week'),
+        ('2_weeks', '2 Weeks'),
+        ('1_month', '1 Month'),
+        ('2_months', '2 Months'),
+        ('3_months', '3 Months'),
+        ('6_months', '6 Months'),
+        ('1_year', '1 Year'),
+    ]
+
     title = models.CharField(max_length=100)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    duration_in_months = models.IntegerField()
+    duration = models.CharField(max_length=20, choices=DURATION_CHOICES, default='1_month')
     description = models.TextField(blank=True, null=True)
 
     def __str__(self):

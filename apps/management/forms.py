@@ -20,7 +20,7 @@ class PackagePlanForm(forms.ModelForm):
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control'}),
             'price': forms.NumberInput(attrs={'class': 'form-control'}),
-            'duration_in_months': forms.NumberInput(attrs={'class': 'form-control'}),
+            'duration': forms.Select(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         }
 
