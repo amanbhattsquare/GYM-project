@@ -38,6 +38,10 @@
                             <th class="font-weight-semibold py-2">Name</th>
                             <th class="font-weight-semibold py-2">Email</th>
                             <th class="font-weight-semibold py-2">Phone</th>
+                            <th class="font-weight-semibold py-2">Address</th>
+                            <th class="font-weight-semibold py-2">Joining Date</th>
+                            <th class="font-weight-semibold py-2">Salary ₹</th>
+                            <th class="font-weight-semibold py-2">PT/Monthly ₹</th>
                             <th class="font-weight-semibold py-2">Specialization</th>
                             <th>Actions</th>
                         </tr>
@@ -49,6 +53,10 @@
                             <td data-label="Name">{{ trainer.name }}</td>
                             <td data-label="Email">{{ trainer.email }}</td>
                             <td data-label="Phone">{{ trainer.phone }}</td>
+                            <td data-label="Address">{{ trainer.address }}</td>
+                            <td data-label="Joining Date">{{ trainer.joining_date }}</td>
+                            <td data-label="Salary">{{ trainer.salary }}</td>
+                            <td data-label="Personal Training Monthly Amount">{{ trainer.personal_training_monthly_amount }}</td>
                             <td data-label="Specialization">{{ trainer.specialization }}</td>
                             <td data-label="Actions">
                                 <a href="{% url 'edit_trainer' trainer.id %}" class="btn btn-primary btn-sm"><i class="mdi mdi-pencil-outline"></i></a>
