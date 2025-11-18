@@ -40,6 +40,7 @@
                             <h4>{{ member.first_name }} {{ member.last_name }}</h4>
                             <div class="d-flex justify-content-center">
                                 <a href="{% url 'edit_member' member.id %}" class="btn btn-primary mr-2">Edit</a>
+                                <a href="{% url 'assign_membership_plan' member.id %}" class="btn btn-success mr-2">Assign Plan</a>
                                 <a href="{% url 'member_list' %}" class="btn btn-secondary">Back to List</a>
                             </div>
                         </div>
@@ -78,6 +79,9 @@
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" id="emergency-tab" data-toggle="tab" href="#emergency" role="tab" aria-controls="emergency" aria-selected="false">Emergency Contact</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="plan-tab" data-toggle="tab" href="#plan" role="tab" aria-controls="plan" aria-selected="false">Membership Plan</a>
                                 </li>
                             </ul>
                             <div class="tab-content" id="myTabContent">
@@ -145,6 +149,17 @@
                                             <p><strong>Relation:</strong> {{ member.emergency_contact.relation }}</p>
                                         {% else %}
                                             <p class="text-muted">No emergency contact provided.</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="plan" role="tabpanel" aria-labelledby="plan-tab">
+                                    <div class="py-3">
+                                        {% if member.membership_plan %}
+                                            <p><strong>Plan Name:</strong> {{ member.membership_plan.plan_name }}</p>
+                                            <p><strong>Plan Price:</strong> {{ member.membership_plan.plan_price }}</p>
+                                            <p><strong>Plan Duration:</strong> {{ member.membership_plan.plan_duration }} days</p>
+                                        {% else %}
+                                            <p class="text-muted">No membership plan assigned.</p>
                                         {% endif %}
                                     </div>
                                 </div>

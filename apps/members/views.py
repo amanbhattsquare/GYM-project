@@ -1,11 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import MemberForm, MedicalHistoryForm, EmergencyContactForm
-from .models import Member, MedicalHistory, EmergencyContact
+from .forms import MemberForm, MedicalHistoryForm, EmergencyContactForm, MembershipHistoryForm
+from .models import Member, MedicalHistory, EmergencyContact, MembershipHistory
+from apps.management.models import MembershipPlan
 from django.forms import modelformset_factory
 from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import JsonResponse
+from django.core.serializers import serialize
 from django.views.decorators.http import require_POST
 
 from django.contrib.auth.decorators import login_required
@@ -145,3 +147,23 @@ def delete_member(request, member_id):
     except Exception as e:
         messages.error(request, f'An error occurred: {e}')
         return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+
+@never_cache
+@login_required(login_url='login')
+def assign_membership_plan(request, member_id):
+    member = get_object_or_404(Member, id=member_id)
+    plans = MembershipPlan.objects.all()
+    plans_json = serialize('json', plans)
+    if request.method == 'POST':
+        form = MembershipHistoryForm(request.POST)
+        if form.is_valid():
+            history = form.save(commit=False)
+            history.member = member
+            history.save()
+            member.membership_plan = history.plan
+            member.save()
+            messages.success(request, f'Membership plan "{history.plan.title}" assigned to {member.first_name} {member.last_name}.')
+            return redirect('member_profile', member_id=member.id)
+    else:
+        form = MembershipHistoryForm()
+    return render(request, 'members/membership_plan_assign.html', {'member': member, 'plans': plans, 'plans_json': plans_json, 'form': form})

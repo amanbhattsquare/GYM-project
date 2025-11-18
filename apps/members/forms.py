@@ -1,5 +1,5 @@
 from django import forms
-from .models import Member, MedicalHistory, EmergencyContact
+from .models import Member, MedicalHistory, EmergencyContact, MembershipHistory
 
 class MemberForm(forms.ModelForm):
     class Meta:
@@ -58,3 +58,9 @@ class EmergencyContactForm(forms.ModelForm):
             'mobile': forms.TextInput(attrs={'class': 'form-control'}),
             'relation': forms.TextInput(attrs={'class': 'form-control'}),
         }
+
+
+class MembershipHistoryForm(forms.ModelForm):
+    class Meta:
+        model = MembershipHistory
+        fields = ['plan', 'registration_fee', 'joining_date', 'membership_start_date', 'discount', 'total_amount', 'paid_amount', 'payment_mode', 'comment']
