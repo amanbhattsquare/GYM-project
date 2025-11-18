@@ -81,3 +81,12 @@ def delete_trainer(request, trainer_id):
     except Exception as e:
         messages.error(request, f'An error occurred: {e}')
         return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+
+@never_cache
+@login_required(login_url='login')
+def toggle_trainer_status(request, trainer_id):
+    trainer = get_object_or_404(Trainer, id=trainer_id)
+    trainer.is_active = not trainer.is_active
+    trainer.save()
+    messages.success(request, f'Trainer {trainer.name} has been marked as {'Active' if trainer.is_active else 'Inactive'}.')
+    return redirect('trainer_list')

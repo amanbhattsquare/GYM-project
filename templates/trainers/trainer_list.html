@@ -35,6 +35,7 @@
                     <thead>
                         <tr>
                             <th class="font-weight-semibold py-2"> SR. No.</th>
+                            <th class="font-weight-semibold py-2">Photo</th>
                             <th class="font-weight-semibold py-2">Name</th>
                             <th class="font-weight-semibold py-2">Email</th>
                             <th class="font-weight-semibold py-2">Phone</th>
@@ -43,6 +44,7 @@
                             <th class="font-weight-semibold py-2">Salary ₹</th>
                             <th class="font-weight-semibold py-2">PT/Monthly ₹</th>
                             <th class="font-weight-semibold py-2">Specialization</th>
+                            <th class="font-weight-semibold py-2">Status</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -50,6 +52,13 @@
                         {% for trainer in trainers %}
                         <tr>
                             <td data-label="SR. No.">{{ forloop.counter0|add:trainers.start_index }}</td>
+                            <td data-label="Photo">
+                                {% if trainer.photo %}
+                                    <img src="{{ trainer.photo.url }}" alt="{{ trainer.name }}" class="img-fluid rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+                                {% else %}
+                                    <img src="{% static 'images/gym-guy.jpg' %}" alt="Default" class="img-fluid rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+                                {% endif %}
+                            </td>
                             <td data-label="Name">{{ trainer.name }}</td>
                             <td data-label="Email">{{ trainer.email }}</td>
                             <td data-label="Phone">{{ trainer.phone }}</td>
@@ -58,9 +67,19 @@
                             <td data-label="Salary">{{ trainer.salary }}</td>
                             <td data-label="Personal Training Monthly Amount">{{ trainer.personal_training_monthly_amount }}</td>
                             <td data-label="Specialization">{{ trainer.specialization }}</td>
+                            <td data-label="Status">
+                                {% if trainer.is_active %}
+                                    <span class="badge bg-success">Active</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Inactive</span>
+                                {% endif %}
+                            </td>
                             <td data-label="Actions">
-                                <a href="{% url 'edit_trainer' trainer.id %}" class="btn btn-primary btn-sm"><i class="mdi mdi-pencil-outline"></i></a>
-                                <a href="#" class="btn btn-danger btn-sm" onclick="confirmDelete('{{ trainer.id }}', '{{ trainer.name }}', '{% url 'delete_trainer' trainer.id %}')"><i class="mdi mdi-delete-outline"></i></a>
+                                <a href="{% url 'edit_trainer' trainer.id %}" class="btn btn-primary btn-sm" title="Edit Trainer Details"><i class="mdi mdi-pencil-outline"></i></a>
+                                <a href="{% url 'toggle_trainer_status' trainer.id %}" class="btn btn-warning btn-sm" title="{% if trainer.is_active %}Deactivate this trainer{% else %}Activate this trainer{% endif %}">
+                                    <i class="mdi {% if trainer.is_active %}mdi-close-circle-outline{% else %}mdi-checkbox-marked-circle-outline{% endif %}"></i>
+                                </a>
+                                <a href="#" class="btn btn-danger btn-sm" title="Delete this trainer" onclick="confirmDelete('{{ trainer.id }}', '{{ trainer.name }}', '{% url 'delete_trainer' trainer.id %}')"><i class="mdi mdi-delete-outline"></i></a>
                             </td>
                         </tr>
                         {% endfor %}
