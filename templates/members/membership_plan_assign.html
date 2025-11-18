@@ -3,53 +3,89 @@
 
 {% block content %}
 <div class="container-fluid">
+    <div class="page-header">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'dashboard' %}"><i class="mdi mdi-home"></i> Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'member_list' %}"><i class="mdi mdi-account-multiple"></i> Members</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'member_profile' member.id %}"><i class="mdi mdi-account"></i> {{ member.first_name }} {{ member.last_name }}</a></li>
+                <li class="breadcrumb-item active" aria-current="page"><i class="mdi mdi-account-plus"></i> Assign Plan</li>
+            </ol>
+        </nav>
+    </div>
     <div class="row">
         <div class="col-md-12">
             <div class="card">
+                <div class="card-header" style="background-color: #4682B4; color: white;">
+                    <h4 class="card-title" style="color: white; margin-bottom: 0;">Assign Membership Plan to {{ member.first_name }} {{ member.last_name }}</h4>
+                </div>
                 <div class="card-body">
-                    <h4 class="card-title text-center">Assign Membership Plan to {{ member.first_name }} {{ member.last_name }}</h4>
                     <form class="forms-sample" action="{% url 'assign_membership_plan' member.id %}" method="post">
                         {% csrf_token %}
-                        <div class="form-group">
-                            <label for="plan">Select Plan</label>
-                            <select class="form-control" id="plan" name="plan_id">
-                                {% for plan in plans %}
-                                <option value="{{ plan.id }}">{{ plan.title }} - ₹{{ plan.price }}</option>
-                                {% endfor %}
-                            </select>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="plan">Select Plan</label>
+                                    <select class="form-control" id="plan" name="plan_id">
+                                        {% for plan in plans %}
+                                        <option value="{{ plan.id }}">{{ plan.title }} - ₹{{ plan.price }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="registration_fee">Registration Fee</label>
+                                    <input type="number" class="form-control" id="registration_fee" name="registration_fee" value="0">
+                                </div>
+                            </div>
                         </div>
                         <div id="plan-details"></div>
-                        <div class="form-group">
-                            <label for="registration_fee">Registration Fee</label>
-                            <input type="number" class="form-control" id="registration_fee" name="registration_fee" value="0">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="joining_date">Joining Date</label>
+                                    <input type="date" class="form-control" id="joining_date" name="joining_date">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="membership_start_date">Membership Start Date</label>
+                                    <input type="date" class="form-control" id="membership_start_date" name="membership_start_date">
+                                </div>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="joining_date">Joining Date</label>
-                            <input type="date" class="form-control" id="joining_date" name="joining_date">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="discount">Discount</label>
+                                    <input type="number" class="form-control" id="discount" name="discount" value="0">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="total_amount">Total Amount</label>
+                                    <input type="number" class="form-control" id="total_amount" name="total_amount" readonly>
+                                </div>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="membership_start_date">Membership Start Date</label>
-                            <input type="date" class="form-control" id="membership_start_date" name="membership_start_date">
-                        </div>
-                        <div class="form-group">
-                            <label for="discount">Discount</label>
-                            <input type="number" class="form-control" id="discount" name="discount" value="0">
-                        </div>
-                        <div class="form-group">
-                            <label for="total_amount">Total Amount</label>
-                            <input type="number" class="form-control" id="total_amount" name="total_amount" readonly>
-                        </div>
-                        <div class="form-group">
-                            <label for="paid_amount">Paid Amount</label>
-                            <input type="number" class="form-control" id="paid_amount" name="paid_amount">
-                        </div>
-                        <div class="form-group">
-                            <label for="payment_mode">Payment Mode</label>
-                            <select class="form-control" id="payment_mode" name="payment_mode">
-                                <option value="cash">Cash</option>
-                                <option value="card">Card</option>
-                                <option value="online">Online</option>
-                            </select>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="paid_amount">Paid Amount</label>
+                                    <input type="number" class="form-control" id="paid_amount" name="paid_amount">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="payment_mode">Payment Mode</label>
+                                    <select class="form-control" id="payment_mode" name="payment_mode">
+                                        <option value="cash">Cash</option>
+                                        <option value="card">Card</option>
+                                        <option value="online">Online</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label for="comment">Comment</label>
