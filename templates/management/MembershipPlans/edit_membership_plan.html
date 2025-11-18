@@ -11,19 +11,19 @@
                 </a>
             </li>
             <li class="breadcrumb-item">
-                <a href="{% url 'package_plans' %}" class="text-decoration-none">
-                    <i class="mdi mdi-package-variant-closed mdi-18px"></i> Package Plans
+                <a href="{% url 'membership_plans' %}" class="text-decoration-none">
+                    <i class="mdi mdi-package-variant-closed mdi-18px"></i> Membership Plans
                 </a>
             </li>
             <li class="breadcrumb-item active" aria-current="page">
-                <i class="mdi mdi-pencil-circle-outline mdi-18px"></i> Edit Package Plan
+                <i class="mdi mdi-pencil-circle-outline mdi-18px"></i> Edit Membership Plan
             </li>
         </ol>
     </nav>
     <div class="container">
     <div class="card">
         <div class="card-header bg-primary text-white">
-            <h4 class="mb-0">Edit Package Plan</h4>
+            <h4 class="mb-0">Edit Membership Plan</h4>
         </div>
         <div class="card-body">
             <form method="post" class="needs-validation" novalidate>
@@ -50,7 +50,7 @@
                 </div>
                 <div class="d-flex justify-content-end">
                     <button type="submit" class="btn btn-primary me-2">Save Changes</button>
-                    <a href="{% url 'package_plans' %}" class="btn btn-light">Cancel</a>
+                    <a href="{% url 'membership_plans' %}" class="btn btn-light">Cancel</a>
                 </div>
             </form>
         </div>

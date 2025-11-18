@@ -1,5 +1,5 @@
 from django import forms
-from .models import DietPlan, PackagePlan, WorkoutPlan
+from .models import DietPlan, MembershipPlan, WorkoutPlan
 
 class WorkoutPlanForm(forms.ModelForm):
     class Meta:
@@ -13,9 +13,9 @@ class WorkoutPlanForm(forms.ModelForm):
         }
 
 
-class PackagePlanForm(forms.ModelForm):
+class MembershipPlanForm(forms.ModelForm):
     class Meta:
-        model = PackagePlan
+        model = MembershipPlan
         fields = '__all__'
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control'}),

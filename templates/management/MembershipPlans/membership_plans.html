@@ -13,7 +13,7 @@
             </a>
         </li>
         <li class="breadcrumb-item active" aria-current="page">
-            <i class="mdi mdi-package-variant-closed mdi-18px"></i> Package Plans
+            <i class="mdi mdi-package-variant-closed mdi-18px"></i> Membership Plans
         </li>
     </ol>
 </nav>
@@ -21,7 +21,7 @@
 <div class="container">
     <div class="card">
         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-            <h4 class="mb-0">Package Plan List</h4>
+            <h4 class="mb-0">Membership Plan List</h4>
             <a href="#" class="btn btn-light btn-sm" data-toggle="modal" data-target="#addPlanModal">
                 <i class="mdi mdi-plus"></i> Add Plan
             </a>
@@ -51,8 +51,8 @@
                             <td data-label="Duration">{{ plan.get_duration_display }}</td>
                             <td data-label="Description">{{ plan.description }}</td>
                             <td data-label="Actions">
-                                <a href="{% url 'edit_package_plan' plan.id %}" class="btn btn-primary btn-sm"> <i class="mdi mdi-pencil-outline"></i></a>
-                                <a href="#" class="btn btn-danger btn-sm" onclick="confirmDelete('{{ plan.id }}', '{{ plan.title }}', '{% url 'delete_package_plan' plan.id %}')"> <i class="mdi mdi-delete-outline"></i></a>
+                                <a href="{% url 'edit_membership_plan' plan.id %}" class="btn btn-primary btn-sm"> <i class="mdi mdi-pencil-outline"></i></a>
+                                <a href="#" class="btn btn-danger btn-sm" onclick="confirmDelete('{{ plan.id }}', '{{ plan.title }}', '{% url 'delete_membership_plan' plan.id %}')"> <i class="mdi mdi-delete-outline"></i></a>
                             </td>
                         </tr>
                         {% endfor %}
@@ -73,13 +73,13 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="addPlanModalLabel">Add New Package Plan</h5>
+        <h5 class="modal-title" id="addPlanModalLabel">Add New Membership Plan</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        <form method="post" action="{% url 'package_plans' %}">
+        <form method="post" action="{% url 'membership_plans' %}">
             {% csrf_token %}
             {% load form_tags %}
             <div class="form-group">

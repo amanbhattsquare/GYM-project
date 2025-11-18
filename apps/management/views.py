@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from .models import DietPlan, PackagePlan, WorkoutPlan
-from .forms import DietPlanForm, PackagePlanForm, WorkoutPlanForm
+from .models import DietPlan, MembershipPlan, WorkoutPlan
+from .forms import DietPlanForm, MembershipPlanForm, WorkoutPlanForm
 from django.http import JsonResponse
 from django.core.paginator import Paginator
 from django.db.models import Q
@@ -10,17 +10,17 @@ from django.views.decorators.cache import never_cache
 
 @never_cache
 @login_required(login_url='login')
-def package_plans(request):
+def membership_plans(request):
     if request.method == 'POST':
-        form = PackagePlanForm(request.POST)
+        form = MembershipPlanForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Package plan created successfully.')
-            return redirect('package_plans')
+            messages.success(request, 'Membership plan created successfully.')
+            return redirect('membership_plans')
     else:
-        form = PackagePlanForm()
+        form = MembershipPlanForm()
     
-    plans = PackagePlan.objects.all()
+    plans = MembershipPlan.objects.all()
     
     # Search functionality
     query = request.GET.get('q')
@@ -35,32 +35,32 @@ def package_plans(request):
     page_number = request.GET.get('page')
     plans = paginator.get_page(page_number)
 
-    return render(request, 'management/PackagePlans/package_plans.html', {'form': form, 'plans': plans})
+    return render(request, 'management/MembershipPlans/membership_plans.html', {'form': form, 'plans': plans})
 
 
 @never_cache
 @login_required(login_url='login')
-def edit_package_plan(request, pk):
-    plan = get_object_or_404(PackagePlan, pk=pk)
+def edit_membership_plan(request, pk):
+    plan = get_object_or_404(MembershipPlan, pk=pk)
     if request.method == 'POST':
-        form = PackagePlanForm(request.POST, instance=plan)
+        form = MembershipPlanForm(request.POST, instance=plan)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Package plan updated successfully.')
-            return redirect('package_plans')
+            messages.success(request, 'Membership plan updated successfully.')
+            return redirect('membership_plans')
     else:
-        form = PackagePlanForm(instance=plan)
-    return render(request, 'management/PackagePlans/edit_package_plan.html', {'form': form})
+        form = MembershipPlanForm(instance=plan)
+    return render(request, 'management/MembershipPlans/edit_membership_plan.html', {'form': form})
 
 
 @never_cache
 @login_required(login_url='login')
-def delete_package_plan(request, pk):
-    plan = get_object_or_404(PackagePlan, pk=pk)
+def delete_membership_plan(request, pk):
+    plan = get_object_or_404(MembershipPlan, pk=pk)
     if request.method == 'POST':
         try:
             plan.delete()
-            return JsonResponse({'status': 'success', 'message': 'Package plan deleted successfully.'})
+            return JsonResponse({'status': 'success', 'message': 'Membership plan deleted successfully.'})
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)})
     return JsonResponse({'status': 'error', 'message': 'Invalid request method.'})

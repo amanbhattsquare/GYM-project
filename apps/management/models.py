@@ -1,6 +1,6 @@
 from django.db import models
 
-class PackagePlan(models.Model):
+class MembershipPlan(models.Model):
     DURATION_CHOICES = [
         ('1_day', '1 Day'),
         ('1_week', '1 Week'),
