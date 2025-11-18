@@ -150,6 +150,18 @@
                             </div>
                         </div>
                         <div class="col-md-4 mb-3">
+                            <label for="id_pincode" class="form-label">Pincode</label>
+                            {{ form.pincode|attr:"required:true" }}
+                            {% for error in form.pincode.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                            <div class="invalid-feedback">
+                                Please enter a pincode.
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
                             <label for="id_address" class="form-label">Address</label>
                             {{ form.address|attr:"required:true" }}
                             {% for error in form.address.errors %}
@@ -197,18 +209,7 @@
                                 Please enter a state.
                             </div>
                         </div>
-                        <div class="col-md-4 mb-3">
-                            <label for="id_pincode" class="form-label">Pincode</label>
-                            {{ form.pincode|attr:"required:true" }}
-                            {% for error in form.pincode.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ error }}
-                                </div>
-                            {% endfor %}
-                            <div class="invalid-feedback">
-                                Please enter a pincode.
-                            </div>
-                        </div>
+                        
                     </div>
                 </fieldset>
 
@@ -281,31 +282,37 @@
                 <fieldset class="border p-4 rounded mb-4">
                     <legend class="w-auto px-2 h5">Medical History</legend>
                     {{ medical_formset.management_form }}
-                    {% for form in medical_formset %}
-                        <div class="row medical-formset-row">
-                            <div class="col-md-4 mb-3">
-                                <label for="{{ form.condition.id_for_label }}" class="form-label">Condition</label>
-                                {{ form.condition }}
-                                <div class="invalid-feedback">
-                                    Please enter a condition.
+                    <div id="medical-formset-container">
+                        {% for form in medical_formset %}
+                            <div class="row medical-formset-row">
+                                <div class="col-md-3 mb-3">
+                                    <label for="{{ form.condition.id_for_label }}" class="form-label">Condition</label>
+                                    {{ form.condition }}
+                                    <div class="invalid-feedback">
+                                        Please enter a condition.
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="{{ form.type.id_for_label }}" class="form-label">Type</label>
+                                    {{ form.type }}
+                                    <div class="invalid-feedback">
+                                        Please enter a type.
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="{{ form.since.id_for_label }}" class="form-label">Since</label>
+                                    {{ form.since }}
+                                    <div class="invalid-feedback">
+                                        Please enter a date.
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mb-3 d-flex align-items-end">
+                                    <button type="button" class="btn btn-danger remove-medical-formset-row">Remove</button>
                                 </div>
                             </div>
-                            <div class="col-md-4 mb-3">
-                                <label for="{{ form.type.id_for_label }}" class="form-label">Type</label>
-                                {{ form.type }}
-                                <div class="invalid-feedback">
-                                    Please enter a type.
-                                </div>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label for="{{ form.since.id_for_label }}" class="form-label">Since</label>
-                                {{ form.since }}
-                                <div class="invalid-feedback">
-                                    Please enter a date.
-                                </div>
-                            </div>
-                        </div>
-                    {% endfor %}
+                        {% endfor %}
+                    </div>
+                    <button type="button" id="add-medical-formset-row" class="btn btn-success">Add More</button>
                 </fieldset>
 
                 <fieldset class="border p-4 rounded mb-4">
@@ -343,4 +350,75 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const container = document.getElementById('medical-formset-container');
+    const addButton = document.getElementById('add-medical-formset-row');
+    const totalForms = document.querySelector('input[name="{{ medical_formset.prefix }}-TOTAL_FORMS"]');
+    const emptyFormTemplate = `
+        <div class="row medical-formset-row">
+            <div class="col-md-3 mb-3">
+                <label for="id_{{ medical_formset.prefix }}-__prefix__-condition" class="form-label">Condition</label>
+                {{ medical_formset.empty_form.condition }}
+            </div>
+            <div class="col-md-3 mb-3">
+                <label for="id_{{ medical_formset.prefix }}-__prefix__-type" class="form-label">Type</label>
+                {{ medical_formset.empty_form.type }}
+            </div>
+            <div class="col-md-3 mb-3">
+                <label for="id_{{ medical_formset.prefix }}-__prefix__-since" class="form-label">Since</label>
+                {{ medical_formset.empty_form.since }}
+            </div>
+            <div class="col-md-3 mb-3 d-flex align-items-end">
+                <button type="button" class="btn btn-danger remove-medical-formset-row">Remove</button>
+            </div>
+        </div>
+    `;
+
+    addButton.addEventListener('click', function () {
+        let newIndex = parseInt(totalForms.value);
+        let newForm = emptyFormTemplate.replace(/__prefix__/g, newIndex);
+        container.insertAdjacentHTML('beforeend', newForm);
+        totalForms.value = newIndex + 1;
+    });
+
+    container.addEventListener('click', function (e) {
+        if (e.target && e.target.classList.contains('remove-medical-formset-row')) {
+            const row = e.target.closest('.medical-formset-row');
+            const deleteInput = row.querySelector('input[type="checkbox"][name$="-DELETE"]');
+            if (deleteInput) {
+                deleteInput.checked = true;
+                row.style.display = 'none';
+            } else {
+                row.remove();
+                updateFormIndexes();
+            }
+        }
+    });
+
+    function updateFormIndexes() {
+        const rows = container.querySelectorAll('.medical-formset-row');
+        let formCount = 0;
+        rows.forEach((row, index) => {
+            if (row.style.display !== 'none') {
+                formCount++;
+                row.querySelectorAll('input, select, textarea').forEach(input => {
+                    if (input.name) {
+                        const name = input.name.replace(/-(\d+|__prefix__)-/, `-${index}-`);
+                        const id = input.id.replace(/-(\d+|__prefix__)-/, `-${index}-`);
+                        input.name = name;
+                        input.id = id;
+                        const label = document.querySelector(`label[for="${id.replace(index, '__prefix__')}"]`);
+                        if (label) {
+                            label.setAttribute('for', id);
+                        }
+                    }
+                });
+            }
+        });
+        totalForms.value = formCount;
+    }
+});
+</script>
 {% endblock %}

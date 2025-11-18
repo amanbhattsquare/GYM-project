@@ -15,18 +15,25 @@ from django.views.decorators.cache import never_cache
 @never_cache
 @login_required(login_url='login')
 def add_new_member(request):
-    MedicalHistoryFormSet = modelformset_factory(MedicalHistory, form=MedicalHistoryForm, extra=1)
+    MedicalHistoryFormSet = modelformset_factory(MedicalHistory, form=MedicalHistoryForm, extra=1, can_delete=True)
     if request.method == 'POST':
         member_form = MemberForm(request.POST, request.FILES)
         medical_formset = MedicalHistoryFormSet(request.POST, request.FILES, prefix='medical')
         emergency_form = EmergencyContactForm(request.POST, prefix='emergency')
         if member_form.is_valid() and medical_formset.is_valid() and emergency_form.is_valid():
             member = member_form.save()
-            for form in medical_formset:
-                if form.cleaned_data:
-                    medical_history = form.save(commit=False)
-                    medical_history.member = member
-                    medical_history.save()
+            
+            instances = medical_formset.save(commit=False)
+            for instance in instances:
+                instance.member = member
+                instance.save()
+            
+            medical_formset.save_m2m() 
+            
+            for form in medical_formset.deleted_forms:
+                if form.instance.pk:
+                    form.instance.delete()
+
             emergency_contact = emergency_form.save(commit=False)
             emergency_contact.member = member
             emergency_contact.save()
@@ -78,7 +85,8 @@ def edit_member(request, member_id):
                 instance.member = member
                 instance.save()
             
-            # Handle deletion of forms
+            medical_formset.save_m2m()
+
             for form_in_formset in medical_formset.deleted_forms:
                 if form_in_formset.instance.pk:
                     form_in_formset.instance.delete()
