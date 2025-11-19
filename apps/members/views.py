@@ -40,7 +40,7 @@ def add_new_member(request):
             emergency_contact.member = member
             emergency_contact.save()
             messages.success(request, 'Member added successfully!')
-            return redirect('member_list')
+            return redirect('assign_membership_plan', member_id=member.id)
         else:
             print("Member form errors:", member_form.errors)
             print("Medical formset errors:", medical_formset.errors)
@@ -184,7 +184,7 @@ def assign_membership_plan(request, member_id):
             member.membership_plan = history.plan
             member.save()
             messages.success(request, f'Membership plan "{history.plan.title}" assigned to {member.first_name} {member.last_name}.')
-            return redirect('billing:invoice', member_id=member.id, history_id=history.id)
+            return redirect('member_profile', member_id=member.id)
     else:
         form = MembershipHistoryForm()
     return render(request, 'members/membership_plan_assign.html', {'member': member, 'plans': plans, 'plans_json': plans_json, 'form': form})
