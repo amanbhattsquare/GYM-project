@@ -12,9 +12,19 @@ from django.core.paginator import Paginator
 def invoice(request, member_id, history_id):
     member = get_object_or_404(Member, id=member_id)
     history = get_object_or_404(MembershipHistory, id=history_id)
+
+    # Get all invoices for the member to find the next and previous
+    member_invoices = list(MembershipHistory.objects.filter(member=member).order_by('created_at'))
+    current_invoice_index = member_invoices.index(history)
+
+    previous_invoice = member_invoices[current_invoice_index - 1] if current_invoice_index > 0 else None
+    next_invoice = member_invoices[current_invoice_index + 1] if current_invoice_index < len(member_invoices) - 1 else None
+
     context = {
         'member': member,
         'history': history,
+        'previous_invoice': previous_invoice,
+        'next_invoice': next_invoice,
     }
     return render(request, 'billing/invoice.html', context)
 
