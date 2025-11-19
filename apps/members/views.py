@@ -59,7 +59,13 @@ def add_new_member(request):
 @login_required(login_url='login')
 def member_profile(request, member_id):
     member = Member.objects.get(id=member_id)
-    return render(request, 'members/member_profile.html', {'member': member})
+    membership_histories = MembershipHistory.objects.filter(member=member).order_by('-created_at')
+    latest_membership = membership_histories.first()
+    return render(request, 'members/member_profile.html', {
+        'member': member, 
+        'membership_histories': membership_histories,
+        'membership_history': latest_membership
+        })
 
 
 
@@ -163,7 +169,14 @@ def assign_membership_plan(request, member_id):
             member.membership_plan = history.plan
             member.save()
             messages.success(request, f'Membership plan "{history.plan.title}" assigned to {member.first_name} {member.last_name}.')
-            return redirect('member_profile', member_id=member.id)
+            return redirect('invoice', member_id=member.id, history_id=history.id)
     else:
         form = MembershipHistoryForm()
     return render(request, 'members/membership_plan_assign.html', {'member': member, 'plans': plans, 'plans_json': plans_json, 'form': form})
+
+@never_cache
+@login_required(login_url='login')
+def invoice(request, member_id, history_id):
+    member = get_object_or_404(Member, id=member_id)
+    history = get_object_or_404(MembershipHistory, id=history_id)
+    return render(request, 'members/invoice.html', {'member': member, 'history': history})

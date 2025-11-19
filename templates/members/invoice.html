@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="card-title">Invoice</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4>{{ member.first_name }} {{ member.last_name }}</h4>
+                            <p>{{ member.address }}, {{ member.city }}, {{ member.state }} - {{ member.pincode }}</p>
+                            <p>Email: {{ member.email }}</p>
+                            <p>Mobile: {{ member.mobile_number }}</p>
+                        </div>
+                        <div class="col-md-6 text-right">
+                            <p><strong>Invoice #:</strong> {{ history.id }}</p>
+                            <p><strong>Date:</strong> {{ history.joining_date }}</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Membership Plan</th>
+                                <th>Registration Fee</th>
+                                <th>Discount</th>
+                                <th>Total Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{{ history.plan.title }}</td>
+                                <td>{{ history.registration_fee }}</td>
+                                <td>{{ history.discount }}</td>
+                                <td>{{ history.total_amount }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Paid Amount:</strong> {{ history.paid_amount }}</p>
+                            <p><strong>Payment Mode:</strong> {{ history.payment_mode }}</p>
+                        </div>
+                        <div class="col-md-6 text-right">
+                            <p><strong>Comment:</strong> {{ history.comment }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-right">
+                    <button class="btn btn-primary" onclick="window.print();">Print Invoice</button>
+                    <a href="{% url 'member_profile' member.id %}" class="btn btn-secondary">Back to Profile</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

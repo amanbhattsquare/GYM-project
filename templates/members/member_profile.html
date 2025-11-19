@@ -1,27 +1,7 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% load static %}
 
 {% block content %}
-
-<!-- Compact Breadcrumb Navigation -->
-<nav aria-label="breadcrumb" class="custom-breadcrumb mb-3">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item">
-            <a href="{% url 'dashboard' %}" class="text-decoration-none">
-                <i class="mdi mdi-home-outline mdi-18px"></i> Dashboard
-            </a>
-        </li>
-        <li class="breadcrumb-item">
-            <a href="{% url 'member_list' %}" class="text-decoration-none">
-                <i class="mdi mdi-account-multiple-outline mdi-18px"></i> Members List
-            </a>
-        </li>
-        <li class="breadcrumb-item active" aria-current="page">
-            <i class="mdi mdi-account-multiple-outline mdi-18px"></i> Member Profile 
-        </li>
-    </ol>
-</nav>
-
 <div class="row">
     <div class="col-12">
         <div class="card">
@@ -41,7 +21,7 @@
                             <div class="d-flex justify-content-center">
                                 <a href="{% url 'edit_member' member.id %}" class="btn btn-primary mr-2">Edit</a>
                                 <a href="{% url 'assign_membership_plan' member.id %}" class="btn btn-success mr-2">Assign Plan</a>
-                                <a href="{% url 'member_list' %}" class="btn btn-secondary">Back to List</a>
+                               
                             </div>
                         </div>
                         <div class="py-4">
@@ -83,6 +63,9 @@
                                 <li class="nav-item">
                                     <a class="nav-link" id="plan-tab" data-toggle="tab" href="#plan" role="tab" aria-controls="plan" aria-selected="false">Membership Plan</a>
                                 </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="invoices-tab" data-toggle="tab" href="#invoices" role="tab" aria-controls="invoices" aria-selected="false">Invoice History</a>
+                                </li>
                             </ul>
                             <div class="tab-content" id="myTabContent">
                                 <div class="tab-pane fade show active" id="personal" role="tabpanel" aria-labelledby="personal-tab">
@@ -95,11 +78,12 @@
                                                 <p><strong>Profession:</strong> {{ member.profession }}</p>
                                             </div>
                                             <div class="col-md-6">
-                                                <p><strong>Address:</strong> {{ member.address }}</p>
-                                                <p><strong>Area:</strong> {{ member.area }}</p>
-                                                <p><strong>City:</strong> {{ member.city }}</p>
-                                                <p><strong>State:</strong> {{ member.state }}</p>
-                                                <p><strong>Pincode:</strong> {{ member.pincode }}</p>
+                                                <div class="form-group row">
+                                                    <label class="col-sm-3 col-form-label">Address</label>
+                                                    <div class="col-sm-9">
+                                                        <p class="form-control-static">{{ member.address }}</p>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -154,12 +138,86 @@
                                 </div>
                                 <div class="tab-pane fade" id="plan" role="tabpanel" aria-labelledby="plan-tab">
                                     <div class="py-3">
-                                        {% if member.membership_plan %}
-                                            <p><strong>Plan Name:</strong> {{ member.membership_plan.plan_name }}</p>
-                                            <p><strong>Plan Price:</strong> {{ member.membership_plan.plan_price }}</p>
-                                            <p><strong>Plan Duration:</strong> {{ member.membership_plan.plan_duration }} days</p>
+                                        {% if membership_history %}
+                                            <h4>Current Membership Plan</h4>
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">{{ membership_history.plan.title }}</h5>
+                                                    <p class="card-text">
+                                                        <strong>Price:</strong> {{ membership_history.plan.price }} <br>
+                                                        <strong>Duration:</strong> {{ membership_history.plan.get_duration_display }} <br>
+                                                        <strong>Start Date:</strong> {{ membership_history.membership_start_date|date:"d-m-Y" }} <br>
+                                                        <strong>End Date:</strong> {{ membership_history.get_end_date|date:"d-m-Y" }}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <hr>
                                         {% else %}
-                                            <p class="text-muted">No membership plan assigned.</p>
+                                            <p class="text-muted">No active membership plan.</p>
+                                        {% endif %}
+
+                                        <h4>Plan History</h4>
+                                        {% if membership_histories %}
+                                            <div class="table-responsive">
+                                                <table class="table table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Plan</th>
+                                                            <th>Start Date</th>
+                                                            <th>End Date</th>
+                                                            <th>Price</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {% for history in membership_histories %}
+                                                            <tr>
+                                                                <td>{{ history.plan.title }}</td>
+                                                                <td>{{ history.membership_start_date|date:"d-m-Y" }}</td>
+                                                                <td>{{ history.get_end_date|date:"d-m-Y" }}</td>
+                                                                <td>{{ history.plan.price }}</td>
+                                                            </tr>
+                                                        {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        {% else %}
+                                            <p class="text-muted">No plan history found.</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="invoices" role="tabpanel" aria-labelledby="invoices-tab">
+                                    <div class="py-3">
+                                        {% if membership_histories %}
+                                            <div class="table-responsive">
+                                                <table class="table table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Plan</th>
+                                                            <th>Start Date</th>
+                                                            <th>End Date</th>
+                                                            <th>Total Amount</th>
+                                                            <th>Paid Amount</th>
+                                                            <th>Invoice</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {% for history in membership_histories %}
+                                                            <tr>
+                                                                <td>{{ history.plan.title }}</td>
+                                                                <td>{{ history.membership_start_date|date:"d-m-Y" }}</td>
+                                                                <td>{{ history.get_end_date|date:"d-m-Y" }}</td>
+                                                                <td>{{ history.total_amount }}</td>
+                                                                <td>{{ history.paid_amount }}</td>
+                                                                <td>
+                                                                    <a href="{% url 'invoice' member.id history.id %}" class="btn btn-primary btn-sm">Download</a>
+                                                                </td>
+                                                            </tr>
+                                                        {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        {% else %}
+                                            <p class="text-muted">No invoice history found.</p>
                                         {% endif %}
                                     </div>
                                 </div>

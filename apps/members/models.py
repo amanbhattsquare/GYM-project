@@ -1,4 +1,5 @@
 from django.db import models
+from datetime import timedelta
 
 class Member(models.Model):
     first_name = models.CharField(max_length=50)
@@ -51,9 +52,25 @@ class MembershipHistory(models.Model):
     discount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
     paid_amount = models.DecimalField(max_digits=10, decimal_places=2)
-    payment_mode = models.CharField(max_length=50)
+    payment_mode = models.CharField(max_length=50, choices=[('cash', 'Cash'), ('card', 'Card'), ('upi', 'UPI')])
     comment = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def get_end_date(self):
+        duration_parts = self.plan.duration.split('_')
+        duration_value = int(duration_parts[0])
+        duration_unit = duration_parts[1]
+
+        if duration_unit == 'day' or duration_unit == 'days':
+            return self.membership_start_date + timedelta(days=duration_value)
+        elif duration_unit == 'week' or duration_unit == 'weeks':
+            return self.membership_start_date + timedelta(weeks=duration_value)
+        elif duration_unit == 'month' or duration_unit == 'months':
+            # This is an approximation, for more accurate calculations, consider using dateutil.relativedelta
+            return self.membership_start_date + timedelta(days=30 * duration_value)
+        elif duration_unit == 'year' or duration_unit == 'years':
+            return self.membership_start_date + timedelta(days=365 * duration_value)
+        return None
 
     def __str__(self):
         return f"{self.member} - {self.plan}"

@@ -64,3 +64,14 @@ class MembershipHistoryForm(forms.ModelForm):
     class Meta:
         model = MembershipHistory
         fields = ['plan', 'registration_fee', 'joining_date', 'membership_start_date', 'discount', 'total_amount', 'paid_amount', 'payment_mode', 'comment']
+        widgets = {
+            'plan': forms.Select(attrs={'class': 'form-control'}),
+            'registration_fee': forms.NumberInput(attrs={'class': 'form-control'}),
+            'joining_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'membership_start_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'discount': forms.NumberInput(attrs={'class': 'form-control'}),
+            'total_amount': forms.NumberInput(attrs={'class': 'form-control', 'readonly': True}),
+            'paid_amount': forms.NumberInput(attrs={'class': 'form-control'}),
+            'payment_mode': forms.Select(attrs={'class': 'form-control'}),
+            'comment': forms.Textarea(attrs={'class': 'form-control'}),
+        }

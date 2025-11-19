@@ -25,71 +25,67 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="plan">Select Plan</label>
-                                    <select class="form-control" id="plan" name="plan_id">
-                                        {% for plan in plans %}
-                                        <option value="{{ plan.id }}">{{ plan.title }} - ₹{{ plan.price }}</option>
-                                        {% endfor %}
-                                    </select>
+                                    {{ form.plan.label_tag }}
+                                    {{ form.plan }}
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="registration_fee">Registration Fee</label>
-                                    <input type="number" class="form-control" id="registration_fee" name="registration_fee" value="0">
-                                </div>
-                            </div>
-                        </div>
-                        <div id="plan-details"></div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="joining_date">Joining Date</label>
-                                    <input type="date" class="form-control" id="joining_date" name="joining_date">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="membership_start_date">Membership Start Date</label>
-                                    <input type="date" class="form-control" id="membership_start_date" name="membership_start_date">
+                                    {{ form.registration_fee.label_tag }}
+                                    {{ form.registration_fee }}
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="discount">Discount</label>
-                                    <input type="number" class="form-control" id="discount" name="discount" value="0">
+                                    {{ form.joining_date.label_tag }}
+                                    {{ form.joining_date }}
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="total_amount">Total Amount</label>
-                                    <input type="number" class="form-control" id="total_amount" name="total_amount" readonly>
+                                    {{ form.membership_start_date.label_tag }}
+                                    {{ form.membership_start_date }}
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="paid_amount">Paid Amount</label>
-                                    <input type="number" class="form-control" id="paid_amount" name="paid_amount">
+                                    {{ form.discount.label_tag }}
+                                    {{ form.discount }}
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="payment_mode">Payment Mode</label>
-                                    <select class="form-control" id="payment_mode" name="payment_mode">
-                                        <option value="cash">Cash</option>
-                                        <option value="card">Card</option>
-                                        <option value="online">Online</option>
-                                    </select>
+                                    {{ form.total_amount.label_tag }}
+                                    {{ form.total_amount }}
+                                    <h4 class="mt-2">Total: <span id="total_display">0.00</span></h4>
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label for="comment">Comment</label>
-                            <textarea class="form-control" id="comment" name="comment" rows="3"></textarea>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    {{ form.paid_amount.label_tag }}
+                                    {{ form.paid_amount }}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    {{ form.payment_mode.label_tag }}
+                                    {{ form.payment_mode }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    {{ form.comment.label_tag }}
+                                    {{ form.comment }}
+                                </div>
+                            </div>
                         </div>
                         <button type="submit" class="btn btn-primary mr-2">Assign Plan</button>
                         <a href="{% url 'member_profile' member.id %}" class="btn btn-light">Cancel</a>
@@ -102,15 +98,14 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    // This assumes the view context provides 'plans_json' from a serialized queryset.
-    // Example in view: context['plans_json'] = serializers.serialize('json', plans)
     const plansData = JSON.parse('{{ plans_json|escapejs|default:"[]" }}');
     
-    const planSelect = document.getElementById('plan');
-    const registrationFeeInput = document.getElementById('registration_fee');
-    const discountInput = document.getElementById('discount');
-    const totalAmountInput = document.getElementById('total_amount');
-
+    const planSelect = document.getElementById('id_plan');
+    const registrationFeeInput = document.getElementById('id_registration_fee');
+    const discountInput = document.getElementById('id_discount');
+    const totalAmountInput = document.getElementById('id_total_amount');
+    const totalDisplay = document.getElementById('total_display');
+    
     function updateTotalAmount() {
         const selectedPlanId = planSelect.value;
         const registrationFee = parseFloat(registrationFeeInput.value) || 0;
@@ -120,22 +115,20 @@ document.addEventListener('DOMContentLoaded', function () {
         if (selectedPlanId && plansData.length > 0) {
             const selectedPlan = plansData.find(p => p.pk == selectedPlanId);
             if (selectedPlan) {
-                // This is the corrected line, accessing price via 'fields' from the serialized object.
                 planPrice = parseFloat(selectedPlan.fields.price);
             }
         }
         
         const totalAmount = planPrice + registrationFee - discount;
         totalAmountInput.value = totalAmount.toFixed(2);
+        totalDisplay.textContent = totalAmount.toFixed(2);
     }
 
-    // Attach event listeners to relevant fields
     planSelect.addEventListener('change', updateTotalAmount);
     registrationFeeInput.addEventListener('input', updateTotalAmount);
     discountInput.addEventListener('input', updateTotalAmount);
 
-    // Trigger calculation on page load to set the initial value correctly
     updateTotalAmount();
 });
 </script>
-{% endblock  %}
+{% endblock %}
