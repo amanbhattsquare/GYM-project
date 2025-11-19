@@ -28,6 +28,7 @@ urlpatterns = [
     path('members/', include('apps.members.urls')),
     path('trainers/', include('apps.trainers.urls')),
     path('enquiry/', include('apps.enquiry.urls')),
+    path('billing/', include('apps.billing.urls')),
     path('management/', include('apps.management.urls')),
 ]
 

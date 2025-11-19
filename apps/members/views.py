@@ -137,11 +137,26 @@ def member_list(request):
             Q(mobile_number__icontains=query)
         ).distinct()
 
+    for member in member_list:
+        latest_history = member.membership_history.order_by('-created_at').first()
+        member.latest_membership_history = latest_history
+
     paginator = Paginator(member_list, 10)  # Show 10 members per page.
 
     page_number = request.GET.get('page')
     members = paginator.get_page(page_number)
     return render(request, 'members/member_list.html', {'members': members})
+
+@require_POST
+def toggle_member_status(request, member_id):
+    member = get_object_or_404(Member, id=member_id)
+    if member.status == 'active':
+        member.status = 'inactive'
+    else:
+        member.status = 'active'
+    member.save()
+    messages.success(request, f'Member status has been updated to {member.status}.')
+    return JsonResponse({'status': 'success', 'message': 'Member status updated successfully.', 'new_status': member.status})
 
 @require_POST
 def delete_member(request, member_id):
@@ -169,14 +184,7 @@ def assign_membership_plan(request, member_id):
             member.membership_plan = history.plan
             member.save()
             messages.success(request, f'Membership plan "{history.plan.title}" assigned to {member.first_name} {member.last_name}.')
-            return redirect('invoice', member_id=member.id, history_id=history.id)
+            return redirect('billing:invoice', member_id=member.id, history_id=history.id)
     else:
         form = MembershipHistoryForm()
     return render(request, 'members/membership_plan_assign.html', {'member': member, 'plans': plans, 'plans_json': plans_json, 'form': form})
-
-@never_cache
-@login_required(login_url='login')
-def invoice(request, member_id, history_id):
-    member = get_object_or_404(Member, id=member_id)
-    history = get_object_or_404(MembershipHistory, id=history_id)
-    return render(request, 'members/invoice.html', {'member': member, 'history': history})

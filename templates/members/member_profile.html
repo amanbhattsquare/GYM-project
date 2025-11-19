@@ -193,24 +193,32 @@
                                                     <thead>
                                                         <tr>
                                                             <th>Plan</th>
+                                                            <th>Joining Date</th>
                                                             <th>Start Date</th>
                                                             <th>End Date</th>
-                                                            <th>Total Amount</th>
-                                                            <th>Paid Amount</th>
-                                                            <th>Invoice</th>
+                                                            <th>Total</th>
+                                                            <th>Paid</th>
+                                                            <th>Due</th>
+                                                            <th>Actions</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        {% for history in membership_histories %}
+                                                        {% for history in member.membership_history.all %}
                                                             <tr>
                                                                 <td>{{ history.plan.title }}</td>
+                                                                <td>{{ history.joining_date|date:"d-m-Y" }}</td>
                                                                 <td>{{ history.membership_start_date|date:"d-m-Y" }}</td>
                                                                 <td>{{ history.get_end_date|date:"d-m-Y" }}</td>
-                                                                <td>{{ history.total_amount }}</td>
-                                                                <td>{{ history.paid_amount }}</td>
+                                                                <td>₹{{ history.total_amount }}</td>
+                                                                <td>₹{{ history.paid_amount }}</td>
+                                                                <td>₹{{ history.due_amount }}</td>
                                                                 <td>
-                                                                    <a href="{% url 'invoice' member.id history.id %}" class="btn btn-primary btn-sm">Download</a>
+                                                                    <a href="{% url 'billing:invoice' member.id history.id %}" class="btn btn-primary btn-sm">View Invoice</a>
                                                                 </td>
+                                                            </tr>
+                                                        {% empty %}
+                                                            <tr>
+                                                                <td colspan="8" class="text-center">No membership history found.</td>
                                                             </tr>
                                                         {% endfor %}
                                                     </tbody>

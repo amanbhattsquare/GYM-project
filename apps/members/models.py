@@ -56,6 +56,13 @@ class MembershipHistory(models.Model):
     comment = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f"{self.member} - {self.plan}"
+
+    @property
+    def due_amount(self):
+        return self.total_amount - self.paid_amount
+
     def get_end_date(self):
         duration_parts = self.plan.duration.split('_')
         duration_value = int(duration_parts[0])
@@ -71,6 +78,3 @@ class MembershipHistory(models.Model):
         elif duration_unit == 'year' or duration_unit == 'years':
             return self.membership_start_date + timedelta(days=365 * duration_value)
         return None
-
-    def __str__(self):
-        return f"{self.member} - {self.plan}"

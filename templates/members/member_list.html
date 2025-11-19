@@ -41,6 +41,9 @@
                             <th class="font-weight-semibold py-2">Name</th>
                             <th class="font-weight-semibold py-2">Email</th>
                             <th class="font-weight-semibold py-2">Mobile</th>
+                            <th class="font-weight-semibold py-2">Due Amount</th>
+                            <th class="font-weight-semibold py-2">Plan Expiry</th>
+                            <th class="font-weight-semibold py-2">Status</th>
                             <th class="font-weight-semibold text-center py-2">Actions</th>
                         </tr>
                     </thead>
@@ -58,6 +61,29 @@
                             <td data-label="Name">{{ member.first_name }} {{ member.last_name }}</td>
                             <td data-label="Email">{{ member.email }}</td>
                             <td data-label="Mobile">{{ member.mobile_number }}</td>
+                            <td data-label="Due Amount">
+                                {% if member.latest_membership_history %}
+                                    {{ member.latest_membership_history.due_amount }}
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </td>
+                            <td data-label="Plan Expiry">
+                                {% if member.latest_membership_history %}
+                                    {{ member.latest_membership_history.get_end_date|date:"d-m-Y" }}
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </td>
+                            <td data-label="Status">
+                                <button type="button" class="btn btn-sm {% if member.status == 'active' %}btn-success{% else %}btn-danger{% endif %}" onclick="toggleStatus('{{ member.id }}', '{{ member.status }}')">
+                                    {% if member.status == 'active' %}
+                                        Active
+                                    {% else %}
+                                        Inactive
+                                    {% endif %}
+                                </button>
+                            </td>
                             <td data-label="Actions" class="text-center">
                                 <a href="{% url 'member_profile' member.id %}" class="btn btn-info btn-sm" data-toggle="tooltip" title="View"><i class="mdi mdi-eye-outline"></i></a>
                                 <a href="{% url 'edit_member' member.id %}" class="btn btn-primary btn-sm" data-toggle="tooltip" title="Edit"><i class="mdi mdi-pencil-outline"></i></a>
@@ -94,6 +120,44 @@
 
 {% block scripts %}
 <script>
+function toggleStatus(memberId, currentStatus) {
+    const url = `/members/toggle-status/${memberId}/`;
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': csrfToken,
+            'Content-Type': 'application/json'
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            const button = document.querySelector(`button[onclick="toggleStatus('${memberId}', '${currentStatus}')"]`);
+            if (data.new_status === 'active') {
+                button.classList.remove('btn-danger');
+                button.classList.add('btn-success');
+                button.innerHTML = 'Active';
+                button.setAttribute('onclick', `toggleStatus('${memberId}', 'active')`);
+            } else {
+                button.classList.remove('btn-success');
+                button.classList.add('btn-danger');
+                button.innerHTML = 'Inactive';
+                button.setAttribute('onclick', `toggleStatus('${memberId}', 'inactive')`);
+            }
+            // Optionally, show a success message
+            // alert(data.message);
+        } else {
+            // Handle error
+            // alert('Error updating status');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        // alert('An error occurred.');
+    });
+}
 // Initialize tooltips
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize Bootstrap tooltips
