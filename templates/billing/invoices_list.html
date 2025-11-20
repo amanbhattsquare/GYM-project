@@ -26,7 +26,7 @@
             <!-- Search and Filter Form -->
             <form method="get" class="mb-4">
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <input type="text" name="q" class="form-control" placeholder="Search by member or plan..." value="{{ query }}">
                     </div>
                     <div class="col-md-3">
@@ -37,8 +37,9 @@
                             <option value="overdue" {% if status_filter == 'overdue' %}selected{% endif %}>Overdue</option>
                         </select>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-3">
                         <button type="submit" class="btn btn-primary">Filter</button>
+                        <a href="{% url 'billing:invoices_list' %}" class="btn btn-secondary">Clear</a>
                     </div>
                 </div>
             </form>
@@ -47,6 +48,7 @@
                 <table class="table table-hover table-sm table-stack-on-mobile">
                     <thead>
                         <tr>
+                            <th class="font-weight-semibold py-2">Sr. No.</th>
                             <th class="font-weight-semibold py-2">Member</th>
                             <th class="font-weight-semibold py-2">Plan</th>
                             <th class="font-weight-semibold py-2">Amount</th>
@@ -58,6 +60,7 @@
                     <tbody>
                         {% for invoice in invoices %}
                         <tr>
+                            <td data-label="Sr. No.">{{ forloop.counter }}</td>
                             <td data-label="Member">{{ invoice.member__first_name }} {{ invoice.member__last_name }}</td>
                             <td data-label="Plan">
                                 {% if invoice.type == 'membership' %}

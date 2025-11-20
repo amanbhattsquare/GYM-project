@@ -111,16 +111,15 @@
     </li>
 
     <!-- 11. Billing -->
-    <li class="nav-item {% if request.resolver_match.url_name == 'invoices_list' or request.resolver_match.url_name == 'payments_list' or request.resolver_match.url_name == 'submit_due' %}active{% endif %}">
-      <a class="nav-link" data-toggle="collapse" href="#billing" aria-expanded="{% if request.resolver_match.url_name == 'invoices_list' or request.resolver_match.url_name == 'payments_list' or request.resolver_match.url_name == 'submit_due' %}true{% else %}false{% endif %}" aria-controls="billing">
+    <li class="nav-item {% if request.resolver_match.url_name == 'invoices_list' or request.resolver_match.url_name == 'submit_due' %}active{% endif %}">
+      <a class="nav-link" data-toggle="collapse" href="#billing" aria-expanded="{% if request.resolver_match.url_name == 'invoices_list' or request.resolver_match.url_name == 'submit_due' %}true{% else %}false{% endif %}" aria-controls="billing">
         <i class="mdi mdi-file-document-box-outline menu-icon"></i>
         <span class="menu-title">Billing</span>
         <i class="menu-arrow"></i>
       </a>
-      <div class="collapse {% if request.resolver_match.url_name == 'invoices_list' or request.resolver_match.url_name == 'payments_list' or request.resolver_match.url_name == 'submit_due' %}show{% endif %}" id="billing">
+      <div class="collapse {% if request.resolver_match.url_name == 'invoices_list' or request.resolver_match.url_name == 'submit_due' %}show{% endif %}" id="billing">
         <ul class="nav flex-column sub-menu">
           <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'invoices_list' %}active{% endif %}" href="{% url 'billing:invoices_list' %}">Invoices</a></li>
-          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'payments_list' %}active{% endif %}" href="{% url 'billing:payments_list' %}">Payments</a></li>
           <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'submit_due' %}active{% endif %}" href="{% url 'billing:submit_due' %}">Submit Due</a></li>
         </ul>
       </div>

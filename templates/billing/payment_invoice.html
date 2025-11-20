@@ -5,7 +5,7 @@
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{% url 'dashboard' %}"><i class="mdi mdi-home"></i> Dashboard</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'member_list' %}"><i class="mdi mdi-account-multiple"></i> Members</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'billing:invoices_list' %}"><i class="mdi mdi-file-document-box-outline"></i> Invoices</a></li> 
         <li class="breadcrumb-item"><a href="{% url 'member_profile' payment.member.id %}"><i class="mdi mdi-account"></i> {{ payment.member.first_name }} {{ payment.member.last_name }}</a></li>
         <li class="breadcrumb-item active" aria-current="page"><i class="mdi mdi-file-document"></i> Payment Receipt #{{ payment.id }}</li>
     </ol>

@@ -34,9 +34,7 @@ def submit_due(request):
         total_due_amount = due_info['total_due'] or 0
 
         # Get the active plan
-        active_plan = selected_member.membership_history.annotate(
-            due=F('total_amount') - F('paid_amount')
-        ).filter(due__gt=0).order_by('-membership_start_date').first()
+        active_plan = selected_member.membership_history.filter(membership_start_date__isnull=False).order_by('-membership_start_date').first()
 
     if request.method == 'POST' and 'amount_paid' in request.POST:
         amount_paid_str = request.POST.get('amount_paid')
@@ -130,7 +128,7 @@ def invoice(request, member_id, history_id):
 @login_required(login_url='login')
 def invoices_list(request):
     # Get query parameters
-    query = request.GET.get('q')
+    query = request.GET.get('q', '')  # Default to an empty string
     status_filter = request.GET.get('status')
     sort_by = request.GET.get('sort', '-date')
 
@@ -180,40 +178,5 @@ def invoices_list(request):
         'invoices': page_obj,
         'sort_by': sort_by,
         'status_filter': status_filter,
-        'query': query,
-    })
-
-@never_cache
-@login_required(login_url='login')
-def payments_list(request):
-    payments = MembershipHistory.objects.select_related('member', 'plan').all()
-
-    # Search
-    query = request.GET.get('q')
-    if query:
-        payments = payments.filter(
-            Q(member__first_name__icontains=query) |
-            Q(member__last_name__icontains=query) |
-            Q(plan__title__icontains=query)
-        ).distinct()
-
-    # Filtering
-    payment_mode_filter = request.GET.get('payment_mode')
-    if payment_mode_filter:
-        payments = payments.filter(payment_mode=payment_mode_filter)
-
-    # Sorting
-    sort_by = request.GET.get('sort', '-created_at')
-    payments = payments.order_by(sort_by)
-
-    # Pagination
-    paginator = Paginator(payments, 15)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-
-    return render(request, 'billing/payments_list.html', {
-        'payments': page_obj,
-        'sort_by': sort_by,
-        'payment_mode_filter': payment_mode_filter,
         'query': query,
     })
