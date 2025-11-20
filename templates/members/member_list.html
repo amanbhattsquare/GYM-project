@@ -62,11 +62,7 @@
                             <td data-label="Email">{{ member.email }}</td>
                             <td data-label="Mobile">{{ member.mobile_number }}</td>
                             <td data-label="Due Amount">
-                                {% if member.latest_membership_history %}
-                                    {{ member.latest_membership_history.due_amount }}
-                                {% else %}
-                                    N/A
-                                {% endif %}
+                                {{ member.due_amount|default:"0" }}
                             </td>
                             <td data-label="Plan Expiry">
                                 {% if member.latest_membership_history %}

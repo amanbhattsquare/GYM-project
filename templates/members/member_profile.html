@@ -18,6 +18,9 @@
                                 <img src="{% static 'images/gym-guy.jpg' %}" alt="profile" class="img-lg rounded-circle mb-3"/>
                             {% endif %}
                             <h4>{{ member.first_name }} {{ member.last_name }}</h4>
+                            {% if due_amount > 0 %}
+                            <h5 class="text-danger">Due: ₹{{ due_amount }}</h5>
+                            {% endif %}
                             <div class="d-flex justify-content-center">
                                 <a href="{% url 'edit_member' member.id %}" class="btn btn-primary mr-2">Edit</a>
                                 <a href="{% url 'assign_membership_plan' member.id %}" class="btn btn-success mr-2">Assign Plan</a>

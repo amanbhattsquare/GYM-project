@@ -49,3 +49,13 @@ SETTINGS
 
 in seacrch bar , add clead button also
 sweetalert2 popup add in includs folder 
+
+
+remove "joining date" from Assign membership plan page ,
+update filder 
+In Settings section
+   Create A new app for setting 
+   GYM Profile-- then show on Invoice page and many more 
+   User Profile
+
+Invoice download in half on the A4 size page 

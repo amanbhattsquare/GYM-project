@@ -5,7 +5,7 @@ from apps.management.models import MembershipPlan
 from django.forms import modelformset_factory
 from django.contrib import messages
 from django.core.paginator import Paginator
-from django.db.models import Q
+from django.db.models import Q, Sum, F
 from django.http import JsonResponse
 from django.core.serializers import serialize
 from django.views.decorators.http import require_POST
@@ -58,13 +58,19 @@ def add_new_member(request):
 @never_cache
 @login_required(login_url='login')
 def member_profile(request, member_id):
-    member = Member.objects.get(id=member_id)
-    membership_histories = MembershipHistory.objects.filter(member=member).order_by('-created_at')
+    member = get_object_or_404(Member, id=member_id)
+    membership_histories = MembershipHistory.objects.filter(member=member).order_by('-id')
     latest_membership = membership_histories.first()
+
+    # Calculate the total due amount
+    due_amount = membership_histories.aggregate(
+        total_due=Sum(F('total_amount') - F('paid_amount'))
+    )['total_due'] or 0
     return render(request, 'members/member_profile.html', {
         'member': member, 
         'membership_histories': membership_histories,
-        'membership_history': latest_membership
+        'membership_history': latest_membership,
+        'due_amount': due_amount
         })
 
 
@@ -127,7 +133,9 @@ def edit_member(request, member_id):
 @never_cache
 @login_required(login_url='login') 
 def member_list(request):
-    member_list = Member.objects.all()
+    member_list = Member.objects.annotate(
+        due_amount=Sum(F('membership_history__total_amount') - F('membership_history__paid_amount'))
+    ).order_by('-id')
     query = request.GET.get('q')
     if query:
         member_list = member_list.filter(
@@ -138,7 +146,7 @@ def member_list(request):
         ).distinct()
 
     for member in member_list:
-        latest_history = member.membership_history.order_by('-created_at').first()
+        latest_history = member.membership_history.order_by('-id').first()
         member.latest_membership_history = latest_history
 
     paginator = Paginator(member_list, 10)  # Show 10 members per page.
