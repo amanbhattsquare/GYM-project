@@ -1,8 +1,10 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from apps.members.models import Member, MembershipHistory
+from .models import Payment
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
-from django.db.models import Q, F, Sum, Case, When, DecimalField
+from django.db import models
+from django.db.models import Q, Sum, F, Value, CharField, Case, When, DecimalField
 from django.core.paginator import Paginator
 from django.contrib import messages
 from decimal import Decimal
@@ -58,6 +60,14 @@ def submit_due(request):
 
             payment_left = amount_paid
             last_updated_history = None
+
+            # Create a single payment record for the total amount paid in this transaction
+            payment = Payment.objects.create(
+                member=selected_member,
+                amount=amount_paid,
+                payment_mode=payment_mode
+            )
+
             for history in outstanding_histories:
                 if payment_left == 0:
                     break
@@ -70,7 +80,8 @@ def submit_due(request):
 
             messages.success(request, 'Payment submitted successfully.')
             if last_updated_history:
-                return redirect('billing:invoice', member_id=selected_member.id, history_id=last_updated_history.id)
+                # Redirect to the new payment invoice view
+                return redirect('billing:payment_invoice', payment_id=payment.id)
             return redirect(f"/billing/submit_due/?member_id={member_id}")
 
     context = {
@@ -80,6 +91,15 @@ def submit_due(request):
         'active_plan': active_plan,
     }
     return render(request, 'billing/submit_due.html', context)
+
+@never_cache
+@login_required(login_url='login')
+def payment_invoice(request, payment_id):
+    payment = get_object_or_404(Payment, id=payment_id)
+    context = {
+        'payment': payment,
+    }
+    return render(request, 'billing/payment_invoice.html', context)
 
 
 
@@ -109,32 +129,50 @@ def invoice(request, member_id, history_id):
 @never_cache
 @login_required(login_url='login')
 def invoices_list(request):
-    invoices = MembershipHistory.objects.select_related('member', 'plan').all()
-
-    # Search
+    # Get query parameters
     query = request.GET.get('q')
-    if query:
-        invoices = invoices.filter(
-            Q(member__first_name__icontains=query) |
-            Q(member__last_name__icontains=query) |
-            Q(plan__title__icontains=query)
-        ).distinct()
-
-    # Filtering
     status_filter = request.GET.get('status')
-    if status_filter == 'paid':
-        invoices = invoices.filter(due_amount=0)
-    elif status_filter == 'unpaid':
-        invoices = invoices.filter(due_amount__gt=0)
-    elif status_filter == 'overdue':
-        invoices = invoices.filter(due_amount__gt=0, plan__end_date__lt=date.today())
+    sort_by = request.GET.get('sort', '-date')
 
-    # Sorting
-    sort_by = request.GET.get('sort', '-created_at')
-    invoices = invoices.order_by(sort_by)
+    # Fetch membership invoices
+    membership_invoices = MembershipHistory.objects.select_related('member', 'plan').annotate(
+        date=F('created_at'),
+        type=Value('membership', output_field=models.CharField()),
+        amount=F('total_amount'),
+        due_amount=F('total_amount') - F('paid_amount')
+    ).values('id', 'date', 'type', 'amount', 'member_id', 'member__first_name', 'member__last_name', 'plan__title', 'due_amount')
+
+    # Fetch payment invoices
+    payment_invoices = Payment.objects.select_related('member').annotate(
+        date=F('payment_date'),
+        type=Value('payment', output_field=models.CharField()),
+        plan_title=Value('N/A', output_field=models.CharField()),
+        due_amount=Value(0, output_field=models.DecimalField())
+    ).values('id', 'date', 'type', 'amount', 'member_id', 'member__first_name', 'member__last_name', 'plan_title', 'due_amount')
+
+    # Combine and sort invoices
+    all_invoices = sorted(
+        list(membership_invoices) + list(payment_invoices),
+        key=lambda x: x['date'],
+        reverse='-' in sort_by
+    )
+
+    # Apply search filter
+    if query:
+        all_invoices = [inv for inv in all_invoices if 
+                        query.lower() in inv['member__first_name'].lower() or 
+                        query.lower() in inv['member__last_name'].lower() or 
+                        (inv['type'] == 'membership' and query.lower() in inv['plan__title'].lower())]
+
+    # Apply status filter
+    if status_filter:
+        if status_filter == 'paid':
+            all_invoices = [inv for inv in all_invoices if inv['type'] == 'payment' or (inv['type'] == 'membership' and inv['due_amount'] == 0)]
+        elif status_filter == 'unpaid':
+            all_invoices = [inv for inv in all_invoices if inv['type'] == 'membership' and inv['due_amount'] > 0]
 
     # Pagination
-    paginator = Paginator(invoices, 15)
+    paginator = Paginator(all_invoices, 15)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 

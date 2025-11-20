@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'apps.enquiry',
     'apps.trainers',
     'apps.management',
+    'apps.billing',
    
 ]
 

@@ -9,4 +9,5 @@ urlpatterns = [
     path('payments/', views.payments_list, name='payments_list'),
 
     path('submit_due/', views.submit_due, name='submit_due'),
+    path('payment_invoice/<int:payment_id>/', views.payment_invoice, name='payment_invoice'),
 ]

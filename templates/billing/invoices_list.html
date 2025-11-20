@@ -58,21 +58,29 @@
                     <tbody>
                         {% for invoice in invoices %}
                         <tr>
-                            <td data-label="Member">{{ invoice.member.first_name }} {{ invoice.member.last_name }}</td>
-                            <td data-label="Plan">{{ invoice.plan.title }}</td>
-                            <td data-label="Amount">{{ invoice.paid_amount }}</td>
-                            <td data-label="Date">{{ invoice.created_at|date:"d-m-Y" }}</td>
+                            <td data-label="Member">{{ invoice.member__first_name }} {{ invoice.member__last_name }}</td>
+                            <td data-label="Plan">
+                                {% if invoice.type == 'membership' %}
+                                    {{ invoice.plan__title }}
+                                {% else %}
+                                    Payment
+                                {% endif %}
+                            </td>
+                            <td data-label="Amount">₹{{ invoice.amount|floatformat:2 }}</td>
+                            <td data-label="Date">{{ invoice.date|date:"d-m-Y" }}</td>
                             <td data-label="Status">
-                                {% if invoice.due_amount == 0 %}
+                                {% if invoice.type == 'payment' or invoice.due_amount == 0 %}
                                     <span class="badge badge-success">Paid</span>
-                                {% elif invoice.get_end_date < today %}
-                                    <span class="badge badge-danger">Overdue</span>
                                 {% else %}
                                     <span class="badge badge-warning">Unpaid</span>
                                 {% endif %}
                             </td>
                             <td data-label="Actions" class="text-center">
-                                <a href="{% url 'billing:invoice' invoice.member.id invoice.id %}" class="btn btn-primary btn-sm">View Invoice</a>
+                                {% if invoice.type == 'membership' %}
+                                    <a href="{% url 'billing:invoice' invoice.member_id invoice.id %}" class="btn btn-primary btn-sm">View Invoice</a>
+                                {% else %}
+                                    <a href="{% url 'billing:payment_invoice' invoice.id %}" class="btn btn-primary btn-sm">View Receipt</a>
+                                {% endif %}
                             </td>
                         </tr>
                         {% endfor %}
