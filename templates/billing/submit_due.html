@@ -67,19 +67,25 @@
                                 <form method="post" action="{% url 'billing:submit_due' %}" class="mt-4">
                                     {% csrf_token %}
                                     <input type="hidden" name="member_id" value="{{ selected_member.id }}">
-                                    <div class="form-group">
-                                        <label for="amount_paid">Amount to Pay</label>
-                                        <input type="number" class="form-control" id="amount_paid" name="amount_paid" step="0.01" min="0.01" max="{{ total_due_amount }}" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="payment_mode">Payment Mode</label>
-                                        <select class="form-control" id="payment_mode" name="payment_mode" required>
-                                            <option value="cash">Cash</option>
-                                            <option value="credit_card">Credit Card</option>
-                                            <option value="debit_card">Debit Card</option>
-                                            <option value="net_banking">Net Banking</option>
-                                            <option value="upi">UPI</option>
-                                        </select>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="amount_paid">Amount to Pay</label>
+                                                <input type="number" class="form-control" id="amount_paid" name="amount_paid" step="0.01" min="0.01" max="{{ total_due_amount }}" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                              <div class="form-group">
+                                                <label for="payment_mode">Payment Mode</label>
+                                                <select class="form-control" id="payment_mode" name="payment_mode" required>
+                                                    <option value="cash">Cash</option>
+                                                    <option value="credit_card">Credit Card</option>
+                                                    <option value="debit_card">Debit Card</option>
+                                                    <option value="net_banking">Net Banking</option>
+                                                    <option value="upi">UPI</option>
+                                                </select>
+                                            </div>
+                                        </div>
                                     </div>
                                     <button type="submit" class="btn btn-primary">Submit Payment</button>
                                 </form>
