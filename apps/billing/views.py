@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from apps.members.models import Member, MembershipHistory
+from apps.members.models import Member, MembershipHistory, PersonalTrainer
 from .models import Payment
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
@@ -15,8 +15,9 @@ from datetime import date
 @login_required(login_url='login')
 def submit_due(request):
     members_with_due = Member.objects.annotate(
-        due_total=Sum(F('membership_history__total_amount') - F('membership_history__paid_amount'))
-    ).filter(due_total__gt=0)
+        membership_due=Sum(F('membership_history__total_amount') - F('membership_history__paid_amount')),
+        pt_due=Sum(F('personal_trainer__total_amount') - F('personal_trainer__paid_amount')),
+    ).filter(Q(membership_due__gt=0) | Q(pt_due__gt=0)).distinct()
 
     selected_member = None
     total_due_amount = 0
@@ -28,10 +29,17 @@ def submit_due(request):
         selected_member = get_object_or_404(Member, id=member_id)
         
         # Calculate total due amount for the selected member
-        due_info = selected_member.membership_history.aggregate(
+        membership_due_info = selected_member.membership_history.aggregate(
             total_due=Sum(F('total_amount') - F('paid_amount'))
         )
-        total_due_amount = due_info['total_due'] or 0
+        membership_due = membership_due_info['total_due'] or 0
+
+        pt_due_info = selected_member.personal_trainer.aggregate(
+            total_due=Sum(F('total_amount') - F('paid_amount'))
+        )
+        pt_due = pt_due_info['total_due'] or 0
+
+        total_due_amount = membership_due + pt_due
 
         # Get the active plan
         active_plan = selected_member.membership_history.filter(membership_start_date__isnull=False).order_by('-membership_start_date').first()
@@ -51,36 +59,42 @@ def submit_due(request):
         elif amount_paid > total_due_amount:
             messages.error(request, f'Amount paid cannot be greater than the due amount of {total_due_amount}.')
         else:
-            # Apply payment to the oldest outstanding dues first
-            outstanding_histories = selected_member.membership_history.annotate(
-                due=F('total_amount') - F('paid_amount')
-            ).filter(due__gt=0).order_by('membership_start_date')
-
-            payment_left = amount_paid
-            last_updated_history = None
-
-            # Create a single payment record for the total amount paid in this transaction
             payment = Payment.objects.create(
                 member=selected_member,
                 amount=amount_paid,
                 payment_mode=payment_mode
             )
 
-            for history in outstanding_histories:
+            payment_left = amount_paid
+
+            # Pay off membership dues first
+            outstanding_memberships = selected_member.membership_history.annotate(
+                due=F('total_amount') - F('paid_amount')
+            ).filter(due__gt=0).order_by('membership_start_date')
+
+            for history in outstanding_memberships:
                 if payment_left == 0:
                     break
-                
                 payable_amount = min(history.due, payment_left)
                 history.paid_amount += payable_amount
                 history.save()
                 payment_left -= payable_amount
-                last_updated_history = history
+
+            # Pay off personal training dues next
+            outstanding_pts = selected_member.personal_trainer.annotate(
+                due=F('total_amount') - F('paid_amount')
+            ).filter(due__gt=0).order_by('pt_start_date')
+
+            for pt in outstanding_pts:
+                if payment_left == 0:
+                    break
+                payable_amount = min(pt.due, payment_left)
+                pt.paid_amount += payable_amount
+                pt.save()
+                payment_left -= payable_amount
 
             messages.success(request, 'Payment submitted successfully.')
-            if last_updated_history:
-                # Redirect to the new payment invoice view
-                return redirect('billing:payment_invoice', payment_id=payment.id)
-            return redirect(f"/billing/submit_due/?member_id={member_id}")
+            return redirect('billing:payment_invoice', payment_id=payment.id)
 
     context = {
         'members': members_with_due,
@@ -126,6 +140,27 @@ def invoice(request, member_id, history_id):
 
 @never_cache
 @login_required(login_url='login')
+def pt_invoice(request, member_id, pt_invoice_id):
+    member = get_object_or_404(Member, id=member_id)
+    pt_invoice = get_object_or_404(PersonalTrainer, id=pt_invoice_id)
+
+    # Get all PT invoices for the member to find the next and previous
+    member_pt_invoices = list(PersonalTrainer.objects.filter(member=member).order_by('created_at'))
+    current_invoice_index = member_pt_invoices.index(pt_invoice)
+
+    previous_invoice = member_pt_invoices[current_invoice_index - 1] if current_invoice_index > 0 else None
+    next_invoice = member_pt_invoices[current_invoice_index + 1] if current_invoice_index < len(member_pt_invoices) - 1 else None
+
+    context = {
+        'member': member,
+        'pt_invoice': pt_invoice,
+        'previous_invoice': previous_invoice,
+        'next_invoice': next_invoice,
+    }
+    return render(request, 'billing/pt_invoice.html', context)
+
+@never_cache
+@login_required(login_url='login')
 def invoices_list(request):
     # Get query parameters
     query = request.GET.get('q', '')  # Default to an empty string
@@ -137,20 +172,33 @@ def invoices_list(request):
         date=F('created_at'),
         type=Value('membership', output_field=models.CharField()),
         amount=F('total_amount'),
-        due_amount=F('total_amount') - F('paid_amount')
-    ).values('id', 'date', 'type', 'amount', 'member_id', 'member__first_name', 'member__last_name', 'plan__title', 'due_amount')
+        due_amount=F('total_amount') - F('paid_amount'),
+        invoice_id=F('id'),
+        plan_title=F('plan__title')
+    ).values('invoice_id', 'date', 'type', 'amount', 'member_id', 'member__first_name', 'member__last_name', 'plan_title', 'due_amount')
+
+    # Fetch personal training invoices
+    pt_invoices = PersonalTrainer.objects.select_related('member', 'trainer').annotate(
+        date=F('created_at'),
+        type=Value('pt', output_field=models.CharField()),
+        amount=F('total_amount'),
+        due_amount=F('total_amount') - F('paid_amount'),
+        invoice_id=F('id'),
+        plan_title=F('trainer__name')
+    ).values('invoice_id', 'date', 'type', 'amount', 'member_id', 'member__first_name', 'member__last_name', 'plan_title', 'due_amount')
 
     # Fetch payment invoices
     payment_invoices = Payment.objects.select_related('member').annotate(
         date=F('payment_date'),
         type=Value('payment', output_field=models.CharField()),
         plan_title=Value('N/A', output_field=models.CharField()),
-        due_amount=Value(0, output_field=models.DecimalField())
-    ).values('id', 'date', 'type', 'amount', 'member_id', 'member__first_name', 'member__last_name', 'plan_title', 'due_amount')
+        due_amount=Value(0, output_field=models.DecimalField()),
+        invoice_id=F('id')
+    ).values('invoice_id', 'date', 'type', 'amount', 'member_id', 'member__first_name', 'member__last_name', 'plan_title', 'due_amount')
 
     # Combine and sort invoices
     all_invoices = sorted(
-        list(membership_invoices) + list(payment_invoices),
+        list(membership_invoices) + list(pt_invoices) + list(payment_invoices),
         key=lambda x: x['date'],
         reverse='-' in sort_by
     )

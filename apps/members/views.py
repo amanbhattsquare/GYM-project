@@ -1,12 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import MemberForm, MedicalHistoryForm, EmergencyContactForm, MembershipHistoryForm, PersonalTrainerForm
-from .models import Member, MedicalHistory, EmergencyContact, MembershipHistory
+from .models import Member, MedicalHistory, EmergencyContact, MembershipHistory, PersonalTrainer
 from apps.management.models import MembershipPlan
 from apps.trainers.models import Trainer
 from django.forms import modelformset_factory
 from django.contrib import messages
 from django.core.paginator import Paginator
-from django.db.models import Q, Sum, F
+from django.db.models import Q, Sum, F, ExpressionWrapper, DecimalField, Value
+from django.db.models.functions import Coalesce
 from django.http import JsonResponse
 from django.core.serializers import serialize
 from django.views.decorators.http import require_POST
@@ -61,18 +62,31 @@ def add_new_member(request):
 def member_profile(request, member_id):
     member = get_object_or_404(Member, id=member_id)
     membership_histories = MembershipHistory.objects.filter(member=member).order_by('-id')
+    pt_member = PersonalTrainer.objects.select_related('trainer').filter(member=member).order_by('-id')
     latest_membership = membership_histories.first()
 
-    # Calculate the total due amount
-    due_amount = membership_histories.aggregate(
+    # Calculate the total due amount for membership
+    membership_due_amount = membership_histories.aggregate(
         total_due=Sum(F('total_amount') - F('paid_amount'))
     )['total_due'] or 0
+
+    # Calculate the total due amount for personal training
+    pt_due_amount = pt_member.aggregate(
+        total_due=Sum(F('total_amount') - F('paid_amount'))
+    )['total_due'] or 0
+
+    total_due_amount = membership_due_amount + pt_due_amount
+
+    pt_invoices = PersonalTrainer.objects.filter(member=member).order_by('-id')
+
     return render(request, 'members/member_profile.html', {
         'member': member, 
         'membership_histories': membership_histories,
+        'pt_member': pt_member,
         'membership_history': latest_membership,
-        'due_amount': due_amount
-        })
+        'due_amount': total_due_amount,
+        'pt_invoices': pt_invoices
+    })
 
 
 
@@ -135,7 +149,10 @@ def edit_member(request, member_id):
 @login_required(login_url='login') 
 def member_list(request):
     member_list = Member.objects.annotate(
-        due_amount=Sum(F('membership_history__total_amount') - F('membership_history__paid_amount'))
+        membership_due=Coalesce(Sum(F('membership_history__total_amount') - F('membership_history__paid_amount')), Value(0, output_field=DecimalField())),
+        pt_due=Coalesce(Sum(F('personal_trainer__total_amount') - F('personal_trainer__paid_amount')), Value(0, output_field=DecimalField()))
+    ).annotate(
+        total_due=F('membership_due') + F('pt_due')
     ).order_by('-id')
     query = request.GET.get('q')
     if query:
@@ -211,7 +228,7 @@ def assign_pt_trainer(request, member_id):
             pt_assignment.member = member
             pt_assignment.save()
             messages.success(request, f'Personal Trainer "{pt_assignment.trainer.name}" assigned to {member.first_name} {member.last_name}.')
-            return redirect('member_profile', member_id=member.id)
+            return redirect('billing:pt_invoice', member_id=member.id, pt_invoice_id=pt_assignment.id)
     else:
         form = PersonalTrainerForm()
     return render(request, 'members/assign_PT_trainer.html', {'member': member, 'trainers': trainers, 'trainers_json': trainers_json, 'form': form})

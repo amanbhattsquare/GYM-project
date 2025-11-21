@@ -96,6 +96,9 @@ class PersonalTrainer(models.Model):
     def __str__(self):
         return f"{self.member} - {self.trainer}"
 
+    def get_end_date(self):
+        return self.pt_start_date + timedelta(days=30 * self.months)
+
     @property
     def due_amount(self):
         return self.total_amount - self.paid_amount

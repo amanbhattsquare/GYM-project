@@ -62,7 +62,11 @@
                             <td data-label="Email">{{ member.email }}</td>
                             <td data-label="Mobile">{{ member.mobile_number }}</td>
                             <td data-label="Due Amount">
-                                {{ member.due_amount|default:"0" }}
+                                {% if member.membership_due > 0 %}
+                                    <span class="badge badge-danger">₹{{ member.membership_due|floatformat:2 }}</span>
+                                {% else %}
+                                    <span class="badge badge-success">₹0.00</span>
+                                {% endif %}
                             </td>
                             <td data-label="Plan Expiry">
                                 {% if member.latest_membership_history %}

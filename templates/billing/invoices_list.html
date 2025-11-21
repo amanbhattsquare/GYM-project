@@ -80,9 +80,11 @@
                             </td>
                             <td data-label="Actions" class="text-center">
                                 {% if invoice.type == 'membership' %}
-                                    <a href="{% url 'billing:invoice' invoice.member_id invoice.id %}" class="btn btn-primary btn-sm">View Invoice</a>
+                                    <a href="{% url 'billing:invoice' invoice.member_id invoice.invoice_id %}" class="btn btn-primary btn-sm">View Invoice</a>
+                                {% elif invoice.type == 'pt' %}
+                                    <a href="{% url 'billing:pt_invoice' invoice.member_id invoice.invoice_id %}" class="btn btn-primary btn-sm">View Invoice</a>
                                 {% else %}
-                                    <a href="{% url 'billing:payment_invoice' invoice.id %}" class="btn btn-primary btn-sm">View Receipt</a>
+                                    <a href="{% url 'billing:payment_invoice' invoice.invoice_id %}" class="btn btn-primary btn-sm">View Receipt</a>
                                 {% endif %}
                             </td>
                         </tr>
