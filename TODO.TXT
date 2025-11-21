@@ -63,4 +63,7 @@ Invoice download in half on the A4 size page
 
 Plan freeze
  In membership list add new section for Assign trainer, and its payment 
+
+
+ Generate Every Member and trainer, Invoice, and payment, want to Unique Id 
  

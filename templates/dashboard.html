@@ -1,146 +1,379 @@
+<!-- Enhanced Gym Dashboard HTML Template - Industry Ready, Modern, Premium UI -->
 {% extends "base.html" %}
+{% load static %}
 {% block content %}
 <div class="container-scroller">
- 
-   
-        
-        <!-- main-panel starts -->
-        <div class="main-panel">
-            <div class="content-wrapper py-3">
-                <div class="page-header flex-wrap">
-                    <h3 class="mb-0"> Hi, welcome back! <span class="pl-0 h6 pl-sm-2 text-muted d-inline-block">Your gym analytics dashboard.</span>
-                    </h3>
-                    <div class="d-flex">
-                        <button type="button" class="btn btn-sm ml-3 btn-success"> Add Member </button>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-xl-3 col-lg-12 stretch-card grid-margin">
-                        <div class="row">
-                            <div class="col-xl-12 col-md-6 stretch-card grid-margin grid-margin-sm-0 pb-sm-3">
-                                <div class="card bg-warning">
-                                    <div class="card-body px-3 py-4">
-                                        <div class="d-flex justify-content-between align-items-start">
-                                            <div class="color-card">
-                                                <p class="mb-0 color-card-head">Total Members</p>
-                                                <h2 class="text-white"> 1,234
-                                                </h2>
-                                            </div>
-                                            <i class="card-icon-indicator mdi mdi-account-multiple-plus text-white"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xl-12 col-md-6 stretch-card grid-margin grid-margin-sm-0 pb-sm-3">
-                                <div class="card bg-danger">
-                                    <div class="card-body px-3 py-4">
-                                        <div class="d-flex justify-content-between align-items-start">
-                                            <div class="color-card">
-                                                <p class="mb-0 color-card-head">Active Trainers</p>
-                                                <h2 class="text-white"> 56
-                                                </h2>
-                                            </div>
-                                            <i class="card-icon-indicator mdi mdi-human-male-female text-white"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xl-12 col-md-6 stretch-card pb-sm-3 pb-lg-0">
-                                <div class="card bg-success">
-                                    <div class="card-body px-3 py-4">
-                                        <div class="d-flex justify-content-between align-items-start">
-                                            <div class="color-card">
-                                                <p class="mb-0 color-card-head">Upcoming Classes</p>
-                                                <h2 class="text-white">12</h2>
-                                            </div>
-                                            <i class="card-icon-indicator mdi mdi-run-fast text-white"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-9 stretch-card grid-margin">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-sm-7">
-                                        <h5>Member Growth</h5>
-                                        <p class="text-muted"> Show monthly member growth </p>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <canvas id="member-growth-chart"></canvas>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-xl-8 col-sm-6 grid-margin stretch-card">
-                        <div class="card">
-                            <div class="card-body px-0 overflow-auto">
-                                <h4 class="card-title pl-4">Member's Attendance</h4>
-                                <div class="table-responsive">
-                                    <table class="table">
-                                        <thead class="bg-light">
-                                            <tr>
-                                                <th>Member</th>
-                                                <th>Check-in Time</th>
-                                                <th>Status</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>
-                                                    <div class="d-flex align-items-center">
-                                                        <img src="assets/images/faces/face1.jpg" alt="image">
-                                                        <div class="table-user-name ml-3">
-                                                            <p class="mb-0 font-weight-medium"> John Doe </p>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td>08:15 AM</td>
-                                                <td>
-                                                    <div class="badge badge-inverse-success"> Present </div>
-                                                </td>
-                                            </tr>
-                                            <!-- Add more members as needed -->
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <a class="text-black d-block pl-4 pt-2 pb-2 pb-lg-0 font-weight-bold" href="#">Show more</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-4 col-sm-6 grid-margin stretch-card">
-                        <div class="card">
-                            <div class="card-body">
-                                <h4 class="card-title">Class Schedule</h4>
-                                <div class="d-flex flex-wrap border-bottom py-2 border-top justify-content-between">
-                                    <div class="pt-2">
-                                        <h5 class="mb-0">Yoga</h5>
-                                        <p class="mb-0 text-muted">10:00 AM - 11:00 AM</p>
-                                    </div>
-                                </div>
-                                <div class="d-flex flex-wrap border-bottom py-2 justify-content-between">
-                                    <div class="pt-2">
-                                        <h5 class="mb-0">Zumba</h5>
-                                        <p class="mb-0 text-muted">05:00 PM - 06:00 PM</p>
-                                    </div>
-                                </div>
-                                <a class="text-black mt-3 d-block font-weight-medium h6" href="#">View all classes</a>
-                            </div>
-                        </div>
+    <div class="content-wrapper py-4">
+
+        <!-- HEADER -->
+        <div class="page-header d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h3 class="mb-0 font-weight-bold">Dashboard Overview</h3>
+                <small class="text-muted">Your complete gym management analytics</small>
+            </div>
+            <div>
+                <button class="btn btn-success btn-sm">+ Add Member</button>
+                <button class="btn btn-primary btn-sm ml-2">+ Add Payment</button>
+            </div>
+        </div>
+
+        <!-- TOP METRICS -->
+        <div class="row">
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card shadow-sm bg-primary text-white">
+                    <div class="card-body">
+                        <p class="mb-1">Total Members</p>
+                        <h3>150</h3>
+                        <small>Updated today</small>
                     </div>
                 </div>
             </div>
-            <!-- content-wrapper ends -->
-            {% comment %} {% include 'includes/footer.html' %} {% endcomment %}
+
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card shadow-sm bg-success text-white">
+                    <div class="card-body">
+                        <p class="mb-1">Active Members</p>
+                        <h3>120</h3>
+                        <small>Currently active subscriptions</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card shadow-sm bg-danger text-white">
+                    <div class="card-body">
+                        <p class="mb-1">Expired Members</p>
+                        <h3>30</h3>
+                        <small>Expired in last 30 days</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card shadow-sm bg-warning text-white">
+                    <div class="card-body">
+                        <p class="mb-1">New (30 Days)</p>
+                        <h3>18</h3>
+                        <small>New registrations</small>
+                    </div>
+                </div>
+            </div>
         </div>
-        <!-- main-panel ends -->
-    
+
+        <!-- REVENUE & PAYMENTS -->
+        <div class="row">
+            <div class="col-xl-4 col-md-6 mb-4">
+                <div class="card shadow-sm bg-dark text-white">
+                    <div class="card-body">
+                        <p class="mb-1">Monthly Revenue</p>
+                        <h3>₹ 45,500</h3>
+                        <small>Compared to last month +16%</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-4 col-md-6 mb-4">
+                <div class="card shadow-sm bg-secondary text-white">
+                    <div class="card-body">
+                        <p class="mb-1">Pending Payments</p>
+                        <h3>₹ 12,800</h3>
+                        <small>8 Members pending</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-4 col-md-6 mb-4">
+                <div class="card shadow-sm bg-info text-white">
+                    <div class="card-body">
+                        <p class="mb-1">Today's Check-ins</p>
+                        <h3>34</h3>
+                        <small>Peak hour: 7–9 AM</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MEMBER GROWTH CHART -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="mb-2">Member Growth</h5>
+                <p class="text-muted">Static preview chart</p>
+                <canvas id="member-growth-chart"></canvas>
+            </div>
+        </div>
+
+        <!-- ATTENDANCE + CLASSES -->
+        <div class="row">
+            <div class="col-xl-8 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body overflow-auto">
+                        <h5 class="mb-3">Today's Attendance</h5>
+                        <table class="table">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Member</th>
+                                    <th>Check-in Time</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Aman Verma</td>
+                                    <td>06:45 AM</td>
+                                    <td><span class="badge badge-success">Present</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Priya Singh</td>
+                                    <td>07:10 AM</td>
+                                    <td><span class="badge badge-success">Present</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Rohit Sharma</td>
+                                    <td>07:40 AM</td>
+                                    <td><span class="badge badge-danger">Expired</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <a href="#" class="text-primary font-weight-bold">View all</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-4 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h5 class="mb-3">Today's Classes</h5>
+                        <ul class="list-group">
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>Yoga</span>
+                                <small class="text-muted">10:00 - 11:00 AM</small>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>Zumba</span>
+                                <small class="text-muted">05:00 - 06:00 PM</small>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>Strength Training</span>
+                                <small class="text-muted">07:00 - 08:00 PM</small>
+                            </li>
+                        </ul>
+                        <a href="#" class="text-primary font-weight-bold mt-3 d-block">View all classes</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- EXPIRING MEMBERS -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="mb-3">Upcoming Expiries (Next 7 Days)</h5>
+                <table class="table table-sm">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Member</th>
+                            <th>Plan</th>
+                            <th>Expiry Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Rahul Mehra</td>
+                            <td>Monthly</td>
+                            <td>25 Nov 2025</td>
+                            <td><span class="badge badge-warning">Expiring Soon</span></td>
+                        </tr>
+                        <tr>
+                            <td>Simran Kaur</td>
+                            <td>Quarterly</td>
+                            <td>26 Nov 2025</td>
+                            <td><span class="badge badge-warning">Expiring Soon</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- EQUIPMENT MAINTENANCE -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="mb-3">Equipment Maintenance</h5>
+                <table class="table table-sm">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Equipment</th>
+                            <th>Last Serviced</th>
+                            <th>Next Due</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Treadmill #1</td>
+                            <td>10 Oct 2025</td>
+                            <td>10 Dec 2025</td>
+                            <td><span class="badge badge-success">OK</span></td>
+                        </tr>
+                        <tr>
+                            <td>Lat Pull Machine</td>
+                            <td>28 Aug 2025</td>
+                            <td>28 Nov 2025</td>
+                            <td><span class="badge badge-warning">Due Soon</span></td>
+                        </tr>
+                        <tr>
+                            <td>Stationary Bike</td>
+                            <td>01 Sep 2025</td>
+                            <td>01 Dec 2025</td>
+                            <td><span class="badge badge-success">OK</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- TRAINERS, RECENT PAYMENTS & ENQUIRIES -->
+        <div class="row">
+            <div class="col-xl-4 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h5 class="mb-3">Trainer Overview</h5>
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="{% static 'images/trainer1.jpg' %}" alt="trainer" class="rounded-circle" width="50" height="50">
+                            <div class="ml-3">
+                                <h6 class="mb-0">Rahul Kumar</h6>
+                                <small class="text-muted">Clients: 35</small>
+                            </div>
+                        </div>
+
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="{% static 'images/trainer2.jpg' %}" alt="trainer" class="rounded-circle" width="50" height="50">
+                            <div class="ml-3">
+                                <h6 class="mb-0">Sneha Patel</h6>
+                                <small class="text-muted">Clients: 28</small>
+                            </div>
+                        </div>
+
+                        <a href="#" class="text-primary font-weight-bold">Manage Trainers</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-5 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body overflow-auto">
+                        <h5 class="mb-3">Recent Payments</h5>
+                        <table class="table table-sm">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Member</th>
+                                    <th>Amount</th>
+                                    <th>Mode</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Aman Verma</td>
+                                    <td>₹ 1,500</td>
+                                    <td>Cash</td>
+                                    <td>21 Nov 2025</td>
+                                </tr>
+                                <tr>
+                                    <td>Priya Singh</td>
+                                    <td>₹ 2,500</td>
+                                    <td>Card</td>
+                                    <td>20 Nov 2025</td>
+                                </tr>
+                                <tr>
+                                    <td>Rahul Mehra</td>
+                                    <td>₹ 3,000</td>
+                                    <td>UPI</td>
+                                    <td>19 Nov 2025</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <a href="#" class="text-primary font-weight-bold">View all transactions</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-3 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                        <h5 class="mb-3">Enquiries & Follow-ups</h5>
+                        <ul class="list-unstyled">
+                            <li class="mb-3">
+                                <strong>Rhea</strong>
+                                <div class="small text-muted">Trial requested — 1 Nov 2025</div>
+                                <div><span class="badge badge-pill badge-warning">Follow-up</span></div>
+                            </li>
+                            <li class="mb-3">
+                                <strong>Vikas</strong>
+                                <div class="small text-muted">Asked about plans — 20 Oct 2025</div>
+                                <div><span class="badge badge-pill badge-success">New</span></div>
+                            </li>
+                        </ul>
+                        <a href="#" class="text-primary font-weight-bold">Manage enquiries</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- QUICK ACTIONS BAR -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-body d-flex flex-wrap align-items-center justify-content-between">
+                <div class="d-flex">
+                    <button class="btn btn-outline-primary mr-2">+ Add Member</button>
+                    <button class="btn btn-outline-success mr-2">+ Add Payment</button>
+                    <button class="btn btn-outline-info mr-2">Create Invoice</button>
+                    <button class="btn btn-outline-warning">Send Reminder</button>
+                </div>
+                <div>
+                    <small class="text-muted">Last synced: 21 Nov 2025</small>
+                </div>
+            </div>
+        </div>
+
+    </div>
 </div>
+{% endblock %}
+
+{% block javascript %}
+<!-- Chart.js CDN (ensure base.html doesn't already include) -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<script>
+// Static sample data for Member Growth chart
+const ctx = document.getElementById('member-growth-chart').getContext('2d');
+const memberGrowthChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: ['Jun','Jul','Aug','Sep','Oct','Nov'],
+        datasets: [{
+            label: 'New Members',
+            data: [12, 18, 22, 30, 25, 18],
+            tension: 0.3,
+            fill: true,
+            backgroundColor: 'rgba(54, 162, 235, 0.12)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            pointRadius: 3
+        }, {
+            label: 'Active Members',
+            data: [80, 85, 90, 105, 115, 120],
+            tension: 0.3,
+            fill: false,
+            borderColor: 'rgba(75, 192, 192, 1)',
+            pointRadius: 3
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { position: 'top' }
+        },
+        scales: {
+            y: { beginAtZero: true }
+        }
+    }
+});
+</script>
 {% endblock %}
