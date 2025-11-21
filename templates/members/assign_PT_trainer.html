@@ -10,7 +10,7 @@
                 <li class="breadcrumb-item"><a href="{% url 'dashboard' %}"><i class="mdi mdi-home"></i> Dashboard</a></li>
                 <li class="breadcrumb-item"><a href="{% url 'member_list' %}"><i class="mdi mdi-account-multiple"></i> Members</a></li>
                 <li class="breadcrumb-item"><a href="{% url 'member_profile' member.id %}"><i class="mdi mdi-account"></i> {{ member.first_name }} {{ member.last_name }}</a></li>
-                <li class="breadcrumb-item active" aria-current="page"><i class="mdi mdi-account-plus"></i> Assign Membership Plan</li>
+                <li class="breadcrumb-item active" aria-current="page"><i class="mdi mdi-account-plus"></i> Assign PT Trainer</li>
             </ol>
         </nav>
     </div>
@@ -18,30 +18,44 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header bg-primary text-white">
-                    <h4 class="card-title text-white mb-0">Assign Membership Plan to {{ member.first_name }} {{ member.last_name }}</h4>
+                    <h4 class="card-title text-white mb-0">Assign Personal Trainer to {{ member.first_name }} {{ member.last_name }}</h4>
                 </div>
                 <div class="card-body">
-                    <form class="forms-sample" action="{% url 'assign_membership_plan' member.id %}" method="post">
+                    <form class="forms-sample" action="{% url 'assign_pt_trainer' member.id %}" method="post">
                         {% csrf_token %}
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="id_plan">Plan</label>
-                                    {{ form.plan|attr:'class:form-control' }}
+                                    <label for="id_trainer">Trainer</label>
+                                    {{ form.trainer|attr:'class:form-control' }}
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="id_registration_fee">Registration Fee</label>
-                                    {{ form.registration_fee|attr:'class:form-control' }}
+                                    <label for="id_months">Months</label>
+                                    {{ form.months|attr:'class:form-control' }}
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="id_membership_start_date">Membership Start Date</label>
-                                    {{ form.membership_start_date|attr:'class:form-control' }}
+                                    <label for="id_trainer_fee">Trainer Fee</label>
+                                    {{ form.trainer_fee|attr:'class:form-control,readonly:true' }}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="id_gym_charges">GYM Charges</label>
+                                    {{ form.gym_charges|attr:'class:form-control' }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="id_pt_start_date">PT Start Date</label>
+                                    {{ form.pt_start_date|attr:'class:form-control' }}
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -73,17 +87,9 @@
                                     {{ form.payment_mode|attr:'class:form-control' }}
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="id_comment">Comment</label>
-                                    {{ form.comment|attr:'class:form-control' }}
-                                </div>
-                            </div>
                         </div>
-                        <div class="row justify-content-end">
-                            <a href="{% url 'member_profile' member.id %}" class="btn btn-light">Cancel</a>
-                        <button type="submit" class="btn btn-primary mr-2 ">Assign Plan</button>
-                        </div>
+                        <button type="submit" class="btn btn-primary mr-2">Assign Trainer</button>
+                        <a href="{% url 'member_profile' member.id %}" class="btn btn-light">Cancel</a>
                     </form>
                 </div>
             </div>
@@ -93,34 +99,39 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const plansData = JSON.parse('{{ plans_json|escapejs|default:"[]" }}');
+    const trainersData = JSON.parse('{{ trainers_json|escapejs|default:"[]" }}');
     
-    const planSelect = document.getElementById('id_plan');
-    const registrationFeeInput = document.getElementById('id_registration_fee');
+    const trainerSelect = document.getElementById('id_trainer');
+    const monthsInput = document.getElementById('id_months');
+    const trainerFeeInput = document.getElementById('id_trainer_fee');
+    const gymChargesInput = document.getElementById('id_gym_charges');
     const discountInput = document.getElementById('id_discount');
     const totalAmountInput = document.getElementById('id_total_amount');
     const totalDisplay = document.getElementById('total_display');
     
     function updateTotalAmount() {
-        const selectedPlanId = planSelect.value;
-        const registrationFee = parseFloat(registrationFeeInput.value) || 0;
+        const selectedTrainerId = trainerSelect.value;
+        const months = parseFloat(monthsInput.value) || 0;
+        const gymCharges = parseFloat(gymChargesInput.value) || 0;
         const discount = parseFloat(discountInput.value) || 0;
         
-        let planPrice = 0;
-        if (selectedPlanId && plansData.length > 0) {
-            const selectedPlan = plansData.find(p => p.pk == selectedPlanId);
-            if (selectedPlan) {
-                planPrice = parseFloat(selectedPlan.fields.price);
+        let trainerFee = 0;
+        if (selectedTrainerId && trainersData.length > 0) {
+            const selectedTrainer = trainersData.find(t => t.pk == selectedTrainerId);
+            if (selectedTrainer) {
+                trainerFee = parseFloat(selectedTrainer.fields.salary);
             }
         }
         
-        const totalAmount = planPrice + registrationFee - discount;
+        const totalAmount = (trainerFee * months) + gymCharges - discount;
         totalAmountInput.value = totalAmount.toFixed(2);
+        trainerFeeInput.value = (trainerFee * months).toFixed(2);
         totalDisplay.textContent = totalAmount.toFixed(2);
     }
 
-    planSelect.addEventListener('change', updateTotalAmount);
-    registrationFeeInput.addEventListener('input', updateTotalAmount);
+    trainerSelect.addEventListener('change', updateTotalAmount);
+    monthsInput.addEventListener('input', updateTotalAmount);
+    gymChargesInput.addEventListener('input', updateTotalAmount);
     discountInput.addEventListener('input', updateTotalAmount);
 
     updateTotalAmount();

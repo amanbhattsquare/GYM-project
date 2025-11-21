@@ -9,5 +9,6 @@ urlpatterns = [
     path('delete/<int:member_id>/', views.delete_member, name='delete_member'),
     path('toggle-status/<int:member_id>/', views.toggle_member_status, name='toggle_member_status'),
     path('assign-membership/<int:member_id>/', views.assign_membership_plan, name='assign_membership_plan'),
+    path('assign-pt-trainer/<int:member_id>/', views.assign_pt_trainer, name='assign_pt_trainer'),
 
 ]

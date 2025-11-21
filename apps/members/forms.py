@@ -1,5 +1,5 @@
 from django import forms
-from .models import Member, MedicalHistory, EmergencyContact, MembershipHistory
+from .models import Member, MedicalHistory, EmergencyContact, MembershipHistory, PersonalTrainer
 
 class MemberForm(forms.ModelForm):
     class Meta:
@@ -63,15 +63,30 @@ class EmergencyContactForm(forms.ModelForm):
 class MembershipHistoryForm(forms.ModelForm):
     class Meta:
         model = MembershipHistory
-        fields = ['plan', 'registration_fee', 'joining_date', 'membership_start_date', 'discount', 'total_amount', 'paid_amount', 'payment_mode', 'comment']
+        fields = ['plan', 'registration_fee', 'membership_start_date', 'discount', 'total_amount', 'paid_amount', 'payment_mode', 'comment']
         widgets = {
             'plan': forms.Select(attrs={'class': 'form-control'}),
             'registration_fee': forms.NumberInput(attrs={'class': 'form-control'}),
-            'joining_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'membership_start_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'discount': forms.NumberInput(attrs={'class': 'form-control'}),
             'total_amount': forms.NumberInput(attrs={'class': 'form-control', 'readonly': True}),
             'paid_amount': forms.NumberInput(attrs={'class': 'form-control'}),
             'payment_mode': forms.Select(attrs={'class': 'form-control'}),
             'comment': forms.Textarea(attrs={'class': 'form-control'}),
+        }
+
+class PersonalTrainerForm(forms.ModelForm):
+    class Meta:
+        model = PersonalTrainer
+        fields = ['trainer', 'months', 'trainer_fee', 'gym_charges', 'pt_start_date', 'discount', 'total_amount', 'paid_amount', 'payment_mode']
+        widgets = {
+            'trainer': forms.Select(attrs={'class': 'form-control'}),
+            'months': forms.NumberInput(attrs={'class': 'form-control'}),
+            'trainer_fee': forms.NumberInput(attrs={'class': 'form-control', 'readonly': True}),
+            'gym_charges': forms.NumberInput(attrs={'class': 'form-control'}),
+            'pt_start_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'discount': forms.NumberInput(attrs={'class': 'form-control'}),
+            'total_amount': forms.NumberInput(attrs={'class': 'form-control', 'readonly': True}),
+            'paid_amount': forms.NumberInput(attrs={'class': 'form-control'}),
+            'payment_mode': forms.Select(attrs={'class': 'form-control'}),
         }

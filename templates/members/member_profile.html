@@ -24,7 +24,12 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header bg-primary text-white">
-                <h2 class="mb-0">Member Profile</h2>
+                <h2 class="mb-0 justify-content-start">Member Profile</h2>
+                 <div class="d-flex justify-content-end">
+                                <a href="{% url 'edit_member' member.id %}" class="btn btn-sm btn-secondary mr-2">Edit</a>
+                                <a href="{% url 'assign_membership_plan' member.id %}" class="btn btn-success mr-2">Assign Plan</a>      
+                                <a href="{% url 'assign_pt_trainer' member.id %}" class="btn btn-danger mr-2">Assign Trainer</a>      
+                            </div>
             </div>
             <div class="card-body">
                 <div class="row">
@@ -39,11 +44,7 @@
                             {% if due_amount > 0 %}
                             <h5 class="text-danger">Due: ₹{{ due_amount }}</h5>
                             {% endif %}
-                            <div class="d-flex justify-content-center">
-                                <a href="{% url 'edit_member' member.id %}" class="btn btn-primary mr-2">Edit</a>
-                                <a href="{% url 'assign_membership_plan' member.id %}" class="btn btn-success mr-2">Assign Plan</a>
-                               
-                            </div>
+                           
                         </div>
                         <div class="py-4">
                             <p class="clearfix">
@@ -214,7 +215,6 @@
                                                     <thead>
                                                         <tr>
                                                             <th>Plan</th>
-                                                            <th>Joining Date</th>
                                                             <th>Start Date</th>
                                                             <th>End Date</th>
                                                             <th>Total</th>
@@ -227,7 +227,6 @@
                                                         {% for history in member.membership_history.all %}
                                                             <tr>
                                                                 <td>{{ history.plan.title }}</td>
-                                                                <td>{{ history.joining_date|date:"d-m-Y" }}</td>
                                                                 <td>{{ history.membership_start_date|date:"d-m-Y" }}</td>
                                                                 <td>{{ history.get_end_date|date:"d-m-Y" }}</td>
                                                                 <td>₹{{ history.total_amount }}</td>

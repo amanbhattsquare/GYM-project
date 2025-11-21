@@ -11,5 +11,7 @@ def attr(field, css):
         if ':' in d:
             key, val = d.split(':')
             attrs[key] = val
+        else:
+            attrs[d] = ''
 
     return field.as_widget(attrs=attrs)

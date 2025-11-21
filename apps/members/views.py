@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import MemberForm, MedicalHistoryForm, EmergencyContactForm, MembershipHistoryForm
+from .forms import MemberForm, MedicalHistoryForm, EmergencyContactForm, MembershipHistoryForm, PersonalTrainerForm
 from .models import Member, MedicalHistory, EmergencyContact, MembershipHistory
 from apps.management.models import MembershipPlan
+from apps.trainers.models import Trainer
 from django.forms import modelformset_factory
 from django.contrib import messages
 from django.core.paginator import Paginator
@@ -196,3 +197,21 @@ def assign_membership_plan(request, member_id):
     else:
         form = MembershipHistoryForm()
     return render(request, 'members/membership_plan_assign.html', {'member': member, 'plans': plans, 'plans_json': plans_json, 'form': form})
+
+@never_cache
+@login_required(login_url='login')
+def assign_pt_trainer(request, member_id):
+    member = get_object_or_404(Member, id=member_id)
+    trainers = Trainer.objects.all()
+    trainers_json = serialize('json', trainers)
+    if request.method == 'POST':
+        form = PersonalTrainerForm(request.POST)
+        if form.is_valid():
+            pt_assignment = form.save(commit=False)
+            pt_assignment.member = member
+            pt_assignment.save()
+            messages.success(request, f'Personal Trainer "{pt_assignment.trainer.name}" assigned to {member.first_name} {member.last_name}.')
+            return redirect('member_profile', member_id=member.id)
+    else:
+        form = PersonalTrainerForm()
+    return render(request, 'members/assign_PT_trainer.html', {'member': member, 'trainers': trainers, 'trainers_json': trainers_json, 'form': form})

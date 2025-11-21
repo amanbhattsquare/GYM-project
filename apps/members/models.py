@@ -1,5 +1,7 @@
 from django.db import models
 from datetime import timedelta
+from apps.trainers.models import Trainer
+
 
 class Member(models.Model):
     first_name = models.CharField(max_length=50)
@@ -47,7 +49,6 @@ class MembershipHistory(models.Model):
     member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name='membership_history')
     plan = models.ForeignKey('management.MembershipPlan', on_delete=models.CASCADE)
     registration_fee = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    joining_date = models.DateField()
     membership_start_date = models.DateField()
     discount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
@@ -78,3 +79,23 @@ class MembershipHistory(models.Model):
         elif duration_unit == 'year' or duration_unit == 'years':
             return self.membership_start_date + timedelta(days=365 * duration_value)
         return None
+
+class PersonalTrainer(models.Model):
+    member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name='personal_trainer')
+    trainer = models.ForeignKey(Trainer, on_delete=models.CASCADE)
+    months = models.PositiveIntegerField()
+    trainer_fee = models.DecimalField(max_digits=10, decimal_places=2)
+    gym_charges = models.DecimalField(max_digits=10, decimal_places=2)
+    pt_start_date = models.DateField()
+    discount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    total_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    paid_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    payment_mode = models.CharField(max_length=50, choices=[('cash', 'Cash'), ('card', 'Card'), ('upi', 'UPI')])
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.member} - {self.trainer}"
+
+    @property
+    def due_amount(self):
+        return self.total_amount - self.paid_amount
