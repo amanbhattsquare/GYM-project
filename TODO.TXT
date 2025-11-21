@@ -3,42 +3,6 @@ Update Dashboard
 In All Forms Add Validation 
    Like in contect Input enter ony 12 numbers, ender only numbers
    
-- Login page
--Sidebar
-- Members
-     -- All Members
-     -- Add Members
-     -- Edit Members
-     -- Member Profile
-- Enquiry
-     -- All Enquiry
-     -- Add Enquiry
-     -- Edit Enquiry
-
-
-     
-PLANS & PACKAGES
-  - All Plans
-  - Create Plan
-  - Diet Plans
-  - Workout Plans
-
-DIET & WORKOUT
-  - Diet Library
-  - Workout Library
-  - Assign Diet
-  - Assign Workout
-
-Master Management
-  - Package plans
-        - All Package
-        - Create Package
-  - Diet Plans
-          - Diet Library
-          - Assign Diet
-  - Workout Plans
-          - Workout Library 
-          - Assign Workout
 
 
 SETTINGS
@@ -62,8 +26,12 @@ Invoice download in half on the A4 size page
 
 
 Plan freeze
- In membership list add new section for Assign trainer, and its payment 
 
+In membership list add new section for Assign trainer, and its payment 
 
- Generate Every Member and trainer, Invoice, and payment, want to Unique Id 
+Generate Every Member and trainer, Invoice, and payment, want to Unique Id 
  
+show Submit due receipt in members Profile
+
+
+update software for branch ready, update Also filder add new field 'select branch'
