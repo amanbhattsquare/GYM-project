@@ -39,7 +39,7 @@ def trainer_list(request):
         trainers = paginator.page(paginator.num_pages)
 
     return render(request, 'trainers/trainer_list.html', {'trainers': trainers})
-
+    
 @never_cache
 @login_required(login_url='login')
 def add_trainer(request):
