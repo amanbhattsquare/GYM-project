@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2>Attendance Report</h2>
+
+    <h3>Member Attendance</h3>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Member Name</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in member_attendance %}
+            <tr>
+                <td>{{ record.date }}</td>
+                <td>{{ record.member.name }}</td>
+                <td>{% if record.status %}Present{% else %}Absent{% endif %}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h3>Trainer Attendance</h3>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Trainer Name</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in trainer_attendance %}
+            <tr>
+                <td>{{ record.date }}</td>
+                <td>{{ record.trainer.name }}</td>
+                <td>{% if record.status %}Present{% else %}Absent{% endif %}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

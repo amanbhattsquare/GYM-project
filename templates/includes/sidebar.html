@@ -80,17 +80,17 @@
     </li>
 
     <!-- 9. Attendance -->
-    <li class="nav-item">
-      <a class="nav-link" data-toggle="collapse" href="#attendance" aria-expanded="false" aria-controls="attendance">
+    <li class="nav-item {% if request.resolver_match.url_name == 'member_attendance' or request.resolver_match.url_name == 'trainer_attendance' or request.resolver_match.url_name == 'attendance_report' %}active{% endif %}">
+      <a class="nav-link" data-toggle="collapse" href="#attendance" aria-expanded="{% if request.resolver_match.url_name == 'member_attendance' or request.resolver_match.url_name == 'trainer_attendance' or request.resolver_match.url_name == 'attendance_report' %}true{% else %}false{% endif %}" aria-controls="attendance">
         <i class="mdi mdi-calendar-check menu-icon"></i>
         <span class="menu-title">Attendance</span>
         <i class="menu-arrow"></i>
       </a>
-      <div class="collapse" id="attendance">
+      <div class="collapse {% if request.resolver_match.url_name == 'member_attendance' or request.resolver_match.url_name == 'trainer_attendance' or request.resolver_match.url_name == 'attendance_report' %}show{% endif %}" id="attendance">
         <ul class="nav flex-column sub-menu">
-          <li class="nav-item"><a class="nav-link" href="pages/attendance/members.html">Member Attendance</a></li>
-          <li class="nav-item"><a class="nav-link" href="pages/attendance/trainers.html">Trainer Attendance</a></li>
-          <li class="nav-item"><a class="nav-link" href="pages/attendance/report.html">Attendance Report</a></li>
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'member_attendance' %}active{% endif %}" href="{% url 'member_attendance' %}">Member Attendance</a></li>
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'trainer_attendance' %}active{% endif %}" href="{% url 'trainer_attendance' %}">Trainer Attendance</a></li>
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'attendance_report' %}active{% endif %}" href="{% url 'attendance_report' %}">Attendance Report</a></li>
         </ul>
       </div>
     </li>

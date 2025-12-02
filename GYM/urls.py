@@ -26,6 +26,7 @@ urlpatterns = [
     path('dashboard/', include('apps.dashboard.urls')),
     path('dashboard', views.dashboard, name="dashboard"),
     path('logout', views.user_logout, name='logout'),
+    path('attendance/', include('apps.attendance.urls')),
     path('members/', include('apps.members.urls')),
     path('trainers/', include('apps.trainers.urls')),
     path('enquiry/', include('apps.enquiry.urls')),
