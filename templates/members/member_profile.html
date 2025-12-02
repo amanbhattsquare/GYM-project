@@ -197,7 +197,12 @@
                                             <h4>Current Membership Plan</h4>
                                             <div class="card">
                                                 <div class="card-body">
-                                                    <h5 class="card-title">{{ membership_history.plan.title }}</h5>
+                                                    <h5 class="card-title">{{ membership_plan.title }}</h5>
+                                                    <p class="card-text">{{ membership_plan.description }}</p>
+                                                    <ul class="list-group list-group-flush">
+                                                        <li class="list-group-item"><strong>Duration:</strong> {{ membership_plan.get_duration_display }}</li>
+                                                        <li class="list-group-item"><strong>Price:</strong> ₹{{ membership_plan.price }}</li>
+                                                    </ul>
                                                     <p class="card-text">
                                                         <strong>Price:</strong> {{ membership_history.plan.price }} <br>
                                                         <strong>Duration:</strong> {{ membership_history.plan.get_duration_display }} <br>

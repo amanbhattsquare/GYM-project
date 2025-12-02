@@ -1,5 +1,6 @@
 from django.db import models
 from datetime import timedelta
+from django.utils import timezone
 from apps.trainers.models import Trainer
 
 
@@ -26,6 +27,21 @@ class Member(models.Model):
 
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
+
+    @property
+    def name(self):
+        return f'{self.first_name} {self.last_name}'
+
+    @property
+    def latest_membership(self):
+        return self.membership_history.order_by('-membership_start_date').first()
+
+    @property
+    def is_active(self):
+        latest = self.latest_membership
+        if not latest:
+            return False
+        return latest.get_end_date() >= timezone.now().date()
 
 class MedicalHistory(models.Model):
     member = models.ForeignKey(Member, related_name='medical_history', on_delete=models.CASCADE)
