@@ -1,46 +1,3 @@
-from django.shortcuts import render, redirect
-from django.utils import timezone
-from apps.members.models import Member
-from apps.trainers.models import Trainer
-from .models import MemberAttendance, TrainerAttendance
-from django.core.paginator import Paginator
-from django.db.models import Q
-
-def trainer_attendance(request):
-    today = timezone.now().date()
-    if request.method == 'POST':
-        trainer_ids = request.POST.getlist('trainer_ids')
-        for trainer_id in trainer_ids:
-            status = request.POST.get(f'status_{trainer_id}') == 'present'
-            TrainerAttendance.objects.update_or_create(
-                trainer_id=trainer_id,
-                date=today,
-                defaults={'status': status}
-            )
-        return redirect('trainer_attendance')
-
-    trainers = Trainer.objects.all()
-    attendance_records = TrainerAttendance.objects.filter(date=today)
-    attendance_status = {record.trainer_id: record.status for record in attendance_records}
-
-    trainer_list = []
-    for trainer in trainers:
-        trainer_list.append({
-            'id': trainer.id,
-            'name': trainer.name,
-            'status': attendance_status.get(trainer.id, False)
-        })
-
-    return render(request, 'attendance/trainer_attendance.html', {'trainers': trainer_list, 'date': today})
-
-def attendance_report(request):
-    member_attendance = MemberAttendance.objects.all().order_by('-date')
-    trainer_attendance = TrainerAttendance.objects.all().order_by('-date')
-    return render(request, 'attendance/attendance_report.html', {
-        'member_attendance': member_attendance,
-        'trainer_attendance': trainer_attendance
-    })
-
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.contrib import messages
@@ -50,6 +7,93 @@ from django.db.models.functions import Concat
 from apps.members.models import Member
 from .models import MemberAttendance, TrainerAttendance
 from apps.trainers.models import Trainer
+
+def trainer_attendance(request):
+    today = timezone.now().date()
+
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        trainer_id = request.POST.get('trainer_id')
+        quick_checkin_id = request.POST.get('quick_checkin_id')
+
+        if quick_checkin_id:
+            try:
+                trainer = Trainer.objects.get(trainer_id=quick_checkin_id, is_active=True)
+                TrainerAttendance.objects.create(trainer=trainer, check_in_time=timezone.now())
+                messages.success(request, f'{trainer.name} checked in successfully.')
+            except Trainer.DoesNotExist:
+                messages.error(request, 'Invalid or inactive Trainer ID.')
+            return redirect('trainer_attendance')
+
+        if trainer_id and action:
+            trainer = get_object_or_404(Trainer, id=trainer_id)
+            if action == 'checkin':
+                TrainerAttendance.objects.create(trainer=trainer, check_in_time=timezone.now())
+                messages.success(request, f'{trainer.name} checked in successfully.')
+            elif action == 'checkout':
+                attendance_record = TrainerAttendance.objects.filter(trainer=trainer, check_in_time__date=today, check_out_time__isnull=True).first()
+                if attendance_record:
+                    attendance_record.check_out_time = timezone.now()
+                    attendance_record.status = 'outside'
+                    attendance_record.save()
+                    messages.success(request, f'{trainer.name} checked out successfully.')
+                else:
+                    messages.error(request, 'Trainer is not checked in.')
+            return redirect('trainer_attendance')
+
+    # Stats
+    checked_in_today = TrainerAttendance.objects.filter(check_in_time__date=today).values('trainer').distinct().count()
+    currently_inside = TrainerAttendance.objects.filter(status='inside', check_in_time__date=today).count()
+    total_trainers = Trainer.objects.count()
+
+    # Get all active trainers
+    query = request.GET.get('q')
+    if query:
+        trainers_list = Trainer.objects.filter(
+            Q(name__icontains=query) |
+            Q(mobile__icontains=query)
+        ).order_by('name')
+    else:
+        trainers_list = Trainer.objects.all().order_by('name')
+
+    paginator = Paginator(trainers_list, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    # Get today's attendance records for the current page of trainers
+    trainer_ids_on_page = [trainer.id for trainer in page_obj]
+    attendance_today = TrainerAttendance.objects.filter(
+        trainer_id__in=trainer_ids_on_page, 
+        check_in_time__date=today
+    ).order_by('-check_in_time')
+
+    # Create a dictionary for quick lookup
+    attendance_dict = {}
+    for record in attendance_today:
+        if record.trainer_id not in attendance_dict:
+            attendance_dict[record.trainer_id] = []
+        attendance_dict[record.trainer_id].append(record)
+
+    # Combine trainer data with attendance status
+    trainer_data = []
+    for trainer in page_obj:
+        records = attendance_dict.get(trainer.id, [])
+        latest_record = records[0] if records else None
+        trainer_data.append({
+            'trainer': trainer,
+            'records': records,
+            'is_checked_in': latest_record and latest_record.status == 'inside'
+        })
+
+    context = {
+        'today': today,
+        'trainer_data': trainer_data,
+        'page_obj': page_obj,
+        'checked_in_today': checked_in_today,
+        'currently_inside': currently_inside,
+        'total_trainers': total_trainers,
+    }
+    return render(request, 'attendance/trainer_attendance.html', context)
 
 def member_attendance(request):
     today = timezone.now().date()
@@ -138,3 +182,11 @@ def member_attendance(request):
         'total_members': total_members,
     }
     return render(request, 'attendance/member_attendance.html', context)
+
+def attendance_report(request):
+    member_attendance = MemberAttendance.objects.all().order_by('-check_in_time__date')
+    trainer_attendance = TrainerAttendance.objects.all().order_by('-check_in_time__date')
+    return render(request, 'attendance/attendance_report.html', {
+        'member_attendance': member_attendance,
+        'trainer_attendance': trainer_attendance
+    })
