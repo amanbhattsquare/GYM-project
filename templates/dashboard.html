@@ -12,8 +12,8 @@
                 <small class="text-muted">Your complete gym management analytics</small>
             </div>
             <div>
-                <button class="btn btn-success btn-sm">+ Add Member</button>
-                <button class="btn btn-primary btn-sm ml-2">+ Add Payment</button>
+                <button onclick="window.location.href='{% url 'add_new_member' %}'" class="btn btn-success btn-sm">+ Add Member</button>
+                <button onclick="window.location.href='{% url 'billing:submit_due' %}'" class="btn btn-primary btn-sm ml-2">+ Add Payment</button>
             </div>
         </div>
 
