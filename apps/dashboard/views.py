@@ -19,6 +19,7 @@ def dashboard(request):
     active_members = Member.objects.filter(status='active').count()
     inactive_members = Member.objects.filter(status='inactive').count()
     
+    
     # Calculate the date 30 days ago from the current date
     thirty_days_ago = timezone.now().date() - timedelta(days=30)
     
