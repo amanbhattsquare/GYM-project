@@ -40,3 +40,6 @@ In Attendence page add filter "All, CheckIn/ Inside and Checkout"
 In seacrch bar , seacrch using ID also
 
 Create trainer Profile 
+
+
+Create help page where mentioned project workflow and  user menual 

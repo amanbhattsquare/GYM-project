@@ -195,7 +195,15 @@
       </a>
     </li>
 
-    <!-- 17. Sign Out -->
+ <!--  help -->
+    <li class="nav-item {% if request.resolver_match.url_name == 'help' %}active{% endif %}">
+      <a class="nav-link" href="{% url 'help' %}">
+        <i class="mdi mdi-help-circle-outline menu-icon"></i>
+        <span class="menu-title">Help</span>
+      </a>
+    </li>
+
+    <!--  Sign Out -->
     <li class="nav-item sidebar-actions">
       <div class="nav-link">
         <div class="mt-2">

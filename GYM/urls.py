@@ -19,6 +19,7 @@ from django.urls import path, include
 from apps.dashboard import views
 from django.conf import settings
 from django.conf.urls.static import static
+from .views import help_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -32,6 +33,7 @@ urlpatterns = [
     path('enquiry/', include('apps.enquiry.urls')),
     path('billing/', include('apps.billing.urls')),
     path('management/', include('apps.management.urls')),
+    path('help/', help_view, name='help'),
 ]
 
 if settings.DEBUG:
