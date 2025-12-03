@@ -43,22 +43,28 @@
     <div class="card-body">
         <!-- Filter Form -->
         <form method="get" class="row g-3 align-items-end mb-4">
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label for="user_type" class="form-label">Report For</label>
                 <select name="user_type" id="user_type" class="form-select">
-                    <option value="member" {% if request.GET.user_type == 'member' %}selected{% endif %}>Members</option>
+                    <option value="member" {% if request.GET.user_type == 'member' or not request.GET.user_type %}selected{% endif %}>Members</option>
                     <option value="trainer" {% if request.GET.user_type == 'trainer' %}selected{% endif %}>Trainers</option>
+                </select>
+            </div>
+            <div class="col-md-3" id="user-select-container">
+                <label for="user_id" class="form-label">Select User</label>
+                <select name="user_id" id="user_id" class="form-select select2-basic">
+                    <option value="">All</option>
                 </select>
             </div>
             <div class="col-md-2">
                 <label for="start_date" class="form-label">From</label>
-                <input type="date" name="start_date" id="start_date" class="form-control" value="{{ request.GET.start_date }}">
+                <input type="date" name="start_date" id="start_date" class="form-control" value="{{ start_date|date:'Y-m-d' }}">
             </div>
             <div class="col-md-2">
                 <label for="end_date" class="form-label">To</label>
-                <input type="date" name="end_date" id="end_date" class="form-control" value="{{ request.GET.end_date }}">
+                <input type="date" name="end_date" id="end_date" class="form-control" value="{{ end_date|date:'Y-m-d' }}">
             </div>
-            <div class="col-md-5 d-flex align-items-end">
+            <div class="col-md-3 d-flex align-items-end">
                 <div class="btn-group w-100" role="group">
                     <button type="submit" class="btn btn-primary"><i class="mdi mdi-filter-variant"></i> Generate</button>
                     <button type="button" id="today-btn" class="btn btn-secondary"><i class="mdi mdi-calendar-today"></i> Today</button>
@@ -172,6 +178,36 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    const members = JSON.parse('{{ members|escapejs }}');
+    const trainers = JSON.parse('{{ trainers|escapejs }}');
+    let selectedUserId = '{{ selected_user_id|escapejs }}' || '';
+
+    function updateUserOptions() {
+        const userType = $('#user_type').val();
+        const userSelect = $('#user_id');
+        userSelect.empty().append('<option value="">All</option>');
+
+        const users = (userType === 'member') ? members : trainers;
+
+        users.forEach(function(user) {
+            const userName = (userType === 'member') ? user.fields.first_name + ' ' + user.fields.last_name : user.fields.name;
+            const option = new Option(userName, user.pk);
+            userSelect.append(option);
+        });
+
+        userSelect.val(selectedUserId);
+        userSelect.trigger('change');
+    }
+
+    $('#user_type').on('change', function() {
+        selectedUserId = ''; // Reset selected user when type changes
+        updateUserOptions();
+    });
+
+    // Initial load
+    updateUserOptions();
+    $('.select2-basic').select2();
+
     const form = document.querySelector('form');
     const loadingSpinner = document.getElementById('loading-spinner');
     const reportResults = document.getElementById('report-results');

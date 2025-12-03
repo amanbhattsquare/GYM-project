@@ -9,6 +9,9 @@ from .models import MemberAttendance, TrainerAttendance
 from apps.trainers.models import Trainer
 from datetime import datetime, timedelta
 from django.conf import settings
+from django.core.serializers import serialize
+import json
+
 
 def trainer_attendance(request):
     today = timezone.now().date()
@@ -185,10 +188,14 @@ def member_attendance(request):
     }
     return render(request, 'attendance/member_attendance.html', context)
 
+import json
+from django.core.serializers import serialize
+
 def attendance_report(request):
     user_type = request.GET.get('user_type', 'member')
     start_date_str = request.GET.get('start_date')
     end_date_str = request.GET.get('end_date')
+    user_id = request.GET.get('user_id')
 
     # Default to today if no dates are provided
     today = timezone.now().date()
@@ -200,10 +207,17 @@ def attendance_report(request):
         records = MemberAttendance.objects.filter(
             check_in_time__date__range=[start_date, end_date]
         ).select_related('member').order_by('-check_in_time')
+        if user_id:
+            records = records.filter(member__id=user_id)
     else: # trainer
         records = TrainerAttendance.objects.filter(
             check_in_time__date__range=[start_date, end_date]
         ).select_related('trainer').order_by('-check_in_time')
+        if user_id:
+            records = records.filter(trainer__id=user_id)
+
+    all_members = Member.objects.all()
+    all_trainers = Trainer.objects.all()
 
     paginator = Paginator(records, settings.ITEMS_PER_PAGE) # 15 records per page
     page_number = request.GET.get('page')
@@ -215,5 +229,8 @@ def attendance_report(request):
         'user_type': user_type,
         'start_date': start_date,
         'end_date': end_date,
+        'members': serialize('json', all_members),
+        'trainers': serialize('json', all_trainers),
+        'selected_user_id': int(user_id) if user_id else None,
     }
     return render(request, 'attendance/attendance_report.html', context)
