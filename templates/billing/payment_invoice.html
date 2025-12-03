@@ -71,7 +71,7 @@
                 </div>
                 <div class="col-sm-6">
                     <h6 class="mb-3 text-uppercase fw-bold">Bill To:</h6>
-                    <p class="mb-1"><strong>{{ payment.member.first_name }} {{ payment.member.last_name }}</strong></p>
+                    <p class="mb-1"><strong>{{ payment.member.first_name }} {{ payment.member.last_name }}</strong></p> <small class="text-muted">({{ payment.member.member_id }})</small>
                     <p class="mb-1">{{ payment.member.address }}</p>
                     <p class="mb-1">Email: {{ payment.member.email }}</p>
                     <p>Phone: {{ payment.member.mobile_number }}</p>
