@@ -35,3 +35,8 @@ show Submit due receipt in members Profile
 
 
 update software for branch ready, update Also filder add new field 'select branch'
+
+In Attendence page add filter "All, CheckIn/ Inside and Checkout" 
+In seacrch bar , seacrch using ID also
+
+Create trainer Profile 

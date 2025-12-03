@@ -22,7 +22,7 @@
       </a>
     </li>
 
-    <!-- 2. Enquiry -->
+    <!--  Enquiry -->
     <li class="nav-item {% if request.resolver_match.url_name == 'enquiry_list' or request.resolver_match.url_name == 'add_new_enquiry' or request.resolver_match.url_name == 'edit_enquiry' %}active{% endif %}">
       <a class="nav-link" data-toggle="collapse" href="#enquiry" aria-expanded="{% if request.resolver_match.url_name == 'enquiry_list' or request.resolver_match.url_name == 'add_new_enquiry' or request.resolver_match.url_name == 'edit_enquiry' %}true{% else %}false{% endif %}" aria-controls="enquiry">
         <i class="mdi mdi-comment-question-outline menu-icon"></i>
@@ -37,7 +37,7 @@
       </div>
     </li>
 
-    <!-- 4. Members -->
+    <!--  Members -->
     <li class="nav-item {% if request.resolver_match.url_name == 'member_list' or request.resolver_match.url_name == 'add_new_member' or request.resolver_match.url_name == 'member_profile' or request.resolver_match.url_name == 'edit_member' %}active{% endif %}">
       <a class="nav-link" data-toggle="collapse" href="#members" aria-expanded="{% if request.resolver_match.url_name == 'member_list' or request.resolver_match.url_name == 'add_new_member' or request.resolver_match.url_name == 'member_profile' or request.resolver_match.url_name == 'edit_member' %}true{% else %}false{% endif %}" aria-controls="members">
         <i class="mdi mdi-account-multiple menu-icon"></i>
@@ -55,7 +55,7 @@
 
     
 
-    <!-- 6. Trainers -->
+    <!--  Trainers -->
     <li class="nav-item {% if request.resolver_match.url_name == 'trainer_list' or request.resolver_match.url_name == 'add_trainer' %}active{% endif %}">
       <a class="nav-link" data-toggle="collapse" href="#trainers" aria-expanded="{% if request.resolver_match.url_name == 'trainer_list' or request.resolver_match.url_name == 'add_trainer' %}true{% else %}false{% endif %}" aria-controls="trainers">
         <i class="mdi mdi-human-male-female menu-icon"></i>
@@ -70,16 +70,7 @@
       </div>
     </li>
 
-
-    <!-- 8. Schedule -->
-    <li class="nav-item">
-      <a class="nav-link" href="pages/schedule.html">
-        <i class="mdi mdi-calendar-clock menu-icon"></i>
-        <span class="menu-title">Schedule</span>
-      </a>
-    </li>
-
-    <!-- 9. Attendance -->
+    <!--  Attendance -->
     <li class="nav-item {% if request.resolver_match.url_name == 'member_attendance' or request.resolver_match.url_name == 'trainer_attendance' or request.resolver_match.url_name == 'attendance_report' %}active{% endif %}">
       <a class="nav-link" data-toggle="collapse" href="#attendance" aria-expanded="{% if request.resolver_match.url_name == 'member_attendance' or request.resolver_match.url_name == 'trainer_attendance' or request.resolver_match.url_name == 'attendance_report' %}true{% else %}false{% endif %}" aria-controls="attendance">
         <i class="mdi mdi-calendar-check menu-icon"></i>
@@ -95,22 +86,8 @@
       </div>
     </li>
 
-    <!-- 10. Events -->
-    <li class="nav-item">
-      <a class="nav-link" data-toggle="collapse" href="#events" aria-expanded="false" aria-controls="events">
-        <i class="mdi mdi-calendar-star menu-icon"></i>
-        <span class="menu-title">Events</span>
-        <i class="menu-arrow"></i>
-      </a>
-      <div class="collapse" id="events">
-        <ul class="nav flex-column sub-menu">
-          <li class="nav-item"><a class="nav-link" href="pages/events/all.html">All Events</a></li>
-          <li class="nav-item"><a class="nav-link" href="pages/events/add.html">Create Event</a></li>
-        </ul>
-      </div>
-    </li>
-
-    <!-- 11. Billing -->
+  
+    <!--  Billing -->
     <li class="nav-item {% if request.resolver_match.url_name == 'invoices_list' or request.resolver_match.url_name == 'submit_due' %}active{% endif %}">
       <a class="nav-link" data-toggle="collapse" href="#billing" aria-expanded="{% if request.resolver_match.url_name == 'invoices_list' or request.resolver_match.url_name == 'submit_due' %}true{% else %}false{% endif %}" aria-controls="billing">
         <i class="mdi mdi-file-document-box-outline menu-icon"></i>
@@ -125,7 +102,7 @@
       </div>
     </li>
 
-    <!-- 12. Expenses -->
+    <!--  Expenses -->
     <li class="nav-item">
       <a class="nav-link" data-toggle="collapse" href="#expenses" aria-expanded="false" aria-controls="expenses">
         <i class="mdi mdi-cash-multiple menu-icon"></i>
@@ -141,7 +118,7 @@
       </div>
     </li>
 
-    <!-- 13. Inventory -->
+    <!--  Inventory -->
     <li class="nav-item">
       <a class="nav-link" data-toggle="collapse" href="#inventory" aria-expanded="false" aria-controls="inventory">
         <i class="mdi mdi-package-variant menu-icon"></i>
@@ -156,8 +133,30 @@
         </ul>
       </div>
     </li>
+    <!--  Events -->
+    <li class="nav-item">
+      <a class="nav-link" data-toggle="collapse" href="#events" aria-expanded="false" aria-controls="events">
+        <i class="mdi mdi-calendar-star menu-icon"></i>
+        <span class="menu-title">Events</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse" id="events">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"><a class="nav-link" href="pages/events/all.html">All Events</a></li>
+          <li class="nav-item"><a class="nav-link" href="pages/events/add.html">Create Event</a></li>
+        </ul>
+      </div>
+    </li>
 
-    <!-- 14. Reports -->
+      <!--  Schedule -->
+    <li class="nav-item">
+      <a class="nav-link" href="pages/schedule.html">
+        <i class="mdi mdi-calendar-clock menu-icon"></i>
+        <span class="menu-title">Schedule</span>
+      </a>
+    </li>
+
+    <!--  Reports -->
     <li class="nav-item">
       <a class="nav-link" href="pages/reports.html">
         <i class="mdi mdi-chart-bar menu-icon"></i>

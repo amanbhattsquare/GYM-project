@@ -126,57 +126,52 @@
                         {% for data in trainer_data %}
                         {% with trainer=data.trainer records=data.records is_checked_in=data.is_checked_in %}
                         <tr class="{% if is_checked_in %}table-success{% else %}table-light{% endif %}">
-                            <td>{{ forloop.counter0|add:page_obj.start_index }}</td>
-                            <td>
+                            <td data-label="#">{{ forloop.counter0|add:page_obj.start_index }}</td>
+                            <td data-label="Photo">
                                 {% if trainer.photo %}
                                     <img src="{{ trainer.photo.url }}" class="rounded-circle" width="40" height="40" alt="{{ trainer }}">
                                 {% else %}
                                     <img src="{% static 'images/member_DP.jpg' %}" class="rounded-circle" width="40" height="40" alt="Default Profile Pic">
                                 {% endif %}
                             </td>
-                        
-                            <td>
+                            <td data-label="Trainer">
                                 <strong>{{ trainer.name }}</strong><br>
                                  <small class="text-muted">#{{ trainer.trainer_id }}</small>
                             </td>
-                            <td>
+                            <td data-label="Specialization">
                                 <span class="badge bg-info">{{ trainer.specialization }}</span>
                             </td>
-                            <td>
+                            <td data-label="Status">
                                 {% if is_checked_in %}
                                     <span class="badge bg-success"><i class="mdi mdi-circle"></i> Inside</span>
                                 {% else %}
                                     <span class="badge bg-secondary">Checked Out</span>
                                 {% endif %}
                             </td>
-                            <td colspan="3">
-                                {% for record in records %}
-                                <div class="row mb-1">
-                                    <div class="col">{{ record.check_in_time|time:"h:i A" }}</div>
-                                    <div class="col">
-                                        {% if record.check_out_time %}
-                                            {{ record.check_out_time|time:"h:i A" }}
-                                        {% else %}
-                                            <span class="text-muted">—</span>
-                                        {% endif %}
-                                    </div>
-                                    <div class="col">
-                                        {% if record.duration %}
-                                            {{ record.duration }}
-                                        {% elif is_checked_in and forloop.first %}
-                                            <span class="text-live" data-start="{{ record.check_in_time|date:'U' }}">
-                                                <span class="badge bg-info">Live</span>
-                                            </span>
-                                        {% else %}
-                                            <span class="text-muted">—</span>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                {% empty %}
-                                <div class="text-muted">No records today</div>
-                                {% endfor %}
+                            {% with latest_record=records.0 %}
+                            <td data-label="Check-In Time">
+                                {% if latest_record %}{{ latest_record.check_in_time|time:"h:i A" }}{% else %}<span class="text-muted">—</span>{% endif %}
                             </td>
-                            <td>
+                            <td data-label="Check-Out Time">
+                                {% if latest_record and latest_record.check_out_time %}{{ latest_record.check_out_time|time:"h:i A" }}{% else %}<span class="text-muted">—</span>{% endif %}
+                            </td>
+                            <td data-label="Duration">
+                                {% if latest_record %}
+                                    {% if latest_record.duration %}
+                                        {{ latest_record.duration }}
+                                    {% elif is_checked_in %}
+                                        <span class="text-live" data-start="{{ latest_record.check_in_time|date:'U' }}">
+                                            <span class="badge bg-info">Live</span>
+                                        </span>
+                                    {% else %}
+                                        <span class="text-muted">—</span>
+                                    {% endif %}
+                                {% else %}
+                                    <span class="text-muted">—</span>
+                                {% endif %}
+                            </td>
+                            {% endwith %}
+                            <td data-label="Action">
                                 <form method="post" class="d-inline">
                                     {% csrf_token %}
                                     <input type="hidden" name="trainer_id" value="{{ trainer.id }}">
