@@ -1,37 +1,273 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Trainer Attendance - Check In/Out{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h2>Trainer Attendance - {{ date }}</h2>
-    <form method="post">
-        {% csrf_token %}
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Trainer Name</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for trainer in trainers %}
-                <tr>
-                    <td>{{ trainer.name }}</td>
-                    <td>
-                        <input type="hidden" name="trainer_ids" value="{{ trainer.id }}">
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="status_{{ trainer.id }}" id="present_{{ trainer.id }}" value="present" {% if trainer.status %}checked{% endif %}>
-                            <label class="form-check-label" for="present_{{ trainer.id }}">Present</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="status_{{ trainer.id }}" id="absent_{{ trainer.id }}" value="absent" {% if not trainer.status %}checked{% endif %}>
-                            <label class="form-check-label" for="absent_{{ trainer.id }}">Absent</label>
-                        </div>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        <button type="submit" class="btn btn-primary">Save Attendance</button>
-    </form>
+<link rel="stylesheet" href="{% static 'css/customstyle.css' %}">
+
+<!-- Compact Breadcrumb Navigation -->
+<nav aria-label="breadcrumb" class="custom-breadcrumb mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{% url 'dashboard' %}" class="text-decoration-none">
+                <i class="mdi mdi-home-outline mdi-18px"></i> Dashboard
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+           <i class="mdi mdi-account-tie-outline mdi-18px"></i> Trainer Attendance  
+        </li>
+    </ol>
+</nav> 
+
+<div class="row">
+    <!-- Live Stats Cards -->
+    <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+        <div class="card bg-success text-white">
+            <div class="card-body d-flex align-items-center">
+                <div>
+                    <h3 class="mb-0">{{ checked_in_today }}</h3>
+                    <p class="mb-0">Checked In Today</p>
+                </div>
+                <i class="mdi mdi-account-check-outline mdi-48px ms-auto opacity-75"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+        <div class="card bg-info text-white">
+            <div class="card-body d-flex align-items-center">
+                <div>
+                    <h3 class="mb-0">{{ currently_inside }}</h3>
+                    <p class="mb-0">Currently Inside</p>
+                </div>
+                <i class="mdi mdi-clipboard-account-outline mdi-48px ms-auto opacity-75"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+        <div class="card bg-warning text-white">
+            <div class="card-body d-flex align-items-center">
+                <div>
+                    <h3 class="mb-0">{{ late_checkouts|default:"0" }}</h3>
+                    <p class="mb-0">Late Checkouts</p>
+                </div>
+                <i class="mdi mdi-clock-alert-outline mdi-48px ms-auto opacity-75"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+        <div class="card bg-primary text-white">
+            <div class="card-body d-flex align-items-center">
+                <div>
+                    <h3 class="mb-0">{{ total_trainers }}</h3>
+                    <p class="mb-0">Total Trainers</p>
+                </div>
+                <i class="mdi mdi-account-group-outline mdi-48px ms-auto opacity-75"></i>
+            </div>
+        </div>
+    </div>
 </div>
+
+<!-- Main Attendance Card -->
+<div class="col-lg-12">
+    <div class="card">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">Trainer Attendance</h4>
+            <a href="{% url 'attendance_report' %}" class="btn btn-light btn-sm">
+                <i class="mdi mdi-file-chart-outline"></i> View Reports
+            </a>
+        </div>
+        <div class="card-body">
+            <!-- Quick Search + Manual ID Entry -->
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    {% include 'includes/search_form.html' with placeholder="Search by name or phone..." %}
+                </div>
+                <div class="col-md-4">
+                    <form method="post" class="d-inline">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <input type="text" name="quick_checkin_id" class="form-control" placeholder="Scan/Enter Trainer ID" autofocus>
+                            <button type="submit" name="quick_action" value="checkin" class="btn btn-success">
+                                <i class="mdi mdi-login"></i> Check In
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Success/Error Alerts -->
+            {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    <i class="mdi {% if 'success' in message.tags %}mdi-check-circle{% else %}mdi-alert-circle{% endif %}"></i>
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                {% endfor %}
+            {% endif %}
+
+           <div class="table-responsive">
+                <table class="table table-hover table-sm table-stack-on-mobile">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Photo</th>
+                            <th>Trainer</th>
+                            <th>Specialization</th>
+                            <th>Status</th>
+                            <th>Check-In Time</th>
+                            <th>Check-Out Time</th>
+                            <th>Duration</th>
+                            <th width="180">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for data in trainer_data %}
+                        {% with trainer=data.trainer records=data.records is_checked_in=data.is_checked_in %}
+                            {% if not records %}
+                                <tr class="table-light">
+                                    <td data-label="#">{{ forloop.counter0|add:page_obj.start_index }}</td>
+                                    <td data-label="Photo">
+                                        {% if trainer.photo %}
+                                            <img src="{{ trainer.photo.url }}" class="rounded-circle" width="40" height="40" alt="{{ trainer }}">
+                                        {% else %}
+                                            <img src="{% static 'images/member_DP.jpg' %}" class="rounded-circle" width="40" height="40" alt="Default Profile Pic">
+                                        {% endif %}
+                                    </td>
+                                    <td data-label="Trainer">
+                                        <strong>{{ trainer.name }}</strong><br>
+                                        <small class="text-muted">#{{ trainer.trainer_id }}</small>
+                                    </td>
+                                    <td data-label="Specialization">
+                                        <span class="badge bg-info">{{ trainer.specialization }}</span>
+                                    </td>
+                                    <td data-label="Status">
+                                        <span class="badge bg-secondary">Checked Out</span>
+                                    </td>
+                                    <td data-label="Check-In Time"><span class="text-muted">—</span></td>
+                                    <td data-label="Check-Out Time"><span class="text-muted">—</span></td>
+                                    <td data-label="Duration"><span class="text-muted">—</span></td>
+                                    <td data-label="Action">
+                                        <form method="post" class="d-inline">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="trainer_id" value="{{ trainer.id }}">
+                                            <button type="submit" name="action" value="checkin" class="btn btn-success btn-sm">
+                                                <i class="mdi mdi-login"></i> Check In
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                {% for record in records %}
+                                <tr class="{% if forloop.first and is_checked_in %}table-success{% else %}table-light{% endif %}">
+                                    {% if forloop.first %}
+                                        <td data-label="#" rowspan="{{ records|length }}">{{ forloop.parentloop.counter0|add:page_obj.start_index }}</td>
+                                        <td data-label="Photo" rowspan="{{ records|length }}">
+                                            {% if trainer.photo %}
+                                                <img src="{{ trainer.photo.url }}" class="rounded-circle" width="40" height="40" alt="{{ trainer }}">
+                                            {% else %}
+                                                <img src="{% static 'images/member_DP.jpg' %}" class="rounded-circle" width="40" height="40" alt="Default Profile Pic">
+                                            {% endif %}
+                                        </td>
+                                        <td data-label="Trainer" rowspan="{{ records|length }}">
+                                            <strong>{{ trainer.name }}</strong><br>
+                                            <small class="text-muted">#{{ trainer.trainer_id }}</small>
+                                        </td>
+                                        <td data-label="Specialization" rowspan="{{ records|length }}">
+                                            <span class="badge bg-info">{{ trainer.specialization }}</span>
+                                        </td>
+                                        <td data-label="Status" rowspan="{{ records|length }}">
+                                            {% if is_checked_in %}
+                                                <span class="badge bg-success"><i class="mdi mdi-circle"></i> Inside</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">Checked Out</span>
+                                            {% endif %}
+                                        </td>
+                                    {% endif %}
+                                    <td data-label="Check-In Time">
+                                        {% if record %}{{ record.check_in_time|time:"h:i A" }}{% else %}<span class="text-muted">—</span>{% endif %}
+                                    </td>
+                                    <td data-label="Check-Out Time">
+                                        {% if record and record.check_out_time %}{{ record.check_out_time|time:"h:i A" }}{% else %}<span class="text-muted">—</span>{% endif %}
+                                    </td>
+                                    <td data-label="Duration">
+                                        {% if record %}
+                                            {% if record.duration %}
+                                                {{ record.duration }}
+                                            {% elif is_checked_in and forloop.first %}
+                                                <span class="text-live" data-start="{{ record.check_in_time|date:'U' }}">
+                                                    <span class="badge bg-info">Live</span>
+                                                </span>
+                                            {% else %}
+                                                <span class="text-muted">—</span>
+                                            {% endif %}
+                                        {% else %}
+                                            <span class="text-muted">—</span>
+                                        {% endif %}
+                                    </td>
+                                    {% if forloop.first %}
+                                        <td data-label="Action" rowspan="{{ records|length }}">
+                                            <form method="post" class="d-inline">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="trainer_id" value="{{ trainer.id }}">
+                                                {% if is_checked_in %}
+                                                    <button type="submit" name="action" value="checkout" class="btn btn-warning btn-sm">
+                                                        <i class="mdi mdi-logout"></i> Check Out
+                                                    </button>
+                                                {% else %}
+                                                    <button type="submit" name="action" value="checkin" class="btn btn-success btn-sm">
+                                                        <i class="mdi mdi-login"></i> Check In
+                                                    </button>
+                                                {% endif %}
+                                            </form>
+                                        </td>
+                                    {% endif %}
+                                </tr>
+                                {% endfor %}
+                            {% endif %}
+                        {% endwith %}
+                        {% empty %}
+                        <tr>
+                            <td colspan="9" class="text-center py-5">
+                                <i class="mdi mdi-account-off-outline mdi-48px text-muted d-block mb-3"></i>
+                                <h5>No active trainers found</h5>
+                                <p class="text-muted">Create trainers or adjust search filters.</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            {% if page_obj.has_other_pages %}
+                <div class="mt-4">
+                    {% include 'includes/pagination.html' with page_obj=page_obj %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Live Duration Update Script -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    function updateLiveDurations() {
+        document.querySelectorAll('.text-live').forEach(el => {
+            const start = parseInt(el.dataset.start) * 1000;
+            const now = Date.now();
+            const diff = Math.floor((now - start) / 1000);
+            
+            let hours = Math.floor(diff / 3600);
+            let minutes = Math.floor((diff % 3600) / 60);
+
+            el.textContent = `${hours}h ${minutes}m`;
+        });
+    }
+
+    setInterval(updateLiveDurations, 1000);
+    updateLiveDurations();
+});
+</script>
 {% endblock %}

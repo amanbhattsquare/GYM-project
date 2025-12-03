@@ -23,7 +23,7 @@
                 <div class="card shadow-sm bg-primary text-white">
                     <div class="card-body">
                         <p class="mb-1">Total Members</p>
-                        <h3>150</h3>
+                        <h3>{{ total_members }}</h3>
                         <small>Updated today</small>
                     </div>
                 </div>
@@ -33,8 +33,8 @@
                 <div class="card shadow-sm bg-success text-white">
                     <div class="card-body">
                         <p class="mb-1">Active Members</p>
-                        <h3>120</h3>
-                        <small>Currently active subscriptions</small>
+                        <h3>{{ active_members }}</h3>
+                        <small>Updated today</small>
                     </div>
                 </div>
             </div>
@@ -43,7 +43,7 @@
                 <div class="card shadow-sm bg-danger text-white">
                     <div class="card-body">
                         <p class="mb-1">Expired Members</p>
-                        <h3>30</h3>
+                        <h3>{{ inactive_members }}</h3>
                         <small>Expired in last 30 days</small>
                     </div>
                 </div>
@@ -53,7 +53,7 @@
                 <div class="card shadow-sm bg-warning text-white">
                     <div class="card-body">
                         <p class="mb-1">New (30 Days)</p>
-                        <h3>18</h3>
+                        <h3>{{ new_members_last_30_days }}</h3>
                         <small>New registrations</small>
                     </div>
                 </div>

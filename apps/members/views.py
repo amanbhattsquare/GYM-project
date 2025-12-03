@@ -85,7 +85,8 @@ def member_profile(request, member_id):
         'pt_member': pt_member,
         'membership_history': latest_membership,
         'due_amount': total_due_amount,
-        'pt_invoices': pt_invoices
+        'pt_invoices': pt_invoices,
+        'membership_plan': latest_membership.plan if latest_membership else None
     })
 
 

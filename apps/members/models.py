@@ -1,5 +1,6 @@
 from django.db import models
 from datetime import timedelta
+from django.utils import timezone
 from apps.trainers.models import Trainer
 
 
@@ -24,8 +25,41 @@ class Member(models.Model):
     identity_document_image = models.ImageField(upload_to='identity_docs/', blank=True, null=True)
     status = models.CharField(max_length=10, choices=[('active', 'Active'), ('inactive', 'Inactive')], default='active')
 
+    # NEW FIELD
+    member_id = models.CharField(max_length=20, unique=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.member_id:
+            # get current year last two digits
+            year = timezone.now().strftime("%y")
+
+            # count existing members for this year
+            count = Member.objects.filter(member_id__startswith=f"MEM-{year}-").count() + 1
+
+            # format ID (6 digits counter)
+            counter = str(count).zfill(6)
+
+            self.member_id = f"MEM-{year}-{counter}"
+
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
+
+    @property
+    def name(self):
+        return f'{self.first_name} {self.last_name}'
+
+    @property
+    def latest_membership(self):
+        return self.membership_history.order_by('-membership_start_date').first()
+
+    @property
+    def is_active(self):
+        latest = self.latest_membership
+        if not latest:
+            return False
+        return latest.get_end_date() >= timezone.now().date()
 
 class MedicalHistory(models.Model):
     member = models.ForeignKey(Member, related_name='medical_history', on_delete=models.CASCADE)
