@@ -7,6 +7,8 @@ from django.db.models.functions import Concat
 from apps.members.models import Member
 from .models import MemberAttendance, TrainerAttendance
 from apps.trainers.models import Trainer
+from datetime import datetime, timedelta
+from django.conf import settings
 
 def trainer_attendance(request):
     today = timezone.now().date()
@@ -56,7 +58,7 @@ def trainer_attendance(request):
     else:
         trainers_list = Trainer.objects.all().order_by('name')
 
-    paginator = Paginator(trainers_list, 10)
+    paginator = Paginator(trainers_list, settings.ITEMS_PER_PAGE)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
@@ -144,7 +146,7 @@ def member_attendance(request):
     else:
         members_list = Member.objects.all().order_by('first_name', 'last_name')
 
-    paginator = Paginator(members_list, 10)
+    paginator = Paginator(members_list, settings.ITEMS_PER_PAGE)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
@@ -184,9 +186,34 @@ def member_attendance(request):
     return render(request, 'attendance/member_attendance.html', context)
 
 def attendance_report(request):
-    member_attendance = MemberAttendance.objects.all().order_by('-check_in_time__date')
-    trainer_attendance = TrainerAttendance.objects.all().order_by('-check_in_time__date')
-    return render(request, 'attendance/attendance_report.html', {
-        'member_attendance': member_attendance,
-        'trainer_attendance': trainer_attendance
-    })
+    user_type = request.GET.get('user_type', 'member')
+    start_date_str = request.GET.get('start_date')
+    end_date_str = request.GET.get('end_date')
+
+    # Default to today if no dates are provided
+    today = timezone.now().date()
+    start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date() if start_date_str else today
+    end_date = datetime.strptime(end_date_str, '%Y-%m-%d').date() if end_date_str else today
+    
+    records = None
+    if user_type == 'member':
+        records = MemberAttendance.objects.filter(
+            check_in_time__date__range=[start_date, end_date]
+        ).select_related('member').order_by('-check_in_time')
+    else: # trainer
+        records = TrainerAttendance.objects.filter(
+            check_in_time__date__range=[start_date, end_date]
+        ).select_related('trainer').order_by('-check_in_time')
+
+    paginator = Paginator(records, settings.ITEMS_PER_PAGE) # 15 records per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'records': page_obj,
+        'page_obj': page_obj,
+        'user_type': user_type,
+        'start_date': start_date,
+        'end_date': end_date,
+    }
+    return render(request, 'attendance/attendance_report.html', context)
