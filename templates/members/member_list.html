@@ -36,10 +36,8 @@
                     <thead>
                         <tr>
                             <th class="font-weight-semibold py-2"> #</th>
-
-                            <th class="font-weight-semibold py-2">Member ID</th>
                             <th class="font-weight-semibold py-2">Profile</th>
-                            <th class="font-weight-semibold py-2">Name</th>
+                            <th class="font-weight-semibold py-2">Member</th>
                             <th class="font-weight-semibold py-2">Email</th>
                             <th class="font-weight-semibold py-2">Mobile</th>
                             <th class="font-weight-semibold py-2">Due Amount</th>
@@ -52,47 +50,55 @@
 
 
                         {% for member in members %}
-                       <tr onclick="window.location.href='{% url 'member_profile' member.id %}'" style="cursor: pointer;">
+                        <tr onclick="window.location.href='{% url 'member_profile' member.id %}'"
+                            style="cursor: pointer;">
 
                             <td data-label="SR. No.">{{ forloop.counter0|add:members.start_index }}</td>
 
-                            <td data-label="Member ID">{{ member.member_id }}</td>
                             <td data-label="Profile">
-                                <img src="{% if member.profile_picture %}{{ member.profile_picture.url }}{% else %}{% static 'images/member_DP.jpg' %}{% endif %}" 
-                                     class="rounded-circle border" 
-                                     style="width: 40px; height: 40px; object-fit: cover;" 
-                                     alt="{{ member.first_name }} {{ member.last_name }}">
+                                <img src="{% if member.profile_picture %}{{ member.profile_picture.url }}{% else %}{% static 'images/member_DP.jpg' %}{% endif %}"
+                                    class="rounded-circle border" style="width: 40px; height: 40px; object-fit: cover;"
+                                    alt="{{ member.first_name }} {{ member.last_name }}">
                             </td>
-                            <td data-label="Name">{{ member.first_name }} {{ member.last_name }}</td>
+                            <td data-label="Name">
+                                <strong>{{ member.name }}</strong><br>
+                                <small class="text-muted">#{{ member.member_id }}</small>
+                            </td>
                             <td data-label="Email">{{ member.email }}</td>
                             <td data-label="Mobile">{{ member.mobile_number }}</td>
                             <td data-label="Due Amount">
                                 {% if member.membership_due > 0 %}
-                                    <span class="badge badge-danger">₹{{ member.membership_due|floatformat:2 }}</span>
+                                <span class="badge badge-danger">₹{{ member.membership_due|floatformat:2 }}</span>
                                 {% else %}
-                                    <span class="badge badge-success">₹0.00</span>
+                                <span class="badge badge-success">₹0.00</span>
                                 {% endif %}
                             </td>
                             <td data-label="Plan Expiry">
                                 {% if member.latest_membership_history %}
-                                    {{ member.latest_membership_history.get_end_date|date:"d-m-Y" }}
+                                {{ member.latest_membership_history.get_end_date|date:"d-m-Y" }}
                                 {% else %}
-                                    N/A
+                                N/A
                                 {% endif %}
                             </td>
                             <td data-label="Status">
-                                <button type="button" class="btn btn-sm {% if member.status == 'active' %}btn-success{% else %}btn-danger{% endif %}" onclick="toggleStatus('{{ member.id }}', '{{ member.status }}')">
+                                <button type="button"
+                                    class="btn btn-sm {% if member.status == 'active' %}btn-success{% else %}btn-danger{% endif %}"
+                                    onclick="toggleStatus('{{ member.id }}', '{{ member.status }}')">
                                     {% if member.status == 'active' %}
-                                        Active
+                                    Active
                                     {% else %}
-                                        Inactive
+                                    Inactive
                                     {% endif %}
                                 </button>
                             </td>
                             <td data-label="Actions" class="text-center">
-                                <a href="{% url 'member_profile' member.id %}" class="btn btn-info btn-sm" data-toggle="tooltip" title="View"><i class="mdi mdi-eye-outline"></i></a>
-                                <a href="{% url 'edit_member' member.id %}" class="btn btn-primary btn-sm" data-toggle="tooltip" title="Edit"><i class="mdi mdi-pencil-outline"></i></a>
-                                <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete('{{ member.id }}', '{{ member.first_name }} {{ member.last_name }}', '{% url 'delete_member' member.id %}')" data-toggle="tooltip" title="Delete"><i class="mdi mdi-delete-outline"></i></button>
+                                <a href="{% url 'member_profile' member.id %}" class="btn btn-info btn-sm"
+                                    data-toggle="tooltip" title="View"><i class="mdi mdi-eye-outline"></i></a>
+                                <a href="{% url 'edit_member' member.id %}" class="btn btn-primary btn-sm"
+                                    data-toggle="tooltip" title="Edit"><i class="mdi mdi-pencil-outline"></i></a>
+                                <button type="button" class="btn btn-danger btn-sm"
+                                    onclick="confirmDelete('{{ member.id }}', '{{ member.first_name }} {{ member.last_name }}', '{% url 'delete_member' member.id %}')"
+                                    data-toggle="tooltip" title="Delete"><i class="mdi mdi-delete-outline"></i></button>
                             </td>
                         </tr>
                         {% empty %}
@@ -101,7 +107,8 @@
                                 <div class="text-muted">
                                     <i class="mdi mdi-account-question-outline mdi-36px mb-2"></i>
                                     <h6 class="mb-2">No members found</h6>
-                                    <p class="mb-2 small">{% if request.GET.search %}No members match your search.{% else %}No members added yet.{% endif %}</p>
+                                    <p class="mb-2 small">{% if request.GET.search %}No members match your search.{%
+                                        else %}No members added yet.{% endif %}</p>
                                     {% if not request.GET.search %}
                                     <a href="{% url 'add_new_member' %}" class="btn btn-primary btn-sm">
                                         <i class="mdi mdi-plus"></i> Add Member
@@ -116,7 +123,7 @@
             </div>
             <!-- Pagination -->
             {% if members.has_other_pages %}
-                {% include 'includes/pagination.html' with page_obj=members %}
+            {% include 'includes/pagination.html' with page_obj=members %}
             {% endif %}
         </div>
     </div>
@@ -125,78 +132,78 @@
 
 {% block scripts %}
 <script>
-function toggleStatus(memberId, currentStatus) {
-    const url = `/members/toggle-status/${memberId}/`;
-    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    function toggleStatus(memberId, currentStatus) {
+        const url = `/members/toggle-status/${memberId}/`;
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
-    fetch(url, {
-        method: 'POST',
-        headers: {
-            'X-CSRFToken': csrfToken,
-            'Content-Type': 'application/json'
-        },
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.status === 'success') {
-            const button = document.querySelector(`button[onclick="toggleStatus('${memberId}', '${currentStatus}')"]`);
-            if (data.new_status === 'active') {
-                button.classList.remove('btn-danger');
-                button.classList.add('btn-success');
-                button.innerHTML = 'Active';
-                button.setAttribute('onclick', `toggleStatus('${memberId}', 'active')`);
-            } else {
-                button.classList.remove('btn-success');
-                button.classList.add('btn-danger');
-                button.innerHTML = 'Inactive';
-                button.setAttribute('onclick', `toggleStatus('${memberId}', 'inactive')`);
-            }
-            // Optionally, show a success message
-            // alert(data.message);
-        } else {
-            // Handle error
-            // alert('Error updating status');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        // alert('An error occurred.');
-    });
-}
-// Initialize tooltips
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize Bootstrap tooltips
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-toggle="tooltip"]'));
-    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl, {
-            placement: 'top',
-            trigger: 'hover',
-            delay: { show: 100, hide: 100 }
-        });
-    });
-
-    // Add fade-in animation to cards
-    const cards = document.querySelectorAll('.stats-card');
-    cards.forEach((card, index) => {
-        card.style.animationDelay = `${index * 0.1}s`;
-    });
-
-    // Enhanced search functionality
-    const searchInput = document.querySelector('input[name="search"]');
-    if (searchInput) {
-        searchInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                this.closest('form').submit();
-            }
-        });
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/json'
+            },
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    const button = document.querySelector(`button[onclick="toggleStatus('${memberId}', '${currentStatus}')"]`);
+                    if (data.new_status === 'active') {
+                        button.classList.remove('btn-danger');
+                        button.classList.add('btn-success');
+                        button.innerHTML = 'Active';
+                        button.setAttribute('onclick', `toggleStatus('${memberId}', 'active')`);
+                    } else {
+                        button.classList.remove('btn-success');
+                        button.classList.add('btn-danger');
+                        button.innerHTML = 'Inactive';
+                        button.setAttribute('onclick', `toggleStatus('${memberId}', 'inactive')`);
+                    }
+                    // Optionally, show a success message
+                    // alert(data.message);
+                } else {
+                    // Handle error
+                    // alert('Error updating status');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // alert('An error occurred.');
+            });
     }
-});
+    // Initialize tooltips
+    document.addEventListener('DOMContentLoaded', function () {
+        // Initialize Bootstrap tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl, {
+                placement: 'top',
+                trigger: 'hover',
+                delay: { show: 100, hide: 100 }
+            });
+        });
 
-// Add loading animation to table
-function showTableLoading() {
-    const tableBody = document.querySelector('table tbody');
-    if (tableBody) {
-        tableBody.innerHTML = `
+        // Add fade-in animation to cards
+        const cards = document.querySelectorAll('.stats-card');
+        cards.forEach((card, index) => {
+            card.style.animationDelay = `${index * 0.1}s`;
+        });
+
+        // Enhanced search functionality
+        const searchInput = document.querySelector('input[name="search"]');
+        if (searchInput) {
+            searchInput.addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    this.closest('form').submit();
+                }
+            });
+        }
+    });
+
+    // Add loading animation to table
+    function showTableLoading() {
+        const tableBody = document.querySelector('table tbody');
+        if (tableBody) {
+            tableBody.innerHTML = `
             <tr>
                 <td colspan="6" class="text-center py-5">
                     <div class="d-flex justify-content-center align-items-center">
@@ -208,29 +215,29 @@ function showTableLoading() {
                 </td>
             </tr>
         `;
+        }
     }
-}   
 
-// Add smooth scrolling to pagination
-function smoothScrollToTop() {
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-    });
-}
+    // Add smooth scrolling to pagination
+    function smoothScrollToTop() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    }
 
-// Attach smooth scroll to pagination links
-document.addEventListener('DOMContentLoaded', function() {
-    const paginationLinks = document.querySelectorAll('.pagination-link');
-    paginationLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            smoothScrollToTop();
-            setTimeout(() => {
-                window.location.href = this.href;
-            }, 300);
+    // Attach smooth scroll to pagination links
+    document.addEventListener('DOMContentLoaded', function () {
+        const paginationLinks = document.querySelectorAll('.pagination-link');
+        paginationLinks.forEach(link => {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                smoothScrollToTop();
+                setTimeout(() => {
+                    window.location.href = this.href;
+                }, 300);
+            });
         });
     });
-});
 </script>
 {% endblock %}

@@ -34,8 +34,7 @@
                <table class="table table-hover table-sm table-stack-on-mobile">
                     <thead>
                         <tr>
-                            <th class="font-weight-semibold py-2"> SR. No.</th>
-                            <th class="font-weight-semibold py-2">Trainer ID</th>
+                            <th class="font-weight-semibold py-2"> #</th>
                             <th class="font-weight-semibold py-2">Photo</th>
                             <th class="font-weight-semibold py-2">Name</th>
                             <th class="font-weight-semibold py-2">Email</th>
@@ -53,7 +52,7 @@
                         {% for trainer in trainers %}
                         <tr>
                             <td data-label="SR. No.">{{ forloop.counter0|add:trainers.start_index }}</td>
-                            <td data-label="Trainer ID">{{ trainer.trainer_id }}</td>
+
                             <td data-label="Photo">
                                 {% if trainer.photo %}
                                     <img src="{{ trainer.photo.url }}" alt="{{ trainer.name }}" class="img-fluid rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
@@ -61,7 +60,10 @@
                                     <img src="{% static 'images/gym-guy.jpg' %}" alt="Default" class="img-fluid rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
                                 {% endif %}
                             </td>
-                            <td data-label="Name">{{ trainer.name }}</td>
+                            <td data-label="Name">
+                                 <strong>{{ trainer.name }}</strong><br>
+                                <small class="text-muted">#{{ trainer.trainer_id }}</small>
+                            </td>
                             <td data-label="Email">{{ trainer.email }}</td>
                             <td data-label="Phone">{{ trainer.phone }}</td>
                             <td data-label="Address">{{ trainer.address }}</td>
