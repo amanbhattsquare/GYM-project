@@ -35,8 +35,9 @@
                 <table class="table table-hover table-sm table-stack-on-mobile">
                     <thead>
                         <tr>
-                            <th class="font-weight-semibold py-2"> SR. No.</th>
-                            <th class="font-weight-semibold py-2">ID</th>
+                            <th class="font-weight-semibold py-2"> #</th>
+
+                            <th class="font-weight-semibold py-2">Member ID</th>
                             <th class="font-weight-semibold py-2">Profile</th>
                             <th class="font-weight-semibold py-2">Name</th>
                             <th class="font-weight-semibold py-2">Email</th>
@@ -54,7 +55,8 @@
                        <tr onclick="window.location.href='{% url 'member_profile' member.id %}'" style="cursor: pointer;">
 
                             <td data-label="SR. No.">{{ forloop.counter0|add:members.start_index }}</td>
-                            <td data-label="ID">#{{ member.id }}</td>
+
+                            <td data-label="Member ID">{{ member.member_id }}</td>
                             <td data-label="Profile">
                                 <img src="{% if member.profile_picture %}{{ member.profile_picture.url }}{% else %}{% static 'images/member_DP.jpg' %}{% endif %}" 
                                      class="rounded-circle border" 

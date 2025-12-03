@@ -25,6 +25,24 @@ class Member(models.Model):
     identity_document_image = models.ImageField(upload_to='identity_docs/', blank=True, null=True)
     status = models.CharField(max_length=10, choices=[('active', 'Active'), ('inactive', 'Inactive')], default='active')
 
+    # NEW FIELD
+    member_id = models.CharField(max_length=20, unique=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.member_id:
+            # get current year last two digits
+            year = timezone.now().strftime("%y")
+
+            # count existing members for this year
+            count = Member.objects.filter(member_id__startswith=f"MEM-{year}-").count() + 1
+
+            # format ID (6 digits counter)
+            counter = str(count).zfill(6)
+
+            self.member_id = f"MEM-{year}-{counter}"
+
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
 

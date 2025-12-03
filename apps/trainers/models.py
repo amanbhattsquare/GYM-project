@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 
 class Trainer(models.Model):
+    trainer_id = models.CharField(max_length=20, unique=True, blank=True)
     name = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
     phone = models.CharField(max_length=15, unique=True)
@@ -13,6 +14,18 @@ class Trainer(models.Model):
     photo = models.ImageField(upload_to='trainers/photos/', blank=True, null=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        if not self.trainer_id:
+            current_year = timezone.now().strftime('%y')
+            last_trainer = Trainer.objects.filter(trainer_id__startswith=f'TRN-{current_year}').order_by('-trainer_id').first()
+            if last_trainer and last_trainer.trainer_id:
+                last_id_int = int(last_trainer.trainer_id.split('-')[-1])
+                new_id_int = last_id_int + 1
+            else:
+                new_id_int = 1
+            self.trainer_id = f'TRN-{current_year}-{new_id_int:06d}'
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name

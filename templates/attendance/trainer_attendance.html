@@ -113,6 +113,7 @@
                         <tr>
                             <th>#</th>
                             <th>Photo</th>
+                            <th>Trainer ID</th>
                             <th>Trainer</th>
                             <th>Specialization</th>
                             <th>Status</th>
@@ -134,9 +135,9 @@
                                     <img src="{% static 'images/member_DP.jpg' %}" class="rounded-circle" width="40" height="40" alt="Default Profile Pic">
                                 {% endif %}
                             </td>
+                            <td>{{ trainer.trainer_id }}</td>
                             <td>
                                 <strong>{{ trainer.name }}</strong><br>
-                                <small class="text-muted">#{{ trainer.trainer_id }}</small>
                             </td>
                             <td>
                                 <span class="badge bg-info">{{ trainer.specialization }}</span>

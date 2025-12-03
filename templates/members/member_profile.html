@@ -41,6 +41,7 @@
                                 <img src="{% static 'images/gym-guy.jpg' %}" alt="profile" class="img-lg rounded-circle mb-3"/>
                             {% endif %}
                             <h4>{{ member.first_name }} {{ member.last_name }}</h4>
+                            <p class="text-muted">{{ member.member_id }}</p>
                             {% if due_amount > 0 %}
                             <h5 class="text-danger">Due: ₹{{ due_amount }}</h5>
                             {% endif %}
