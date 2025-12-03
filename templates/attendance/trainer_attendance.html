@@ -125,68 +125,107 @@
                     <tbody>
                         {% for data in trainer_data %}
                         {% with trainer=data.trainer records=data.records is_checked_in=data.is_checked_in %}
-                        <tr class="{% if is_checked_in %}table-success{% else %}table-light{% endif %}">
-                            <td data-label="#">{{ forloop.counter0|add:page_obj.start_index }}</td>
-                            <td data-label="Photo">
-                                {% if trainer.photo %}
-                                    <img src="{{ trainer.photo.url }}" class="rounded-circle" width="40" height="40" alt="{{ trainer }}">
-                                {% else %}
-                                    <img src="{% static 'images/member_DP.jpg' %}" class="rounded-circle" width="40" height="40" alt="Default Profile Pic">
-                                {% endif %}
-                            </td>
-                            <td data-label="Trainer">
-                                <strong>{{ trainer.name }}</strong><br>
-                                 <small class="text-muted">#{{ trainer.trainer_id }}</small>
-                            </td>
-                            <td data-label="Specialization">
-                                <span class="badge bg-info">{{ trainer.specialization }}</span>
-                            </td>
-                            <td data-label="Status">
-                                {% if is_checked_in %}
-                                    <span class="badge bg-success"><i class="mdi mdi-circle"></i> Inside</span>
-                                {% else %}
-                                    <span class="badge bg-secondary">Checked Out</span>
-                                {% endif %}
-                            </td>
-                            {% with latest_record=records.0 %}
-                            <td data-label="Check-In Time">
-                                {% if latest_record %}{{ latest_record.check_in_time|time:"h:i A" }}{% else %}<span class="text-muted">—</span>{% endif %}
-                            </td>
-                            <td data-label="Check-Out Time">
-                                {% if latest_record and latest_record.check_out_time %}{{ latest_record.check_out_time|time:"h:i A" }}{% else %}<span class="text-muted">—</span>{% endif %}
-                            </td>
-                            <td data-label="Duration">
-                                {% if latest_record %}
-                                    {% if latest_record.duration %}
-                                        {{ latest_record.duration }}
-                                    {% elif is_checked_in %}
-                                        <span class="text-live" data-start="{{ latest_record.check_in_time|date:'U' }}">
-                                            <span class="badge bg-info">Live</span>
-                                        </span>
-                                    {% else %}
-                                        <span class="text-muted">—</span>
+                            {% if not records %}
+                                <tr class="table-light">
+                                    <td data-label="#">{{ forloop.counter0|add:page_obj.start_index }}</td>
+                                    <td data-label="Photo">
+                                        {% if trainer.photo %}
+                                            <img src="{{ trainer.photo.url }}" class="rounded-circle" width="40" height="40" alt="{{ trainer }}">
+                                        {% else %}
+                                            <img src="{% static 'images/member_DP.jpg' %}" class="rounded-circle" width="40" height="40" alt="Default Profile Pic">
+                                        {% endif %}
+                                    </td>
+                                    <td data-label="Trainer">
+                                        <strong>{{ trainer.name }}</strong><br>
+                                        <small class="text-muted">#{{ trainer.trainer_id }}</small>
+                                    </td>
+                                    <td data-label="Specialization">
+                                        <span class="badge bg-info">{{ trainer.specialization }}</span>
+                                    </td>
+                                    <td data-label="Status">
+                                        <span class="badge bg-secondary">Checked Out</span>
+                                    </td>
+                                    <td data-label="Check-In Time"><span class="text-muted">—</span></td>
+                                    <td data-label="Check-Out Time"><span class="text-muted">—</span></td>
+                                    <td data-label="Duration"><span class="text-muted">—</span></td>
+                                    <td data-label="Action">
+                                        <form method="post" class="d-inline">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="trainer_id" value="{{ trainer.id }}">
+                                            <button type="submit" name="action" value="checkin" class="btn btn-success btn-sm">
+                                                <i class="mdi mdi-login"></i> Check In
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                {% for record in records %}
+                                <tr class="{% if forloop.first and is_checked_in %}table-success{% else %}table-light{% endif %}">
+                                    {% if forloop.first %}
+                                        <td data-label="#" rowspan="{{ records|length }}">{{ forloop.parentloop.counter0|add:page_obj.start_index }}</td>
+                                        <td data-label="Photo" rowspan="{{ records|length }}">
+                                            {% if trainer.photo %}
+                                                <img src="{{ trainer.photo.url }}" class="rounded-circle" width="40" height="40" alt="{{ trainer }}">
+                                            {% else %}
+                                                <img src="{% static 'images/member_DP.jpg' %}" class="rounded-circle" width="40" height="40" alt="Default Profile Pic">
+                                            {% endif %}
+                                        </td>
+                                        <td data-label="Trainer" rowspan="{{ records|length }}">
+                                            <strong>{{ trainer.name }}</strong><br>
+                                            <small class="text-muted">#{{ trainer.trainer_id }}</small>
+                                        </td>
+                                        <td data-label="Specialization" rowspan="{{ records|length }}">
+                                            <span class="badge bg-info">{{ trainer.specialization }}</span>
+                                        </td>
+                                        <td data-label="Status" rowspan="{{ records|length }}">
+                                            {% if is_checked_in %}
+                                                <span class="badge bg-success"><i class="mdi mdi-circle"></i> Inside</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">Checked Out</span>
+                                            {% endif %}
+                                        </td>
                                     {% endif %}
-                                {% else %}
-                                    <span class="text-muted">—</span>
-                                {% endif %}
-                            </td>
-                            {% endwith %}
-                            <td data-label="Action">
-                                <form method="post" class="d-inline">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="trainer_id" value="{{ trainer.id }}">
-                                    {% if is_checked_in %}
-                                        <button type="submit" name="action" value="checkout" class="btn btn-warning btn-sm">
-                                            <i class="mdi mdi-logout"></i> Check Out
-                                        </button>
-                                    {% else %}
-                                        <button type="submit" name="action" value="checkin" class="btn btn-success btn-sm">
-                                            <i class="mdi mdi-login"></i> Check In
-                                        </button>
+                                    <td data-label="Check-In Time">
+                                        {% if record %}{{ record.check_in_time|time:"h:i A" }}{% else %}<span class="text-muted">—</span>{% endif %}
+                                    </td>
+                                    <td data-label="Check-Out Time">
+                                        {% if record and record.check_out_time %}{{ record.check_out_time|time:"h:i A" }}{% else %}<span class="text-muted">—</span>{% endif %}
+                                    </td>
+                                    <td data-label="Duration">
+                                        {% if record %}
+                                            {% if record.duration %}
+                                                {{ record.duration }}
+                                            {% elif is_checked_in and forloop.first %}
+                                                <span class="text-live" data-start="{{ record.check_in_time|date:'U' }}">
+                                                    <span class="badge bg-info">Live</span>
+                                                </span>
+                                            {% else %}
+                                                <span class="text-muted">—</span>
+                                            {% endif %}
+                                        {% else %}
+                                            <span class="text-muted">—</span>
+                                        {% endif %}
+                                    </td>
+                                    {% if forloop.first %}
+                                        <td data-label="Action" rowspan="{{ records|length }}">
+                                            <form method="post" class="d-inline">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="trainer_id" value="{{ trainer.id }}">
+                                                {% if is_checked_in %}
+                                                    <button type="submit" name="action" value="checkout" class="btn btn-warning btn-sm">
+                                                        <i class="mdi mdi-logout"></i> Check Out
+                                                    </button>
+                                                {% else %}
+                                                    <button type="submit" name="action" value="checkin" class="btn btn-success btn-sm">
+                                                        <i class="mdi mdi-login"></i> Check In
+                                                    </button>
+                                                {% endif %}
+                                            </form>
+                                        </td>
                                     {% endif %}
-                                </form>
-                            </td>
-                        </tr>
+                                </tr>
+                                {% endfor %}
+                            {% endif %}
                         {% endwith %}
                         {% empty %}
                         <tr>

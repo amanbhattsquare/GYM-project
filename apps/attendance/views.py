@@ -83,7 +83,7 @@ def trainer_attendance(request):
         latest_record = records[0] if records else None
         trainer_data.append({
             'trainer': trainer,
-            'records': records,
+            'records': sorted(records, key=lambda x: x.check_in_time, reverse=True) if records else [],
             'is_checked_in': latest_record and latest_record.status == 'inside'
         })
 
@@ -171,7 +171,7 @@ def member_attendance(request):
         latest_record = records[0] if records else None
         member_data.append({
             'member': member,
-            'records': records,
+            'records': sorted(records, key=lambda x: x.check_in_time, reverse=True) if records else [],
             'is_checked_in': latest_record and latest_record.status == 'inside'
         })
 
