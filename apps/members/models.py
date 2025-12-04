@@ -23,7 +23,7 @@ class Member(models.Model):
     identity_type = models.CharField(max_length=50, null=True, blank=True)
     identity_no = models.CharField(max_length=50, null=True, blank=True)
     identity_document_image = models.ImageField(upload_to='identity_docs/', blank=True, null=True)
-    status = models.CharField(max_length=10, choices=[('active', 'Active'), ('inactive', 'Inactive')], default='active')
+    # status = models.CharField(max_length=10, choices=[('active', 'Active'), ('inactive', 'Inactive')], default='active')
 
     # generated member ID like MEM-25-000001
     member_id = models.CharField(max_length=20, unique=True, blank=True)

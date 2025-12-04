@@ -51,7 +51,7 @@
                             <p class="clearfix">
                                 <span class="float-left">Status</span>
                                 <span class="float-right text-muted">
-                                    {% if member.status == 'active' %}
+                                    {% if member.is_active %}
                                         <span class="badge badge-success">Active</span>
                                     {% else %}
                                         <span class="badge badge-danger">Inactive</span>
