@@ -17,6 +17,7 @@ class Payment(models.Model):
     payment_mode = models.CharField(max_length=50, choices=PAYMENT_MODE_CHOICES, default='cash')
     transaction_id = models.CharField(max_length=100, blank=True, null=True)
     comment = models.TextField(blank=True, null=True)
+    follow_up_date = models.DateField(blank=True, null=True)
 
     def __str__(self):
         return f'Payment of {self.amount} for {self.member} on {self.payment_date.strftime("%Y-%m-%d")}'

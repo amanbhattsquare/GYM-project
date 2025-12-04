@@ -50,8 +50,7 @@
 
 
                         {% for member in members %}
-                        <tr onclick="window.location.href='{% url 'member_profile' member.id %}'"
-                            style="cursor: pointer;">
+                        <tr>
 
                             <td data-label="SR. No.">{{ forloop.counter0|add:members.start_index }}</td>
 
@@ -61,7 +60,7 @@
                                     alt="{{ member.first_name }} {{ member.last_name }}">
                             </td>
                             <td data-label="Name">
-                                <strong>{{ member.name }}</strong><br>
+                                <strong> <a href="{% url 'member_profile' member.id %}" class="text-decoration-none">{{ member.name }}</a></strong><br>
                                 <small class="text-muted">#{{ member.member_id }}</small>
                             </td>
                             <td data-label="Email">{{ member.email }}</td>
