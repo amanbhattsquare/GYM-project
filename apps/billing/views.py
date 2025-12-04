@@ -47,6 +47,8 @@ def submit_due(request):
     if request.method == 'POST' and 'amount_paid' in request.POST:
         amount_paid_str = request.POST.get('amount_paid')
         payment_mode = request.POST.get('payment_mode')
+        transaction_id = request.POST.get('transaction_id')
+        comment = request.POST.get('comment')
 
         try:
             amount_paid = Decimal(amount_paid_str)
@@ -62,7 +64,9 @@ def submit_due(request):
             payment = Payment.objects.create(
                 member=selected_member,
                 amount=amount_paid,
-                payment_mode=payment_mode
+                payment_mode=payment_mode,
+                transaction_id=transaction_id,
+                comment=comment
             )
 
             payment_left = amount_paid

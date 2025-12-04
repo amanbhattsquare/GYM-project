@@ -100,6 +100,18 @@
                 </table>
             </div>
 
+            <!-- ================= Transaction ID & Comment ================= -->
+            {% if payment.transaction_id %}
+            <div class="mt-4">
+                <p><strong>Transaction ID:</strong> {{ payment.transaction_id }}</p>
+            </div>
+            {% endif %}
+            {% if payment.comment %}
+            <div class="mt-4">
+                <p><strong>Comment:</strong> {{ payment.comment }}</p>
+            </div>
+            {% endif %}
+
             <!-- ================= Totals ================= -->
             <div class="row justify-content-end">
                 <div class="col-lg-5 col-md-6">

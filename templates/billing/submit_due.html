@@ -79,11 +79,26 @@
                                                 <label for="payment_mode">Payment Mode</label>
                                                 <select class="form-control" id="payment_mode" name="payment_mode" required>
                                                     <option value="cash">Cash</option>
+                                                    <option value="upi">UPI</option>
                                                     <option value="credit_card">Credit Card</option>
                                                     <option value="debit_card">Debit Card</option>
                                                     <option value="net_banking">Net Banking</option>
-                                                    <option value="upi">UPI</option>
+                                                    <option value="other">Other</option>
                                                 </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="transaction_id">Transaction ID</label>
+                                                <input type="text" class="form-control" id="transaction_id" name="transaction_id">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="comment">Comment</label>
+                                                <textarea class="form-control" id="comment" name="comment" rows="3"></textarea>
                                             </div>
                                         </div>
                                     </div>

@@ -51,14 +51,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="id_transaction_id">Transaction ID</label>
-                                    <input type="text" name="transaction_id" class="form-control" id="id_transaction_id">
-                                </div>
-                            </div>
-                        </div>
+                       
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
@@ -93,6 +86,20 @@
                                 <div class="form-group">
                                     <label for="id_payment_mode">Payment Mode</label>
                                     {{ form.payment_mode|attr:'class:form-control' }}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="id_transaction_id">Transaction ID</label>
+                                    <input type="text" name="transaction_id" class="form-control" id="id_transaction_id">
+                                </div>
+                            </div>
+                        </div>
+                         <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="id_comment">Comment</label>
+                                    <textarea name="comment" class="form-control" id="id_comment"></textarea>
                                 </div>
                             </div>
                         </div>
