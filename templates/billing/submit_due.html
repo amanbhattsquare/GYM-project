@@ -70,10 +70,16 @@
                                 {% endif %}
                             </td>
                             <td data-label="Actions">
-                                <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#followUpModal-{{ member.id }}">
+                                <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#followUpModal-{{ member.id }}" title="Update Follow Up Date">
                                     <i class="mdi mdi-calendar-edit"></i> 
                                 </button>
-                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#paymentModal-{{ member.id }}">
+                                <a href="https://wa.me/{{ member.mobile_number }}" target="_blank" class="btn btn-success btn-sm" title="WhatsApp">
+                                    <i class="mdi mdi-whatsapp"></i>
+                                </a>
+                                <a href="tel:{{ member.mobile_number }}" class="btn btn-secondary btn-sm" title="Call">
+                                    <i class="mdi mdi-phone"></i>
+                                </a>
+                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#paymentModal-{{ member.id }}" title="Submit Payment">
                                     <i class="mdi mdi-cash-multiple"></i> Pay
                                 </button>
                             </td>

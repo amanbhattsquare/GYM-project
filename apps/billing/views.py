@@ -57,7 +57,9 @@ def submit_due(request):
         payment_mode = request.POST.get('payment_mode')
         transaction_id = request.POST.get('transaction_id')
         comment = request.POST.get('comment')
-        follow_up_date = request.POST.get('follow_up_date')
+        follow_up_date_str = request.POST.get('follow_up_date')
+        follow_up_date = date.fromisoformat(follow_up_date_str) if follow_up_date_str and follow_up_date_str.strip() else None
+
 
         try:
             amount_paid = Decimal(amount_paid_str)
