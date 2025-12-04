@@ -15,10 +15,15 @@ from django.views.decorators.cache import never_cache
 @never_cache
 @login_required(login_url='login')
 def dashboard(request):
-    total_members = Member.objects.count()
-    active_members = Member.objects.filter(status='active').count()
-    inactive_members = Member.objects.filter(status='inactive').count()
+    members = Member.objects.prefetch_related('membership_history__plan').all()
+    total_members = members.count()
+
+    active_members = 0
+    for member in members:
+        if member.is_active:
+            active_members += 1
     
+    inactive_members = total_members - active_members
     
     # Calculate the date 30 days ago from the current date
     thirty_days_ago = timezone.now().date() - timedelta(days=30)

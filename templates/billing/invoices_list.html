@@ -26,9 +26,10 @@
             <!-- Search and Filter Form -->
             <form method="get" class="mb-4">
                 <div class="row">
-                    <div class="col-md-3">
-                        <input type="text" name="q" class="form-control" placeholder="Search by member or plan..." value="{{ query }}">
-                    </div>
+                    <div class="col-md-6">
+                    {% csrf_token %}
+            <!-- Search form -->
+            {% include 'includes/search_form.html' %}</div>
                     <div class="col-md-3">
                         <select name="status" class="form-control">
                             <option value="">All Statuses</option>
@@ -49,7 +50,9 @@
                     <thead>
                         <tr>
                             <th class="font-weight-semibold py-2">#</th>
-                            <th class="font-weight-semibold py-2">Member</th>
+                            <th class="font-weight-semibold py-2">Invoice No</th>
+                            <th class="font-weight-semibold py-2">Profile</th>
+                            <th class="font-weight-semibold py-2">Member Name</th>
                             <th class="font-weight-semibold py-2">Plan</th>
                             <th class="font-weight-semibold py-2">Amount</th>
                             <th class="font-weight-semibold py-2">Date</th>
@@ -61,7 +64,20 @@
                         {% for invoice in invoices %}
                         <tr>
                             <td data-label="Sr. No.">{{ forloop.counter }}</td>
-                            <td data-label="Member">{{ invoice.member__first_name }} {{ invoice.member__last_name }}</td>
+                            <td data-label="Invoice No">#{{ invoice.invoice_id }}</td>
+                           <td data-label="Profile">
+                                <img src="{% if invoice.member__profile_picture %}{{ invoice.member__profile_picture.url }}{% else %}{% static 'images/member_DP.jpg' %}{% endif %}"
+                                    class="rounded-circle border" style="width: 40px; height: 40px; object-fit: cover;"
+                                    alt="{{ invoice.member__first_name }} {{ invoice.member__last_name }}">
+                            </td>
+                            <td data-label="Name">
+                                {% if invoice.member_id %}
+                                    <strong> <a href="{% url 'member_profile' invoice.member_id %}" class="text-decoration-none">{{ invoice.member__first_name }} {{ invoice.member__last_name }}</a></strong><br>
+                                    <small class="text-muted">#{{ invoice.member__member_id }}</small>
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </td>
                             <td data-label="Plan">
                                 {% if invoice.type == 'membership' %}
                                     {{ invoice.plan__title }}

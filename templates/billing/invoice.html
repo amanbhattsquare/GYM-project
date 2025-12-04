@@ -159,6 +159,11 @@
             </div>
 
             <!-- ================= Comment ================= -->
+            {% if history.transaction_id %}
+            <div class="mt-4">
+                <p><strong>Transaction ID:</strong> {{ history.transaction_id }}</p>
+            </div>
+            {% endif %}
             {% if history.comment %}
             <div class="mt-4">
                 <p><strong>Comment:</strong> {{ history.comment }}</p>

@@ -107,18 +107,7 @@
                                 Please enter a profession.
                             </div>
                         </div>
-                        <div class="col-md-4 mb-3">
-                            <label for="id_status" class="form-label">Status</label>
-                            {{ form.status|attr:"required:true" }}
-                            {% for error in form.status.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ error }}
-                                </div>
-                            {% endfor %}
-                            <div class="invalid-feedback">
-                                Please select a status.
-                            </div>
-                        </div>
+                        
                     </div>
                 </fieldset>
 

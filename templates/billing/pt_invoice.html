@@ -156,8 +156,17 @@
                 </div>
             </div>
 
-        </div>
-    </div>
+            <!-- ================= Comment ================= -->
+            {% if pt_invoice.transaction_id %}
+            <div class="mt-4">
+                <p><strong>Transaction ID:</strong> {{ pt_invoice.transaction_id }}</p>
+            </div>
+            {% endif %}
+            {% if pt_invoice.comment %}
+            <div class="mt-4">
+                <p><strong>Comment:</strong> {{ pt_invoice.comment }}</p>
+            </div>
+            {% endif %}
 
     <!-- ================= Footer Buttons ================= -->
     <div class="text-center mt-4">

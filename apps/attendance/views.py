@@ -108,11 +108,28 @@ def member_attendance(request):
         member_id = request.POST.get('member_id')
         quick_checkin_id = request.POST.get('quick_checkin_id')
 
-        if quick_checkin_id:
+        if quick_checkin_id and action:
             try:
-                member = Member.objects.get(membership_id=quick_checkin_id, status='active')
-                MemberAttendance.objects.create(member=member, check_in_time=timezone.now())
-                messages.success(request, f'{member.name} checked in successfully.')
+                member = get_object_or_404(Member, member_id=quick_checkin_id)
+                if not member.is_active:
+                    messages.error(request, 'This member is not active and cannot be checked in.')
+                    return redirect('member_attendance')
+
+                if action == 'checkin':
+                    if MemberAttendance.objects.filter(member=member, check_in_time__date=today, check_out_time__isnull=True).exists():
+                        messages.warning(request, f'{member.name} is already checked in.')
+                    else:
+                        MemberAttendance.objects.create(member=member, check_in_time=timezone.now())
+                        messages.success(request, f'{member.name} checked in successfully.')
+                elif action == 'checkout':
+                    attendance_record = MemberAttendance.objects.filter(member=member, check_in_time__date=today, check_out_time__isnull=True).first()
+                    if attendance_record:
+                        attendance_record.check_out_time = timezone.now()
+                        attendance_record.status = 'outside'
+                        attendance_record.save()
+                        messages.success(request, f'{member.name} checked out successfully.')
+                    else:
+                        messages.error(request, 'Member is not checked in.')
             except Member.DoesNotExist:
                 messages.error(request, 'Invalid or inactive Membership ID.')
             return redirect('member_attendance')
@@ -144,7 +161,7 @@ def member_attendance(request):
         members_list = Member.objects.annotate(full_name=Concat('first_name', Value(' '), 'last_name')).filter(
             Q(full_name__icontains=query) |
             Q(mobile_number__icontains=query) |
-            Q(membership_id__icontains=query)
+            Q(member_id__icontains=query)
         ).order_by('first_name', 'last_name')
     else:
         members_list = Member.objects.all().order_by('first_name', 'last_name')

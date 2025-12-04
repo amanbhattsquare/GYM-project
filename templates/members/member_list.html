@@ -50,8 +50,7 @@
 
 
                         {% for member in members %}
-                        <tr onclick="window.location.href='{% url 'member_profile' member.id %}'"
-                            style="cursor: pointer;">
+                        <tr>
 
                             <td data-label="SR. No.">{{ forloop.counter0|add:members.start_index }}</td>
 
@@ -61,7 +60,7 @@
                                     alt="{{ member.first_name }} {{ member.last_name }}">
                             </td>
                             <td data-label="Name">
-                                <strong>{{ member.name }}</strong><br>
+                                <strong> <a href="{% url 'member_profile' member.id %}" class="text-decoration-none">{{ member.name }}</a></strong><br>
                                 <small class="text-muted">#{{ member.member_id }}</small>
                             </td>
                             <td data-label="Email">{{ member.email }}</td>
@@ -81,15 +80,13 @@
                                 {% endif %}
                             </td>
                             <td data-label="Status">
-                                <button type="button"
-                                    class="btn btn-sm {% if member.status == 'active' %}btn-success{% else %}btn-danger{% endif %}"
-                                    onclick="toggleStatus('{{ member.id }}', '{{ member.status }}')">
-                                    {% if member.status == 'active' %}
+                                <span class="badge {% if member.is_active %}badge-success{% else %}badge-danger{% endif %}">
+                                    {% if member.is_active %}
                                     Active
                                     {% else %}
                                     Inactive
                                     {% endif %}
-                                </button>
+                                </span>
                             </td>
                             <td data-label="Actions" class="text-center">
                                 <a href="{% url 'member_profile' member.id %}" class="btn btn-info btn-sm"
@@ -132,44 +129,6 @@
 
 {% block scripts %}
 <script>
-    function toggleStatus(memberId, currentStatus) {
-        const url = `/members/toggle-status/${memberId}/`;
-        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-
-        fetch(url, {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': csrfToken,
-                'Content-Type': 'application/json'
-            },
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    const button = document.querySelector(`button[onclick="toggleStatus('${memberId}', '${currentStatus}')"]`);
-                    if (data.new_status === 'active') {
-                        button.classList.remove('btn-danger');
-                        button.classList.add('btn-success');
-                        button.innerHTML = 'Active';
-                        button.setAttribute('onclick', `toggleStatus('${memberId}', 'active')`);
-                    } else {
-                        button.classList.remove('btn-success');
-                        button.classList.add('btn-danger');
-                        button.innerHTML = 'Inactive';
-                        button.setAttribute('onclick', `toggleStatus('${memberId}', 'inactive')`);
-                    }
-                    // Optionally, show a success message
-                    // alert(data.message);
-                } else {
-                    // Handle error
-                    // alert('Error updating status');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                // alert('An error occurred.');
-            });
-    }
     // Initialize tooltips
     document.addEventListener('DOMContentLoaded', function () {
         // Initialize Bootstrap tooltips

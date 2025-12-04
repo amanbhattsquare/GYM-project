@@ -14,20 +14,32 @@ from datetime import date
 @never_cache
 @login_required(login_url='login')
 def submit_due(request):
+    latest_follow_up = Payment.objects.filter(
+        member=models.OuterRef('pk')
+    ).order_by('-follow_up_date').values('follow_up_date')[:1]
+
     members_with_due = Member.objects.annotate(
         membership_due=Sum(F('membership_history__total_amount') - F('membership_history__paid_amount')),
         pt_due=Sum(F('personal_trainer__total_amount') - F('personal_trainer__paid_amount')),
+        latest_follow_up_date=models.Subquery(latest_follow_up)
     ).filter(Q(membership_due__gt=0) | Q(pt_due__gt=0)).distinct()
 
-    selected_member = None
-    total_due_amount = 0
-    active_plan = None
+    query = request.GET.get('q')
+    if query:
+        members_with_due = members_with_due.filter(
+            Q(first_name__icontains=query) |
+            Q(last_name__icontains=query) |
+            Q(mobile_number__icontains=query)
+        )
 
-    member_id = request.GET.get('member_id') or request.POST.get('member_id')
+    paginator = Paginator(members_with_due, 10)  # Show 10 members per page
+    page_number = request.GET.get('page')
+    members_page = paginator.get_page(page_number)
 
-    if member_id:
+    if request.method == 'POST' and 'amount_paid' in request.POST:
+        member_id = request.POST.get('member_id')
         selected_member = get_object_or_404(Member, id=member_id)
-        
+
         # Calculate total due amount for the selected member
         membership_due_info = selected_member.membership_history.aggregate(
             total_due=Sum(F('total_amount') - F('paid_amount'))
@@ -41,12 +53,13 @@ def submit_due(request):
 
         total_due_amount = membership_due + pt_due
 
-        # Get the active plan
-        active_plan = selected_member.membership_history.filter(membership_start_date__isnull=False).order_by('-membership_start_date').first()
-
-    if request.method == 'POST' and 'amount_paid' in request.POST:
         amount_paid_str = request.POST.get('amount_paid')
         payment_mode = request.POST.get('payment_mode')
+        transaction_id = request.POST.get('transaction_id')
+        comment = request.POST.get('comment')
+        follow_up_date_str = request.POST.get('follow_up_date')
+        follow_up_date = date.fromisoformat(follow_up_date_str) if follow_up_date_str and follow_up_date_str.strip() else None
+
 
         try:
             amount_paid = Decimal(amount_paid_str)
@@ -62,7 +75,10 @@ def submit_due(request):
             payment = Payment.objects.create(
                 member=selected_member,
                 amount=amount_paid,
-                payment_mode=payment_mode
+                payment_mode=payment_mode,
+                transaction_id=transaction_id,
+                comment=comment,
+                follow_up_date=follow_up_date
             )
 
             payment_left = amount_paid
@@ -97,12 +113,37 @@ def submit_due(request):
             return redirect('billing:payment_invoice', payment_id=payment.id)
 
     context = {
-        'members': members_with_due,
-        'selected_member': selected_member,
-        'total_due_amount': total_due_amount,
-        'active_plan': active_plan,
+        'members': members_page,
+        'query': query,
     }
     return render(request, 'billing/submit_due.html', context)
+
+@login_required
+def update_follow_up(request, member_id):
+    if request.method == 'POST':
+        follow_up_date_str = request.POST.get('follow_up_date')
+        if follow_up_date_str:
+            try:
+                follow_up_date = date.fromisoformat(follow_up_date_str)
+                member = get_object_or_404(Member, id=member_id)
+                
+                # Create a new payment record for the follow-up
+                Payment.objects.create(
+                    member=member,
+                    amount=0,  # No payment is being made, this is just for the follow-up
+                    payment_mode='other', 
+                    comment=f"Follow-up date updated to {follow_up_date_str}",
+                    follow_up_date=follow_up_date
+                )
+
+                messages.success(request, f"Follow-up date for {member.first_name} {member.last_name} has been updated.")
+            except (ValueError, TypeError):
+                messages.error(request, "Invalid date format.")
+        else:
+            messages.error(request, "No follow-up date provided.")
+    
+    return redirect('billing:submit_due')
+
 
 @never_cache
 @login_required(login_url='login')
@@ -175,7 +216,7 @@ def invoices_list(request):
         due_amount=F('total_amount') - F('paid_amount'),
         invoice_id=F('id'),
         plan_title=F('plan__title')
-    ).values('invoice_id', 'date', 'type', 'amount', 'member_id', 'member__first_name', 'member__last_name', 'plan_title', 'due_amount')
+    ).values('invoice_id', 'date', 'type', 'amount', 'member_id', 'member__member_id', 'member__first_name', 'member__last_name', 'plan_title', 'due_amount')
 
     # Fetch personal training invoices
     pt_invoices = PersonalTrainer.objects.select_related('member', 'trainer').annotate(
@@ -185,7 +226,7 @@ def invoices_list(request):
         due_amount=F('total_amount') - F('paid_amount'),
         invoice_id=F('id'),
         plan_title=F('trainer__name')
-    ).values('invoice_id', 'date', 'type', 'amount', 'member_id', 'member__first_name', 'member__last_name', 'plan_title', 'due_amount')
+    ).values('invoice_id', 'date', 'type', 'amount', 'member_id', 'member__member_id', 'member__first_name', 'member__last_name', 'plan_title', 'due_amount')
 
     # Fetch payment invoices
     payment_invoices = Payment.objects.select_related('member').annotate(
@@ -194,7 +235,7 @@ def invoices_list(request):
         plan_title=Value('N/A', output_field=models.CharField()),
         due_amount=Value(0, output_field=models.DecimalField()),
         invoice_id=F('id')
-    ).values('invoice_id', 'date', 'type', 'amount', 'member_id', 'member__first_name', 'member__last_name', 'plan_title', 'due_amount')
+    ).values('invoice_id', 'date', 'type', 'amount', 'member_id', 'member__member_id', 'member__first_name', 'member__last_name', 'plan_title', 'due_amount')
 
     # Combine and sort invoices
     all_invoices = sorted(
@@ -202,6 +243,9 @@ def invoices_list(request):
         key=lambda x: x['date'],
         reverse='-' in sort_by
     )
+
+    # Filter out invoices with no member_id
+    all_invoices = [inv for inv in all_invoices if inv.get('member_id')]
 
     # Apply search filter
     if query:
