@@ -5,12 +5,7 @@
 
 {% block content %}
 <style>
-    .highlight {
-        background-color: #f0ad4e;
-        color: #fff;
-        padding: 2px 4px;
-        border-radius: 3px;
-    }
+ 
     .video-container {
         position: relative;
         padding-bottom: 56.25%;
@@ -37,20 +32,9 @@
         </div>
     </div>
 
-    <!-- SEARCH BAR -->
-    <div class="row mb-4">
-        <div class="col-md-8 mx-auto">
-            <div class="input-group">
-                <input type="text" id="help-search" class="form-control" placeholder="Search for a topic...">
-                <div class="input-group-append">
-                    <button class="btn btn-primary" type="button"><i class="mdi mdi-magnify"></i></button>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- VIDEO TUTORIALS -->
-    <div class="row mb-4">
+    {% comment %} <div class="row mb-4">
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
@@ -78,7 +62,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> {% endcomment %}
 
     <!-- FAQ SECTIONS -->
     <div class="row">
@@ -174,7 +158,7 @@
                             <div id="collapseFive" class="collapse" aria-labelledby="headingFive" data-parent="#faqAccordion">
                                 <div class="card-body">
                                     <strong>How do I view attendance reports?</strong>
-                                    <p>Go to "Attendance" > "Attendance Report" to generate and view attendance records for members and trainers.</p>
+                                    <p>Go to "Attendance" = "Attendance Report" to generate and view attendance records for members and trainers.</p>
                                     <strong>Can I export data?</strong>
                                     <p>Yes, most tables in the software have an "Export" button that allows you to download data in CSV or PDF format.</p>
                                 </div>
@@ -195,7 +179,7 @@
                                     <strong>How do I change my password?</strong>
                                     <p>You can change your password from the "Settings" page, accessible from the sidebar.</p>
                                     <strong>How do I configure membership plans?</strong>
-                                    <p>Navigate to "Management" > "Membership Plans" to add, edit, or delete membership packages.</p>
+                                    <p>Navigate to "Management" = "Membership Plans" to add, edit, or delete membership packages.</p>
                                 </div>
                             </div>
                         </div>
@@ -226,63 +210,3 @@
 </div>
 {% endblock content %}
 
-{% block javascript %}
-{{ block.super }}
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.getElementById('help-search');
-    const accordionItems = document.querySelectorAll('#faqAccordion .card');
-    const noResults = document.getElementById('no-results');
-
-    function highlightText(text, query) {
-        if (!query) {
-            return text;
-        }
-        const regex = new RegExp(`(${query})`, 'gi');
-        return text.replace(regex, '<span class="highlight">$1</span>');
-    }
-
-    function removeHighlight() {
-        const highlightedElements = document.querySelectorAll('#faqAccordion .highlight');
-        highlightedElements.forEach(el => {
-            el.outerHTML = el.innerHTML;
-        });
-    }
-
-    searchInput.addEventListener('keyup', function() {
-        const filter = searchInput.value.toLowerCase();
-        let resultsFound = false;
-
-        removeHighlight();
-
-        accordionItems.forEach(function(card) {
-            const cardHeader = card.querySelector('.card-header');
-            const cardBody = card.querySelector('.card-body');
-            const headerText = cardHeader.innerText;
-            const bodyText = cardBody.innerText;
-
-            const headerHTML = cardHeader.innerHTML;
-            const bodyHTML = cardBody.innerHTML;
-
-            if (headerText.toLowerCase().includes(filter) || bodyText.toLowerCase().includes(filter)) {
-                card.style.display = "";
-                resultsFound = true;
-
-                if (filter) {
-                    cardHeader.innerHTML = highlightText(headerHTML, filter);
-                    cardBody.innerHTML = highlightText(bodyHTML, filter);
-                }
-            } else {
-                card.style.display = "none";
-            }
-        });
-
-        if (resultsFound) {
-            noResults.style.display = 'none';
-        } else {
-            noResults.style.display = 'block';
-        }
-    });
-});
-</script>
-{% endblock javascript %}
