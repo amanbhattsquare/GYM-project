@@ -25,9 +25,8 @@ class Member(models.Model):
     identity_document_image = models.ImageField(upload_to='identity_docs/', blank=True, null=True)
     status = models.CharField(max_length=10, choices=[('active', 'Active'), ('inactive', 'Inactive')], default='active')
 
-    # NEW FIELD
+    # generated member ID like MEM-25-000001
     member_id = models.CharField(max_length=20, unique=True, blank=True)
-
     def save(self, *args, **kwargs):
         if not self.member_id:
             # get current year last two digits
@@ -87,7 +86,8 @@ class MembershipHistory(models.Model):
     discount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
     paid_amount = models.DecimalField(max_digits=10, decimal_places=2)
-    payment_mode = models.CharField(max_length=50, choices=[('cash', 'Cash'), ('card', 'Card'), ('upi', 'UPI')])
+    payment_mode = models.CharField(max_length=50, choices=[('cash', 'Cash'), ('card', 'Card'), ('upi', 'UPI'), ('net_banking', 'Net Banking'),('other', 'Other')])
+    transaction_id = models.CharField(max_length=100, blank=True, null=True)
     comment = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -124,7 +124,9 @@ class PersonalTrainer(models.Model):
     discount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
     paid_amount = models.DecimalField(max_digits=10, decimal_places=2)
-    payment_mode = models.CharField(max_length=50, choices=[('cash', 'Cash'), ('card', 'Card'), ('upi', 'UPI')])
+    payment_mode = models.CharField(max_length=50, choices=[('cash', 'Cash'), ('card', 'Card'), ('upi', 'UPI'), ('net_banking', 'Net Banking'),('other', 'Other')])
+    transaction_id = models.CharField(max_length=100, blank=True, null=True)
+    comment = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

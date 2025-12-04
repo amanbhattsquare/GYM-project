@@ -82,32 +82,24 @@
         <div class="card-body">
             <!-- Quick Search + Manual ID Entry -->
             <div class="row mb-4">
-                <div class="col-md-8">
+                <div class="col-md-6">
                     {% include 'includes/search_form.html' with placeholder="Search by name, phone or membership ID..." %}
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <form method="post" class="d-inline">
                         {% csrf_token %}
                         <div class="input-group">
                             <input type="text" name="quick_checkin_id" class="form-control" placeholder="Scan/Enter Membership ID" autofocus>
-                            <button type="submit" name="quick_action" value="checkin" class="btn btn-success">
+                            <button type="submit" name="action" value="checkin" class="btn btn-success">
                                 <i class="mdi mdi-login"></i> Check In
+                            </button>
+                            <button type="submit" name="action" value="checkout" class="btn btn-warning">
+                                <i class="mdi mdi-logout"></i> Check Out
                             </button>
                         </div>
                     </form>
                 </div>
             </div>
-
-            <!-- Success/Error Alerts -->
-            {% if messages %}
-                {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                    <i class="mdi {% if 'success' in message.tags %}mdi-check-circle{% else %}mdi-alert-circle{% endif %}"></i>
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-                {% endfor %}
-            {% endif %}
 
            <div class="table-responsive">
                 <table class="table table-hover table-sm table-stack-on-mobile">

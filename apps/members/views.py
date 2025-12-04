@@ -207,11 +207,12 @@ def assign_membership_plan(request, member_id):
         if form.is_valid():
             history = form.save(commit=False)
             history.member = member
+            history.transaction_id = request.POST.get('transaction_id')
             history.save()
             member.membership_plan = history.plan
             member.save()
             messages.success(request, f'Membership plan "{history.plan.title}" assigned to {member.first_name} {member.last_name}.')
-            return redirect('member_profile', member_id=member.id)
+            return redirect('billing:invoice', member_id=member.id, history_id=history.id)
     else:
         form = MembershipHistoryForm()
     return render(request, 'members/membership_plan_assign.html', {'member': member, 'plans': plans, 'plans_json': plans_json, 'form': form})
@@ -227,6 +228,7 @@ def assign_pt_trainer(request, member_id):
         if form.is_valid():
             pt_assignment = form.save(commit=False)
             pt_assignment.member = member
+            pt_assignment.transaction_id = request.POST.get('transaction_id')
             pt_assignment.save()
             messages.success(request, f'Personal Trainer "{pt_assignment.trainer.name}" assigned to {member.first_name} {member.last_name}.')
             return redirect('billing:pt_invoice', member_id=member.id, pt_invoice_id=pt_assignment.id)
