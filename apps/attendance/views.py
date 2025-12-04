@@ -110,10 +110,17 @@ def member_attendance(request):
 
         if quick_checkin_id and action:
             try:
-                member = get_object_or_404(Member, member_id=quick_checkin_id, status='active')
+                member = get_object_or_404(Member, member_id=quick_checkin_id)
+                if not member.is_active:
+                    messages.error(request, 'This member is not active and cannot be checked in.')
+                    return redirect('member_attendance')
+
                 if action == 'checkin':
-                    MemberAttendance.objects.create(member=member, check_in_time=timezone.now())
-                    messages.success(request, f'{member.name} checked in successfully.')
+                    if MemberAttendance.objects.filter(member=member, check_in_time__date=today, check_out_time__isnull=True).exists():
+                        messages.warning(request, f'{member.name} is already checked in.')
+                    else:
+                        MemberAttendance.objects.create(member=member, check_in_time=timezone.now())
+                        messages.success(request, f'{member.name} checked in successfully.')
                 elif action == 'checkout':
                     attendance_record = MemberAttendance.objects.filter(member=member, check_in_time__date=today, check_out_time__isnull=True).first()
                     if attendance_record:
