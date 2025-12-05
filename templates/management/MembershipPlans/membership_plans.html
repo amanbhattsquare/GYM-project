@@ -36,7 +36,9 @@
                         <tr>
                             <th class="font-weight-semibold py-2"> SR. No.</th>
                             <th class="font-weight-semibold py-2">Name</th>
-                            <th class="font-weight-semibold py-2">Price</th>
+                            <th class="font-weight-semibold py-2">Amount</th>
+                            <th class="font-weight-semibold py-2">Discount</th>
+                            <th class="font-weight-semibold py-2">Offer Price</th>
                             <th class="font-weight-semibold py-2">Duration</th>
                             <th class="font-weight-semibold py-2">Add on days</th>
                             <th class="font-weight-semibold py-2">Description</th>
@@ -48,7 +50,9 @@
                         <tr>
                             <td data-label="SR. No.">{{ forloop.counter0|add:plans.start_index }}</td>
                             <td data-label="Name">{{ plan.title }}</td>
-                            <td data-label="Price">{{ plan.price }}</td>
+                            <td data-label="Amount">{{ plan.amount }}</td>
+                            <td data-label="Discount">{{ plan.discount }}</td>
+                            <td data-label="Offer Price">{{ plan.offer_price }}</td>
                             <td data-label="Duration">{{ plan.get_duration_display }}</td>
                             <td data-label="add_on_days">{{ plan.add_on_days }}</td>
                             <td data-label="Description">{{ plan.description }}</td>
@@ -89,10 +93,24 @@
                 {{ form.title|attr:"class:form-control" }}
             </div>
             <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form.amount.label_tag }}
+                        {{ form.amount|attr:"class:form-control" }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form.discount.label_tag }}
+                        {{ form.discount|attr:"class:form-control" }}
+                    </div>
+                </div>
+            </div>
+            <div class="row">
                 <div class="col-md-4">
                     <div class="form-group">
-                        {{ form.price.label_tag }}
-                        {{ form.price|attr:"class:form-control" }}
+                        <label for="id_offer_price">Offer Price</label>
+                        <input type="text" id="id_offer_price" name="offer_price" class="form-control" readonly>
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -118,5 +136,23 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const amountInput = document.getElementById('id_amount');
+        const discountInput = document.getElementById('id_discount');
+        const offerPriceInput = document.getElementById('id_offer_price');
+
+        function calculateOfferPrice() {
+            const amount = parseFloat(amountInput.value) || 0;
+            const discount = parseFloat(discountInput.value) || 0;
+            const offerPrice = amount - discount;
+            offerPriceInput.value = offerPrice.toFixed(2);
+        }
+
+        amountInput.addEventListener('input', calculateOfferPrice);
+        discountInput.addEventListener('input', calculateOfferPrice);
+    });
+</script>
 
 {% endblock %}

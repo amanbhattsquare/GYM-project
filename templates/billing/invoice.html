@@ -116,9 +116,9 @@
                                     <br><small class="text-muted">{{ history.plan.description }}</small>
                                 {% endif %}
                             </td>
-                            <td class="right">₹{{ history.plan.price }}</td>
-                            <td class="center">1</td>
-                            <td class="right">₹{{ history.total_amount }}</td>
+                            <td class="right">₹{{ history.plan.amount }}</td>
+                            <td class="center">₹{{ history.plan.discount }}</td>
+                            <td class="right">₹{{ history.plan.offer_price }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -131,15 +131,15 @@
                         <tbody>
                             <tr>
                                 <td><strong>Subtotal</strong></td>
-                                <td class="text-right">₹{{ history.total_amount }}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Discount</strong></td>
-                                <td class="text-right">₹{{ history.discount }}</td>
+                                <td class="text-right">₹{{ history.plan.offer_price }}</td>
                             </tr>
                             <tr>
                                 <td><strong>Registration Fee</strong></td>
                                 <td class="text-right">₹{{ history.registration_fee }}</td>
+                            </tr>
+                             <tr>
+                                <td><strong>Discount on Total</strong></td>
+                                <td class="text-right">- ₹{{ history.discount }}</td>
                             </tr>
                             <tr class="bg-light">
                                 <td><strong>Total</strong></td>

@@ -13,10 +13,16 @@ class MembershipPlan(models.Model):
     ]
 
     title = models.CharField(max_length=100)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    discount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    offer_price = models.DecimalField(max_digits=10, decimal_places=2, editable=False, null=True, blank=True)
     duration = models.CharField(max_length=20, choices=DURATION_CHOICES, default='1_month')
     description = models.TextField(blank=True, null=True)
     add_on_days = models.IntegerField(default=0)
+
+    def save(self, *args, **kwargs):
+        self.offer_price = self.amount - self.discount
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.title
