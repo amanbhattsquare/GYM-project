@@ -24,24 +24,31 @@
                     <form class="forms-sample" action="{% url 'assign_membership_plan' member.id %}" method="post">
                         {% csrf_token %}
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="id_plan">Plan</label>
                                     {{ form.plan|attr:'class:form-control' }}
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <div class="form-group">
-                                    <label for="id_registration_fee">Registration Fee</label>
-                                    {{ form.registration_fee|attr:'class:form-control' }}
+                                    <label for="id_add_on_days">Add on days </label>
+                                    {{ form.add_on_days|attr:'class:form-control' }}
                                 </div>
                             </div>
+                             <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="id_membership_start_date">Membership Start Date</label>
+                                    {{ form.membership_start_date|attr:'class:form-control' }}
+                                </div>
+                            </div>
+                            
                         </div>
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="id_membership_start_date">Membership Start Date</label>
-                                    {{ form.membership_start_date|attr:'class:form-control' }}
+                                    <label for="id_registration_fee">Registration Fee</label>
+                                    {{ form.registration_fee|attr:'class:form-control' }}
                                 </div>
                             </div>
                             <div class="col-md-6">

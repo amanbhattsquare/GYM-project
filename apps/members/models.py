@@ -83,6 +83,7 @@ class MembershipHistory(models.Model):
     plan = models.ForeignKey('management.MembershipPlan', on_delete=models.CASCADE)
     registration_fee = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     membership_start_date = models.DateField()
+    add_on_days = models.IntegerField(default=0)
     discount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
     paid_amount = models.DecimalField(max_digits=10, decimal_places=2)
@@ -103,16 +104,22 @@ class MembershipHistory(models.Model):
         duration_value = int(duration_parts[0])
         duration_unit = duration_parts[1]
 
+        total_add_on_days = self.add_on_days + self.plan.add_on_days
+
         if duration_unit == 'day' or duration_unit == 'days':
-            return self.membership_start_date + timedelta(days=duration_value)
+            return self.membership_start_date + timedelta(days=duration_value + total_add_on_days)
         elif duration_unit == 'week' or duration_unit == 'weeks':
-            return self.membership_start_date + timedelta(weeks=duration_value)
+            return self.membership_start_date + timedelta(weeks=duration_value) + timedelta(days=total_add_on_days)
         elif duration_unit == 'month' or duration_unit == 'months':
             # This is an approximation, for more accurate calculations, consider using dateutil.relativedelta
-            return self.membership_start_date + timedelta(days=30 * duration_value)
+            return self.membership_start_date + timedelta(days=30 * duration_value) + timedelta(days=total_add_on_days)
         elif duration_unit == 'year' or duration_unit == 'years':
-            return self.membership_start_date + timedelta(days=365 * duration_value)
+            return self.membership_start_date + timedelta(days=365 * duration_value) + timedelta(days=total_add_on_days)
         return None
+
+    @property
+    def total_add_on_days(self):
+        return self.add_on_days + self.plan.add_on_days
 
 class PersonalTrainer(models.Model):
     member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name='personal_trainer')
