@@ -93,9 +93,9 @@
                                     data-toggle="tooltip" title="View"><i class="mdi mdi-eye-outline"></i></a>
                                 <a href="{% url 'edit_member' member.id %}" class="btn btn-primary btn-sm"
                                     data-toggle="tooltip" title="Edit"><i class="mdi mdi-pencil-outline"></i></a>
-                                <button type="button" class="btn btn-danger btn-sm"
+                                {% comment %} <button type="button" class="btn btn-danger btn-sm"
                                     onclick="confirmDelete('{{ member.id }}', '{{ member.first_name }} {{ member.last_name }}', '{% url 'delete_member' member.id %}')"
-                                    data-toggle="tooltip" title="Delete"><i class="mdi mdi-delete-outline"></i></button>
+                                    data-toggle="tooltip" title="Delete"><i class="mdi mdi-delete-outline"></i></button> {% endcomment %}
                             </td>
                         </tr>
                         {% empty %}

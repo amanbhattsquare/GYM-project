@@ -38,6 +38,7 @@
                             <th class="font-weight-semibold py-2">Name</th>
                             <th class="font-weight-semibold py-2">Price</th>
                             <th class="font-weight-semibold py-2">Duration</th>
+                            <th class="font-weight-semibold py-2">Add on days</th>
                             <th class="font-weight-semibold py-2">Description</th>
                             <th>Actions</th>
                         </tr>
@@ -49,6 +50,7 @@
                             <td data-label="Name">{{ plan.title }}</td>
                             <td data-label="Price">{{ plan.price }}</td>
                             <td data-label="Duration">{{ plan.get_duration_display }}</td>
+                            <td data-label="add_on_days">{{ plan.add_on_days }}</td>
                             <td data-label="Description">{{ plan.description }}</td>
                             <td data-label="Actions">
                                 <a href="{% url 'edit_membership_plan' plan.id %}" class="btn btn-primary btn-sm"> <i class="mdi mdi-pencil-outline"></i></a>
@@ -87,28 +89,34 @@
                 {{ form.title|attr:"class:form-control" }}
             </div>
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="form-group">
                         {{ form.price.label_tag }}
                         {{ form.price|attr:"class:form-control" }}
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        {{ form.duration.label_tag }}
-                        {{ form.duration|attr:"class:form-control" }}
+                <div class="col-md-4">
+                            <div class="form-group">
+                                {{ form.duration.label_tag }}
+                                {{ form.duration|attr:"class:form-control" }}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                {{ form.add_on_days.label_tag }}
+                                {{ form.add_on_days|attr:"class:form-control" }}
+                            </div>
+                        </div>
                     </div>
-                </div>
+                    <div class="form-group">
+                        {{ form.description.label_tag }}
+                        {{ form.description|attr:"class:form-control" }}
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Plan</button>
+                </form>
             </div>
-            <div class="form-group">
-                {{ form.description.label_tag }}
-                {{ form.description|attr:"class:form-control" }}
-            </div>
-            <button type="submit" class="btn btn-primary">Add Plan</button>
-        </form>
-      </div>
+        </div>
     </div>
-  </div>
 </div>
 
 {% endblock %}

@@ -21,6 +21,7 @@ class MembershipPlanForm(forms.ModelForm):
             'title': forms.TextInput(attrs={'class': 'form-control'}),
             'price': forms.NumberInput(attrs={'class': 'form-control'}),
             'duration': forms.Select(attrs={'class': 'form-control'}),
+            'add_on_days': forms.NumberInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         }
 

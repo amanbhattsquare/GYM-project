@@ -63,11 +63,12 @@ class EmergencyContactForm(forms.ModelForm):
 class MembershipHistoryForm(forms.ModelForm):
     class Meta:
         model = MembershipHistory
-        fields = ['plan', 'registration_fee', 'membership_start_date', 'discount', 'total_amount', 'paid_amount', 'payment_mode', 'comment']
+        fields = ['plan', 'registration_fee', 'membership_start_date', 'add_on_days', 'discount', 'total_amount', 'paid_amount', 'payment_mode', 'comment']
         widgets = {
             'plan': forms.Select(attrs={'class': 'form-control'}),
             'registration_fee': forms.NumberInput(attrs={'class': 'form-control'}),
             'membership_start_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'add_on_days': forms.NumberInput(attrs={'class': 'form-control'}),
             'discount': forms.NumberInput(attrs={'class': 'form-control'}),
             'total_amount': forms.NumberInput(attrs={'class': 'form-control', 'readonly': True}),
             'paid_amount': forms.NumberInput(attrs={'class': 'form-control'}),
