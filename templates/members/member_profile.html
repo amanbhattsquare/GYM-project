@@ -202,11 +202,11 @@
                                                     <p class="card-text">{{ membership_plan.description }}</p>
                                                     <ul class="list-group list-group-flush">
                                                         <li class="list-group-item"><strong>Duration:</strong> {{ membership_plan.get_duration_display }}</li>
-                                                        <li class="list-group-item"><strong>Price:</strong> ₹{{ membership_plan.price }}</li>
+                                                        <li class="list-group-item"><strong>Amount:</strong> ₹{{ membership_plan.amount }}</li>
+                                                        <li class="list-group-item"><strong>Discount:</strong> ₹{{ membership_plan.discount }}</li>
+                                                        <li class="list-group-item"><strong>Offer Price:</strong> ₹{{ membership_plan.offer_price }}</li>
                                                     </ul>
                                                     <p class="card-text">
-                                                        <strong>Price:</strong> {{ membership_history.plan.price }} <br>
-                                                        <strong>Duration:</strong> {{ membership_history.plan.get_duration_display }} <br>
                                                         <strong>Start Date:</strong> {{ membership_history.membership_start_date|date:"d-m-Y" }} <br>
                                                         <strong>End Date:</strong> {{ membership_history.get_end_date|date:"d-m-Y" }} <br>
                                                         <strong>Add on Days:</strong> {{ membership_history.total_add_on_days }}
@@ -228,7 +228,7 @@
                                                             <th>Start Date</th>
                                                             <th>End Date</th>
                                                             <th>Add on Days</th>
-                                                            <th>Price</th>
+                                                            <th>Offer Price</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -238,7 +238,7 @@
                                                                 <td>{{ history.membership_start_date|date:"d-m-Y" }}</td>
                                                                 <td>{{ history.get_end_date|date:"d-m-Y" }}</td>
                                                                 <td>{{ history.total_add_on_days }}</td>
-                                                                <td>{{ history.plan.price }}</td>
+                                                                <td>{{ history.plan.offer_price }}</td>
                                                             </tr>
                                                         {% endfor %}
                                                     </tbody>

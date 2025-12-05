@@ -125,15 +125,15 @@ document.addEventListener('DOMContentLoaded', function () {
         const registrationFee = parseFloat(registrationFeeInput.value) || 0;
         const discount = parseFloat(discountInput.value) || 0;
         
-        let planPrice = 0;
+        let planOfferPrice = 0;
         if (selectedPlanId && plansData.length > 0) {
             const selectedPlan = plansData.find(p => p.pk == selectedPlanId);
             if (selectedPlan) {
-                planPrice = parseFloat(selectedPlan.fields.price);
+                planOfferPrice = parseFloat(selectedPlan.fields.offer_price);
             }
         }
         
-        const totalAmount = planPrice + registrationFee - discount;
+        const totalAmount = planOfferPrice + registrationFee - discount;
         totalAmountInput.value = totalAmount.toFixed(2);
         totalDisplay.textContent = totalAmount.toFixed(2);
     }

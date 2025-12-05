@@ -34,8 +34,18 @@
                         {{ form.title }}
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label for="id_price" class="form-label">Price</label>
-                        {{ form.price }}
+                        <label for="id_amount" class="form-label">Amount</label>
+                        {{ form.amount }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="id_discount" class="form-label">Discount</label>
+                        {{ form.discount }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="id_offer_price" class="form-label">Offer Price</label>
+                        <input type="text" id="id_offer_price" name="offer_price" class="form-control" value="{{ form.instance.offer_price|default_if_none:'' }}" readonly>
                     </div>
                 </div>
                 <div class="row">
@@ -61,5 +71,22 @@
     </div>
 </div>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const amountInput = document.getElementById('id_amount');
+        const discountInput = document.getElementById('id_discount');
+        const offerPriceInput = document.getElementById('id_offer_price');
+
+        function calculateOfferPrice() {
+            const amount = parseFloat(amountInput.value) || 0;
+            const discount = parseFloat(discountInput.value) || 0;
+            const offerPrice = amount - discount;
+            offerPriceInput.value = offerPrice.toFixed(2);
+        }
+
+        amountInput.addEventListener('input', calculateOfferPrice);
+        discountInput.addEventListener('input', calculateOfferPrice);
+    });
+</script>
 
 {% endblock %}

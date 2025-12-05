@@ -50,3 +50,7 @@ In Member table Status (Active/ Expired)
 Create due table in due page and in table add follow up date also
 
 Update plan- here upadate user's membership plan, 
+
+delete invoice 
+
+
