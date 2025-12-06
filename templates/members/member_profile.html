@@ -67,6 +67,38 @@
                                 <span class="float-right text-muted">{{ member.email }}</span>
                             </p>
                         </div>
+                        <div class="py-4">
+                            <h4>Current Membership Plan</h4>
+                            {% if membership_history %}
+                                <p class="clearfix">
+                                    <span class="float-left">Plan</span>
+                                    <span class="float-right text-muted">{{ membership_plan.title }}</span>
+                                </p>
+                                <p class="clearfix">
+                                    <span class="float-left">End Date</span>
+                                    <span class="float-right text-muted">{{ membership_history.get_end_date|date:"d-m-Y" }}</span>
+                                </p>
+                            {% else %}
+                                <p class="text-muted">No active membership plan.</p>
+                            {% endif %}
+                        </div>
+                        <div class="py-4">
+                            <h4>Personal Trainer Info</h4>
+                            {% if pt_member.first %}
+                                {% with pt=pt_member.first %}
+                                <p class="clearfix">
+                                    <span class="float-left">Trainer</span>
+                                    <span class="float-right text-muted">{{ pt.trainer.name }}</span>
+                                </p>
+                                <p class="clearfix">
+                                    <span class="float-left">End Date</span>
+                                    <span class="float-right text-muted">{{ pt.get_end_date|date:"d-m-Y" }}</span>
+                                </p>
+                                {% endwith %}
+                            {% else %}
+                                <p class="text-muted">No personal trainer assigned.</p>
+                            {% endif %}
+                        </div>
                     </div>
                     <div class="col-lg-8">
                         <div class="mt-4 py-2">
@@ -96,34 +128,64 @@
                             </ul>
                             <div class="tab-content" id="myTabContent">
                                   <div class="tab-pane fade" id="personal-trainer" role="tabpanel" aria-labelledby="personal-trainer-tab">
-                                      <div class="table-responsive">
-                                          <table class="table table-bordered">
-                                              <thead>
-                                                  <tr>
-                                                      <th>Trainer Name</th>
-                                                      <th>Start Date</th>
-                                                      <th>End Date</th>
-                                                      <th>Total Amount</th>
-                                                      <th>Paid Amount</th>
-                                                  </tr>
-                                              </thead>
-                                              <tbody>
-                                                  {% for pt in pt_member %}
-                                                  <tr>
-                                                      <td>{{ pt.trainer.name }}</td>
-                                                      <td>{{ pt.pt_start_date|date:"d-m-Y" }}</td>
-                                                      <td>{{ pt.get_end_date|date:"d-m-Y" }}</td>
-                                                      <td>{{ pt.total_amount }}</td>
-                                                      <td>{{ pt.paid_amount }}</td>
-                                                  </tr>
-                                                  {% empty %}
-                                                  <tr>
-                                                      <td colspan="5" class="text-center">This member has not been assigned a personal trainer.</td>
-                                                  </tr>
-                                                  {% endfor %}
-                                              </tbody>
-                                          </table>
-                                      </div>
+                                    <div class="py-3">
+                                        <h4>Personal Trainer Info</h4>
+                                        {% for pt in pt_member %}
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered">
+                                                    <tbody>
+                                                        <tr>
+                                                            <th>Trainer Name</th>
+                                                            <td>{{ pt.trainer.name }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Months</th>
+                                                            <td>{{ pt.months }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Trainer Fee</th>
+                                                            <td>{{ pt.trainer_fee }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>GYM Charges</th>
+                                                            <td>{{ pt.gym_charges }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Start Date</th>
+                                                            <td>{{ pt.pt_start_date|date:"d-m-Y" }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>End Date</th>
+                                                            <td>{{ pt.get_end_date|date:"d-m-Y" }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Discount</th>
+                                                            <td>{{ pt.discount }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Total Amount</th>
+                                                            <td>{{ pt.total_amount }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Paid Amount</th>
+                                                            <td>{{ pt.paid_amount }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Payment Mode</th>
+                                                            <td>{{ pt.get_payment_mode_display }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Transaction ID</th>
+                                                            <td>{{ pt.transaction_id|default_if_none:"N/A" }}</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            {% if not forloop.last %}<hr>{% endif %}
+                                        {% empty %}
+                                            <p class="text-muted">This member has not been assigned a personal trainer.</p>
+                                        {% endfor %}
+                                    </div>
                                   </div>
                                 <div class="tab-pane fade show active" id="personal" role="tabpanel" aria-labelledby="personal-tab">
                                     <div class="py-3">
@@ -197,22 +259,47 @@
                                     <div class="py-3">
                                         {% if membership_history %}
                                             <h4>Current Membership Plan</h4>
-                                            <div class="card">
-                                                <div class="card-body">
-                                                    <h5 class="card-title">{{ membership_plan.title }}</h5>
-                                                    <p class="card-text">{{ membership_plan.description }}</p>
-                                                    <ul class="list-group list-group-flush">
-                                                        <li class="list-group-item"><strong>Duration:</strong> {{ membership_plan.get_duration_display }}</li>
-                                                        <li class="list-group-item"><strong>Amount:</strong> ₹{{ membership_plan.amount }}</li>
-                                                        <li class="list-group-item"><strong>Discount:</strong> ₹{{ membership_plan.discount }}</li>
-                                                        <li class="list-group-item"><strong>Offer Price:</strong> ₹{{ membership_plan.offer_price }}</li>
-                                                    </ul>
-                                                    <p class="card-text">
-                                                        <strong>Start Date:</strong> {{ membership_history.membership_start_date|date:"d-m-Y" }} <br>
-                                                        <strong>End Date:</strong> {{ membership_history.get_end_date|date:"d-m-Y" }} <br>
-                                                        <strong>Add on Days:</strong> {{ membership_history.total_add_on_days }}
-                                                    </p>
-                                                </div>
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered">
+                                                    <tbody>
+                                                        <tr>
+                                                            <th>Plan</th>
+                                                            <td>{{ membership_plan.title }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Description</th>
+                                                            <td>{{ membership_plan.description }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Duration</th>
+                                                            <td>{{ membership_plan.get_duration_display }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Amount</th>
+                                                            <td>₹{{ membership_plan.amount }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Discount</th>
+                                                            <td>₹{{ membership_plan.discount }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Offer Price</th>
+                                                            <td>₹{{ membership_plan.offer_price }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Start Date</th>
+                                                            <td>{{ membership_history.membership_start_date|date:"d-m-Y" }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>End Date</th>
+                                                            <td>{{ membership_history.get_end_date|date:"d-m-Y" }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Add on Days</th>
+                                                            <td>{{ membership_history.total_add_on_days }}</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
                                             </div>
                                             <hr>
                                         {% else %}
