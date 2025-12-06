@@ -100,7 +100,7 @@
                             <td data-label="Date">{{ expense.date }}</td>
 
                             <td data-label="Category">
-                                <span class="badge bg-dark">{{ expense.get_category_display }}</span>
+                                <span class="badge bg-dark text-white">{{ expense.get_category_display }}</span>
                             </td>
 
                             <td data-label="Vendor">
@@ -108,7 +108,7 @@
                             </td>
 
                             <td data-label="Payment">
-                                <span class="badge bg-info text-dark">{{ expense.get_payment_mode_display }}</span>
+                                <span class="badge bg-info text-white">{{ expense.get_payment_mode_display }}</span>
                                 {% if expense.transaction_id %}
                                 <br><small class="text-muted">TX: {{ expense.transaction_id }}</small>
                                 {% endif %}

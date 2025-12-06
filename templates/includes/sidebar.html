@@ -103,17 +103,16 @@
     </li>
 
     <!--  Expenses -->
-    <li class="nav-item">
-      <a class="nav-link" data-toggle="collapse" href="#expenses" aria-expanded="false" aria-controls="expenses">
+    <li class="nav-item {% if request.resolver_match.url_name == 'expenses' or request.resolver_match.url_name == 'expense_add' or request.resolver_match.url_name == 'expense_trash' %}active{% endif %}">
+      <a class="nav-link" data-toggle="collapse" href="#expenses" aria-expanded="{% if request.resolver_match.url_name == 'expenses' or request.resolver_match.url_name == 'expense_add' or request.resolver_match.url_name == 'expense_trash' %}true{% else %}false{% endif %}" aria-controls="expenses">
         <i class="mdi mdi-cash-multiple menu-icon"></i>
         <span class="menu-title">Expenses</span>
         <i class="menu-arrow"></i>
       </a>
-      <div class="collapse" id="expenses">
+      <div class="collapse {% if request.resolver_match.url_name == 'expenses' or request.resolver_match.url_name == 'expense_add' or request.resolver_match.url_name == 'expense_trash' %}show{% endif %}" id="expenses">
         <ul class="nav flex-column sub-menu">
-          <li class="nav-item"><a class="nav-link" href="{% url 'expenses' %}">All Expenses</a></li>
-          <li class="nav-item"><a class="nav-link" href="{% url 'expense_add' %}">Add Expense</a></li>
-      
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'expenses' %}active{% endif %}" href="{% url 'expenses' %}">All Expenses</a></li>
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'expense_add' %}active{% endif %}" href="{% url 'expense_add' %}">Add Expense</a></li>
         </ul>
       </div>
     </li>
