@@ -155,9 +155,6 @@ def payment_invoice(request, payment_id):
     return render(request, 'billing/payment_invoice.html', context)
 
 
-
-
-
 @never_cache
 @login_required(login_url='login')
 def invoice(request, member_id, history_id):
@@ -209,7 +206,7 @@ def invoices_list(request):
     sort_by = request.GET.get('sort', '-date')
 
     # Fetch membership invoices
-    membership_invoices = MembershipHistory.objects.select_related('member', 'plan').annotate(
+    membership_invoices = MembershipHistory.objects.select_related('member', 'plan').filter(status='active').annotate(
         date=F('created_at'),
         type=Value('membership', output_field=models.CharField()),
         amount=F('total_amount'),
@@ -219,7 +216,7 @@ def invoices_list(request):
     ).values('invoice_id', 'date', 'type', 'amount', 'member_id', 'member__member_id', 'member__first_name', 'member__last_name', 'plan_title', 'due_amount')
 
     # Fetch personal training invoices
-    pt_invoices = PersonalTrainer.objects.select_related('member', 'trainer').annotate(
+    pt_invoices = PersonalTrainer.objects.select_related('member', 'trainer').filter(status='active').annotate(
         date=F('created_at'),
         type=Value('pt', output_field=models.CharField()),
         amount=F('total_amount'),
@@ -260,6 +257,10 @@ def invoices_list(request):
             all_invoices = [inv for inv in all_invoices if inv['type'] == 'payment' or (inv['type'] == 'membership' and inv['due_amount'] == 0)]
         elif status_filter == 'unpaid':
             all_invoices = [inv for inv in all_invoices if inv['type'] == 'membership' and inv['due_amount'] > 0]
+        elif status_filter == 'receipt':
+            all_invoices = [inv for inv in all_invoices if inv['type'] == 'payment']
+        elif status_filter == 'invoice':
+            all_invoices = [inv for inv in all_invoices if inv['type'] in ['membership', 'pt']]
 
     # Pagination
     paginator = Paginator(all_invoices, 15)
@@ -272,3 +273,99 @@ def invoices_list(request):
         'status_filter': status_filter,
         'query': query,
     })
+
+from django.http import JsonResponse
+
+@login_required
+def delete_invoice(request, invoice_type, invoice_id):
+    if request.method == 'POST':
+        try:
+            if invoice_type == 'membership':
+                invoice = get_object_or_404(MembershipHistory, id=invoice_id)
+            elif invoice_type == 'pt':
+                invoice = get_object_or_404(PersonalTrainer, id=invoice_id)
+            else:
+                return JsonResponse({'status': 'error', 'message': 'Invalid invoice type.'}, status=400)
+
+            invoice.status = 'inactive'
+            invoice.save()
+            return JsonResponse({'status': 'success', 'message': 'Invoice deleted successfully.'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+
+    # Keep the old GET request logic for other purposes if needed, but it won't be used by the new delete button.
+    if invoice_type == 'membership':
+        invoice = get_object_or_404(MembershipHistory, id=invoice_id)
+    elif invoice_type == 'pt':
+        invoice = get_object_or_404(PersonalTrainer, id=invoice_id)
+    else:
+        messages.error(request, 'Invalid invoice type.')
+        return redirect('billing:invoices_list')
+
+    invoice.status = 'inactive'
+    invoice.save()
+    messages.success(request, 'Invoice deleted successfully.')
+    return redirect('billing:invoices_list')
+
+@login_required
+def trash_invoices(request):
+    # Fetch inactive membership invoices
+    membership_invoices = MembershipHistory.objects.select_related('member', 'plan').filter(status='inactive').annotate(
+        date=F('created_at'),
+        type=Value('membership', output_field=models.CharField()),
+        amount=F('total_amount'),
+        due_amount=F('total_amount') - F('paid_amount'),
+        invoice_id=F('id'),
+        plan_title=F('plan__title')
+    ).values('invoice_id', 'date', 'type', 'amount', 'member_id', 'member__member_id', 'member__first_name', 'member__last_name', 'plan_title', 'due_amount')
+
+    # Fetch inactive personal training invoices
+    pt_invoices = PersonalTrainer.objects.select_related('member', 'trainer').filter(status='inactive').annotate(
+        date=F('created_at'),
+        type=Value('pt', output_field=models.CharField()),
+        amount=F('total_amount'),
+        due_amount=F('total_amount') - F('paid_amount'),
+        invoice_id=F('id'),
+        plan_title=F('trainer__name')
+    ).values('invoice_id', 'date', 'type', 'amount', 'member_id', 'member__member_id', 'member__first_name', 'member__last_name', 'plan_title', 'due_amount')
+
+    all_invoices = list(membership_invoices) + list(pt_invoices)
+
+    # Sort by date
+    all_invoices.sort(key=lambda x: x['date'], reverse=True)
+
+    # Pagination
+    paginator = Paginator(all_invoices, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'billing/trash.html', {'invoices': page_obj})
+
+@login_required
+def restore_invoice(request, invoice_type, invoice_id):
+    if invoice_type == 'membership':
+        invoice = get_object_or_404(MembershipHistory, id=invoice_id)
+    elif invoice_type == 'pt':
+        invoice = get_object_or_404(PersonalTrainer, id=invoice_id)
+    else:
+        messages.error(request, 'Invalid invoice type.')
+        return redirect('billing:trash_invoices')
+
+    invoice.status = 'active'
+    invoice.save()
+    messages.success(request, 'Invoice restored successfully.')
+    return redirect('billing:trash_invoices')
+
+@login_required
+def delete_permanently(request, invoice_type, invoice_id):
+    if invoice_type == 'membership':
+        invoice = get_object_or_404(MembershipHistory, id=invoice_id)
+    elif invoice_type == 'pt':
+        invoice = get_object_or_404(PersonalTrainer, id=invoice_id)
+    else:
+        messages.error(request, 'Invalid invoice type.')
+        return redirect('billing:trash_invoices')
+
+    invoice.delete()
+    messages.success(request, 'Invoice deleted permanently.')
+    return redirect('billing:trash_invoices')

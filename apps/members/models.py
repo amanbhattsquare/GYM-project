@@ -91,6 +91,7 @@ class MembershipHistory(models.Model):
     transaction_id = models.CharField(max_length=100, blank=True, null=True)
     comment = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=10, choices=[('active', 'Active'), ('inactive', 'Inactive')], default='active')
 
     def __str__(self):
         return f"{self.member} - {self.plan}"
@@ -135,6 +136,7 @@ class PersonalTrainer(models.Model):
     transaction_id = models.CharField(max_length=100, blank=True, null=True)
     comment = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=10, choices=[('active', 'Active'), ('inactive', 'Inactive')], default='active')
 
     def __str__(self):
         return f"{self.member} - {self.trainer}"
