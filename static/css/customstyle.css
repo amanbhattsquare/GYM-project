@@ -752,3 +752,37 @@ legend {
     font-size: 1.25rem;
     font-weight: 500;
 }
+
+.modal-content {
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.modal-body .icon-box {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    border: 3px solid #ffc107; /* Changed border color to warning yellow */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-body .icon-box i {
+    color: #ffc107; /* Changed icon color to warning yellow */
+}
+
+.modal-footer .btn-danger {
+    background-color: #dc3545; /* Standard Bootstrap danger color */
+    border-color: #dc3545;
+}
+
+.modal-title {
+    font-weight: bold;
+}
+
+.modal-footer .btn-danger {
+    background-color: #f15e5e;
+    border-color: #f15e5e;
+}
