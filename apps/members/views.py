@@ -3,6 +3,7 @@ from .forms import MemberForm, MedicalHistoryForm, EmergencyContactForm, Members
 from .models import Member, MedicalHistory, EmergencyContact, MembershipHistory, PersonalTrainer
 from apps.management.models import MembershipPlan
 from apps.trainers.models import Trainer
+from apps.billing.models import Payment
 from django.forms import modelformset_factory
 from django.contrib import messages
 from django.core.paginator import Paginator
@@ -64,6 +65,8 @@ def member_profile(request, member_id):
     membership_histories = MembershipHistory.objects.filter(member=member).order_by('-id')
     pt_member = PersonalTrainer.objects.select_related('trainer').filter(member=member).order_by('-id')
     latest_membership = membership_histories.first()
+    payments = Payment.objects.filter(member=member).order_by('-payment_date')
+
 
     # Calculate the total due amount for membership
     membership_due_amount = membership_histories.aggregate(
@@ -86,6 +89,7 @@ def member_profile(request, member_id):
         'membership_history': latest_membership,
         'due_amount': total_due_amount,
         'pt_invoices': pt_invoices,
+        'payments': payments,
         'membership_plan': latest_membership.plan if latest_membership else None
     })
 
