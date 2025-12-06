@@ -33,6 +33,7 @@ urlpatterns = [
     path('enquiry/', include('apps.enquiry.urls')),
     path('billing/', include('apps.billing.urls')),
     path('management/', include('apps.management.urls')),
+    path('expenses/', include('apps.expenses.urls')),
     path('help/', help_view, name='help'),
 ]
 

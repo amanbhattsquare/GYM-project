@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    {% if form.instance.pk %}
+        Edit Expense
+    {% else %}
+        Add Expense
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/customstyle.css' %}">
+
+<!-- Compact Breadcrumb -->
+<nav aria-label="breadcrumb" class="custom-breadcrumb mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{% url 'dashboard' %}" class="text-decoration-none">
+                <i class="mdi mdi-home-outline mdi-18px"></i> Dashboard
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{% url 'expenses' %}" class="text-decoration-none">
+                <i class="mdi mdi-cash-multiple mdi-18px"></i> Expenses
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <i class="mdi mdi-file-document-edit-outline mdi-18px"></i> 
+            {% if form.instance.pk %}Edit{% else %}Add{% endif %}
+        </li>
+    </ol>
+</nav>
+
+<div class="col-lg-12">
+    <div class="card">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">
+                <i class="mdi mdi-file-document-edit-outline"></i> 
+                {% if form.instance.pk %}Edit Expense{% else %}Add Expense{% endif %}
+            </h4>
+            <a href="{% url 'expenses' %}" class="btn btn-light btn-sm">
+                <i class="mdi mdi-arrow-left"></i> Back to Expenses
+            </a>
+        </div>
+
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data" novalidate>
+                {% csrf_token %}
+
+                <fieldset class="border p-4 rounded mb-4">
+                    <legend class="w-auto px-2 h5">Expense Details</legend>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="{{ form.date.id_for_label }}" class="form-label">
+                                <i class="mdi mdi-calendar"></i> {{ form.date.label }}
+                            </label>
+                            {{ form.date }}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="{{ form.category.id_for_label }}" class="form-label">
+                                <i class="mdi mdi-shape"></i> {{ form.category.label }}
+                            </label>
+                            {{ form.category }}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="{{ form.amount.id_for_label }}" class="form-label">
+                                <i class="mdi mdi-currency-inr"></i> {{ form.amount.label }}
+                            </label>
+                            {{ form.amount }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="{{ form.description.id_for_label }}" class="form-label">
+                                <i class="mdi mdi-text"></i> {{ form.description.label }}
+                            </label>
+                            {{ form.description }}
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset class="border p-4 rounded mb-4">
+                    <legend class="w-auto px-2 h5">Vendor Details (Optional)</legend>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="{{ form.vendor_name.id_for_label }}" class="form-label">
+                                <i class="mdi mdi-account"></i> {{ form.vendor_name.label }}
+                            </label>
+                            {{ form.vendor_name }}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="{{ form.vendor_phone.id_for_label }}" class="form-label">
+                                <i class="mdi mdi-phone"></i> {{ form.vendor_phone.label }}
+                            </label>
+                            {{ form.vendor_phone }}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="{{ form.vendor_bill_number.id_for_label }}" class="form-label">
+                                <i class="mdi mdi-receipt"></i> {{ form.vendor_bill_number.label }}
+                            </label>
+                            {{ form.vendor_bill_number }}
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset class="border p-4 rounded mb-4">
+                    <legend class="w-auto px-2 h5">Payment & Other Details</legend>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="{{ form.payment_mode.id_for_label }}" class="form-label">
+                                <i class="mdi mdi-credit-card"></i> {{ form.payment_mode.label }}
+                            </label>
+                            {{ form.payment_mode }}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="{{ form.transaction_id.id_for_label }}" class="form-label">
+                                <i class="mdi mdi-identifier"></i> {{ form.transaction_id.label }}
+                            </label>
+                            {{ form.transaction_id }}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="{{ form.receipt_image.id_for_label }}" class="form-label">
+                                <i class="mdi mdi-file-image"></i> {{ form.receipt_image.label }}
+                            </label>
+                            {{ form.receipt_image }}
+                            {% if form.instance.receipt_image %}
+                                <div class="mt-2">
+                                    <a href="{{ form.instance.receipt_image.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                        <i class="mdi mdi-eye"></i> View Current Receipt
+                                    </a>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset class="border p-4 rounded mb-4">
+                    <legend class="w-auto px-2 h5">Recurrence</legend>
+                    <div class="form-check mb-2">
+                        {{ form.is_recurring }}
+                        <label class="form-check-label" for="{{ form.is_recurring.id_for_label }}">
+                            {{ form.is_recurring.label }}
+                        </label>
+                    </div>
+                    <div id="recurring-cycle-field" class="mb-3">
+                        <label for="{{ form.recurring_cycle.id_for_label }}" class="form-label">
+                            <i class="mdi mdi-sync"></i> {{ form.recurring_cycle.label }}
+                        </label>
+                        {{ form.recurring_cycle }}
+                    </div>
+                </fieldset>
+
+                <div class="mt-4 pt-3 border-top">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="mdi mdi-content-save"></i> Save Expense
+                    </button>
+                    <a href="{% url 'expenses' %}" class="btn btn-secondary">
+                        <i class="mdi mdi-cancel"></i> Cancel
+                    </a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Show/hide recurring cycle based on checkbox
+        const recurringCheckbox = document.querySelector('#{{ form.is_recurring.id_for_label }}');
+        const recurringCycleField = document.querySelector('#recurring-cycle-field');
+
+        function toggleRecurringCycle() {
+            if (recurringCheckbox.checked) {
+                recurringCycleField.style.display = 'block';
+            } else {
+                recurringCycleField.style.display = 'none';
+            }
+        }
+
+        recurringCheckbox.addEventListener('change', toggleRecurringCycle);
+        
+        // Initial check
+        toggleRecurringCycle();
+    });
+</script>
+{% endblock extra_js %}
