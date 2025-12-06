@@ -111,9 +111,9 @@
       </a>
       <div class="collapse" id="expenses">
         <ul class="nav flex-column sub-menu">
-          <li class="nav-item"><a class="nav-link" href="pages/expenses/all.html">All Expenses</a></li>
-          <li class="nav-item"><a class="nav-link" href="pages/expenses/add.html">Add Expense</a></li>
-          <li class="nav-item"><a class="nav-link" href="pages/expenses/categories.html">Categories</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'expenses' %}">All Expenses</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'expense_add' %}">Add Expense</a></li>
+      
         </ul>
       </div>
     </li>

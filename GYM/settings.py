@@ -17,6 +17,7 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
@@ -45,6 +46,7 @@ INSTALLED_APPS = [
     'apps.management',
     'apps.billing',
     'apps.attendance',
+    'apps.expenses',
    
 ]
 
@@ -137,4 +139,4 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-ITEMS_PER_PAGE = 10
+ITEMS_PER_PAGE = 15
