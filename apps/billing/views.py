@@ -19,10 +19,16 @@ def submit_due(request):
     ).order_by('-follow_up_date').values('follow_up_date')[:1]
 
     members_with_due = Member.objects.annotate(
-        membership_due=Sum(F('membership_history__total_amount') - F('membership_history__paid_amount')),
-        pt_due=Sum(F('personal_trainer__total_amount') - F('personal_trainer__paid_amount')),
+        membership_due=Sum(
+            F('membership_history__total_amount') - F('membership_history__paid_amount'),
+            filter=Q(membership_history__status='active')
+        ),
+        pt_due=Sum(
+            F('personal_trainer__total_amount') - F('personal_trainer__paid_amount'),
+            filter=Q(personal_trainer__status='active')
+        ),
         latest_follow_up_date=models.Subquery(latest_follow_up)
-    ).filter(Q(membership_due__gt=0) | Q(pt_due__gt=0)).filter(status='active').distinct()
+    ).filter(Q(membership_due__gt=0) | Q(pt_due__gt=0)).distinct()
 
     query = request.GET.get('q')
     if query:
