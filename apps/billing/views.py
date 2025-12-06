@@ -22,7 +22,7 @@ def submit_due(request):
         membership_due=Sum(F('membership_history__total_amount') - F('membership_history__paid_amount')),
         pt_due=Sum(F('personal_trainer__total_amount') - F('personal_trainer__paid_amount')),
         latest_follow_up_date=models.Subquery(latest_follow_up)
-    ).filter(Q(membership_due__gt=0) | Q(pt_due__gt=0)).distinct()
+    ).filter(Q(membership_due__gt=0) | Q(pt_due__gt=0)).filter(status='active').distinct()
 
     query = request.GET.get('q')
     if query:
@@ -41,12 +41,12 @@ def submit_due(request):
         selected_member = get_object_or_404(Member, id=member_id)
 
         # Calculate total due amount for the selected member
-        membership_due_info = selected_member.membership_history.aggregate(
+        membership_due_info = selected_member.membership_history.filter(status='active').aggregate(
             total_due=Sum(F('total_amount') - F('paid_amount'))
         )
         membership_due = membership_due_info['total_due'] or 0
 
-        pt_due_info = selected_member.personal_trainer.aggregate(
+        pt_due_info = selected_member.personal_trainer.filter(status='active').aggregate(
             total_due=Sum(F('total_amount') - F('paid_amount'))
         )
         pt_due = pt_due_info['total_due'] or 0

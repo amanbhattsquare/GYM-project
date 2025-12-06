@@ -62,25 +62,25 @@ def add_new_member(request):
 @login_required(login_url='login')
 def member_profile(request, member_id):
     member = get_object_or_404(Member, id=member_id)
-    membership_histories = MembershipHistory.objects.filter(member=member).order_by('-id')
-    pt_member = PersonalTrainer.objects.select_related('trainer').filter(member=member).order_by('-id')
+    membership_histories = MembershipHistory.objects.filter(member=member, status='active').order_by('-id')
+    pt_member = PersonalTrainer.objects.select_related('trainer').filter(member=member, status='active').order_by('-id')
     latest_membership = membership_histories.first()
     payments = Payment.objects.filter(member=member).order_by('-payment_date')
 
 
     # Calculate the total due amount for membership
-    membership_due_amount = membership_histories.aggregate(
+    membership_due_amount = membership_histories.filter(status='active').aggregate(
         total_due=Sum(F('total_amount') - F('paid_amount'))
     )['total_due'] or 0
 
     # Calculate the total due amount for personal training
-    pt_due_amount = pt_member.aggregate(
+    pt_due_amount = pt_member.filter(status='active').aggregate(
         total_due=Sum(F('total_amount') - F('paid_amount'))
     )['total_due'] or 0
 
     total_due_amount = membership_due_amount + pt_due_amount
 
-    pt_invoices = PersonalTrainer.objects.filter(member=member).order_by('-id')
+
 
     return render(request, 'members/member_profile.html', {
         'member': member, 
@@ -88,7 +88,7 @@ def member_profile(request, member_id):
         'pt_member': pt_member,
         'membership_history': latest_membership,
         'due_amount': total_due_amount,
-        'pt_invoices': pt_invoices,
+        'pt_invoices': pt_member,
         'payments': payments,
         'membership_plan': latest_membership.plan if latest_membership else None
     })
@@ -154,8 +154,8 @@ def edit_member(request, member_id):
 @login_required(login_url='login') 
 def member_list(request):
     member_list = Member.objects.annotate(
-        membership_due=Coalesce(Sum(F('membership_history__total_amount') - F('membership_history__paid_amount')), Value(0, output_field=DecimalField())),
-        pt_due=Coalesce(Sum(F('personal_trainer__total_amount') - F('personal_trainer__paid_amount')), Value(0, output_field=DecimalField()))
+        membership_due=Coalesce(Sum(F('membership_history__total_amount') - F('membership_history__paid_amount'), filter=Q(membership_history__status='active')), Value(0, output_field=DecimalField())),
+        pt_due=Coalesce(Sum(F('personal_trainer__total_amount') - F('personal_trainer__paid_amount'), filter=Q(personal_trainer__status='active')), Value(0, output_field=DecimalField()))
     ).annotate(
         total_due=F('membership_due') + F('pt_due')
     ).order_by('-id')
