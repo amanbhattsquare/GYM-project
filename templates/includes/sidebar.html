@@ -187,11 +187,17 @@
       </div>
     </li>
     <!-- 17. Settings -->
-    <li class="nav-item">
-      <a class="nav-link" href="pages/settings.html">
+    <li class="nav-item {% if request.resolver_match.namespace == 'settings' %}active{% endif %}">
+      <a class="nav-link" data-toggle="collapse" href="#settings" aria-expanded="{% if request.resolver_match.url_name == 'general_settings' %}true{% else %}false{% endif %}" aria-controls="settings">
         <i class="mdi mdi-settings menu-icon"></i>
         <span class="menu-title">Settings</span>
+        <i class="menu-arrow"></i>
       </a>
+      <div class="collapse {% if request.resolver_match.url_name == 'general_settings' %}show{% endif %}" id="settings">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'general_settings' %}active{% endif %}" href="{% url 'settings:general_settings' %}">General Settings</a></li>
+        </ul>
+      </div>
     </li>
 
  <!--  help -->

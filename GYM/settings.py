@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'apps.billing',
     'apps.attendance',
     'apps.expenses',
+    'apps.settings',
    
 ]
 
