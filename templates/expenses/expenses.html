@@ -25,7 +25,7 @@
         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
             <h4 class="mb-0">Expenses</h4>
             <div>
-                <a href="{% url 'expense_trash' %}" class="btn btn-light btn-sm me-2">
+                <a href="{% url 'expense_trash' %}" class="btn btn-danger btn-sm me-2">
                     <i class="mdi mdi-trash-can-outline"></i> Trash
                 </a>
                 <a href="{% url 'expense_add' %}" class="btn btn-light btn-sm">
@@ -81,14 +81,15 @@
                 <table class="table table-hover table-sm table-stack-on-mobile">
                     <thead>
                         <tr>
-                            <th>Sr. No.</th>
+                            <th>#</th>
                             <th>Date</th>
                             <th>Category</th>
-                            <th>Vendor</th>
+                            <th>Vendor Details</th>
                             <th>Payment</th>
                             <th>Amount</th>
                             <th>Receipt</th>
                             <th>Description</th>
+                            <th>Added By</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -103,8 +104,14 @@
                                 <span class="badge bg-dark text-white">{{ expense.get_category_display }}</span>
                             </td>
 
-                            <td data-label="Vendor">
+                            <td data-label="Vendor Details">
                                 {{ expense.vendor_name|default:"-" }}
+                                {% if expense.vendor_phone %}
+                                <br><small class="text-muted">Phone: {{ expense.vendor_phone }}</small>
+                                {% endif %}
+                                {% if expense.vendor_bill_number %}
+                                <br><small class="text-muted">Bill: {{ expense.vendor_bill_number }}</small>
+                                {% endif %}
                             </td>
 
                             <td data-label="Payment">
@@ -127,10 +134,14 @@
                                 -
                                 {% endif %}
                             </td>
-
-                            <td data-label="Description" style="max-width: 250px;">
+                            <td data-label="Description" >
                                 {{ expense.description|default:"-" }}
                             </td>
+                            <td data-label="Added By">
+                              {{ expense.added_by.username|default:"-" }}
+                               
+                            </td>
+                            
 
                             <td data-label="Actions">
 
@@ -149,7 +160,7 @@
 
                         {% empty %}
                         <tr>
-                            <td colspan="9" class="text-center py-5">
+                            <td colspan="14" class="text-center py-5">
                                 <i class="mdi mdi-cash-remove mdi-48px text-muted d-block mb-3"></i>
                                 <h5>No expenses found</h5>
                                 <p class="text-muted">Add an expense or adjust search filters.</p>
