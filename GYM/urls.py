@@ -35,6 +35,7 @@ urlpatterns = [
     path('management/', include('apps.management.urls')),
     path('expenses/', include('apps.expenses.urls')),
     path('settings/', include(('apps.settings.urls', 'settings'), namespace='settings')),
+    path('superadmin/', include('apps.superadmin.urls')),
     path('help/', help_view, name='help'),
 ]
 

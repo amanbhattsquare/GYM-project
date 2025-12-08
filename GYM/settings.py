@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'apps.attendance',
     'apps.expenses',
     'apps.settings',
+    'apps.superadmin',
    
 ]
 
