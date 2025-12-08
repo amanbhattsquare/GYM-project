@@ -6,6 +6,8 @@ from django.core.paginator import Paginator
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
 
 # LIST EXPENSES (not deleted)
 @login_required
@@ -84,13 +86,17 @@ def expense_edit(request, pk):
     return render(request, 'expenses/expense_form.html', {'form': form})
 
 # SOFT DELETE (Send to Trash)
+@require_POST
 @login_required
 def expense_delete(request, pk):
-    expense = get_object_or_404(Expense, pk=pk)
-    expense.is_deleted = True
-    expense.save()
-    messages.success(request, 'Expense moved to trash.')
-    return redirect('expenses')
+    try:
+        expense = get_object_or_404(Expense, pk=pk)
+        expense.is_deleted = True
+        expense.save()
+        messages.success(request, 'Expense moved to trash successfully.')
+        return JsonResponse({'status': 'success'})
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
 
 
 # TRASH PAGE
@@ -110,7 +116,7 @@ def expense_trash(request):
 # RESTORE FROM TRASH
 @login_required
 def expense_restore(request, pk):
-    expense = get_ot_object_or_404(Expense, pk=pk)
+    expense = get_object_or_404(Expense, pk=pk)
     expense.is_deleted = False
     expense.save()
     messages.success(request, 'Expense restored successfully.')
