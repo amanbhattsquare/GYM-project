@@ -5,6 +5,7 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 # LIST EXPENSES (not deleted)
 @login_required
@@ -59,6 +60,7 @@ def expense_add(request):
             expense = form.save(commit=False)
             expense.added_by = request.user  # auto assign staff
             expense.save()
+            messages.success(request, 'Expense added successfully.')
             return redirect('expenses')
     else:
         form = ExpenseForm()
@@ -74,6 +76,7 @@ def expense_edit(request, pk):
         form = ExpenseForm(request.POST, request.FILES, instance=expense)
         if form.is_valid():
             form.save()
+            messages.success(request, 'Expense updated successfully.')
             return redirect('expenses')
     else:
         form = ExpenseForm(instance=expense)
@@ -86,14 +89,7 @@ def expense_delete(request, pk):
     expense = get_object_or_404(Expense, pk=pk)
     expense.is_deleted = True
     expense.save()
-    return redirect('expenses')
-
-# APPROVE EXPENSE
-@login_required
-def expense_approve(request, pk):
-    expense = get_object_or_404(Expense, pk=pk)
-    expense.approved_by = request.user
-    expense.save()
+    messages.success(request, 'Expense moved to trash.')
     return redirect('expenses')
 
 
@@ -114,9 +110,10 @@ def expense_trash(request):
 # RESTORE FROM TRASH
 @login_required
 def expense_restore(request, pk):
-    expense = get_object_or_404(Expense, pk=pk)
+    expense = get_ot_object_or_404(Expense, pk=pk)
     expense.is_deleted = False
     expense.save()
+    messages.success(request, 'Expense restored successfully.')
     return redirect('expense_trash')
 
 # PERMANENT DELETE
@@ -124,4 +121,5 @@ def expense_restore(request, pk):
 def expense_delete_permanent(request, pk):
     expense = get_object_or_404(Expense, pk=pk)
     expense.delete()
+    messages.success(request, 'Expense permanently deleted.')
     return redirect('expense_trash')

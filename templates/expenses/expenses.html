@@ -149,9 +149,11 @@
                                     <i class="mdi mdi-pencil"></i>
                                 </a>
 
-                                <a href="{% url 'expense_delete' expense.pk %}"
-                                   class="btn btn-sm btn-danger"
-                                   onclick="return confirm('Move to Trash?');">
+                                <a href="#" 
+                                   class="btn btn-sm btn-danger delete-btn"
+                                   data-item-id="{{ expense.pk }}"
+                                   data-item-name="{{ expense.category|slice:":10" }}"
+                                   data-delete-url="{% url 'expense_delete' expense.pk %}">
                                     <i class="mdi mdi-trash-can"></i>
                                 </a>
 
@@ -182,3 +184,22 @@
 </div>
 
 {% endblock %}
+
+{% block javascript %}
+{{ block.super }}
+<script src="{% static 'js/delete_confirmation.js' %}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const deleteButtons = document.querySelectorAll('.delete-btn');
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const itemId = this.dataset.itemId;
+                const itemName = this.dataset.itemName;
+                const deleteUrl = this.dataset.deleteUrl;
+                confirmDelete(itemId, itemName, deleteUrl);
+            });
+        });
+    });
+</script>
+{% endblock javascript %}
