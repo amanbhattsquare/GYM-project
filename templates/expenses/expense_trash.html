@@ -39,7 +39,10 @@
                 <table class="table table-hover table-sm table-stack-on-mobile">
                     <thead>
                         <tr>
+<<<<<<< HEAD
                             <th>#</th>
+=======
+>>>>>>> 62d6936db457b1b92c4574af858d4e2c5465788d
                             <th>Date</th>
                             <th>Category</th>
                             <th>Amount</th>
@@ -51,6 +54,7 @@
                     <tbody>
                         {% for expense in expenses %}
                         <tr>
+<<<<<<< HEAD
                             <td data-label="#">{{ forloop.counter }}</td>
                             <td data-label="Date">{{ expense.date }}</td>
                             <td data-label="Category">
@@ -58,6 +62,14 @@
                             </td>
                             <td data-label="Amount">₹ {{ expense.amount }}</td>
                             <td data-label="Description" >
+=======
+                            <td data-label="Date">{{ expense.date }}</td>
+                            <td data-label="Category">
+                                <span class="badge bg-dark">{{ expense.get_category_display }}</span>
+                            </td>
+                            <td data-label="Amount">₹ {{ expense.amount }}</td>
+                            <td data-label="Description" style="max-width: 300px;">
+>>>>>>> 62d6936db457b1b92c4574af858d4e2c5465788d
                                 {{ expense.description|default:"-" }}
                             </td>
                             <td data-label="Actions">
