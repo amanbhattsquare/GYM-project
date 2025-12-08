@@ -28,7 +28,40 @@
         <div class="card-body">
             {% csrf_token %}
             <!-- Search form -->
-            {% include 'includes/search_form.html' %}
+            <form method="get" action="{% url 'billing:submit_due' %}" class="mb-4">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="q">Search</label>
+                            <input type="text" name="q" id="q" class="form-control" placeholder="Name, Number, ID" value="{{ request.GET.q }}">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="from_date">From</label>
+                            <input type="date" name="from_date" id="from_date" class="form-control" value="{{ request.GET.from_date }}">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="to_date">To</label>
+                            <input type="date" name="to_date" id="to_date" class="form-control" value="{{ request.GET.to_date }}">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label for="follow_up_date">Follow Up Date</label>
+                            <input type="date" name="follow_up_date" id="follow_up_date" class="form-control" value="{{ request.GET.follow_up_date }}">
+                        </div>
+                    </div>
+                    <div class="col-md-3 align-self-end">
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Filter</button>
+                            <a href="{% url 'billing:submit_due' %}" class="btn btn-secondary"><i class="mdi mdi-reload"></i> </a>
+                        </div>
+                    </div>
+                </div>
+            </form>
 
             <div class="table-responsive">
                <table class="table table-hover table-sm table-stack-on-mobile">

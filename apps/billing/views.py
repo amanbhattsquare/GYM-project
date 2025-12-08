@@ -31,12 +31,23 @@ def submit_due(request):
     ).filter(Q(membership_due__gt=0) | Q(pt_due__gt=0)).distinct()
 
     query = request.GET.get('q')
+    from_date = request.GET.get('from_date')
+    to_date = request.GET.get('to_date')
+    follow_up_date_filter = request.GET.get('follow_up_date')
+
     if query:
         members_with_due = members_with_due.filter(
             Q(first_name__icontains=query) |
             Q(last_name__icontains=query) |
-            Q(mobile_number__icontains=query)
+            Q(mobile_number__icontains=query) |
+            Q(member_id__icontains=query)
         )
+
+    if from_date and to_date:
+        members_with_due = members_with_due.filter(latest_follow_up_date__range=[from_date, to_date])
+    
+    if follow_up_date_filter:
+        members_with_due = members_with_due.filter(latest_follow_up_date=follow_up_date_filter)
 
     paginator = Paginator(members_with_due, 10)  # Show 10 members per page
     page_number = request.GET.get('page')
@@ -121,6 +132,9 @@ def submit_due(request):
     context = {
         'members': members_page,
         'query': query,
+        'from_date': from_date,
+        'to_date': to_date,
+        'follow_up_date': follow_up_date_filter,
     }
     return render(request, 'billing/submit_due.html', context)
 
