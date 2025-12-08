@@ -6,14 +6,7 @@ from django.core.paginator import Paginator
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 
-<<<<<<< HEAD
 # LIST EXPENSES (not deleted)
-=======
-
-# ----------------------------
-# LIST EXPENSES (not deleted)
-# ----------------------------
->>>>>>> 62d6936db457b1b92c4574af858d4e2c5465788d
 @login_required
 def expenses(request):
     query = request.GET.get('q')
@@ -57,14 +50,7 @@ def expenses(request):
         'payment_modes': Expense.PAYMENT_MODES,
     })
 
-<<<<<<< HEAD
 # ADD EXPENSE
-=======
-
-# ----------------------------
-# ADD EXPENSE
-# ----------------------------
->>>>>>> 62d6936db457b1b92c4574af858d4e2c5465788d
 @login_required
 def expense_add(request):
     if request.method == 'POST':
@@ -79,14 +65,7 @@ def expense_add(request):
 
     return render(request, 'expenses/expense_form.html', {'form': form})
 
-<<<<<<< HEAD
 # EDIT EXPENSE
-=======
-
-# ----------------------------
-# EDIT EXPENSE
-# ----------------------------
->>>>>>> 62d6936db457b1b92c4574af858d4e2c5465788d
 @login_required
 def expense_edit(request, pk):
     expense = get_object_or_404(Expense, pk=pk, is_deleted=False)
@@ -101,14 +80,7 @@ def expense_edit(request, pk):
 
     return render(request, 'expenses/expense_form.html', {'form': form})
 
-<<<<<<< HEAD
 # SOFT DELETE (Send to Trash)
-=======
-
-# ----------------------------
-# SOFT DELETE (Send to Trash)
-# ----------------------------
->>>>>>> 62d6936db457b1b92c4574af858d4e2c5465788d
 @login_required
 def expense_delete(request, pk):
     expense = get_object_or_404(Expense, pk=pk)
@@ -116,7 +88,6 @@ def expense_delete(request, pk):
     expense.save()
     return redirect('expenses')
 
-<<<<<<< HEAD
 # APPROVE EXPENSE
 @login_required
 def expense_approve(request, pk):
@@ -127,12 +98,6 @@ def expense_approve(request, pk):
 
 
 # TRASH PAGE
-=======
-
-# ----------------------------
-# TRASH PAGE
-# ----------------------------
->>>>>>> 62d6936db457b1b92c4574af858d4e2c5465788d
 @login_required
 def expense_trash(request):
     trash_list = Expense.objects.filter(is_deleted=True).order_by('-date')
@@ -146,14 +111,7 @@ def expense_trash(request):
         'page_obj': page_obj,
     })
 
-<<<<<<< HEAD
 # RESTORE FROM TRASH
-=======
-
-# ----------------------------
-# RESTORE FROM TRASH
-# ----------------------------
->>>>>>> 62d6936db457b1b92c4574af858d4e2c5465788d
 @login_required
 def expense_restore(request, pk):
     expense = get_object_or_404(Expense, pk=pk)
@@ -161,14 +119,7 @@ def expense_restore(request, pk):
     expense.save()
     return redirect('expense_trash')
 
-<<<<<<< HEAD
 # PERMANENT DELETE
-=======
-
-# ----------------------------
-# PERMANENT DELETE
-# ----------------------------
->>>>>>> 62d6936db457b1b92c4574af858d4e2c5465788d
 @login_required
 def expense_delete_permanent(request, pk):
     expense = get_object_or_404(Expense, pk=pk)

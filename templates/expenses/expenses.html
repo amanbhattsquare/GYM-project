@@ -25,11 +25,7 @@
         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
             <h4 class="mb-0">Expenses</h4>
             <div>
-<<<<<<< HEAD
                 <a href="{% url 'expense_trash' %}" class="btn btn-danger btn-sm me-2">
-=======
-                <a href="{% url 'expense_trash' %}" class="btn btn-light btn-sm me-2">
->>>>>>> 62d6936db457b1b92c4574af858d4e2c5465788d
                     <i class="mdi mdi-trash-can-outline"></i> Trash
                 </a>
                 <a href="{% url 'expense_add' %}" class="btn btn-light btn-sm">
@@ -85,25 +81,15 @@
                 <table class="table table-hover table-sm table-stack-on-mobile">
                     <thead>
                         <tr>
-<<<<<<< HEAD
                             <th>#</th>
                             <th>Date</th>
                             <th>Category</th>
                             <th>Vendor Details</th>
-=======
-                            <th>Sr. No.</th>
-                            <th>Date</th>
-                            <th>Category</th>
-                            <th>Vendor</th>
->>>>>>> 62d6936db457b1b92c4574af858d4e2c5465788d
                             <th>Payment</th>
                             <th>Amount</th>
                             <th>Receipt</th>
                             <th>Description</th>
-<<<<<<< HEAD
                             <th>Added By</th>
-=======
->>>>>>> 62d6936db457b1b92c4574af858d4e2c5465788d
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -115,7 +101,6 @@
                             <td data-label="Date">{{ expense.date }}</td>
 
                             <td data-label="Category">
-<<<<<<< HEAD
                                 <span class="badge bg-dark text-white">{{ expense.get_category_display }}</span>
                             </td>
 
@@ -131,17 +116,6 @@
 
                             <td data-label="Payment">
                                 <span class="badge bg-info text-white">{{ expense.get_payment_mode_display }}</span>
-=======
-                                <span class="badge bg-dark">{{ expense.get_category_display }}</span>
-                            </td>
-
-                            <td data-label="Vendor">
-                                {{ expense.vendor_name|default:"-" }}
-                            </td>
-
-                            <td data-label="Payment">
-                                <span class="badge bg-info text-dark">{{ expense.get_payment_mode_display }}</span>
->>>>>>> 62d6936db457b1b92c4574af858d4e2c5465788d
                                 {% if expense.transaction_id %}
                                 <br><small class="text-muted">TX: {{ expense.transaction_id }}</small>
                                 {% endif %}
@@ -160,7 +134,6 @@
                                 -
                                 {% endif %}
                             </td>
-<<<<<<< HEAD
                             <td data-label="Description" >
                                 {{ expense.description|default:"-" }}
                             </td>
@@ -169,12 +142,6 @@
                                
                             </td>
                             
-=======
-
-                            <td data-label="Description" style="max-width: 250px;">
-                                {{ expense.description|default:"-" }}
-                            </td>
->>>>>>> 62d6936db457b1b92c4574af858d4e2c5465788d
 
                             <td data-label="Actions">
 
@@ -193,11 +160,7 @@
 
                         {% empty %}
                         <tr>
-<<<<<<< HEAD
                             <td colspan="14" class="text-center py-5">
-=======
-                            <td colspan="9" class="text-center py-5">
->>>>>>> 62d6936db457b1b92c4574af858d4e2c5465788d
                                 <i class="mdi mdi-cash-remove mdi-48px text-muted d-block mb-3"></i>
                                 <h5>No expenses found</h5>
                                 <p class="text-muted">Add an expense or adjust search filters.</p>
