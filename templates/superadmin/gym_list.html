@@ -19,6 +19,8 @@
                                 <th>Address</th>
                                 <th>Phone</th>
                                 <th>Email</th>
+                                <th>Admin Name</th>
+                                <th>Admin Username</th>
                                 <th class="text-right">Actions</th>
                             </thead>
                             <tbody>
@@ -30,9 +32,12 @@
                                     <td>{{ gym.address }}</td>
                                     <td>{{ gym.phone }}</td>
                                     <td>{{ gym.email }}</td>
+                                    <td>{{ gym.admin_name }}</td>
+                                    <td>{{ gym.admin_username }}</td>
                                     <td class="text-right">
                                         <a href="{% url 'superadmin:update_gym' gym.id %}" class="btn btn-sm btn-warning">Edit</a>
                                         <a href="{% url 'superadmin:delete_gym' gym.id %}" class="btn btn-sm btn-danger">Delete</a>
+                                        <a href="{% url 'superadmin:gym_profile' gym.id %}" class="btn btn-sm btn-info">View</a>
                                         {% if not gym.has_admin %}
                                             <a href="{% url 'superadmin:create_gym_admin' gym.id %}" class="btn btn-sm btn-success">Create Admin</a>
                                         {% endif %}

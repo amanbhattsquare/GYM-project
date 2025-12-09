@@ -19,36 +19,7 @@
                                 {% endfor %}
                             </div>
                         {% endif %}
-                        
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>Username</label>
-                                    {{ form.username }}
-                                    {% if form.username.errors %}
-                                        <div class="text-danger">
-                                            {% for error in form.username.errors %}
-                                                <small>{{ error }}</small>
-                                            {% endfor %}
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>Password</label>
-                                    {{ form.password }}
-                                     {% if form.password.errors %}
-                                        <div class="text-danger">
-                                            {% for error in form.password.errors %}
-                                                <small>{{ error }}</small>
-                                            {% endfor %}
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-
+                      
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
