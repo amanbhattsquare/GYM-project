@@ -4,6 +4,8 @@ from django.contrib.auth.models import User
 from .forms import GymForm, GymAdminForm
 from .models import Gym, GymAdmin
 from apps.members.models import Member, MembershipHistory
+from django.db.models import Q
+
 
 def add_gym(request):
     if request.method == 'POST':
@@ -24,7 +26,17 @@ def add_gym(request):
     return render(request, 'superadmin/add_gym.html', {'form': form})
 
 def gym_list(request):
-    gyms_list = Gym.objects.all()
+    query = request.GET.get('q')
+    if query:
+        gyms_list = Gym.objects.filter(
+            Q(name__icontains=query) |
+            Q(address__icontains=query) |
+            Q(phone__icontains=query) |
+            Q(email__icontains=query)
+        ).distinct()
+    else:
+        gyms_list = Gym.objects.all()
+
     for gym in gyms_list:
         gym.has_admin = GymAdmin.objects.filter(gym=gym).exists()
         gym_admin = GymAdmin.objects.filter(gym=gym).first()

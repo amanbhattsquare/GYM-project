@@ -1,45 +1,70 @@
 {% extends 'superadmin/base.html' %}
 
 {% block content %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/customstyle.css' %}">
+
+<!-- Compact Breadcrumb Navigation -->
+<nav aria-label="breadcrumb" class="custom-breadcrumb mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{% url 'superadmin:dashboard' %}" class="text-decoration-none">
+                <i class="mdi mdi-home-outline mdi-18px"></i> Dashboard
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <i class="mdi mdi-office-building mdi-18px"></i> Gyms
+        </li>
+    </ol>
+</nav>
+
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12">
             <div class="card">
-                <div class="card-header">
-                    <h4 class="card-title">Gyms List</h4>
-                    <a href="{% url 'superadmin:add_gym' %}" class="btn btn-primary btn-sm float-right">Add Gym</a>
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">Gyms List</h4>
+                    <a href="{% url 'superadmin:add_gym' %}" class="btn btn-light btn-sm">
+                        <i class="mdi mdi-plus"></i> Add Gym
+                    </a>
                 </div>
                 <div class="card-body">
+                    {% csrf_token %}
+                    <!-- Search form -->
+                    {% include 'includes/search_form.html' %}
                     <div class="table-responsive">
-                        <table class="table">
-                            <thead class=" text-primary">
-                                <th>#</th>
-                                <th>Name</th>
-                                <th>Slogan</th>
-                                <th>Address</th>
-                                <th>Phone</th>
-                                <th>Email</th>
-                                <th>Admin Name</th>
-                                <th>Admin Username</th>
-                                <th class="text-right">Actions</th>
+                        <table class="table table-hover table-sm table-stack-on-mobile">
+                            <thead>
+                                <tr>
+                                    <th class="font-weight-semibold py-2">#</th>
+                                    <th class="font-weight-semibold py-2">Name</th>
+                                    <th class="font-weight-semibold py-2">Slogan</th>
+                                    <th class="font-weight-semibold py-2">Address</th>
+                                    <th class="font-weight-semibold py-2">Phone</th>
+                                    <th class="font-weight-semibold py-2">Email</th>
+                                    <th class="font-weight-semibold py-2">Admin Name</th>
+                                    <th class="font-weight-semibold py-2">Admin Username</th>
+                                    <th class="font-weight-semibold text-center py-2">Actions</th>
+                                </tr>
                             </thead>
                             <tbody>
                                 {% for gym in gyms %}
                                 <tr>
-                                    <td>{{ forloop.counter }}</td>
-                                    <td>{{ gym.name }}</td>
-                                    <td>{{ gym.slogan }}</td>
-                                    <td>{{ gym.address }}</td>
-                                    <td>{{ gym.phone }}</td>
-                                    <td>{{ gym.email }}</td>
-                                    <td>{{ gym.admin_name }}</td>
-                                    <td>{{ gym.admin_username }}</td>
-                                    <td class="text-right">
-                                        <a href="{% url 'superadmin:update_gym' gym.id %}" class="btn btn-sm btn-warning">Edit</a>
-                                        <a href="{% url 'superadmin:delete_gym' gym.id %}" class="btn btn-sm btn-danger">Delete</a>
-                                        <a href="{% url 'superadmin:gym_profile' gym.id %}" class="btn btn-sm btn-info">View</a>
+                                    <td data-label="SR. No.">{{ forloop.counter }}</td>
+                                    <td data-label="Name">{{ gym.name }}</td>
+                                    <td data-label="Slogan">{{ gym.slogan }}</td>
+                                    <td data-label="Address">{{ gym.address }}</td>
+                                    <td data-label="Phone">{{ gym.phone }}</td>
+                                    <td data-label="Email">{{ gym.email }}</td>
+                                    <td data-label="Admin Name">{{ gym.admin_name }}</td>
+                                    <td data-label="Admin Username">{{ gym.admin_username }}</td>
+                                    <td data-label="Actions" class="text-center">
+                                         <a href="{% url 'superadmin:gym_profile' gym.id %}" class="btn btn-info btn-sm" data-toggle="tooltip" title="View"><i class="mdi mdi-eye-outline"></i></a>
+                                        <a href="{% url 'superadmin:update_gym' gym.id %}" class="btn btn-primary btn-sm" data-toggle="tooltip" title="Edit"><i class="mdi mdi-pencil-outline"></i></a>
+                                        <a href="{% url 'superadmin:delete_gym' gym.id %}" class="btn btn-danger btn-sm" data-toggle="tooltip" title="Delete"><i class="mdi mdi-delete-outline"></i></a>
+                                       
                                         {% if not gym.has_admin %}
-                                            <a href="{% url 'superadmin:create_gym_admin' gym.id %}" class="btn btn-sm btn-success">Create Admin</a>
+                                            <a href="{% url 'superadmin:create_gym_admin' gym.id %}" class="btn btn-success btn-sm" data-toggle="tooltip" title="Create Admin">Create Admin</a>
                                         {% endif %}
                                     </td>
                                 </tr>
@@ -47,6 +72,10 @@
                             </tbody>
                         </table>
                     </div>
+                    <!-- Pagination -->
+                    {% if gyms.has_other_pages %}
+                    {% include 'includes/pagination.html' with page_obj=gyms %}
+                    {% endif %}
                 </div>
             </div>
         </div>

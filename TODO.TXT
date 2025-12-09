@@ -65,3 +65,10 @@ in member ko phle se hi koi Membership Plan
   member ka plan expire ho gya hai to 'Renew membership plan ' 
   button aa jaye. make this functionality  fully functional and indrustry ready
 
+
+
+
+create gym ID aslo , this is unique and foren key and auto generated
+
+All id are created {gym}+MEM-25-000008, every gyms have own unique ids of all 
+like members, trainers, invoice, receipt etc.
