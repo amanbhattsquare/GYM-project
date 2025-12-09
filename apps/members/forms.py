@@ -4,7 +4,7 @@ from .models import Member, MedicalHistory, EmergencyContact, MembershipHistory,
 class MemberForm(forms.ModelForm):
     class Meta:
         model = Member
-        fields = '__all__'
+        fields = ['first_name', 'last_name', 'mobile_number', 'email', 'age', 'gender', 'date_of_birth', 'profile_picture', 'address', 'area', 'state', 'city', 'pincode', 'profession', 'sign', 'identity_type', 'identity_no', 'identity_document_image']
         widgets = {
             'first_name': forms.TextInput(attrs={'class': 'form-control'}),
             'last_name': forms.TextInput(attrs={'class': 'form-control'}),
@@ -24,7 +24,6 @@ class MemberForm(forms.ModelForm):
             'identity_type': forms.TextInput(attrs={'class': 'form-control'}),
             'identity_no': forms.TextInput(attrs={'class': 'form-control'}),
             'identity_document_image': forms.FileInput(attrs={'class': 'form-control'}),
-            'status': forms.Select(attrs={'class': 'form-select'}),
         }
     def __init__(self, *args, **kwargs):
         super(MemberForm, self).__init__(*args, **kwargs)

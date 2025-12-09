@@ -2,9 +2,11 @@ from django.db import models
 from datetime import timedelta
 from django.utils import timezone
 from apps.trainers.models import Trainer
+from apps.superadmin.models import Gym
 
 
 class Member(models.Model):
+    gym = models.ForeignKey(Gym, on_delete=models.CASCADE, null=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     mobile_number = models.CharField(max_length=15, unique=True)
@@ -61,6 +63,7 @@ class Member(models.Model):
         return latest.get_end_date() >= timezone.now().date()
 
 class MedicalHistory(models.Model):
+    gym = models.ForeignKey(Gym, on_delete=models.CASCADE, null=True)
     member = models.ForeignKey(Member, related_name='medical_history', on_delete=models.CASCADE)
     condition = models.CharField(max_length=100)
     type = models.CharField(max_length=100)
@@ -70,6 +73,7 @@ class MedicalHistory(models.Model):
         return f'{self.member} - {self.condition}'
 
 class EmergencyContact(models.Model):
+    gym = models.ForeignKey(Gym, on_delete=models.CASCADE, null=True)
     member = models.OneToOneField(Member, related_name='emergency_contact', on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     mobile = models.CharField(max_length=15)
@@ -79,6 +83,7 @@ class EmergencyContact(models.Model):
         return f'{self.member} - {self.name}'
 
 class MembershipHistory(models.Model):
+    gym = models.ForeignKey(Gym, on_delete=models.CASCADE, null=True)
     member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name='membership_history')
     plan = models.ForeignKey('management.MembershipPlan', on_delete=models.CASCADE)
     registration_fee = models.DecimalField(max_digits=10, decimal_places=2, default=0)
@@ -123,6 +128,7 @@ class MembershipHistory(models.Model):
         return self.add_on_days + self.plan.add_on_days
 
 class PersonalTrainer(models.Model):
+    gym = models.ForeignKey(Gym, on_delete=models.CASCADE, null=True)
     member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name='personal_trainer')
     trainer = models.ForeignKey(Trainer, on_delete=models.CASCADE)
     months = models.PositiveIntegerField()

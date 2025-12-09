@@ -23,6 +23,7 @@ from .views import help_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('superadmin/', include(('apps.superadmin.urls', 'superadmin'))),
     path('', views.user_login, name='login'),
     path('dashboard/', include('apps.dashboard.urls')),
     path('dashboard', views.dashboard, name="dashboard"),
@@ -35,7 +36,7 @@ urlpatterns = [
     path('management/', include('apps.management.urls')),
     path('expenses/', include('apps.expenses.urls')),
     path('settings/', include(('apps.settings.urls', 'settings'), namespace='settings')),
-    path('superadmin/', include('apps.superadmin.urls')),
+ 
     path('help/', help_view, name='help'),
 ]
 

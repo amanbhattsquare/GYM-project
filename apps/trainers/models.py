@@ -1,7 +1,9 @@
 from django.db import models
 from django.utils import timezone
+from apps.superadmin.models import Gym
 
 class Trainer(models.Model):
+    gym = models.ForeignKey(Gym, on_delete=models.CASCADE, null=True)
     trainer_id = models.CharField(max_length=20, unique=True, blank=True)
     name = models.CharField(max_length=100)
     email = models.EmailField(unique=True)

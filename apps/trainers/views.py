@@ -15,7 +15,8 @@ from django.views.decorators.cache import never_cache
 @never_cache
 @login_required(login_url='login')
 def trainer_list(request):
-    trainers_list = Trainer.objects.all()
+    gym = getattr(request, 'gym', None)
+    trainers_list = Trainer.objects.filter(gym=gym)
 
     query = request.GET.get('q')
     if query:
@@ -43,10 +44,13 @@ def trainer_list(request):
 @never_cache
 @login_required(login_url='login')
 def add_trainer(request):
+    gym = getattr(request, 'gym', None)
     if request.method == 'POST':
         form = TrainerForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            trainer = form.save(commit=False)
+            trainer.gym = gym
+            trainer.save()
             messages.success(request, 'Trainer added successfully!')
             return redirect('trainer_list')
     else:
@@ -56,7 +60,8 @@ def add_trainer(request):
 @never_cache
 @login_required(login_url='login')
 def edit_trainer(request, trainer_id):
-    trainer = get_object_or_404(Trainer, id=trainer_id)
+    gym = getattr(request, 'gym', None)
+    trainer = get_object_or_404(Trainer, id=trainer_id, gym=gym)
     if request.method == 'POST':
         form = TrainerForm(request.POST, request.FILES, instance=trainer)
         if form.is_valid():
@@ -73,7 +78,8 @@ from django.views.decorators.http import require_POST
 @login_required(login_url='login')
 @require_POST
 def delete_trainer(request, trainer_id):
-    trainer = get_object_or_404(Trainer, id=trainer_id)
+    gym = getattr(request, 'gym', None)
+    trainer = get_object_or_404(Trainer, id=trainer_id, gym=gym)
     try:
         trainer.delete()
         messages.success(request, 'Trainer has been deleted successfully.')
@@ -85,7 +91,8 @@ def delete_trainer(request, trainer_id):
 @never_cache
 @login_required(login_url='login')
 def toggle_trainer_status(request, trainer_id):
-    trainer = get_object_or_404(Trainer, id=trainer_id)
+    gym = getattr(request, 'gym', None)
+    trainer = get_object_or_404(Trainer, id=trainer_id, gym=gym)
     trainer.is_active = not trainer.is_active
     trainer.save()
     messages.success(request, f'Trainer {trainer.name} has been marked as {'Active' if trainer.is_active else 'Inactive'}.')

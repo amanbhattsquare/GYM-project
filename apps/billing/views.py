@@ -14,18 +14,20 @@ from datetime import date
 @never_cache
 @login_required(login_url='login')
 def submit_due(request):
+    gym = getattr(request, 'gym', None)
     latest_follow_up = Payment.objects.filter(
-        member=models.OuterRef('pk')
+        member=models.OuterRef('pk'),
+        gym=gym
     ).order_by('-follow_up_date').values('follow_up_date')[:1]
 
-    members_with_due = Member.objects.annotate(
+    members_with_due = Member.objects.filter(gym=gym).annotate(
         membership_due=Sum(
             F('membership_history__total_amount') - F('membership_history__paid_amount'),
-            filter=Q(membership_history__status='active')
+            filter=Q(membership_history__status='active', membership_history__gym=gym)
         ),
         pt_due=Sum(
             F('personal_trainer__total_amount') - F('personal_trainer__paid_amount'),
-            filter=Q(personal_trainer__status='active')
+            filter=Q(personal_trainer__status='active', personal_trainer__gym=gym)
         ),
         latest_follow_up_date=models.Subquery(latest_follow_up)
     ).filter(Q(membership_due__gt=0) | Q(pt_due__gt=0)).distinct()
@@ -55,15 +57,15 @@ def submit_due(request):
 
     if request.method == 'POST' and 'amount_paid' in request.POST:
         member_id = request.POST.get('member_id')
-        selected_member = get_object_or_404(Member, id=member_id)
+        selected_member = get_object_or_404(Member, id=member_id, gym=gym)
 
         # Calculate total due amount for the selected member
-        membership_due_info = selected_member.membership_history.filter(status='active').aggregate(
+        membership_due_info = selected_member.membership_history.filter(status='active', gym=gym).aggregate(
             total_due=Sum(F('total_amount') - F('paid_amount'))
         )
         membership_due = membership_due_info['total_due'] or 0
 
-        pt_due_info = selected_member.personal_trainer.filter(status='active').aggregate(
+        pt_due_info = selected_member.personal_trainer.filter(status='active', gym=gym).aggregate(
             total_due=Sum(F('total_amount') - F('paid_amount'))
         )
         pt_due = pt_due_info['total_due'] or 0
@@ -95,7 +97,8 @@ def submit_due(request):
                 payment_mode=payment_mode,
                 transaction_id=transaction_id,
                 comment=comment,
-                follow_up_date=follow_up_date
+                follow_up_date=follow_up_date,
+                gym=gym
             )
 
             payment_left = amount_paid
@@ -103,7 +106,7 @@ def submit_due(request):
             # Pay off membership dues first
             outstanding_memberships = selected_member.membership_history.annotate(
                 due=F('total_amount') - F('paid_amount')
-            ).filter(due__gt=0).order_by('membership_start_date')
+            ).filter(due__gt=0, gym=gym).order_by('membership_start_date')
 
             for history in outstanding_memberships:
                 if payment_left == 0:
@@ -116,7 +119,7 @@ def submit_due(request):
             # Pay off personal training dues next
             outstanding_pts = selected_member.personal_trainer.annotate(
                 due=F('total_amount') - F('paid_amount')
-            ).filter(due__gt=0).order_by('pt_start_date')
+            ).filter(due__gt=0, gym=gym).order_by('pt_start_date')
 
             for pt in outstanding_pts:
                 if payment_left == 0:
@@ -140,12 +143,13 @@ def submit_due(request):
 
 @login_required
 def update_follow_up(request, member_id):
+    gym = getattr(request, 'gym', None)
     if request.method == 'POST':
         follow_up_date_str = request.POST.get('follow_up_date')
         if follow_up_date_str:
             try:
                 follow_up_date = date.fromisoformat(follow_up_date_str)
-                member = get_object_or_404(Member, id=member_id)
+                member = get_object_or_404(Member, id=member_id, gym=gym)
                 
                 # Create a new payment record for the follow-up
                 Payment.objects.create(
@@ -153,7 +157,8 @@ def update_follow_up(request, member_id):
                     amount=0,  # No payment is being made, this is just for the follow-up
                     payment_mode='other', 
                     comment=f"Follow-up date updated to {follow_up_date_str}",
-                    follow_up_date=follow_up_date
+                    follow_up_date=follow_up_date,
+                    gym=gym
                 )
 
                 messages.success(request, f"Follow-up date for {member.first_name} {member.last_name} has been updated.")
@@ -168,7 +173,8 @@ def update_follow_up(request, member_id):
 @never_cache
 @login_required(login_url='login')
 def payment_invoice(request, payment_id):
-    payment = get_object_or_404(Payment, id=payment_id)
+    gym = getattr(request, 'gym', None)
+    payment = get_object_or_404(Payment, id=payment_id, gym=gym)
     context = {
         'payment': payment,
     }
@@ -178,11 +184,12 @@ def payment_invoice(request, payment_id):
 @never_cache
 @login_required(login_url='login')
 def invoice(request, member_id, history_id):
-    member = get_object_or_404(Member, id=member_id)
-    history = get_object_or_404(MembershipHistory, id=history_id)
+    gym = getattr(request, 'gym', None)
+    member = get_object_or_404(Member, id=member_id, gym=gym)
+    history = get_object_or_404(MembershipHistory, id=history_id, gym=gym)
 
     # Get all invoices for the member to find the next and previous
-    member_invoices = list(MembershipHistory.objects.filter(member=member).order_by('created_at'))
+    member_invoices = list(MembershipHistory.objects.filter(member=member, gym=gym).order_by('created_at'))
     current_invoice_index = member_invoices.index(history)
 
     previous_invoice = member_invoices[current_invoice_index - 1] if current_invoice_index > 0 else None

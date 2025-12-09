@@ -20,17 +20,21 @@ from django.views.decorators.cache import never_cache
 @never_cache
 @login_required(login_url='login')
 def add_new_member(request):
+    gym = getattr(request, 'gym', None)
     MedicalHistoryFormSet = modelformset_factory(MedicalHistory, form=MedicalHistoryForm, extra=1, can_delete=True)
     if request.method == 'POST':
         member_form = MemberForm(request.POST, request.FILES)
         medical_formset = MedicalHistoryFormSet(request.POST, request.FILES, prefix='medical')
         emergency_form = EmergencyContactForm(request.POST, prefix='emergency')
         if member_form.is_valid() and medical_formset.is_valid() and emergency_form.is_valid():
-            member = member_form.save()
+            member = member_form.save(commit=False)
+            member.gym = gym
+            member.save()
             
             instances = medical_formset.save(commit=False)
             for instance in instances:
                 instance.member = member
+                instance.gym = gym
                 instance.save()
             
             medical_formset.save_m2m() 
@@ -41,6 +45,7 @@ def add_new_member(request):
 
             emergency_contact = emergency_form.save(commit=False)
             emergency_contact.member = member
+            emergency_contact.gym = gym
             emergency_contact.save()
             messages.success(request, 'Member added successfully!')
             return redirect('assign_membership_plan', member_id=member.id)
@@ -61,11 +66,12 @@ def add_new_member(request):
 @never_cache
 @login_required(login_url='login')
 def member_profile(request, member_id):
-    member = get_object_or_404(Member, id=member_id)
-    membership_histories = MembershipHistory.objects.filter(member=member, status='active').order_by('-id')
-    pt_member = PersonalTrainer.objects.select_related('trainer').filter(member=member, status='active').order_by('-id')
+    gym = getattr(request, 'gym', None)
+    member = get_object_or_404(Member, id=member_id, gym=gym)
+    membership_histories = MembershipHistory.objects.filter(member=member, status='active', gym=gym).order_by('-id')
+    pt_member = PersonalTrainer.objects.select_related('trainer').filter(member=member, status='active', gym=gym).order_by('-id')
     latest_membership = membership_histories.first()
-    payments = Payment.objects.filter(member=member).order_by('-payment_date')
+    payments = Payment.objects.filter(member=member, gym=gym).order_by('-payment_date')
 
 
     # Calculate the total due amount for membership
@@ -98,7 +104,8 @@ def member_profile(request, member_id):
 @never_cache
 @login_required(login_url='login')
 def edit_member(request, member_id):
-    member = get_object_or_404(Member, id=member_id)
+    gym = getattr(request, 'gym', None)
+    member = get_object_or_404(Member, id=member_id, gym=gym)
     try:
         emergency_contact = member.emergency_contact
     except EmergencyContact.DoesNotExist:
@@ -108,7 +115,7 @@ def edit_member(request, member_id):
 
     if request.method == 'POST':
         form = MemberForm(request.POST, request.FILES, instance=member)
-        medical_formset = MedicalHistoryFormSet(request.POST, request.FILES, queryset=MedicalHistory.objects.filter(member=member), prefix='medical')
+        medical_formset = MedicalHistoryFormSet(request.POST, request.FILES, queryset=MedicalHistory.objects.filter(member=member, gym=gym), prefix='medical')
         emergency_form = EmergencyContactForm(request.POST, instance=emergency_contact, prefix='emergency')
 
         if form.is_valid() and medical_formset.is_valid() and emergency_form.is_valid():
@@ -117,6 +124,7 @@ def edit_member(request, member_id):
             instances = medical_formset.save(commit=False)
             for instance in instances:
                 instance.member = member
+                instance.gym = gym
                 instance.save()
             
             medical_formset.save_m2m()
@@ -127,6 +135,7 @@ def edit_member(request, member_id):
 
             emergency_contact_instance = emergency_form.save(commit=False)
             emergency_contact_instance.member = member
+            emergency_contact_instance.gym = gym
             emergency_contact_instance.save()
             
             messages.success(request, 'Member details updated successfully!')
@@ -139,7 +148,7 @@ def edit_member(request, member_id):
 
     else:
         form = MemberForm(instance=member)
-        medical_formset = MedicalHistoryFormSet(queryset=MedicalHistory.objects.filter(member=member), prefix='medical')
+        medical_formset = MedicalHistoryFormSet(queryset=MedicalHistory.objects.filter(member=member, gym=gym), prefix='medical')
         emergency_form = EmergencyContactForm(instance=emergency_contact, prefix='emergency')
 
     return render(request, 'members/edit_member.html', {
@@ -153,7 +162,8 @@ def edit_member(request, member_id):
 @never_cache
 @login_required(login_url='login') 
 def member_list(request):
-    member_list = Member.objects.annotate(
+    gym = getattr(request, 'gym', None)
+    member_list = Member.objects.filter(gym=gym).annotate(
         membership_due=Coalesce(Sum(F('membership_history__total_amount') - F('membership_history__paid_amount'), filter=Q(membership_history__status='active')), Value(0, output_field=DecimalField())),
         pt_due=Coalesce(Sum(F('personal_trainer__total_amount') - F('personal_trainer__paid_amount'), filter=Q(personal_trainer__status='active')), Value(0, output_field=DecimalField()))
     ).annotate(
@@ -169,7 +179,7 @@ def member_list(request):
         ).distinct()
 
     for member in member_list:
-        latest_history = member.membership_history.order_by('-id').first()
+        latest_history = member.membership_history.filter(gym=gym).order_by('-id').first()
         member.latest_membership_history = latest_history
 
     paginator = Paginator(member_list, 10)  # Show 10 members per page.
@@ -180,7 +190,8 @@ def member_list(request):
 
 @require_POST
 def toggle_member_status(request, member_id):
-    member = get_object_or_404(Member, id=member_id)
+    gym = getattr(request, 'gym', None)
+    member = get_object_or_404(Member, id=member_id, gym=gym)
     if member.status == 'active':
         member.status = 'inactive'
     else:
@@ -191,7 +202,8 @@ def toggle_member_status(request, member_id):
 
 @require_POST
 def delete_member(request, member_id):
-    member = get_object_or_404(Member, id=member_id)
+    gym = getattr(request, 'gym', None)
+    member = get_object_or_404(Member, id=member_id, gym=gym)
     try:
         member.delete()
         messages.success(request, 'Member has been deleted successfully.')

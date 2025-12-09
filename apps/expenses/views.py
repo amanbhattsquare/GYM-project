@@ -12,13 +12,14 @@ from django.views.decorators.http import require_POST
 # LIST EXPENSES (not deleted)
 @login_required
 def expenses(request):
+    gym = getattr(request, 'gym', None)
     query = request.GET.get('q')
     category = request.GET.get('category')
     payment_mode = request.GET.get('payment_mode')
     date_from = request.GET.get('date_from')
     date_to = request.GET.get('date_to')
 
-    expenses_list = Expense.objects.filter(is_deleted=False).order_by('-date')
+    expenses_list = Expense.objects.filter(is_deleted=False, gym=gym).order_by('-date')
 
     # SEARCH
     if query:
@@ -56,11 +57,13 @@ def expenses(request):
 # ADD EXPENSE
 @login_required
 def expense_add(request):
+    gym = getattr(request, 'gym', None)
     if request.method == 'POST':
         form = ExpenseForm(request.POST, request.FILES)
         if form.is_valid():
             expense = form.save(commit=False)
             expense.added_by = request.user  # auto assign staff
+            expense.gym = gym
             expense.save()
             messages.success(request, 'Expense added successfully.')
             return redirect('expenses')
@@ -72,7 +75,8 @@ def expense_add(request):
 # EDIT EXPENSE
 @login_required
 def expense_edit(request, pk):
-    expense = get_object_or_404(Expense, pk=pk, is_deleted=False)
+    gym = getattr(request, 'gym', None)
+    expense = get_object_or_404(Expense, pk=pk, is_deleted=False, gym=gym)
 
     if request.method == 'POST':
         form = ExpenseForm(request.POST, request.FILES, instance=expense)
@@ -89,8 +93,9 @@ def expense_edit(request, pk):
 @require_POST
 @login_required
 def expense_delete(request, pk):
+    gym = getattr(request, 'gym', None)
     try:
-        expense = get_object_or_404(Expense, pk=pk)
+        expense = get_object_or_404(Expense, pk=pk, gym=gym)
         expense.is_deleted = True
         expense.save()
         messages.success(request, 'Expense moved to trash successfully.')
@@ -102,7 +107,8 @@ def expense_delete(request, pk):
 # TRASH PAGE
 @login_required
 def expense_trash(request):
-    trash_list = Expense.objects.filter(is_deleted=True).order_by('-date')
+    gym = getattr(request, 'gym', None)
+    trash_list = Expense.objects.filter(is_deleted=True, gym=gym).order_by('-date')
 
     paginator = Paginator(trash_list, settings.ITEMS_PER_PAGE)
     page_number = request.GET.get('page')
@@ -116,7 +122,8 @@ def expense_trash(request):
 # RESTORE FROM TRASH
 @login_required
 def expense_restore(request, pk):
-    expense = get_object_or_404(Expense, pk=pk)
+    gym = getattr(request, 'gym', None)
+    expense = get_object_or_404(Expense, pk=pk, gym=gym)
     expense.is_deleted = False
     expense.save()
     messages.success(request, 'Expense restored successfully.')
@@ -125,7 +132,8 @@ def expense_restore(request, pk):
 # PERMANENT DELETE
 @login_required
 def expense_delete_permanent(request, pk):
-    expense = get_object_or_404(Expense, pk=pk)
+    gym = getattr(request, 'gym', None)
+    expense = get_object_or_404(Expense, pk=pk, gym=gym)
     expense.delete()
     messages.success(request, 'Expense permanently deleted.')
     return redirect('expense_trash')

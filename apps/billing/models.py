@@ -1,7 +1,9 @@
 from django.db import models
 from apps.members.models import Member
+from apps.superadmin.models import Gym
 
 class Payment(models.Model):
+    gym = models.ForeignKey(Gym, on_delete=models.CASCADE, null=True)
     PAYMENT_MODE_CHOICES = [
         ('cash', 'Cash'),
         ('upi', 'UPI'),

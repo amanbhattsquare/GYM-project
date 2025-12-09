@@ -14,6 +14,7 @@ import json
 
 
 def trainer_attendance(request):
+    gym = getattr(request, 'gym', None)
     today = timezone.now().date()
 
     if request.method == 'POST':
@@ -23,20 +24,20 @@ def trainer_attendance(request):
 
         if quick_checkin_id:
             try:
-                trainer = Trainer.objects.get(trainer_id=quick_checkin_id, is_active=True)
-                TrainerAttendance.objects.create(trainer=trainer, check_in_time=timezone.now())
+                trainer = Trainer.objects.get(trainer_id=quick_checkin_id, is_active=True, gym=gym)
+                TrainerAttendance.objects.create(trainer=trainer, check_in_time=timezone.now(), gym=gym)
                 messages.success(request, f'{trainer.name} checked in successfully.')
             except Trainer.DoesNotExist:
                 messages.error(request, 'Invalid or inactive Trainer ID.')
             return redirect('trainer_attendance')
 
         if trainer_id and action:
-            trainer = get_object_or_404(Trainer, id=trainer_id)
+            trainer = get_object_or_404(Trainer, id=trainer_id, gym=gym)
             if action == 'checkin':
-                TrainerAttendance.objects.create(trainer=trainer, check_in_time=timezone.now())
+                TrainerAttendance.objects.create(trainer=trainer, check_in_time=timezone.now(), gym=gym)
                 messages.success(request, f'{trainer.name} checked in successfully.')
             elif action == 'checkout':
-                attendance_record = TrainerAttendance.objects.filter(trainer=trainer, check_in_time__date=today, check_out_time__isnull=True).first()
+                attendance_record = TrainerAttendance.objects.filter(trainer=trainer, check_in_time__date=today, check_out_time__isnull=True, gym=gym).first()
                 if attendance_record:
                     attendance_record.check_out_time = timezone.now()
                     attendance_record.status = 'outside'
@@ -47,19 +48,20 @@ def trainer_attendance(request):
             return redirect('trainer_attendance')
 
     # Stats
-    checked_in_today = TrainerAttendance.objects.filter(check_in_time__date=today).values('trainer').distinct().count()
-    currently_inside = TrainerAttendance.objects.filter(status='inside', check_in_time__date=today).count()
-    total_trainers = Trainer.objects.count()
+    checked_in_today = TrainerAttendance.objects.filter(check_in_time__date=today, gym=gym).values('trainer').distinct().count()
+    currently_inside = TrainerAttendance.objects.filter(status='inside', check_in_time__date=today, gym=gym).count()
+    total_trainers = Trainer.objects.filter(gym=gym).count()
 
     # Get all active trainers
     query = request.GET.get('q')
     if query:
         trainers_list = Trainer.objects.filter(
-            Q(name__icontains=query) |
-            Q(mobile__icontains=query)
+            (Q(name__icontains=query) |
+            Q(mobile__icontains=query)),
+            gym=gym
         ).order_by('name')
     else:
-        trainers_list = Trainer.objects.all().order_by('name')
+        trainers_list = Trainer.objects.filter(gym=gym).order_by('name')
 
     paginator = Paginator(trainers_list, settings.ITEMS_PER_PAGE)
     page_number = request.GET.get('page')
@@ -69,7 +71,8 @@ def trainer_attendance(request):
     trainer_ids_on_page = [trainer.id for trainer in page_obj]
     attendance_today = TrainerAttendance.objects.filter(
         trainer_id__in=trainer_ids_on_page, 
-        check_in_time__date=today
+        check_in_time__date=today,
+        gym=gym
     ).order_by('-check_in_time')
 
     # Create a dictionary for quick lookup
@@ -101,6 +104,7 @@ def trainer_attendance(request):
     return render(request, 'attendance/trainer_attendance.html', context)
 
 def member_attendance(request):
+    gym = getattr(request, 'gym', None)
     today = timezone.now().date()
 
     if request.method == 'POST':
@@ -110,19 +114,19 @@ def member_attendance(request):
 
         if quick_checkin_id and action:
             try:
-                member = get_object_or_404(Member, member_id=quick_checkin_id)
+                member = get_object_or_404(Member, member_id=quick_checkin_id, gym=gym)
                 if not member.is_active:
                     messages.error(request, 'This member is not active and cannot be checked in.')
                     return redirect('member_attendance')
 
                 if action == 'checkin':
-                    if MemberAttendance.objects.filter(member=member, check_in_time__date=today, check_out_time__isnull=True).exists():
+                    if MemberAttendance.objects.filter(member=member, check_in_time__date=today, check_out_time__isnull=True, gym=gym).exists():
                         messages.warning(request, f'{member.name} is already checked in.')
                     else:
-                        MemberAttendance.objects.create(member=member, check_in_time=timezone.now())
+                        MemberAttendance.objects.create(member=member, check_in_time=timezone.now(), gym=gym)
                         messages.success(request, f'{member.name} checked in successfully.')
                 elif action == 'checkout':
-                    attendance_record = MemberAttendance.objects.filter(member=member, check_in_time__date=today, check_out_time__isnull=True).first()
+                    attendance_record = MemberAttendance.objects.filter(member=member, check_in_time__date=today, check_out_time__isnull=True, gym=gym).first()
                     if attendance_record:
                         attendance_record.check_out_time = timezone.now()
                         attendance_record.status = 'outside'
@@ -135,12 +139,12 @@ def member_attendance(request):
             return redirect('member_attendance')
 
         if member_id and action:
-            member = get_object_or_404(Member, id=member_id)
+            member = get_object_or_404(Member, id=member_id, gym=gym)
             if action == 'checkin':
-                MemberAttendance.objects.create(member=member, check_in_time=timezone.now())
+                MemberAttendance.objects.create(member=member, check_in_time=timezone.now(), gym=gym)
                 messages.success(request, f'{member.name} checked in successfully.')
             elif action == 'checkout':
-                attendance_record = MemberAttendance.objects.filter(member=member, check_in_time__date=today, check_out_time__isnull=True).first()
+                attendance_record = MemberAttendance.objects.filter(member=member, check_in_time__date=today, check_out_time__isnull=True, gym=gym).first()
                 if attendance_record:
                     attendance_record.check_out_time = timezone.now()
                     attendance_record.status = 'outside'
@@ -151,20 +155,21 @@ def member_attendance(request):
             return redirect('member_attendance')
 
     # Stats
-    checked_in_today = MemberAttendance.objects.filter(check_in_time__date=today).values('member').distinct().count()
-    currently_inside = MemberAttendance.objects.filter(status='inside', check_in_time__date=today).count()
-    total_members = Member.objects.count()
+    checked_in_today = MemberAttendance.objects.filter(check_in_time__date=today, gym=gym).values('member').distinct().count()
+    currently_inside = MemberAttendance.objects.filter(status='inside', check_in_time__date=today, gym=gym).count()
+    total_members = Member.objects.filter(gym=gym).count()
 
     # Get all active members
     query = request.GET.get('q')
     if query:
         members_list = Member.objects.annotate(full_name=Concat('first_name', Value(' '), 'last_name')).filter(
-            Q(full_name__icontains=query) |
+            (Q(full_name__icontains=query) |
             Q(mobile_number__icontains=query) |
-            Q(member_id__icontains=query)
+            Q(member_id__icontains=query)),
+            gym=gym
         ).order_by('first_name', 'last_name')
     else:
-        members_list = Member.objects.all().order_by('first_name', 'last_name')
+        members_list = Member.objects.filter(gym=gym).order_by('first_name', 'last_name')
 
     paginator = Paginator(members_list, settings.ITEMS_PER_PAGE)
     page_number = request.GET.get('page')
@@ -174,7 +179,8 @@ def member_attendance(request):
     member_ids_on_page = [member.id for member in page_obj]
     attendance_today = MemberAttendance.objects.filter(
         member_id__in=member_ids_on_page, 
-        check_in_time__date=today
+        check_in_time__date=today,
+        gym=gym
     ).order_by('-check_in_time')
 
     # Create a dictionary for quick lookup

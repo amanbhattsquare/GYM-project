@@ -1,9 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from apps.superadmin.models import Gym
 
 
 class Expense(models.Model):
+    gym = models.ForeignKey(Gym, on_delete=models.CASCADE, null=True)
     PAYMENT_MODES = [
         ('cash', 'Cash'),
         ('upi', 'UPI'),
