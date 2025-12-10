@@ -14,6 +14,20 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 
 @never_cache
+def superadmin_login(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None and user.is_superuser:
+            login(request, user)
+            request.session['role'] = 'superadmin'
+            return redirect('superadmin:dashboard')
+        else:
+            messages.error(request, 'Invalid username or password for superadmin.')
+    return render(request, 'login/superadmin_login.html')
+
+@never_cache
 @login_required(login_url='login')
 def dashboard(request):
     gym = getattr(request, 'gym', None)

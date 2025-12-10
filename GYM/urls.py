@@ -22,9 +22,11 @@ from django.conf.urls.static import static
 from .views import help_view
 
 urlpatterns = [
+    path('', include('apps.website.urls')),
+    path('login/', views.user_login, name='login'),
+    path('superadmin/', views.superadmin_login, name='superadmin_login'),
     path('admin/', admin.site.urls),
     path('superadmin/', include(('apps.superadmin.urls', 'superadmin'))),
-    path('', views.user_login, name='login'),
     path('dashboard/', include('apps.dashboard.urls')),
     path('dashboard', views.dashboard, name="dashboard"),
     path('logout', views.user_logout, name='logout'),
