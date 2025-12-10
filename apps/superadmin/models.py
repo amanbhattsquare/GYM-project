@@ -1,7 +1,11 @@
+import uuid
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
 # apps/tenants/models.py
 from django.db import models
 
 class Gym(models.Model):
+    gym_id = models.CharField(max_length=100, unique=True, editable=False)
     name = models.CharField(max_length=200)
     slogan = models.CharField(max_length=255, blank=True, null=True)
     logo = models.ImageField(upload_to="gym_logos/", null=True, blank=True)
@@ -12,6 +16,11 @@ class Gym(models.Model):
     website = models.URLField(blank=True)
     note = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+@receiver(pre_save, sender=Gym)
+def create_gym_id(sender, instance, **kwargs):
+    if not instance.gym_id:
+        instance.gym_id = f"GYM-{uuid.uuid4().hex[:8].upper()}"
 
 class GymAdmin(models.Model):
     user = models.OneToOneField("auth.User", on_delete=models.CASCADE)

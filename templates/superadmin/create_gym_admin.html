@@ -21,6 +21,34 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
+                                    <label>Name</label>
+                                    {{ form.name }}
+                                    {% if form.name.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.name.errors %}
+                                                <small>{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Phone Number</label>
+                                    {{ form.Phone_number }}
+                                    {% if form.Phone_number.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.Phone_number.errors %}
+                                                <small>{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
                                     <label>Username</label>
                                     {{ form.username }}
                                     {% if form.username.errors %}

@@ -72,3 +72,8 @@ create gym ID aslo , this is unique and foren key and auto generated
 
 All id are created {gym}+MEM-25-000008, every gyms have own unique ids of all 
 like members, trainers, invoice, receipt etc.
+
+
+I want to do than ki superadmin ko "python manage.py createsuperuser"  
+se banau, and gyms ko super admin se add karu vahi se jo gym ka login id banaunga
+super admin "http://127.0.0.1:8000/superadmin/" ye url hai, yahi gym add karunga
