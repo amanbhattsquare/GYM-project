@@ -1,5 +1,8 @@
 from django.db import models
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
 from django.utils import timezone
+import random
 from apps.superadmin.models import Gym
 
 class Trainer(models.Model):
@@ -17,23 +20,16 @@ class Trainer(models.Model):
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
-    def save(self, *args, **kwargs):
-        if not self.trainer_id and self.gym:
-            current_year = timezone.now().strftime('%y')
-            # Filter by the current gym
-            last_trainer = Trainer.objects.filter(
-                gym=self.gym, 
-                trainer_id__startswith=f'TRN-{self.gym.id}-{current_year}'
-            ).order_by('-trainer_id').first()
-            
-            if last_trainer and last_trainer.trainer_id:
-                last_id_int = int(last_trainer.trainer_id.split('-')[-1])
-                new_id_int = last_id_int + 1
-            else:
-                new_id_int = 1
-            
-            self.trainer_id = f'TRN-{self.gym.id}-{current_year}-{new_id_int:06d}'
-        super().save(*args, **kwargs)
-
     def __str__(self):
         return self.name
+
+@receiver(pre_save, sender=Trainer)
+def create_trainer_id(sender, instance, **kwargs):
+    if not instance.trainer_id:
+        gym_id_part = "GD"  # Default value
+        if instance.gym and instance.gym.gym_id_prefix:
+            gym_id_part = instance.gym.gym_id_prefix
+
+        present_year = timezone.now().strftime('%y')
+        random_number = ''.join([str(random.randint(0, 9)) for _ in range(6)])
+        instance.trainer_id = f"{gym_id_part}-TRN-{present_year}-{random_number}"

@@ -6,7 +6,7 @@ class GymForm(forms.ModelForm):
 
     class Meta:
         model = Gym
-        fields = ['name', 'slogan', 'logo', 'address', 'phone', 'landline', 'email', 'website', 'note']
+        fields = ['name', 'gym_id_prefix', 'slogan', 'logo', 'address', 'phone', 'landline', 'email', 'website', 'note']
 
     def clean_username(self):
         username = self.cleaned_data.get('username')

@@ -6,6 +6,7 @@ from django.db import models
 
 class Gym(models.Model):
     gym_id = models.CharField(max_length=100, unique=True, editable=False)
+    gym_id_prefix = models.CharField(max_length=10, unique=True, null=True)  # Allow null temporarily
     name = models.CharField(max_length=200)
     slogan = models.CharField(max_length=255, blank=True, null=True)
     logo = models.ImageField(upload_to="gym_logos/", null=True, blank=True)
