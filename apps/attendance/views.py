@@ -215,6 +215,7 @@ import json
 from django.core.serializers import serialize
 
 def attendance_report(request):
+    gym = getattr(request, 'gym', None)
     user_type = request.GET.get('user_type', 'member')
     start_date_str = request.GET.get('start_date')
     end_date_str = request.GET.get('end_date')
@@ -228,19 +229,21 @@ def attendance_report(request):
     records = None
     if user_type == 'member':
         records = MemberAttendance.objects.filter(
-            check_in_time__date__range=[start_date, end_date]
+            check_in_time__date__range=[start_date, end_date],
+            gym=gym
         ).select_related('member').order_by('-check_in_time')
         if user_id:
             records = records.filter(member__id=user_id)
     else: # trainer
         records = TrainerAttendance.objects.filter(
-            check_in_time__date__range=[start_date, end_date]
+            check_in_time__date__range=[start_date, end_date],
+            gym=gym
         ).select_related('trainer').order_by('-check_in_time')
         if user_id:
             records = records.filter(trainer__id=user_id)
 
-    all_members = Member.objects.all()
-    all_trainers = Trainer.objects.all()
+    all_members = Member.objects.filter(gym=gym)
+    all_trainers = Trainer.objects.filter(gym=gym)
 
     paginator = Paginator(records, settings.ITEMS_PER_PAGE) # 15 records per page
     page_number = request.GET.get('page')

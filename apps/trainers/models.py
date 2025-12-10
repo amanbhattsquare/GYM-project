@@ -18,15 +18,21 @@ class Trainer(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
-        if not self.trainer_id:
+        if not self.trainer_id and self.gym:
             current_year = timezone.now().strftime('%y')
-            last_trainer = Trainer.objects.filter(trainer_id__startswith=f'TRN-{current_year}').order_by('-trainer_id').first()
+            # Filter by the current gym
+            last_trainer = Trainer.objects.filter(
+                gym=self.gym, 
+                trainer_id__startswith=f'TRN-{self.gym.id}-{current_year}'
+            ).order_by('-trainer_id').first()
+            
             if last_trainer and last_trainer.trainer_id:
                 last_id_int = int(last_trainer.trainer_id.split('-')[-1])
                 new_id_int = last_id_int + 1
             else:
                 new_id_int = 1
-            self.trainer_id = f'TRN-{current_year}-{new_id_int:06d}'
+            
+            self.trainer_id = f'TRN-{self.gym.id}-{current_year}-{new_id_int:06d}'
         super().save(*args, **kwargs)
 
     def __str__(self):

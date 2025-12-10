@@ -215,14 +215,16 @@ def delete_member(request, member_id):
 @never_cache
 @login_required(login_url='login')
 def assign_membership_plan(request, member_id):
-    member = get_object_or_404(Member, id=member_id)
-    plans = MembershipPlan.objects.all()
+    gym = getattr(request, 'gym', None)
+    member = get_object_or_404(Member, id=member_id, gym=gym)
+    plans = MembershipPlan.objects.filter(gym=gym)
     plans_json = serialize('json', plans)
     if request.method == 'POST':
-        form = MembershipHistoryForm(request.POST)
+        form = MembershipHistoryForm(request.POST, gym=gym)
         if form.is_valid():
             history = form.save(commit=False)
             history.member = member
+            history.gym = gym
             history.transaction_id = request.POST.get('transaction_id')
             history.save()
             member.membership_plan = history.plan
@@ -230,24 +232,30 @@ def assign_membership_plan(request, member_id):
             messages.success(request, f'Membership plan "{history.plan.title}" assigned to {member.first_name} {member.last_name}.')
             return redirect('billing:invoice', member_id=member.id, history_id=history.id)
     else:
-        form = MembershipHistoryForm()
+        form = MembershipHistoryForm(gym=gym)
     return render(request, 'members/membership_plan_assign.html', {'member': member, 'plans': plans, 'plans_json': plans_json, 'form': form})
 
 @never_cache
 @login_required(login_url='login')
 def assign_pt_trainer(request, member_id):
-    member = get_object_or_404(Member, id=member_id)
-    trainers = Trainer.objects.all()
+    gym = getattr(request, 'gym', None) 
+    member = get_object_or_404(Member, id=member_id, gym=gym)
+    
+    # Filter trainers by the current gym
+    trainers = Trainer.objects.filter(gym=gym)
     trainers_json = serialize('json', trainers)
+    
     if request.method == 'POST':
-        form = PersonalTrainerForm(request.POST)
+        form = PersonalTrainerForm(request.POST, gym=gym) # Pass gym to the form
         if form.is_valid():
             pt_assignment = form.save(commit=False)
             pt_assignment.member = member
+            pt_assignment.gym = gym # Assign gym to the instance
             pt_assignment.transaction_id = request.POST.get('transaction_id')
             pt_assignment.save()
             messages.success(request, f'Personal Trainer "{pt_assignment.trainer.name}" assigned to {member.first_name} {member.last_name}.')
             return redirect('billing:pt_invoice', member_id=member.id, pt_invoice_id=pt_assignment.id)
     else:
-        form = PersonalTrainerForm()
+        form = PersonalTrainerForm(gym=gym) # Pass gym to the form
+    
     return render(request, 'members/assign_PT_trainer.html', {'member': member, 'trainers': trainers, 'trainers_json': trainers_json, 'form': form})

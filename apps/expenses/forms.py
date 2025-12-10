@@ -5,7 +5,7 @@ from django.utils import timezone
 class ExpenseForm(forms.ModelForm):
     class Meta:
         model = Expense
-        exclude = ['added_by', 'is_deleted']
+        exclude = ['added_by', 'is_deleted', 'gym']
         widgets = {
             'date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'category': forms.Select(attrs={'class': 'form-select'}),

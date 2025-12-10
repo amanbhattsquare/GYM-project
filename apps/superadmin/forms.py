@@ -7,7 +7,7 @@ class GymForm(forms.ModelForm):
 
     class Meta:
         model = Gym
-        fields = '__all__'
+        fields = ['name', 'slogan', 'logo', 'address', 'phone', 'landline', 'email', 'website', 'note']
 
     def __init__(self, *args, **kwargs):
         super(GymForm, self).__init__(*args, **kwargs)

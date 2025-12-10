@@ -206,11 +206,12 @@ def invoice(request, member_id, history_id):
 @never_cache
 @login_required(login_url='login')
 def pt_invoice(request, member_id, pt_invoice_id):
-    member = get_object_or_404(Member, id=member_id)
-    pt_invoice = get_object_or_404(PersonalTrainer, id=pt_invoice_id)
+    gym = getattr(request, 'gym', None)
+    member = get_object_or_404(Member, id=member_id, gym=gym)
+    pt_invoice = get_object_or_404(PersonalTrainer, id=pt_invoice_id, gym=gym)
 
     # Get all PT invoices for the member to find the next and previous
-    member_pt_invoices = list(PersonalTrainer.objects.filter(member=member).order_by('created_at'))
+    member_pt_invoices = list(PersonalTrainer.objects.filter(member=member, gym=gym).order_by('created_at'))
     current_invoice_index = member_pt_invoices.index(pt_invoice)
 
     previous_invoice = member_pt_invoices[current_invoice_index - 1] if current_invoice_index > 0 else None
@@ -227,13 +228,14 @@ def pt_invoice(request, member_id, pt_invoice_id):
 @never_cache
 @login_required(login_url='login')
 def invoices_list(request):
+    gym = getattr(request, 'gym', None)
     # Get query parameters
     query = request.GET.get('q', '')  # Default to an empty string
     status_filter = request.GET.get('status')
     sort_by = request.GET.get('sort', '-date')
 
     # Fetch membership invoices
-    membership_invoices = MembershipHistory.objects.select_related('member', 'plan').filter(status='active').annotate(
+    membership_invoices = MembershipHistory.objects.select_related('member', 'plan').filter(status='active', gym=gym).annotate(
         date=F('created_at'),
         type=Value('membership', output_field=models.CharField()),
         amount=F('total_amount'),
@@ -243,7 +245,7 @@ def invoices_list(request):
     ).values('invoice_id', 'date', 'type', 'amount', 'member_id', 'member__member_id', 'member__first_name', 'member__last_name', 'plan_title', 'due_amount')
 
     # Fetch personal training invoices
-    pt_invoices = PersonalTrainer.objects.select_related('member', 'trainer').filter(status='active').annotate(
+    pt_invoices = PersonalTrainer.objects.select_related('member', 'trainer').filter(status='active', gym=gym).annotate(
         date=F('created_at'),
         type=Value('pt', output_field=models.CharField()),
         amount=F('total_amount'),
@@ -253,7 +255,7 @@ def invoices_list(request):
     ).values('invoice_id', 'date', 'type', 'amount', 'member_id', 'member__member_id', 'member__first_name', 'member__last_name', 'plan_title', 'due_amount')
 
     # Fetch payment invoices
-    payment_invoices = Payment.objects.select_related('member').annotate(
+    payment_invoices = Payment.objects.select_related('member').filter(gym=gym).annotate(
         date=F('payment_date'),
         type=Value('payment', output_field=models.CharField()),
         plan_title=Value('N/A', output_field=models.CharField()),
@@ -305,12 +307,13 @@ from django.http import JsonResponse
 
 @login_required
 def delete_invoice(request, invoice_type, invoice_id):
+    gym = getattr(request, 'gym', None)
     if request.method == 'POST':
         try:
             if invoice_type == 'membership':
-                invoice = get_object_or_404(MembershipHistory, id=invoice_id)
+                invoice = get_object_or_404(MembershipHistory, id=invoice_id, gym=gym)
             elif invoice_type == 'pt':
-                invoice = get_object_or_404(PersonalTrainer, id=invoice_id)
+                invoice = get_object_or_404(PersonalTrainer, id=invoice_id, gym=gym)
             else:
                 return JsonResponse({'status': 'error', 'message': 'Invalid invoice type.'}, status=400)
 
@@ -322,9 +325,9 @@ def delete_invoice(request, invoice_type, invoice_id):
 
     # Keep the old GET request logic for other purposes if needed, but it won't be used by the new delete button.
     if invoice_type == 'membership':
-        invoice = get_object_or_404(MembershipHistory, id=invoice_id)
+        invoice = get_object_or_404(MembershipHistory, id=invoice_id, gym=gym)
     elif invoice_type == 'pt':
-        invoice = get_object_or_404(PersonalTrainer, id=invoice_id)
+        invoice = get_object_or_404(PersonalTrainer, id=invoice_id, gym=gym)
     else:
         messages.error(request, 'Invalid invoice type.')
         return redirect('billing:invoices_list')
@@ -336,8 +339,9 @@ def delete_invoice(request, invoice_type, invoice_id):
 
 @login_required
 def trash_invoices(request):
+    gym = getattr(request, 'gym', None)
     # Fetch inactive membership invoices
-    membership_invoices = MembershipHistory.objects.select_related('member', 'plan').filter(status='inactive').annotate(
+    membership_invoices = MembershipHistory.objects.select_related('member', 'plan').filter(status='inactive', gym=gym).annotate(
         date=F('created_at'),
         type=Value('membership', output_field=models.CharField()),
         amount=F('total_amount'),
@@ -347,7 +351,7 @@ def trash_invoices(request):
     ).values('invoice_id', 'date', 'type', 'amount', 'member_id', 'member__member_id', 'member__first_name', 'member__last_name', 'plan_title', 'due_amount')
 
     # Fetch inactive personal training invoices
-    pt_invoices = PersonalTrainer.objects.select_related('member', 'trainer').filter(status='inactive').annotate(
+    pt_invoices = PersonalTrainer.objects.select_related('member', 'trainer').filter(status='inactive', gym=gym).annotate(
         date=F('created_at'),
         type=Value('pt', output_field=models.CharField()),
         amount=F('total_amount'),
@@ -370,10 +374,11 @@ def trash_invoices(request):
 
 @login_required
 def restore_invoice(request, invoice_type, invoice_id):
+    gym = getattr(request, 'gym', None)
     if invoice_type == 'membership':
-        invoice = get_object_or_404(MembershipHistory, id=invoice_id)
+        invoice = get_object_or_404(MembershipHistory, id=invoice_id, gym=gym)
     elif invoice_type == 'pt':
-        invoice = get_object_or_404(PersonalTrainer, id=invoice_id)
+        invoice = get_object_or_404(PersonalTrainer, id=invoice_id, gym=gym)
     else:
         messages.error(request, 'Invalid invoice type.')
         return redirect('billing:trash_invoices')
@@ -385,10 +390,11 @@ def restore_invoice(request, invoice_type, invoice_id):
 
 @login_required
 def delete_permanently(request, invoice_type, invoice_id):
+    gym = getattr(request, 'gym', None)
     if invoice_type == 'membership':
-        invoice = get_object_or_404(MembershipHistory, id=invoice_id)
+        invoice = get_object_or_404(MembershipHistory, id=invoice_id, gym=gym)
     elif invoice_type == 'pt':
-        invoice = get_object_or_404(PersonalTrainer, id=invoice_id)
+        invoice = get_object_or_404(PersonalTrainer, id=invoice_id, gym=gym)
     else:
         messages.error(request, 'Invalid invoice type.')
         return redirect('billing:trash_invoices')
