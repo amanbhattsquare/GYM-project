@@ -23,13 +23,11 @@ from .views import help_view
 
 urlpatterns = [
     path('', include('apps.website.urls')),
-    path('login/', views.user_login, name='login'),
-    path('superadmin/', views.superadmin_login, name='superadmin_login'),
+    path('', include('apps.login.urls')),
     path('admin/', admin.site.urls),
     path('superadmin/', include(('apps.superadmin.urls', 'superadmin'))),
     path('dashboard/', include('apps.dashboard.urls')),
     path('dashboard', views.dashboard, name="dashboard"),
-    path('logout', views.user_logout, name='logout'),
     path('attendance/', include('apps.attendance.urls')),
     path('members/', include('apps.members.urls')),
     path('trainers/', include('apps.trainers.urls')),

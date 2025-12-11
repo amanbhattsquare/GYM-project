@@ -4,9 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FitFlow | Modern Gym Management Software</title>
+    <title>SquareFit |  Gym Management Software</title>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -48,156 +49,224 @@
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
 
-        /* Additional CSS for compact layout */
-        @media (max-width: 640px) {
-            .navbar .container {
-                padding-left: 0.5rem;
-                padding-right: 0.5rem;
-            }
-
-            .btn-xs {
-                padding-left: 0.5rem;
-                padding-right: 0.5rem;
-                min-height: 1.75rem;
-                font-size: 0.75rem;
-            }
-        }
-
-        /* For extra small screens */
-        @media (max-width: 360px) {
-            .hidden-xs {
-                display: none;
-            }
-        }
+       
     </style>
 </head>
 
 <body>
-    <!--  Navigation -->
-    <nav class="navbar bg-base-100 shadow-sm sticky top-0 z-50 py-1">
-        <div class="container mx-auto px-3">
-            <!-- All in one flex row -->
-            <div class="flex items-center justify-between w-full">
-                <!-- Left: Brand + Mobile Menu -->
-                <div class="flex items-center gap-2">
-                    <!-- Mobile Menu -->
-                    <div class="dropdown lg:hidden">
-                        <div tabindex="0" role="button" class="btn btn-ghost btn-xs btn-circle">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M4 6h16M4 12h16M4 18h16" />
-                            </svg>
-                        </div>
-                        <ul tabindex="0"
-                            class="dropdown-content menu menu-sm bg-base-100 rounded-box z-[1] mt-3 w-48 p-2 shadow">
-                            <li><a href="#features">Features</a></li>
-                            <li><a href="#pricing">Pricing</a></li>
-                            <li><a href="#testimonials">Testimonials</a></li>
-                            <li><a href="#faq">FAQ</a></li>
-                            <li><a href="#contact">Contact</a></li>
-                            <div class="divider my-1"></div>
-                            <li><a onclick="showMemberLogin()">Member Login</a></li>
-                            <li><a onclick="showOwnerLogin()">Gym Owner Login</a></li>
-                        </ul>
-                    </div>
+  <!-- Navigation -->
+<nav class="navbar bg-base-100 shadow-md sticky top-0 z-50 border-b border-base-200">
+  <div class="navbar max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-                    <!-- Logo -->
-                    <a href="/" class="flex items-center">
-                        <i class="fas fa-dumbbell text-primary text-lg mr-1"></i>
-                        <span class="font-bold text-primary text-sm sm:text-base">FitFlow</span>
-                    </a>
-                </div>
+    <!-- Left: Logo -->
+    <div class="flex-none">
+      <a href="/" class="btn btn-ghost text-xl font-bold text-primary normal-case gap-2">
+        <i class="fas fa-dumbbell text-2xl"></i>
+        SquareFit
+      </a>
+    </div>
 
-                <!-- Center: Navigation Links (Desktop) -->
-                <div class="hidden lg:flex items-center gap-1">
-                    <a href="#features" class="btn btn-ghost btn-xs">Features</a>
-                    <div class="w-px h-4 bg-gray-300"></div>
-                    <a href="#pricing" class="btn btn-ghost btn-xs">Pricing</a>
-                    <div class="w-px h-4 bg-gray-300"></div>
-                    <a href="#testimonials" class="btn btn-ghost btn-xs">Testimonials</a>
-                    <div class="w-px h-4 bg-gray-300"></div>
-                    <a href="#faq" class="btn btn-ghost btn-xs">FAQ</a>
-                    <div class="w-px h-4 bg-gray-300"></div>
-                    <a href="#contact" class="btn btn-ghost btn-xs">Contact</a>
-                </div>
+    <!-- Center: Desktop Menu -->
+    <div class="flex-1 hidden lg:flex justify-center">
+      <ul class="menu menu-horizontal px-1 gap-2 text-sm font-medium">
+        <li><a href="#features" class="rounded-lg hover:bg-primary hover:text-white">Features</a></li>
+        <li><a href="#pricing" class="rounded-lg hover:bg-primary hover:text-white">Pricing</a></li>
+        <li><a href="#testimonials" class="rounded-lg hover:bg-primary hover:text-white">Testimonials</a></li>
+        <li><a href="#faq" class="rounded-lg hover:bg-primary hover:text-white">FAQ</a></li>
+        <li><a href="#contact" class="rounded-lg hover:bg-primary hover:text-white">Contact</a></li>
+      </ul>
+    </div>
 
-                <!-- Right: All Buttons in One Compact Row -->
-                <div class="flex items-center gap-1">
-                    <!-- Login Buttons (Desktop) -->
-                    <div class="hidden md:flex items-center gap-1">
-                        {% comment %} <button onclick="showMemberLogin()" class="btn btn-outline btn-xs">
-                            <i class="fas fa-user text-xs"></i>
-                            <span class="ml-1 hidden sm:inline">Member</span>
-                        </button> {% endcomment %}
-                        <button onclick="showOwnerLogin()" class="btn btn-primary btn-xs">
-                            <i class="fas fa-dumbbell text-xs"></i>
-                            <span class="ml-1 hidden sm:inline">Owner</span>
-                        </button>
-                    </div>
+    <!-- Right: Actions (Login + CTA) -->
+    <div class="flex-none flex items-center gap-3">
 
-                    <!-- CTA Button -->
-                    <a href="#pricing" class="btn btn-secondary btn-xs">
-                        <i class="fas fa-rocket text-xs"></i>
-                        <span class="ml-1">Start</span>
-                    </a>
+      <!-- Login Button (Visible on larger screens) -->
+      <a href="{% url 'login' %}" class="btn btn-ghost btn-sm hidden sm:flex gap-2">
+        <i class="fas fa-sign-in-alt"></i>
+        Login
+      </a>
 
-                    <!-- Mobile Login Dropdown -->
-                    <div class="md:hidden">
-                        <div tabindex="0" role="button" class="btn btn-ghost btn-xs btn-circle">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <ul tabindex="0"
-                            class="dropdown-content menu menu-sm bg-base-100 rounded-box z-[1] mt-3 w-40 p-2 shadow right-0">
-                            <li><a onclick="showOwnerLogin()">Gym Owner</a></li>
-                            <li><a onclick="showMemberLogin()">Member</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+      <!-- Get Started CTA -->
+      <a href="#pricing" class="btn btn-primary btn-sm gap-2 shadow-lg">
+        <i class="fas fa-rocket"></i>
+        <span class="hidden sm:inline">Get Started</span>
+        <span class="sm:hidden">Start</span>
+      </a>
+      
+
+      <!-- Mobile Menu Toggle -->
+      <label for="mobile-drawer" class="btn btn-square btn-ghost lg:hidden">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+             class="inline-block w-6 h-6 stroke-current">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </label>
+    </div>
+  </div>
+   <label class="toggle text-base-content">
+  <input type="checkbox" value="synthwave" class="theme-controller" />
+
+  <svg aria-label="sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g stroke-linejoin="round" stroke-linecap="round" stroke-width="2" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path></g></svg>
+
+  <svg aria-label="moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g stroke-linejoin="round" stroke-linecap="round" stroke-width="2" fill="none" stroke="currentColor"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></g></svg>
+
+</label>
+</nav>
+
+<!-- Mobile Drawer Menu (Hidden by default) -->
+<input type="checkbox" id="mobile-drawer" class="drawer-toggle" />
+<div class="drawer-side z-50">
+  <label for="mobile-drawer" class="drawer-overlay"></label>
+  <ul class="menu p-6 w-80 h-full bg-base-100 text-base-content shadow-2xl">
+    <!-- Mobile Logo + Close -->
+    <div class="flex justify-between items-center mb-8">
+      <a href="/" class="text-2xl font-bold text-primary flex items-center gap-2">
+        <i class="fas fa-dumbbell"></i> SquareFit
+      </a>
+      <label for="mobile-drawer" class="btn btn-circle btn-ghost">
+        <i class="fas fa-times text-xl"></i>
+      </label>
+    </div>
+
+    <!-- Mobile Menu Items -->
+    <li><a href="#features" class="text-lg py-3">Features</a></li>
+    <li><a href="#pricing" class="text-lg py-3">Pricing</a></li>
+    <li><a href="#testimonials" class="text-lg py-3">Testimonials</a></li>
+    <li><a href="#faq" class="text-lg py-3">FAQ</a></li>
+    <li><a href="#contact" class="text-lg py-3">Contact</a></li>
+
+    <div class="divider"></div>
+
+    <!-- Mobile Buttons -->
+    <li>
+      <a href="{% url 'login' %}" class="btn btn-ghost text-lg">
+        <i class="fas fa-sign-in-alt mr-2"></i> Login
+      </a>
+    </li>
+    <li>
+      <a href="#pricing" class="btn btn-primary text-lg shadow-lg">
+        <i class="fas fa-rocket mr-2"></i> Get Started
+      </a>
+    </li>
+  </ul>
+</div>
+
+
+<!-- Hero Section – New Premium Indigo-Cyan Color Palette -->
+<section class="relative overflow-hidden bg-gradient-to-br from-indigo-600 via-indigo-500 to-cyan-500 py-24 lg:py-10"> 
+  <div class="absolute inset-0 bg-black/20"></div>
+  <div class="absolute -top-40 -right-40 w-96 h-96 bg-secondary/30 rounded-full blur-3xl"></div>
+  <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-primary/40 rounded-full blur-3xl"></div>
+
+  <div class="container mx-auto px-6 relative z-10">
+    <div class="grid lg:grid-cols-2 gap-12 xl:gap-20 items-center">
+
+      <!-- Left: Content -->
+      <div class="text-center lg:text-left">
+        <!-- Badge -->
+        <div class="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 text-sm font-medium mb-6">
+          <span class="flex h-2 w-2 rounded-full bg-green-400"></span>
+          Trusted by 2,500+ gyms worldwide
         </div>
-    </nav>
 
+        <!-- Main Heading -->
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black text-white leading-tight mb-6">
+          Run Your Gym Like a <span class="text-secondary">Pro</span>
+        </h1>
 
-    <!-- Hero Section -->
-    <section class="gradient-bg text-white py-20">
-        <div class="container mx-auto px-4">
-            <div class="flex flex-col lg:flex-row items-center justify-between">
-                <div class="lg:w-1/2 mb-10 lg:mb-0">
-                    <h1 class="text-4xl md:text-6xl font-bold mb-6">Streamline Your Gym Operations</h1>
-                    <p class="text-xl mb-8 opacity-90">The all-in-one SaaS platform designed to help gym owners manage
-                        memberships, schedules, payments, and more with ease.</p>
-                    <div class="flex flex-col sm:flex-row gap-4">
-                        <a href="#pricing" class="btn btn-secondary btn-lg text-lg">Start 30-Day Free Trial</a>
-                        <a href="#features"
-                            class="btn btn-outline btn-lg text-lg text-white border-white hover:bg-white hover:text-gray-900">View
-                            Features</a>
-                    </div>
-                    <div class="mt-10 flex items-center">
-                        <div class="rating rating-sm">
-                            <input type="radio" name="rating-2" class="mask mask-star-2 bg-orange-400" checked />
-                            <input type="radio" name="rating-2" class="mask mask-star-2 bg-orange-400" checked />
-                            <input type="radio" name="rating-2" class="mask mask-star-2 bg-orange-400" checked />
-                            <input type="radio" name="rating-2" class="mask mask-star-2 bg-orange-400" checked />
-                            <input type="radio" name="rating-2" class="mask mask-star-2 bg-orange-400" checked />
-                        </div>
-                        <span class="ml-2">Rated 4.9/5 by 1,200+ gym owners</span>
-                    </div>
-                </div>
-                <div class="lg:w-1/2 flex justify-center">
-                    <div class="mockup-window border border-base-300 bg-base-100 shadow-2xl max-w-lg">
-                        <div class="flex justify-center px-4 py-16 bg-base-200">
-                            <div class="text-center">
-                                <i class="fas fa-chart-line text-6xl text-primary mb-4"></i>
-                                <h3 class="text-2xl font-bold text-gray-800 mb-2">Dashboard Preview</h3>
-                                <p class="text-gray-600">Real-time insights into your gym performance</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <!-- Subheading -->
+        <p class="text-xl lg:text-2xl text-white/90 font-light mb-10 max-w-2xl">
+          The #1 all-in-one gym management platform. Handle members, classes, payments, check-ins, and reporting — all in one beautiful dashboard.
+        </p>
+
+        <!-- CTA Buttons -->
+        <div class="flex flex-col sm:flex-row gap-5 mb-10 justify-center lg:justify-start">
+          <a href="#pricing" class="btn btn-lg btn-secondary shadow-2xl hover:shadow-secondary/50 transform hover:-translate-y-1 transition-all duration-300 text-lg font-bold">
+            Start 30-Day Free Trial
+            <i class="fas fa-arrow-right ml-2"></i>
+          </a>
+          <a href="#demo" class="btn btn-lg btn-outline border-white text-white hover:bg-white hover:text-primary shadow-xl text-lg">
+            Watch Demo
+            <i class="fas fa-play-circle ml-2"></i>
+          </a>
         </div>
-    </section>
+
+        <!-- Trust Signals -->
+        <div class="flex flex-col sm:flex-row items-center gap-6 text-white/90">
+          <div class="flex -space-x-3">
+            <img class="w-12 h-12 rounded-full ring-4 ring-white/30" src="https://i.pravatar.cc/100?img=1" alt="gym owner">
+            <img class="w-12 h-12 rounded-full ring-4 ring-white/30" src="https://i.pravatar.cc/100?img=2" alt="gym owner">
+            <img class="w-12 h-12 rounded-full ring-4 ring-white/30" src="https://i.pravatar.cc/100?img=3" alt="gym owner">
+            <div class="w-12 h-12 rounded-full bg-white/20 backdrop-blur ring-4 ring-white/30 flex items-center justify-center text-sm font-bold">
+              +2.5k
+            </div>
+          </div>
+          <div class="text-left">
+            <div class="flex items-center gap-2 mb-1">
+              <div class="rating rating-sm">
+                {% for i in "12345" %}
+                <input type="radio" name="rating-hero" class="mask mask-star-2 bg-yellow-400" {% if forloop.counter == 5 %}checked{% endif %} disabled />
+                {% endfor %}
+              </div>
+              <span class="font-bold text-lg">4.9/5</span>
+            </div>
+            <p class="text-sm opacity-90">From 2,500+ happy gym owners</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Visual Mockup -->
+      <div class="relative flex justify-center lg:justify-end">
+        <!-- Floating Dashboard Mockup -->
+        <div class="relative mockup-browser border border-base-300 shadow-2xl w-full max-w-lg bg-base-100">
+          <div class="mockup-browser-toolbar">
+            <div class="input border border-base-300">https://app.SquareFit.com/dashboard</div>
+          </div>
+          <div class="flex justify-center px-4 py-12 bg-gradient-to-br from-primary/10 to-secondary/10">
+            <div class="text-center space-y-4">
+              <div class="stats shadow-lg bg-white/90 backdrop-blur">
+                <div class="stat place-items-center">
+                  <div class="stat-title">Active Members</div>
+                  <div class="stat-value text-primary">1,247</div>
+                  <div class="stat-desc text-success">+12% this month</div>
+                </div>
+                <div class="stat place-items-center">
+                  <div class="stat-title">Revenue</div>
+                  <div class="stat-value text-secondary">$48,920</div>
+                  <div class="stat-desc">This month</div>
+                </div>
+              </div>
+              <div class="grid grid-cols-3 gap-4">
+                <div class="bg-white/80 rounded-2xl p-4 shadow">
+                  <i class="fas fa-users text-3xl text-primary mb-2"></i>
+                  <p class="font-bold">Members</p>
+                </div>
+                <div class="bg-white/80 rounded-2xl p-4 shadow">
+                  <i class="fas fa-calendar-check text-3xl text-success mb-2"></i>
+                  <p class="font-bold">Attendance</p>
+                </div>
+                <div class="bg-white/80 rounded-2xl p-4 shadow">
+                  <i class="fas fa-dollar-sign text-3xl text-warning mb-2"></i>
+                  <p class="font-bold">Billing</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Floating Elements -->
+        <div class="absolute -top-6 -left-10 bg-success/20 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg animate-pulse">
+          +89% retention rate
+        </div>
+        <div class="absolute -bottom-8 -right-10 bg-secondary/20 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg">
+          No credit card required
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
 
     <!-- Stats Section -->
     <section class="py-16 bg-base-200">
@@ -256,7 +325,7 @@
         <div class="container mx-auto px-4">
             <div class="text-center mb-16">
                 <h2 class="text-4xl font-bold mb-4">Everything You Need to Run Your Gym</h2>
-                <p class="text-xl text-gray-600 max-w-3xl mx-auto">FitFlow provides a comprehensive suite of tools
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">SquareFit provides a comprehensive suite of tools
                     designed specifically for fitness businesses.</p>
             </div>
 
@@ -515,7 +584,7 @@
             <div class="text-center mb-16">
                 <h2 class="text-4xl font-bold mb-4">What Gym Owners Say</h2>
                 <p class="text-xl text-gray-600 max-w-3xl mx-auto">Join thousands of gym owners who have transformed
-                    their business with FitFlow.</p>
+                    their business with SquareFit.</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -533,7 +602,7 @@
                                 <p class="text-sm text-gray-600">Owner, Peak Fitness</p>
                             </div>
                         </div>
-                        <p>"FitFlow cut our administrative time in half. The member management system is intuitive, and
+                        <p>"SquareFit cut our administrative time in half. The member management system is intuitive, and
                             our members love the mobile app for booking classes."</p>
                         <div class="rating rating-sm mt-4">
                             <input type="radio" name="rating-1" class="mask mask-star-2 bg-orange-400" checked />
@@ -670,7 +739,7 @@
         <div class="container mx-auto px-4 text-center">
             <h2 class="text-4xl font-bold mb-6">Ready to Transform Your Gym Management?</h2>
             <p class="text-xl mb-10 max-w-2xl mx-auto">Join thousands of gym owners who have streamlined their
-                operations with FitFlow. Start your free trial today.</p>
+                operations with SquareFit. Start your free trial today.</p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
                 <a href="#pricing" class="btn btn-secondary btn-lg text-lg">Start 30-Day Free Trial</a>
                 <a href="#features"
@@ -689,7 +758,7 @@
                 <div class="lg:col-span-2">
                     <a href="/" class="flex items-center gap-3 text-2xl font-bold text-primary mb-6">
                         <i class="fas fa-dumbbell text-3xl"></i>
-                        FitFlow
+                        SquareFit
                     </a>
                     <p class="text-base-content/70 max-w-xs leading-relaxed">
                         India’s fastest-growing gym & fitness studio management software. Member check-in, billing,
@@ -756,7 +825,7 @@
             <div
                 class="mt-12 pt-8 border-t border-base-300 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-base-content/60">
                 <div>
-                    &copy; 2024 FitFlow. All rights reserved.
+                   <p class="text-center md:text-left">&copy; 2025 SquareFit <a href="{%url 'superadmin_login'%}"><i class="fas fa-shield-heart"></i> </a>. All rights reserved. </p>
                 </div>
                 <div class="flex gap-6">
                     <a href="#" class="link link-hover">Privacy Policy</a>
@@ -794,6 +863,7 @@
             });
         });
     </script>
+    
 </body>
 
 </html>
