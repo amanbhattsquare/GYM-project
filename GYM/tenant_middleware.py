@@ -21,7 +21,8 @@ class TenantMiddleware:
         # Assuming login/logout URLs are named 'login' and 'logout'
         login_url = reverse('login')
         logout_url = reverse('logout')
-        if request.path in [login_url, logout_url]:
+        index_url = reverse('index')
+        if request.path in [login_url, logout_url, index_url]:
             return self.get_response(request)
 
         gym_id = request.session.get('gym_id')
