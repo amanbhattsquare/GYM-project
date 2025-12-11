@@ -5,8 +5,12 @@ from .forms import GymForm, GymAdminForm
 from .models import Gym, GymAdmin
 from apps.members.models import Member, MembershipHistory
 from django.db.models import Q
+from django.contrib.auth.decorators import login_required
+from .decorators import superadmin_required
 
 
+@login_required
+@superadmin_required
 def add_gym(request):
     if request.method == 'POST':
         form = GymForm(request.POST, request.FILES)
@@ -17,7 +21,8 @@ def add_gym(request):
         form = GymForm()
     return render(request, 'superadmin/add_gym.html', {'form': form})
 
-
+@login_required
+@superadmin_required
 def create_gym_admin(request, gym_id):
     gym = get_object_or_404(Gym, id=gym_id)
     if request.method == 'POST':
@@ -32,6 +37,10 @@ def create_gym_admin(request, gym_id):
         form = GymAdminForm()
     return render(request, 'superadmin/create_gym_admin.html', {'form': form, 'gym': gym})
 
+
+
+@login_required
+@superadmin_required
 def gym_list(request):
     gyms = Gym.objects.all()
     for gym in gyms:
@@ -52,6 +61,8 @@ def gym_list(request):
     return render(request, 'superadmin/gym_list.html', {'gyms': gyms})
 
 
+@login_required
+@superadmin_required
 def update_gym(request, gym_id):
     gym = get_object_or_404(Gym, pk=gym_id)
     if request.method == 'POST':
@@ -63,11 +74,15 @@ def update_gym(request, gym_id):
         form = GymForm(instance=gym)
     return render(request, 'superadmin/add_gym.html', {'form': form})
 
+@login_required
+@superadmin_required
 def delete_gym(request, gym_id):
     gym = get_object_or_404(Gym, pk=gym_id)
     gym.delete()
     return redirect('superadmin:gym_list')
 
+@login_required
+@superadmin_required
 def gym_profile(request, gym_id):
     gym = get_object_or_404(Gym, pk=gym_id)
     form = GymForm(instance=gym)
@@ -84,6 +99,8 @@ def gym_profile(request, gym_id):
         'admin_form': admin_form
     })
 
+@login_required
+@superadmin_required
 def reset_admin_password(request, admin_id):
     gym_admin = get_object_or_404(GymAdmin, pk=admin_id)
     if request.method == 'POST':

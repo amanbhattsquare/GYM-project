@@ -145,3 +145,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 ITEMS_PER_PAGE = 15
 
 LOGOUT_REDIRECT_URL = '/'
+
+SESSION_SAVE_EVERY_REQUEST = True
+SESSION_COOKIE_AGE = 7200  # 2 hours in seconds
