@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.models import User
-from .forms import GymForm, GymAdminForm
-from .models import Gym, GymAdmin
+from .forms import GymForm, GymAdminForm, SubscriptionPlanForm
+from .models import Gym, GymAdmin, SubscriptionPlan
 from apps.members.models import Member, MembershipHistory
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
@@ -112,3 +112,42 @@ def reset_admin_password(request, admin_id):
             user.save()
             return redirect('superadmin:gym_profile', gym_id=gym_admin.gym.id)
     return redirect('superadmin:gym_profile', gym_id=gym_admin.gym.id)
+
+
+@login_required
+@superadmin_required
+def subscription_plan_list(request):
+    plans = SubscriptionPlan.objects.all()
+    return render(request, 'superadmin/subscription_plan_list.html', {'plans': plans})
+
+@login_required
+@superadmin_required
+def add_subscription_plan(request):
+    if request.method == 'POST':
+        form = SubscriptionPlanForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('superadmin:subscription_plan_list')
+    else:
+        form = SubscriptionPlanForm()
+    return render(request, 'superadmin/add_subscription_plan.html', {'form': form})
+
+@login_required
+@superadmin_required
+def update_subscription_plan(request, plan_id):
+    plan = get_object_or_404(SubscriptionPlan, id=plan_id)
+    if request.method == 'POST':
+        form = SubscriptionPlanForm(request.POST, instance=plan)
+        if form.is_valid():
+            form.save()
+            return redirect('superadmin:subscription_plan_list')
+    else:
+        form = SubscriptionPlanForm(instance=plan)
+    return render(request, 'superadmin/update_subscription_plan.html', {'form': form})
+
+@login_required
+@superadmin_required
+def delete_subscription_plan(request, plan_id):
+    plan = get_object_or_404(SubscriptionPlan, id=plan_id)
+    plan.delete()
+    return redirect('superadmin:subscription_plan_list')

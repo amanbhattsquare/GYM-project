@@ -1,0 +1,104 @@
+{% extends 'superadmin/base.html' %}
+
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/customstyle.css' %}">
+
+<!-- Compact Breadcrumb Navigation -->
+<nav aria-label="breadcrumb" class="custom-breadcrumb mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{% url 'superadmin:dashboard' %}" class="text-decoration-none">
+                <i class="mdi mdi-home-outline mdi-18px"></i> Dashboard
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <i class="mdi mdi-package-variant-closed mdi-18px"></i> Subscription Plans
+        </li>
+    </ol>
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">Subscription Plan List</h4>
+                    <a href="{% url 'superadmin:add_subscription_plan' %}" class="btn btn-light btn-sm">
+                        <i class="mdi mdi-plus"></i> Add Plan
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% csrf_token %}
+                    <!-- Search form -->
+                    {% include 'includes/search_form.html' %}
+                    <div class="table-responsive">
+                        <table class="table table-hover table-sm table-stack-on-mobile">
+                            <thead>
+                                <tr>
+                                    <th class="font-weight-semibold py-2">#</th>
+                                    <th class="font-weight-semibold py-2">Name</th>
+                                    <th class="font-weight-semibold py-2">Price</th>
+                                    <th class="font-weight-semibold py-2">Duration (Months)</th>
+                                    <th class="font-weight-semibold py-2">Features</th>
+                                    <th class="font-weight-semibold text-center py-2">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for plan in plans %}
+                                <tr>
+                                    <td data-label="SR. No.">{{ forloop.counter }}</td>
+                                    <td data-label="Name">{{ plan.name }}</td>
+                                    <td data-label="Price">{{ plan.price }}</td>
+                                    <td data-label="Duration (Months)">{{ plan.duration_months }}</td>
+                                    <td data-label="Features">{{ plan.features }}</td>
+                                    <td data-label="Actions" class="text-center">
+                                        <a href="{% url 'superadmin:update_subscription_plan' plan.id %}" class="btn btn-primary btn-sm" data-toggle="tooltip" title="Edit"><i class="mdi mdi-pencil-outline"></i></a>
+                                        <a href="#" data-url="{% url 'superadmin:delete_subscription_plan' plan.id %}" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteModal" title="Delete"><i class="mdi mdi-delete-outline"></i></a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Pagination -->
+                    {% if plans.has_other_pages %}
+                    {% include 'includes/pagination.html' with page_obj=plans %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this subscription plan?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <a id="deleteBtn" href="#" class="btn btn-danger">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        $('#deleteModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); // Button that triggered the modal
+            var url = button.data('url'); // Extract info from data-* attributes
+            var modal = $(this);
+            modal.find('#deleteBtn').attr('href', url);
+        });
+    });
+</script>
+{% endblock %}

@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import Gym
+from .models import Gym, SubscriptionPlan
 
 class GymForm(forms.ModelForm):
 
@@ -29,3 +29,8 @@ class GymAdminForm(forms.Form):
         super().__init__(*args, **kwargs)
         for field in self.fields:
             self.fields[field].widget.attrs.update({'class': 'form-control'})
+
+class SubscriptionPlanForm(forms.ModelForm):
+    class Meta:
+        model = SubscriptionPlan
+        fields = ['name', 'price', 'duration_months', 'features']

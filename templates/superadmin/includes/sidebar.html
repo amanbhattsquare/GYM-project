@@ -45,8 +45,17 @@
       </a>
       <div class="collapse" id="subscription-management">
         <ul class="nav flex-column sub-menu">
+          
           <li class="nav-item">
-            <a class="nav-link" href="#">Subscription Plans</a>
+            <a class="nav-link" href="{% url 'superadmin:subscription_plan_list' %}">
+              <span class="menu-title">Subscription Plans</span>
+            </a>
+          </li>
+            <li class="nav-item">
+            <a class="nav-link" href="{% url 'superadmin:add_subscription_plan' %}">
+            
+              <span class="menu-title"> Add Plans</span>
+            </a>
           </li>
         </ul>
       </div>
