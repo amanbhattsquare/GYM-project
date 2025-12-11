@@ -77,3 +77,9 @@ like members, trainers, invoice, receipt etc.
 I want to do than ki superadmin ko "python manage.py createsuperuser"  
 se banau, and gyms ko super admin se add karu vahi se jo gym ka login id banaunga
 super admin "http://127.0.0.1:8000/superadmin/" ye url hai, yahi gym add karunga
+
+
+
+
+ek kaam kar do ki main jo 'python manage.py createsuberuser' se jo Id password banata hu usses abhi gym login lo rha hai, main superadmin login karna chahata hu, then superadmin me gym ko add karu fir main jo superadmin me gym
+ id and password banaunga usse gym login hogi

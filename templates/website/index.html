@@ -1,143 +1,799 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gym SaaS – Modern Gym Management Software</title>
-
-    <!-- Bootstrap 5 CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
+    <title>FitFlow | Modern Gym Management Software</title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <style>
-        body {
-            font-family: "Poppins", sans-serif;
-            background: #f9fafb;
+        * {
+            font-family: 'Inter', sans-serif;
         }
 
-        .hero {
-            padding: 120px 0;
-            background: linear-gradient(135deg, #0d6efd, #6610f2);
-            color: white;
-            text-align: center;
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
 
-        .hero h1 {
-            font-size: 3rem;
-            font-weight: 700;
+        .feature-card:hover {
+            transform: translateY(-8px);
+            transition: transform 0.3s ease;
         }
 
-        .hero p {
-            font-size: 1.2rem;
-            margin-top: 10px;
+        .stats-card {
+            transition: all 0.3s ease;
         }
 
-        .feature-box {
-            padding: 30px;
-            border-radius: 12px;
-            background: white;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-            transition: 0.3s;
+        .stats-card:hover {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
 
-        .feature-box:hover {
-            transform: translateY(-5px);
+        .pricing-card:hover {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            transform: scale(1.02);
+            transition: all 0.3s ease;
         }
 
-        .login-section {
-            background: #eef1f7;
-            padding: 50px 0;
+        .testimonial-card {
+            transition: all 0.3s ease;
         }
 
-        .footer {
-            background: #111;
-            color: #bbb;
-            padding: 40px 0;
-            text-align: center;
+        .testimonial-card:hover {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
 
-        .btn-login{
-            padding: 12px 22px;
-            border-radius: 8px;
+        /* Additional CSS for compact layout */
+        @media (max-width: 640px) {
+            .navbar .container {
+                padding-left: 0.5rem;
+                padding-right: 0.5rem;
+            }
+
+            .btn-xs {
+                padding-left: 0.5rem;
+                padding-right: 0.5rem;
+                min-height: 1.75rem;
+                font-size: 0.75rem;
+            }
         }
 
-        .navbar-brand {
-            font-weight: 600;
-            font-size: 1.4rem;
+        /* For extra small screens */
+        @media (max-width: 360px) {
+            .hidden-xs {
+                display: none;
+            }
         }
     </style>
 </head>
-<body>
 
-    <!-- NAVBAR -->
-    <nav class="navbar navbar-expand-lg navbar-light shadow-sm bg-white">
-        <div class="container">
-            <a class="navbar-brand text-primary" href="#">GYM SaaS</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+<body>
+    <!--  Navigation -->
+    <nav class="navbar bg-base-100 shadow-sm sticky top-0 z-50 py-1">
+        <div class="container mx-auto px-3">
+            <!-- All in one flex row -->
+            <div class="flex items-center justify-between w-full">
+                <!-- Left: Brand + Mobile Menu -->
+                <div class="flex items-center gap-2">
+                    <!-- Mobile Menu -->
+                    <div class="dropdown lg:hidden">
+                        <div tabindex="0" role="button" class="btn btn-ghost btn-xs btn-circle">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                        </div>
+                        <ul tabindex="0"
+                            class="dropdown-content menu menu-sm bg-base-100 rounded-box z-[1] mt-3 w-48 p-2 shadow">
+                            <li><a href="#features">Features</a></li>
+                            <li><a href="#pricing">Pricing</a></li>
+                            <li><a href="#testimonials">Testimonials</a></li>
+                            <li><a href="#faq">FAQ</a></li>
+                            <li><a href="#contact">Contact</a></li>
+                            <div class="divider my-1"></div>
+                            <li><a onclick="showMemberLogin()">Member Login</a></li>
+                            <li><a onclick="showOwnerLogin()">Gym Owner Login</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Logo -->
+                    <a href="/" class="flex items-center">
+                        <i class="fas fa-dumbbell text-primary text-lg mr-1"></i>
+                        <span class="font-bold text-primary text-sm sm:text-base">FitFlow</span>
+                    </a>
+                </div>
+
+                <!-- Center: Navigation Links (Desktop) -->
+                <div class="hidden lg:flex items-center gap-1">
+                    <a href="#features" class="btn btn-ghost btn-xs">Features</a>
+                    <div class="w-px h-4 bg-gray-300"></div>
+                    <a href="#pricing" class="btn btn-ghost btn-xs">Pricing</a>
+                    <div class="w-px h-4 bg-gray-300"></div>
+                    <a href="#testimonials" class="btn btn-ghost btn-xs">Testimonials</a>
+                    <div class="w-px h-4 bg-gray-300"></div>
+                    <a href="#faq" class="btn btn-ghost btn-xs">FAQ</a>
+                    <div class="w-px h-4 bg-gray-300"></div>
+                    <a href="#contact" class="btn btn-ghost btn-xs">Contact</a>
+                </div>
+
+                <!-- Right: All Buttons in One Compact Row -->
+                <div class="flex items-center gap-1">
+                    <!-- Login Buttons (Desktop) -->
+                    <div class="hidden md:flex items-center gap-1">
+                        {% comment %} <button onclick="showMemberLogin()" class="btn btn-outline btn-xs">
+                            <i class="fas fa-user text-xs"></i>
+                            <span class="ml-1 hidden sm:inline">Member</span>
+                        </button> {% endcomment %}
+                        <button onclick="showOwnerLogin()" class="btn btn-primary btn-xs">
+                            <i class="fas fa-dumbbell text-xs"></i>
+                            <span class="ml-1 hidden sm:inline">Owner</span>
+                        </button>
+                    </div>
+
+                    <!-- CTA Button -->
+                    <a href="#pricing" class="btn btn-secondary btn-xs">
+                        <i class="fas fa-rocket text-xs"></i>
+                        <span class="ml-1">Start</span>
+                    </a>
+
+                    <!-- Mobile Login Dropdown -->
+                    <div class="md:hidden">
+                        <div tabindex="0" role="button" class="btn btn-ghost btn-xs btn-circle">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <ul tabindex="0"
+                            class="dropdown-content menu menu-sm bg-base-100 rounded-box z-[1] mt-3 w-40 p-2 shadow right-0">
+                            <li><a onclick="showOwnerLogin()">Gym Owner</a></li>
+                            <li><a onclick="showMemberLogin()">Member</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
     </nav>
 
-    <!-- HERO SECTION -->
-    <section class="hero">
-        <div class="container">
-            <h1>Modern Gym Management Software</h1>
-            <p>Powerful SaaS solution to manage gyms, trainers, members, and payments in one place.</p>
-            <div class="mt-4">
-                <a href="{% url 'login' %}" class="btn btn-light btn-lg me-2">Login</a>
-                <a href="#features" class="btn btn-outline-light btn-lg">Explore Features</a>
-            </div>
-        </div>
-    </section>
 
-    <!-- FEATURES SECTION -->
-    <section id="features" class="container py-5">
-        <h2 class="text-center mb-5 fw-bold">Why Choose Our GYM SaaS?</h2>
-
-        <div class="row g-4">
-            <div class="col-md-4">
-                <div class="feature-box">
-                    <h4>✔ Multi-Gym Support</h4>
-                    <p>Handle unlimited gyms from one central dashboard with complete data isolation.</p>
+    <!-- Hero Section -->
+    <section class="gradient-bg text-white py-20">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col lg:flex-row items-center justify-between">
+                <div class="lg:w-1/2 mb-10 lg:mb-0">
+                    <h1 class="text-4xl md:text-6xl font-bold mb-6">Streamline Your Gym Operations</h1>
+                    <p class="text-xl mb-8 opacity-90">The all-in-one SaaS platform designed to help gym owners manage
+                        memberships, schedules, payments, and more with ease.</p>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <a href="#pricing" class="btn btn-secondary btn-lg text-lg">Start 30-Day Free Trial</a>
+                        <a href="#features"
+                            class="btn btn-outline btn-lg text-lg text-white border-white hover:bg-white hover:text-gray-900">View
+                            Features</a>
+                    </div>
+                    <div class="mt-10 flex items-center">
+                        <div class="rating rating-sm">
+                            <input type="radio" name="rating-2" class="mask mask-star-2 bg-orange-400" checked />
+                            <input type="radio" name="rating-2" class="mask mask-star-2 bg-orange-400" checked />
+                            <input type="radio" name="rating-2" class="mask mask-star-2 bg-orange-400" checked />
+                            <input type="radio" name="rating-2" class="mask mask-star-2 bg-orange-400" checked />
+                            <input type="radio" name="rating-2" class="mask mask-star-2 bg-orange-400" checked />
+                        </div>
+                        <span class="ml-2">Rated 4.9/5 by 1,200+ gym owners</span>
+                    </div>
                 </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="feature-box">
-                    <h4>✔ Trainer & Member Management</h4>
-                    <p>Track active members, assign trainers, manage attendance and sessions.</p>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="feature-box">
-                    <h4>✔ Payment & Invoice System</h4>
-                    <p>Generate invoices, collect payments, send reminders via WhatsApp & SMS.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- LOGIN SECTION -->
-    <section id="login" class="login-section">
-        <div class="container">
-            <h2 class="text-center fw-bold mb-4">Login to Your Account</h2>
-            
-            <div class="row justify-content-center">
-                <div class="col-md-8 text-center">
-                    <a href="{% url 'superadmin_login' %}" class="btn btn-primary btn-login m-2">Super Admin Login</a>
-                    <a href="{% url 'login' %}" class="btn btn-dark btn-login m-2">Gym Admin Login</a>
+                <div class="lg:w-1/2 flex justify-center">
+                    <div class="mockup-window border border-base-300 bg-base-100 shadow-2xl max-w-lg">
+                        <div class="flex justify-center px-4 py-16 bg-base-200">
+                            <div class="text-center">
+                                <i class="fas fa-chart-line text-6xl text-primary mb-4"></i>
+                                <h3 class="text-2xl font-bold text-gray-800 mb-2">Dashboard Preview</h3>
+                                <p class="text-gray-600">Real-time insights into your gym performance</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- FOOTER -->
-    <footer class="footer">
-        <p>© 2025 Gym SaaS – All Rights Reserved.</p>
+    <!-- Stats Section -->
+    <section class="py-16 bg-base-200">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12">Trusted by Fitness Businesses Worldwide</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="stats-card stats shadow bg-base-100">
+                    <div class="stat">
+                        <div class="stat-figure text-primary">
+                            <i class="fas fa-users text-3xl"></i>
+                        </div>
+                        <div class="stat-title">Active Members</div>
+                        <div class="stat-value">500K+</div>
+                        <div class="stat-desc">Across 2,500+ gyms</div>
+                    </div>
+                </div>
+
+                <div class="stats-card stats shadow bg-base-100">
+                    <div class="stat">
+                        <div class="stat-figure text-secondary">
+                            <i class="fas fa-dumbbell text-3xl"></i>
+                        </div>
+                        <div class="stat-title">Classes Scheduled</div>
+                        <div class="stat-value">1.2M+</div>
+                        <div class="stat-desc">Monthly average</div>
+                    </div>
+                </div>
+
+                <div class="stats-card stats shadow bg-base-100">
+                    <div class="stat">
+                        <div class="stat-figure text-accent">
+                            <i class="fas fa-wallet text-3xl"></i>
+                        </div>
+                        <div class="stat-title">Revenue Processed</div>
+                        <div class="stat-value">$85M+</div>
+                        <div class="stat-desc">In 2024</div>
+                    </div>
+                </div>
+
+                <div class="stats-card stats shadow bg-base-100">
+                    <div class="stat">
+                        <div class="stat-figure text-primary">
+                            <i class="fas fa-clock text-3xl"></i>
+                        </div>
+                        <div class="stat-title">Time Saved</div>
+                        <div class="stat-value">15+ hrs</div>
+                        <div class="stat-desc">Per week per gym</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 bg-base-100">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold mb-4">Everything You Need to Run Your Gym</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">FitFlow provides a comprehensive suite of tools
+                    designed specifically for fitness businesses.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="feature-card card bg-base-100 shadow-xl">
+                    <figure class="px-10 pt-10">
+                        <div class="avatar">
+                            <div class="w-24 rounded-full bg-primary text-primary-content p-6">
+                                <i class="fas fa-id-card text-4xl"></i>
+                            </div>
+                        </div>
+                    </figure>
+                    <div class="card-body items-center text-center">
+                        <h2 class="card-title">Member Management</h2>
+                        <p>Track member profiles, check-ins, attendance, and membership tiers with our intuitive
+                            dashboard.</p>
+                        <div class="card-actions mt-4">
+                            <div class="badge badge-primary">Automated billing</div>
+                            <div class="badge badge-secondary">Check-in system</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="feature-card card bg-base-100 shadow-xl">
+                    <figure class="px-10 pt-10">
+                        <div class="avatar">
+                            <div class="w-24 rounded-full bg-secondary text-secondary-content p-6">
+                                <i class="fas fa-calendar-alt text-4xl"></i>
+                            </div>
+                        </div>
+                    </figure>
+                    <div class="card-body items-center text-center">
+                        <h2 class="card-title">Class Scheduling</h2>
+                        <p>Create, manage, and optimize class schedules with automatic waitlists and capacity tracking.
+                        </p>
+                        <div class="card-actions mt-4">
+                            <div class="badge badge-primary">Capacity alerts</div>
+                            <div class="badge badge-secondary">Auto waitlist</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="feature-card card bg-base-100 shadow-xl">
+                    <figure class="px-10 pt-10">
+                        <div class="avatar">
+                            <div class="w-24 rounded-full bg-accent text-accent-content p-6">
+                                <i class="fas fa-chart-pie text-4xl"></i>
+                            </div>
+                        </div>
+                    </figure>
+                    <div class="card-body items-center text-center">
+                        <h2 class="card-title">Analytics & Reporting</h2>
+                        <p>Gain insights into your gym's performance with detailed reports and real-time dashboards.</p>
+                        <div class="card-actions mt-4">
+                            <div class="badge badge-primary">Revenue reports</div>
+                            <div class="badge badge-secondary">Member analytics</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="feature-card card bg-base-100 shadow-xl">
+                    <figure class="px-10 pt-10">
+                        <div class="avatar">
+                            <div class="w-24 rounded-full bg-primary text-primary-content p-6">
+                                <i class="fas fa-credit-card text-4xl"></i>
+                            </div>
+                        </div>
+                    </figure>
+                    <div class="card-body items-center text-center">
+                        <h2 class="card-title">Payment Processing</h2>
+                        <p>Secure, automated payment processing with support for multiple payment methods and
+                            currencies.</p>
+                        <div class="card-actions mt-4">
+                            <div class="badge badge-primary">Recurring billing</div>
+                            <div class="badge badge-secondary">Multi-currency</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="feature-card card bg-base-100 shadow-xl">
+                    <figure class="px-10 pt-10">
+                        <div class="avatar">
+                            <div class="w-24 rounded-full bg-secondary text-secondary-content p-6">
+                                <i class="fas fa-mobile-alt text-4xl"></i>
+                            </div>
+                        </div>
+                    </figure>
+                    <div class="card-body items-center text-center">
+                        <h2 class="card-title">Mobile App</h2>
+                        <p>Give your members and staff access on the go with our dedicated iOS and Android apps.</p>
+                        <div class="card-actions mt-4">
+                            <div class="badge badge-primary">Member check-in</div>
+                            <div class="badge badge-secondary">Class booking</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature 6 -->
+                <div class="feature-card card bg-base-100 shadow-xl">
+                    <figure class="px-10 pt-10">
+                        <div class="avatar">
+                            <div class="w-24 rounded-full bg-accent text-accent-content p-6">
+                                <i class="fas fa-headset text-4xl"></i>
+                            </div>
+                        </div>
+                    </figure>
+                    <div class="card-body items-center text-center">
+                        <h2 class="card-title">24/7 Support</h2>
+                        <p>Get help whenever you need it with our dedicated customer success team and resources.</p>
+                        <div class="card-actions mt-4">
+                            <div class="badge badge-primary">Live chat</div>
+                            <div class="badge badge-secondary">Phone support</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-20 bg-base-200">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold mb-4">Simple, Transparent Pricing</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">Choose the plan that fits your gym's needs. All plans
+                    include a 30-day free trial.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <!-- Starter Plan -->
+                <div class="pricing-card card bg-base-100 shadow-xl">
+                    <div class="card-body">
+                        <h2 class="card-title text-2xl">Starter</h2>
+                        <p class="text-gray-600">Perfect for small gyms and fitness studios</p>
+                        <div class="my-6">
+                            <span class="text-5xl font-bold">$99</span>
+                            <span class="text-gray-600">/month</span>
+                        </div>
+                        <div class="space-y-3 mb-8">
+                            <div class="flex items-center">
+                                <i class="fas fa-check text-green-500 mr-3"></i>
+                                <span>Up to 100 active members</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-check text-green-500 mr-3"></i>
+                                <span>Basic class scheduling</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-check text-green-500 mr-3"></i>
+                                <span>Member check-in system</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-check text-green-500 mr-3"></i>
+                                <span>Email support</span>
+                            </div>
+                        </div>
+                        <div class="card-actions">
+                            <button class="btn btn-outline btn-primary w-full">Start Free Trial</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pro Plan (Highlighted) -->
+                <div class="pricing-card card bg-primary text-primary-content shadow-xl relative">
+                    <div
+                        class="absolute top-0 right-0 bg-secondary text-secondary-content px-4 py-1 rounded-bl-lg font-bold">
+                        MOST POPULAR</div>
+                    <div class="card-body">
+                        <h2 class="card-title text-2xl">Professional</h2>
+                        <p>Ideal for growing gyms with multiple trainers</p>
+                        <div class="my-6">
+                            <span class="text-5xl font-bold">$199</span>
+                            <span>/month</span>
+                        </div>
+                        <div class="space-y-3 mb-8">
+                            <div class="flex items-center">
+                                <i class="fas fa-check mr-3"></i>
+                                <span>Up to 500 active members</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-check mr-3"></i>
+                                <span>Advanced class scheduling</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-check mr-3"></i>
+                                <span>Automated billing & payments</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-check mr-3"></i>
+                                <span>Member mobile app</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-check mr-3"></i>
+                                <span>Priority email & chat support</span>
+                            </div>
+                        </div>
+                        <div class="card-actions">
+                            <button class="btn btn-secondary w-full">Start Free Trial</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Enterprise Plan -->
+                <div class="pricing-card card bg-base-100 shadow-xl">
+                    <div class="card-body">
+                        <h2 class="card-title text-2xl">Enterprise</h2>
+                        <p class="text-gray-600">For large fitness chains and franchises</p>
+                        <div class="my-6">
+                            <span class="text-5xl font-bold">Custom</span>
+                            <span class="text-gray-600">/month</span>
+                        </div>
+                        <div class="space-y-3 mb-8">
+                            <div class="flex items-center">
+                                <i class="fas fa-check text-green-500 mr-3"></i>
+                                <span>Unlimited members</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-check text-green-500 mr-3"></i>
+                                <span>Multi-location management</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-check text-green-500 mr-3"></i>
+                                <span>Custom API access</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-check text-green-500 mr-3"></i>
+                                <span>Advanced analytics</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-check text-green-500 mr-3"></i>
+                                <span>Dedicated account manager</span>
+                            </div>
+                        </div>
+                        <div class="card-actions">
+                            <button class="btn btn-outline btn-primary w-full">Contact Sales</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-12">
+                <p class="text-gray-600">All plans include a 30-day free trial with no credit card required. Cancel
+                    anytime.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section id="testimonials" class="py-20 bg-base-100">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold mb-4">What Gym Owners Say</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">Join thousands of gym owners who have transformed
+                    their business with FitFlow.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Testimonial 1 -->
+                <div class="testimonial-card card bg-base-100 shadow-xl">
+                    <div class="card-body">
+                        <div class="flex items-center mb-4">
+                            <div class="avatar mr-4">
+                                <div class="w-12 rounded-full ring ring-primary ring-offset-2 ring-offset-base-100">
+                                    <img src="https://i.pravatar.cc/150?img=1" />
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="font-bold">Sarah Johnson</h4>
+                                <p class="text-sm text-gray-600">Owner, Peak Fitness</p>
+                            </div>
+                        </div>
+                        <p>"FitFlow cut our administrative time in half. The member management system is intuitive, and
+                            our members love the mobile app for booking classes."</p>
+                        <div class="rating rating-sm mt-4">
+                            <input type="radio" name="rating-1" class="mask mask-star-2 bg-orange-400" checked />
+                            <input type="radio" name="rating-1" class="mask mask-star-2 bg-orange-400" checked />
+                            <input type="radio" name="rating-1" class="mask mask-star-2 bg-orange-400" checked />
+                            <input type="radio" name="rating-1" class="mask mask-star-2 bg-orange-400" checked />
+                            <input type="radio" name="rating-1" class="mask mask-star-2 bg-orange-400" checked />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 2 -->
+                <div class="testimonial-card card bg-base-100 shadow-xl">
+                    <div class="card-body">
+                        <div class="flex items-center mb-4">
+                            <div class="avatar mr-4">
+                                <div class="w-12 rounded-full ring ring-primary ring-offset-2 ring-offset-base-100">
+                                    <img src="https://i.pravatar.cc/150?img=5" />
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="font-bold">Marcus Chen</h4>
+                                <p class="text-sm text-gray-600">Founder, Iron Forge Gym</p>
+                            </div>
+                        </div>
+                        <p>"The analytics dashboard helped us identify our most profitable classes and optimize our
+                            schedule. Revenue increased by 30% in just 3 months."</p>
+                        <div class="rating rating-sm mt-4">
+                            <input type="radio" name="rating-2" class="mask mask-star-2 bg-orange-400" checked />
+                            <input type="radio" name="rating-2" class="mask mask-star-2 bg-orange-400" checked />
+                            <input type="radio" name="rating-2" class="mask mask-star-2 bg-orange-400" checked />
+                            <input type="radio" name="rating-2" class="mask mask-star-2 bg-orange-400" checked />
+                            <input type="radio" name="rating-2" class="mask mask-star-2 bg-orange-400" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 3 -->
+                <div class="testimonial-card card bg-base-100 shadow-xl">
+                    <div class="card-body">
+                        <div class="flex items-center mb-4">
+                            <div class="avatar mr-4">
+                                <div class="w-12 rounded-full ring ring-primary ring-offset-2 ring-offset-base-100">
+                                    <img src="https://i.pravatar.cc/150?img=8" />
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="font-bold">Jessica Williams</h4>
+                                <p class="text-sm text-gray-600">CEO, Yoga Harmony Studio</p>
+                            </div>
+                        </div>
+                        <p>"The automated billing system eliminated our late payments issue. Customer support is
+                            fantastic - they helped us migrate all our data seamlessly."</p>
+                        <div class="rating rating-sm mt-4">
+                            <input type="radio" name="rating-3" class="mask mask-star-2 bg-orange-400" checked />
+                            <input type="radio" name="rating-3" class="mask mask-star-2 bg-orange-400" checked />
+                            <input type="radio" name="rating-3" class="mask mask-star-2 bg-orange-400" checked />
+                            <input type="radio" name="rating-3" class="mask mask-star-2 bg-orange-400" checked />
+                            <input type="radio" name="rating-3" class="mask mask-star-2 bg-orange-400" checked />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="py-20 bg-base-200">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold mb-4">Frequently Asked Questions</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">Have questions? We're here to help you get started.
+                </p>
+            </div>
+
+            <div class="max-w-3xl mx-auto">
+                <div class="join join-vertical w-full">
+                    <div class="collapse collapse-arrow join-item border border-base-300">
+                        <input type="radio" name="my-accordion-4" checked="checked" />
+                        <div class="collapse-title text-xl font-medium">How does the 30-day free trial work?</div>
+                        <div class="collapse-content">
+                            <p>Your free trial gives you full access to all features of your selected plan for 30 days.
+                                No credit card is required to start. At the end of the trial, you can choose to upgrade
+                                to a paid plan or cancel with no obligation.</p>
+                        </div>
+                    </div>
+                    <div class="collapse collapse-arrow join-item border border-base-300">
+                        <input type="radio" name="my-accordion-4" />
+                        <div class="collapse-title text-xl font-medium">Can I switch plans later?</div>
+                        <div class="collapse-content">
+                            <p>Yes, you can upgrade or downgrade your plan at any time. When upgrading, you'll get
+                                immediate access to new features. When downgrading, changes take effect at the start of
+                                your next billing cycle.</p>
+                        </div>
+                    </div>
+                    <div class="collapse collapse-arrow join-item border border-base-300">
+                        <input type="radio" name="my-accordion-4" />
+                        <div class="collapse-title text-xl font-medium">Do you offer multi-location support?</div>
+                        <div class="collapse-content">
+                            <p>Yes, our Enterprise plan includes multi-location management with centralized billing,
+                                reporting across all locations, and location-specific access controls for staff members.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="collapse collapse-arrow join-item border border-base-300">
+                        <input type="radio" name="my-accordion-4" />
+                        <div class="collapse-title text-xl font-medium">Is there a mobile app for members?</div>
+                        <div class="collapse-content">
+                            <p>Yes, all plans include a branded mobile app for your members (available on iOS and
+                                Android) where they can book classes, check schedules, make payments, and track their
+                                attendance.</p>
+                        </div>
+                    </div>
+                    <div class="collapse collapse-arrow join-item border border-base-300">
+                        <input type="radio" name="my-accordion-4" />
+                        <div class="collapse-title text-xl font-medium">What payment methods do you accept?</div>
+                        <div class="collapse-content">
+                            <p>We accept all major credit cards (Visa, MasterCard, American Express), ACH bank
+                                transfers, and PayPal. We also support recurring billing for member convenience.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-12">
+                    <p class="text-gray-600 mb-6">Still have questions? We're happy to help.</p>
+                    <a href="#contact" class="btn btn-primary">Contact Our Team</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section id="contact" class="py-20 gradient-bg text-white">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-4xl font-bold mb-6">Ready to Transform Your Gym Management?</h2>
+            <p class="text-xl mb-10 max-w-2xl mx-auto">Join thousands of gym owners who have streamlined their
+                operations with FitFlow. Start your free trial today.</p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="#pricing" class="btn btn-secondary btn-lg text-lg">Start 30-Day Free Trial</a>
+                <a href="#features"
+                    class="btn btn-outline btn-lg text-lg text-white border-white hover:bg-white hover:text-gray-900">Schedule
+                    a Demo</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-base-100 border-t border-base-300">
+        <div class="max-w-7xl mx-auto px-6 py-12 lg:py-16">
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-10 lg:gap-12">
+
+                <!-- Brand + Description -->
+                <div class="lg:col-span-2">
+                    <a href="/" class="flex items-center gap-3 text-2xl font-bold text-primary mb-6">
+                        <i class="fas fa-dumbbell text-3xl"></i>
+                        FitFlow
+                    </a>
+                    <p class="text-base-content/70 max-w-xs leading-relaxed">
+                        India’s fastest-growing gym & fitness studio management software. Member check-in, billing,
+                        class booking, trainer app – sab ek jagah.
+                    </p>
+
+                    <!-- Social Icons -->
+                    <div class="flex gap-3 mt-6">
+                        <a href="#"
+                            class="w-10 h-10 rounded-lg bg-base-200 flex items-center justify-center hover:bg-primary hover:text-white transition">
+                            <i class="fa-brands fa-instagram"></i>
+                        </a>
+                        <a href="#"
+                            class="w-10 h-10 rounded-lg bg-base-200 flex items-center justify-center hover:bg-primary hover:text-white transition">
+                            <i class="fa-brands fa-facebook-f"></i>
+                        </a>
+                        <a href="#"
+                            class="w-10 h-10 rounded-lg bg-base-200 flex items-center justify-center hover:bg-primary hover:text-white transition">
+                            <i class="fa-brands fa-whatsapp"></i>
+                        </a>
+                        <a href="#"
+                            class="w-10 h-10 rounded-lg bg-base-200 flex items-center justify-center hover:bg-primary hover:text-white transition">
+                            <i class="fa-brands fa-linkedin-in"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div>
+                    <h3 class="font-semibold text-lg mb-5">Product</h3>
+                    <ul class="space-y-3 text-base-content/70">
+                        <li><a href="#" class="link link-hover">Features</a></li>
+                        <li><a href="#" class="link link-hover">Pricing</a></li>
+                        <li><a href="#" class="link link-hover">Mobile App</a></li>
+                        <li><a href="#" class="link link-hover">Integrations</a></li>
+                        <li><a href="#" class="link link-hover">Free Demo</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="font-semibold text-lg mb-5">Company</h3>
+                    <ul class="space-y-3 text-base-content/70">
+                        <li><a href="#" class="link link-hover">About Us</a></li>
+                        <li><a href="#" class="link link-hover">Careers <span
+                                    class="badge badge-xs badge-primary">Hiring!</span></a></li>
+                        <li><a href="#" class="link link-hover">Blog</a></li>
+                        <li><a href="#" class="link link-hover">Contact</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="font-semibold text-lg mb-5">Support</h3>
+                    <ul class="space-y-3 text-base-content/70">
+                        <li><a href="#" class="link link-hover">Help Center</a></li>
+                        <li><a href="#" class="link link-hover">WhatsApp Support</a></li>
+                        <li><a href="#" class="link link-hover">Status Page</a></li>
+                        <li><a href="#" class="link link-hover">Book a Demo</a></li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <!-- Bottom Line -->
+            <div
+                class="mt-12 pt-8 border-t border-base-300 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-base-content/60">
+                <div>
+                    &copy; 2024 FitFlow. All rights reserved.
+                </div>
+                <div class="flex gap-6">
+                    <a href="#" class="link link-hover">Privacy Policy</a>
+                    <a href="#" class="link link-hover">Terms of Service</a>
+                    <a href="#" class="link link-hover">Refund Policy</a>
+                </div>
+            </div>
+        </div>
     </footer>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Simple script for smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Demo pricing button functionality
+        document.querySelectorAll('.pricing-card button').forEach(button => {
+            button.addEventListener('click', function () {
+                const plan = this.closest('.card').querySelector('.card-title').textContent;
+                alert(`Thank you for your interest in the ${plan} plan! You would now be redirected to the signup page.`);
+            });
+        });
+    </script>
 </body>
+
 </html>
