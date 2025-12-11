@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     'apps.billing',
     'apps.attendance',
     'apps.expenses',
+    'apps.settings',
+    'apps.superadmin',
    
 ]
 
@@ -58,6 +60,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'GYM.tenant_middleware.TenantMiddleware',
 ]
 
 ROOT_URLCONF = 'GYM.urls'
@@ -140,3 +143,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 ITEMS_PER_PAGE = 15
+
+LOGOUT_REDIRECT_URL = '/'
+
+SESSION_SAVE_EVERY_REQUEST = True
+SESSION_COOKIE_AGE = 7200  # 2 hours in seconds

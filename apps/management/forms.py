@@ -4,7 +4,7 @@ from .models import DietPlan, MembershipPlan, WorkoutPlan
 class WorkoutPlanForm(forms.ModelForm):
     class Meta:
         model = WorkoutPlan
-        fields = '__all__'
+        exclude = ['gym']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
@@ -16,7 +16,7 @@ class WorkoutPlanForm(forms.ModelForm):
 class MembershipPlanForm(forms.ModelForm):
     class Meta:
         model = MembershipPlan
-        fields = '__all__'
+        exclude = ['gym']
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control'}),
             'amount': forms.NumberInput(attrs={'class': 'form-control'}),
@@ -29,7 +29,7 @@ class MembershipPlanForm(forms.ModelForm):
 class DietPlanForm(forms.ModelForm):
     class Meta:
         model = DietPlan
-        fields = '__all__'
+        exclude = ['gym']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'target': forms.Select(attrs={'class': 'form-control'}),

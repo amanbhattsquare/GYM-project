@@ -1,7 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
+from apps.superadmin.models import Gym
 
 class Enquiry(models.Model):
+    gym = models.ForeignKey(Gym, on_delete=models.CASCADE, null=True)
     GENDER_CHOICES = [
         ('M', 'Male'),
         ('F', 'Female'),

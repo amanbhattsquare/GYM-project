@@ -4,7 +4,7 @@ from .models import Enquiry
 class EnquiryForm(forms.ModelForm):
     class Meta:
         model = Enquiry
-        fields = '__all__'
+        exclude = ['gym']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'contact_number': forms.TextInput(attrs={'class': 'form-control'}),

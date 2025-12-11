@@ -1,10 +1,13 @@
 from django import forms
+
+from apps.management.models import MembershipPlan
 from .models import Member, MedicalHistory, EmergencyContact, MembershipHistory, PersonalTrainer
+from apps.trainers.models import Trainer
 
 class MemberForm(forms.ModelForm):
     class Meta:
         model = Member
-        fields = '__all__'
+        fields = ['first_name', 'last_name', 'mobile_number', 'email', 'age', 'gender', 'date_of_birth', 'profile_picture', 'address', 'area', 'state', 'city', 'pincode', 'profession', 'sign', 'identity_type', 'identity_no', 'identity_document_image']
         widgets = {
             'first_name': forms.TextInput(attrs={'class': 'form-control'}),
             'last_name': forms.TextInput(attrs={'class': 'form-control'}),
@@ -24,7 +27,6 @@ class MemberForm(forms.ModelForm):
             'identity_type': forms.TextInput(attrs={'class': 'form-control'}),
             'identity_no': forms.TextInput(attrs={'class': 'form-control'}),
             'identity_document_image': forms.FileInput(attrs={'class': 'form-control'}),
-            'status': forms.Select(attrs={'class': 'form-select'}),
         }
     def __init__(self, *args, **kwargs):
         super(MemberForm, self).__init__(*args, **kwargs)
@@ -76,6 +78,12 @@ class MembershipHistoryForm(forms.ModelForm):
             'comment': forms.Textarea(attrs={'class': 'form-control'}),
         }
 
+    def __init__(self, *args, **kwargs):
+        gym = kwargs.pop('gym', None)
+        super(MembershipHistoryForm, self).__init__(*args, **kwargs)
+        if gym:
+            self.fields['plan'].queryset = MembershipPlan.objects.filter(gym=gym)
+
 class PersonalTrainerForm(forms.ModelForm):
     class Meta:
         model = PersonalTrainer
@@ -91,3 +99,9 @@ class PersonalTrainerForm(forms.ModelForm):
             'paid_amount': forms.NumberInput(attrs={'class': 'form-control'}),
             'payment_mode': forms.Select(attrs={'class': 'form-control'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        gym = kwargs.pop('gym', None)
+        super(PersonalTrainerForm, self).__init__(*args, **kwargs)
+        if gym:
+            self.fields['trainer'].queryset = Trainer.objects.filter(gym=gym)

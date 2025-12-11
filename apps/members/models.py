@@ -2,9 +2,14 @@ from django.db import models
 from datetime import timedelta
 from django.utils import timezone
 from apps.trainers.models import Trainer
+from apps.superadmin.models import Gym
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
+import random
 
 
 class Member(models.Model):
+    gym = models.ForeignKey(Gym, on_delete=models.CASCADE, null=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     mobile_number = models.CharField(max_length=15, unique=True)
@@ -23,22 +28,19 @@ class Member(models.Model):
     identity_type = models.CharField(max_length=50, null=True, blank=True)
     identity_no = models.CharField(max_length=50, null=True, blank=True)
     identity_document_image = models.ImageField(upload_to='identity_docs/', blank=True, null=True)
-    # status = models.CharField(max_length=10, choices=[('active', 'Active'), ('inactive', 'Inactive')], default='active')
-
-    # generated member ID like MEM-25-000001
-    member_id = models.CharField(max_length=20, unique=True, blank=True)
+    member_id = models.CharField(max_length=100, unique=True, editable=False)
     def save(self, *args, **kwargs):
         if not self.member_id:
             # get current year last two digits
             year = timezone.now().strftime("%y")
 
             # count existing members for this year
-            count = Member.objects.filter(member_id__startswith=f"MEM-{year}-").count() + 1
+            count = Member.objects.filter(gym=self.gym, member_id__startswith=f"{self.gym.gym_id_prefix}-{year}-").count() + 1
 
             # format ID (6 digits counter)
             counter = str(count).zfill(6)
 
-            self.member_id = f"MEM-{year}-{counter}"
+            self.member_id = f"{self.gym.gym_id_prefix}-MEM-{year}-{counter}"
 
         super().save(*args, **kwargs)
 
@@ -61,6 +63,7 @@ class Member(models.Model):
         return latest.get_end_date() >= timezone.now().date()
 
 class MedicalHistory(models.Model):
+    gym = models.ForeignKey(Gym, on_delete=models.CASCADE, null=True)
     member = models.ForeignKey(Member, related_name='medical_history', on_delete=models.CASCADE)
     condition = models.CharField(max_length=100)
     type = models.CharField(max_length=100)
@@ -70,6 +73,7 @@ class MedicalHistory(models.Model):
         return f'{self.member} - {self.condition}'
 
 class EmergencyContact(models.Model):
+    gym = models.ForeignKey(Gym, on_delete=models.CASCADE, null=True)
     member = models.OneToOneField(Member, related_name='emergency_contact', on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     mobile = models.CharField(max_length=15)
@@ -79,6 +83,7 @@ class EmergencyContact(models.Model):
         return f'{self.member} - {self.name}'
 
 class MembershipHistory(models.Model):
+    gym = models.ForeignKey(Gym, on_delete=models.CASCADE, null=True)
     member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name='membership_history')
     plan = models.ForeignKey('management.MembershipPlan', on_delete=models.CASCADE)
     registration_fee = models.DecimalField(max_digits=10, decimal_places=2, default=0)
@@ -123,6 +128,7 @@ class MembershipHistory(models.Model):
         return self.add_on_days + self.plan.add_on_days
 
 class PersonalTrainer(models.Model):
+    gym = models.ForeignKey(Gym, on_delete=models.CASCADE, null=True)
     member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name='personal_trainer')
     trainer = models.ForeignKey(Trainer, on_delete=models.CASCADE)
     months = models.PositiveIntegerField()
@@ -147,3 +153,15 @@ class PersonalTrainer(models.Model):
     @property
     def due_amount(self):
         return self.total_amount - self.paid_amount
+
+
+@receiver(pre_save, sender=Member)
+def create_member_id(sender, instance, **kwargs):
+    if not instance.member_id:
+        gym_id_part = "GD"  # Default value
+        if instance.gym and instance.gym.gym_id_prefix:
+            gym_id_part = instance.gym.gym_id_prefix
+
+        present_year = timezone.now().strftime('%y')
+        random_number = ''.join([str(random.randint(0, 9)) for _ in range(6)])
+        instance.member_id = f"{gym_id_part}-MEM-{present_year}-{random_number}"

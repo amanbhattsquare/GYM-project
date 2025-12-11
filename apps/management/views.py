@@ -11,16 +11,19 @@ from django.views.decorators.cache import never_cache
 @never_cache
 @login_required(login_url='login')
 def membership_plans(request):
+    gym = getattr(request, 'gym', None)
     if request.method == 'POST':
         form = MembershipPlanForm(request.POST)
         if form.is_valid():
-            form.save()
+            plan = form.save(commit=False)
+            plan.gym = gym
+            plan.save()
             messages.success(request, 'Membership plan created successfully.')
             return redirect('membership_plans')
     else:
         form = MembershipPlanForm()
     
-    plans = MembershipPlan.objects.all()
+    plans = MembershipPlan.objects.filter(gym=gym)
     
     # Search functionality
     query = request.GET.get('q')
@@ -41,7 +44,8 @@ def membership_plans(request):
 @never_cache
 @login_required(login_url='login')
 def edit_membership_plan(request, pk):
-    plan = get_object_or_404(MembershipPlan, pk=pk)
+    gym = getattr(request, 'gym', None)
+    plan = get_object_or_404(MembershipPlan, pk=pk, gym=gym)
     if request.method == 'POST':
         form = MembershipPlanForm(request.POST, instance=plan)
         if form.is_valid():
@@ -56,7 +60,8 @@ def edit_membership_plan(request, pk):
 @never_cache
 @login_required(login_url='login')
 def delete_membership_plan(request, pk):
-    plan = get_object_or_404(MembershipPlan, pk=pk)
+    gym = getattr(request, 'gym', None)
+    plan = get_object_or_404(MembershipPlan, pk=pk, gym=gym)
     if request.method == 'POST':
         try:
             plan.delete()
@@ -69,16 +74,19 @@ def delete_membership_plan(request, pk):
 @never_cache
 @login_required(login_url='login')  
 def diet_plans(request):
+    gym = getattr(request, 'gym', None)
     if request.method == 'POST':
         form = DietPlanForm(request.POST)
         if form.is_valid():
-            form.save()
+            plan = form.save(commit=False)
+            plan.gym = gym
+            plan.save()
             messages.success(request, 'Diet plan created successfully.')
             return redirect('diet_plans')
     else:
         form = DietPlanForm()
     
-    plans = DietPlan.objects.all()
+    plans = DietPlan.objects.filter(gym=gym)
     
     # Search functionality
     query = request.GET.get('q')
@@ -100,7 +108,8 @@ def diet_plans(request):
 @never_cache
 @login_required(login_url='login')
 def edit_diet_plan(request, pk):
-    plan = get_object_or_404(DietPlan, pk=pk)
+    gym = getattr(request, 'gym', None)
+    plan = get_object_or_404(DietPlan, pk=pk, gym=gym)
     if request.method == 'POST':
         form = DietPlanForm(request.POST, instance=plan)
         if form.is_valid():
@@ -116,7 +125,8 @@ def edit_diet_plan(request, pk):
 @never_cache    
 @login_required(login_url='login')
 def delete_diet_plan(request, pk):
-    plan = get_object_or_404(DietPlan, pk=pk)
+    gym = getattr(request, 'gym', None)
+    plan = get_object_or_404(DietPlan, pk=pk, gym=gym)
     if request.method == 'POST':
         try:
             plan.delete()
@@ -128,16 +138,19 @@ def delete_diet_plan(request, pk):
 @never_cache
 @login_required(login_url='login')
 def workout_plans(request):
+    gym = getattr(request, 'gym', None)
     if request.method == 'POST':
         form = WorkoutPlanForm(request.POST)
         if form.is_valid():
-            form.save()
+            plan = form.save(commit=False)
+            plan.gym = gym
+            plan.save()
             messages.success(request, 'Workout plan created successfully.')
             return redirect('workout_plans')
     else:
         form = WorkoutPlanForm()
     
-    plans = WorkoutPlan.objects.all()
+    plans = WorkoutPlan.objects.filter(gym=gym)
     
     # Search functionality
     query = request.GET.get('q')
@@ -157,7 +170,8 @@ def workout_plans(request):
 @never_cache
 @login_required(login_url='login')
 def edit_workout_plan(request, pk):
-    plan = get_object_or_404(WorkoutPlan, pk=pk)
+    gym = getattr(request, 'gym', None)
+    plan = get_object_or_404(WorkoutPlan, pk=pk, gym=gym)
     if request.method == 'POST':
         form = WorkoutPlanForm(request.POST, instance=plan)
         if form.is_valid():
@@ -171,7 +185,8 @@ def edit_workout_plan(request, pk):
 @never_cache
 @login_required(login_url='login')
 def delete_workout_plan(request, pk):
-    plan = get_object_or_404(WorkoutPlan, pk=pk)
+    gym = getattr(request, 'gym', None)
+    plan = get_object_or_404(WorkoutPlan, pk=pk, gym=gym)
     if request.method == 'POST':
         try:
             plan.delete()

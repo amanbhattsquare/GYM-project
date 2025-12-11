@@ -1,10 +1,12 @@
 from django.db import models
 from apps.members.models import Member
 from apps.trainers.models import Trainer
+from apps.superadmin.models import Gym
 
 from django.utils import timezone
 
 class MemberAttendance(models.Model):
+    gym = models.ForeignKey(Gym, on_delete=models.CASCADE, null=True)
     member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name='attendance_records')
     check_in_time = models.DateTimeField(default=timezone.now)
     check_out_time = models.DateTimeField(null=True, blank=True)
@@ -24,6 +26,7 @@ class MemberAttendance(models.Model):
         return None
 
 class TrainerAttendance(models.Model):
+    gym = models.ForeignKey(Gym, on_delete=models.CASCADE, null=True)
     trainer = models.ForeignKey(Trainer, on_delete=models.CASCADE, related_name='attendance_records')
     check_in_time = models.DateTimeField(default=timezone.now)
     check_out_time = models.DateTimeField(null=True, blank=True)

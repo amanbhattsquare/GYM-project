@@ -1,6 +1,8 @@
 from django.db import models
+from apps.superadmin.models import Gym
 
 class MembershipPlan(models.Model):
+    gym = models.ForeignKey(Gym, on_delete=models.CASCADE, null=True)
     DURATION_CHOICES = [
         ('1_day', '1 Day'),
         ('1_week', '1 Week'),
@@ -29,6 +31,7 @@ class MembershipPlan(models.Model):
     
 
 class DietPlan(models.Model):
+    gym = models.ForeignKey(Gym, on_delete=models.CASCADE, null=True)
     TARGET_CHOICES = [
         ('weight_loss', 'Weight Loss'),
         ('muscle_gain', 'Muscle Gain'),
@@ -46,6 +49,7 @@ class DietPlan(models.Model):
         return self.name
 
 class WorkoutPlan(models.Model):
+    gym = models.ForeignKey(Gym, on_delete=models.CASCADE, null=True)
     DIFFICULTY_CHOICES = [
         ('beginner', 'Beginner'),
         ('intermediate', 'Intermediate'),
