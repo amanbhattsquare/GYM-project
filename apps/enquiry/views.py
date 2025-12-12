@@ -1,16 +1,24 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import EnquiryForm
+from django.urls import reverse_lazy
 from .models import Enquiry
+from .forms import EnquiryForm
 from django.contrib import messages
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.cache import never_cache
-from django.core.paginator import Paginator
 from django.db.models import Q
 
+@login_required
+def update_enquiry_status(request, enquiry_id):
+    enquiry = get_object_or_404(Enquiry, id=enquiry_id)
+    if request.method == 'POST':
+        status = request.POST.get('status')
+        if status in [choice[0] for choice in Enquiry.STATUS_CHOICES]:
+            enquiry.status = status
+            enquiry.save()
+            messages.success(request, f"Status for {enquiry.name} updated successfully.")
+    return redirect('enquiry_list')
 
-
-@never_cache
-@login_required(login_url='login')
+@login_required
 def add_new_enquiry(request):
     gym = getattr(request, 'gym', None)
     if request.method == 'POST':
@@ -24,8 +32,7 @@ def add_new_enquiry(request):
     else:
         form = EnquiryForm()
     return render(request, 'enquiry/add_new_enquiry.html', {'form': form})
-@never_cache
-@login_required(login_url='login')
+@login_required
 def enquiry_list(request):
     gym = getattr(request, 'gym', None)
     enquiry_list = Enquiry.objects.filter(gym=gym)
@@ -45,9 +52,7 @@ def enquiry_list(request):
     enquiries = paginator.get_page(page_number)
 
     return render(request, 'enquiry/enquiry_list.html', {'enquiries': enquiries})
-
-@never_cache
-@login_required(login_url='login')
+@login_required
 def edit_enquiry(request, enquiry_id):
     gym = getattr(request, 'gym', None)
     enquiry = get_object_or_404(Enquiry, id=enquiry_id, gym=gym)
@@ -63,8 +68,7 @@ def edit_enquiry(request, enquiry_id):
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 
-@never_cache
-@login_required(login_url='login')
+@login_required
 @require_POST
 def delete_enquiry(request, enquiry_id):
     gym = getattr(request, 'gym', None)

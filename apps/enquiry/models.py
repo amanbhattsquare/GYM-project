@@ -49,3 +49,14 @@ class Enquiry(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_status_color_class(self):
+        if self.status == 'pending':
+            return 'badge-warning'
+        elif self.status == 'follow_up':
+            return 'badge-info'
+        elif self.status == 'converted':
+            return 'badge-success'
+        elif self.status == 'lost':
+            return 'badge-danger'
+        return ''

@@ -38,10 +38,9 @@
                             <th class="font-weight-semibold py-2">Name</th>
                             <th class="font-weight-semibold py-2">Contact Number</th>
                             <th class="font-weight-semibold py-2">Email</th>
-                            <th class="font-weight-semibold py-2">Gender</th>
                             <th class="font-weight-semibold py-2">Interested In</th>
                             <th class="font-weight-semibold py-2">Status</th>
-                            <th>Assigned To</th>
+
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -52,11 +51,23 @@
                             <td data-label="Name">{{ enquiry.name }}</td>
                             <td data-label="Contact Number">{{ enquiry.contact_number }}</td>
                             <td data-label="Email">{{ enquiry.email }}</td>
-                            <td data-label="Gender">{{ enquiry.get_gender_display }}</td>
                             <td data-label="Interested In">{{ enquiry.get_interested_in_display }}</td>
-                            <td data-label="Status">{{ enquiry.get_status_display }}</td>
-                            <td data-label="Assigned To">{{ enquiry.assigned_to }}</td>
+                            <td data-label="Status">
+                                <form action="{% url 'update_enquiry_status' enquiry.id %}" method="POST" class="status-form">
+                                    {% csrf_token %}
+                                    <select name="status" class="form-control form-control-sm badge {{ enquiry.get_status_color_class }}" onchange="this.form.submit()">
+                                        {% for status_value, status_display in enquiry.STATUS_CHOICES %}
+                                            <option value="{{ status_value }}" {% if enquiry.status == status_value %}selected{% endif %}>
+                                                {{ status_display }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </form>
+                            </td>
                             <td data-label="Actions">
+                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#viewEnquiryModal-{{ enquiry.id }}">
+                                    <i class="mdi mdi-eye-outline"></i>
+                                </button>
                                 <a href="{% url 'edit_enquiry' enquiry.id %}" class="btn btn-primary btn-sm"><i class="mdi mdi-pencil-outline"></i></a>
                                 <a href="#" class="btn btn-danger btn-sm" onclick="confirmDelete('{{ enquiry.id }}', '{{ enquiry.name }}', '{% url 'delete_enquiry' enquiry.id %}')"><i class="mdi mdi-delete-outline"></i></a>
                             </td>
@@ -73,4 +84,37 @@
         </div>
     </div>
 </div>
+
+{% for enquiry in enquiries %}
+<div class="modal fade" id="viewEnquiryModal-{{ enquiry.id }}" tabindex="-1" role="dialog" aria-labelledby="viewEnquiryModalLabel-{{ enquiry.id }}" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewEnquiryModalLabel-{{ enquiry.id }}">Enquiry Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Name:</strong> {{ enquiry.name }}</p>
+                <p><strong>Contact Number:</strong> {{ enquiry.contact_number }}</p>
+                <p><strong>Email:</strong> {{ enquiry.email }}</p>
+                <p><strong>Gender:</strong> {{ enquiry.get_gender_display }}</p>
+                <p><strong>Date of Birth:</strong> {{ enquiry.date_of_birth }}</p>
+                <p><strong>Address:</strong> {{ enquiry.address }}</p>
+                <p><strong>Enquiry Date:</strong> {{ enquiry.enquiry_date }}</p>
+                <p><strong>Source:</strong> {{ enquiry.get_source_display }}</p>
+                <p><strong>Interested In:</strong> {{ enquiry.get_interested_in_display }}</p>
+                <p><strong>Status:</strong> <span class="badge {{ enquiry.get_status_color_class }}">{{ enquiry.get_status_display }}</span></p>
+                <p><strong>Next Follow-up Date:</strong> {{ enquiry.next_follow_up_date }}</p>
+                <p><strong>Enquiry Note:</strong> {{ enquiry.enquiry_note }}</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
 {% endblock %}
