@@ -13,6 +13,21 @@ from django.views.decorators.http import require_POST
 
 @login_required
 @superadmin_required
+def dashboard(request):
+    total_gyms = Gym.objects.count()
+    total_members = Member.objects.count()
+    active_subscriptions = MembershipHistory.objects.filter(status='active').count()
+
+    context = {
+        'total_gyms': total_gyms,
+        'total_members': total_members,
+        'active_subscriptions': active_subscriptions,
+    }
+    return render(request, 'superadmin/dashboard.html', context)
+
+
+@login_required
+@superadmin_required
 def add_gym(request):
     if request.method == 'POST':
         form = GymForm(request.POST, request.FILES)
@@ -60,7 +75,17 @@ def create_gym_admin(request, gym_id):
 @login_required
 @superadmin_required
 def gym_list(request):
-    gyms = Gym.objects.all()
+    query = request.GET.get('q')
+    if query:
+        gyms = Gym.objects.filter(
+            Q(name__icontains=query) |
+            Q(gym_id__icontains=query) |
+            Q(address__icontains=query) |
+            Q(admin_name__icontains=query)
+        ).distinct()
+    else:
+        gyms = Gym.objects.all()
+
     for gym in gyms:
         admin = GymAdmin.objects.filter(gym=gym).first()
         if admin:
@@ -141,7 +166,15 @@ def reset_admin_password(request, admin_id):
 @login_required
 @superadmin_required
 def subscription_plan_list(request):
-    plans = SubscriptionPlan.objects.all()
+    query = request.GET.get('q')
+    if query:
+        plans = SubscriptionPlan.objects.filter(
+            Q(name__icontains=query) |
+            Q(price__icontains=query) |
+            Q(duration_months__icontains=query)
+        ).distinct()
+    else:
+        plans = SubscriptionPlan.objects.all()
     return render(request, 'superadmin/subscription_plan_list.html', {'plans': plans})
 
 from django.contrib import messages

@@ -1,6 +1,24 @@
 {% extends 'superadmin/base.html' %}
 
 {% block content %}
+<!-- Compact Breadcrumb Navigation -->
+<nav aria-label="breadcrumb" class="custom-breadcrumb mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{% url 'superadmin:dashboard' %}" class="text-decoration-none">
+                <i class="mdi mdi-home-outline mdi-18px"></i> Dashboard
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{% url 'superadmin:gym_list' %}" class="text-decoration-none">
+                <i class="mdi mdi-office-building mdi-18px"></i> Gyms
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <i class="mdi mdi-account-plus-outline mdi-18px"></i> Create Gym Admin
+    </ol>
+</nav>
+
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12">
