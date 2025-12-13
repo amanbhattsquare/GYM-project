@@ -33,13 +33,26 @@
                 <div class="card-body">
                     <form method="post">
                         {% csrf_token %}
-                        {{ form.as_p }}
+                        <div class="form-group">
+                            <label for="id_name">Name</label>
+                            {{ form.name }}
+                        </div>
+                        <div class="form-group">
+                            <label for="id_price">Price</label>
+                            {{ form.price }}
+                        </div>
+                        <div class="form-group">
+                            <label for="id_duration_months">Duration (Months)</label>
+                            {{ form.duration_months }}
+                        </div>
+                        <div class="form-group">
+                            <label for="id_features">Features</label>
+                            {{ form.features }}
+                        </div>
                         <button type="submit" class="btn btn-primary">Save</button>
                         <a href="{% url 'superadmin:subscription_plan_list' %}" class="btn btn-secondary">Cancel</a>
                     </form>
                 </div>
-            </div>
-        </div>
     </div>
 </div>
 {% endblock %}

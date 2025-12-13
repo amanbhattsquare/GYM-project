@@ -72,7 +72,9 @@
                                     <td data-label="Actions" class="text-center">
                                          <a href="{% url 'superadmin:gym_profile' gym.id %}" class="btn btn-info btn-sm" data-toggle="tooltip" title="View"><i class="mdi mdi-eye-outline"></i></a>
                                         <a href="{% url 'superadmin:update_gym' gym.id %}" class="btn btn-primary btn-sm" data-toggle="tooltip" title="Edit"><i class="mdi mdi-pencil-outline"></i></a>
-                                        <a href="{% url 'superadmin:delete_gym' gym.id %}" class="btn btn-danger btn-sm" data-toggle="tooltip" title="Delete"><i class="mdi mdi-delete-outline"></i></a>
+                                        <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete('{{ gym.id }}', '{{ gym.name }}', '{% url 'superadmin:delete_gym' gym.id %}')" data-toggle="tooltip" title="Delete">
+                                            <i class="mdi mdi-delete-outline"></i>
+                                        </button>
                                        
                                         {% if not gym.has_admin %}
                                             <a href="{% url 'superadmin:create_gym_admin' gym.id %}" class="btn btn-success btn-sm" data-toggle="tooltip" title="Create Admin">Create Admin</a>
@@ -92,4 +94,8 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/delete_confirmation.js' %}"></script>
 {% endblock %}

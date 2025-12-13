@@ -72,3 +72,12 @@ class SubscriptionPlanForm(forms.ModelForm):
     class Meta:
         model = SubscriptionPlan
         fields = ['name', 'price', 'duration_months', 'features']
+
+    def __init__(self, *args, **kwargs):
+        super(SubscriptionPlanForm, self).__init__(*args, **kwargs)
+        self.fields['name'].widget.attrs['placeholder'] = 'Enter the name of the plan'
+        self.fields['price'].widget.attrs['placeholder'] = 'Enter the price'
+        self.fields['duration_months'].widget.attrs['placeholder'] = 'Enter the duration in months'
+        self.fields['features'].widget.attrs['placeholder'] = 'Enter the features of the plan'
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control'

@@ -7,6 +7,8 @@ from apps.members.models import Member, MembershipHistory
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from .decorators import superadmin_required
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
 
 
 @login_required
@@ -16,6 +18,7 @@ def add_gym(request):
         form = GymForm(request.POST, request.FILES)
         if form.is_valid():
             gym = form.save()
+            messages.success(request, f"Gym '{gym.name}' has been added successfully.")
             return redirect('superadmin:create_gym_admin', gym_id=gym.id)
     else:
         form = GymForm()
@@ -46,6 +49,7 @@ def create_gym_admin(request, gym_id):
                 gym_admin.photo = request.FILES['photo']
                 gym_admin.save()
 
+            messages.success(request, f"Admin for '{gym.name}' has been created successfully.")
             return redirect('superadmin:gym_list')
     else:
         form = GymAdminForm()
@@ -90,10 +94,16 @@ def update_gym(request, gym_id):
 
 @login_required
 @superadmin_required
+@require_POST
 def delete_gym(request, gym_id):
     gym = get_object_or_404(Gym, pk=gym_id)
-    gym.delete()
-    return redirect('superadmin:gym_list')
+    try:
+        gym.delete()
+        messages.success(request, 'Gym has been deleted successfully.')
+        return JsonResponse({'status': 'success', 'message': 'Gym deleted successfully.'})
+    except Exception as e:
+        messages.error(request, f'An error occurred: {e}')
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
 
 @login_required
 @superadmin_required
@@ -134,6 +144,8 @@ def subscription_plan_list(request):
     plans = SubscriptionPlan.objects.all()
     return render(request, 'superadmin/subscription_plan_list.html', {'plans': plans})
 
+from django.contrib import messages
+
 @login_required
 @superadmin_required
 def add_subscription_plan(request):
@@ -141,6 +153,7 @@ def add_subscription_plan(request):
         form = SubscriptionPlanForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request, "Subscription plan created successfully.")
             return redirect('superadmin:subscription_plan_list')
     else:
         form = SubscriptionPlanForm()
@@ -161,7 +174,13 @@ def update_subscription_plan(request, plan_id):
 
 @login_required
 @superadmin_required
+@require_POST
 def delete_subscription_plan(request, plan_id):
     plan = get_object_or_404(SubscriptionPlan, id=plan_id)
-    plan.delete()
-    return redirect('superadmin:subscription_plan_list')
+    try:
+        plan.delete()
+        messages.success(request, 'Subscription plan has been deleted successfully.')
+        return JsonResponse({'status': 'success', 'message': 'Subscription plan deleted successfully.'})
+    except Exception as e:
+        messages.error(request, f'An error occurred: {e}')
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
