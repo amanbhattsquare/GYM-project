@@ -21,17 +21,31 @@ def add_gym(request):
         form = GymForm()
     return render(request, 'superadmin/add_gym.html', {'form': form})
 
+
 @login_required
 @superadmin_required
 def create_gym_admin(request, gym_id):
     gym = get_object_or_404(Gym, id=gym_id)
     if request.method == 'POST':
-        form = GymAdminForm(request.POST)
+        form = GymAdminForm(request.POST, request.FILES)
         if form.is_valid():
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password']
-            user = User.objects.create_user(username=username, password=password)
-            GymAdmin.objects.create(user=user, gym=gym)
+            user = form.save()
+            user.is_staff = True
+            user.save()
+
+            gym_admin = GymAdmin.objects.create(
+                user=user,
+                gym=gym,
+                name=form.cleaned_data['name'],
+                Phone_number=form.cleaned_data['Phone_number'],
+                Department=form.cleaned_data.get('Department'),
+                notes=form.cleaned_data.get('notes')
+            )
+
+            if 'photo' in request.FILES:
+                gym_admin.photo = request.FILES['photo']
+                gym_admin.save()
+
             return redirect('superadmin:gym_list')
     else:
         form = GymAdminForm()

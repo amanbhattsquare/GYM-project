@@ -5,77 +5,88 @@
     <div class="row">
         <div class="col-md-12">
             <div class="card">
-                <div class="card-header">
-                    <h4 class="card-title">Create Admin for {{ gym.name }}</h4>
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Create Gym Admin</h4>
                 </div>
                 <div class="card-body">
-                    <form method="post">
+                    <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
-                        {% if form.non_field_errors %}
-                            <div class="alert alert-danger">
-                                {% for error in form.non_field_errors %}
-                                    <p>{{ error }}</p>
-                                {% endfor %}
+
+                        <!-- Personal Info -->
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <h5>Personal Info</h5>
                             </div>
-                        {% endif %}
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>Name</label>
-                                    {{ form.name }}
-                                    {% if form.name.errors %}
-                                        <div class="text-danger">
-                                            {% for error in form.name.errors %}
-                                                <small>{{ error }}</small>
-                                            {% endfor %}
-                                        </div>
-                                    {% endif %}
+                            <div class="card-body">
+                                <div class="form-row">
+                                    <div class="form-group col-md-4">
+                                        <label for="name">Full Name</label>
+                                        <input type="text" class="form-control" id="name" name="name" placeholder="Enter full name" required>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label for="Phone_number">Phone Number</label>
+                                        <input type="text" class="form-control" id="Phone_number" placeholder="Enter phone number" name="Phone_number">
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label for="email">Email</label>
+                                        <input type="email" class="form-control" id="email" placeholder="Enter email" name="email" required>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>Phone Number</label>
-                                    {{ form.Phone_number }}
-                                    {% if form.Phone_number.errors %}
-                                        <div class="text-danger">
-                                            {% for error in form.Phone_number.errors %}
-                                                <small>{{ error }}</small>
-                                            {% endfor %}
-                                        </div>
-                                    {% endif %}
+                                <div class="form-row">
+                                    
+                                    <div class="form-group col-md-6">
+                                        <label for="photo">Photo</label>
+                                        <input type="file" class="form-control-file" id="photo" name="photo">
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>Username</label>
-                                    {{ form.username }}
-                                    {% if form.username.errors %}
-                                        <div class="text-danger">
-                                            {% for error in form.username.errors %}
-                                                <small>{{ error }}</small>
-                                            {% endfor %}
-                                        </div>
-                                    {% endif %}
-                                </div>
+
+                        <!-- Security & Access -->
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <h5>Security & Access</h5>
                             </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>Password</label>
-                                    {{ form.password }}
-                                    {% if form.password.errors %}
-                                        <div class="text-danger">
-                                            {% for error in form.password.errors %}
-                                                <small>{{ error }}</small>
-                                            {% endfor %}
-                                        </div>
-                                    {% endif %}
+                            <div class="card-body">
+                                <div class="form-row">
+                                    <div class="form-group col-md-4">
+                                        <label for="username">Username</label>
+                                        <input type="text" class="form-control" id="username" placeholder="Enter username" name="username" required>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label for="password">Password</label>
+                                        <input type="password" class="form-control" id="password" placeholder="Enter password" name="password" required>
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                        <label for="confirm_password">Confirm Password</label>
+                                        <input type="password" class="form-control" id="confirm_password" placeholder="Confirm password" name="confirm_password" required>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <button type="submit" class="btn btn-primary btn-fill pull-right">Create Admin</button>
-                        <div class="clearfix"></div>
+
+                        <!-- Additional Info -->
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <h5>Additional Info</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label for="Department">Department/Team</label>
+                                        <input type="text" class="form-control" id="Department" placeholder="Enter department/Team" name="Department">
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label for="notes">Notes</label>
+                                        <textarea class="form-control" id="notes" name="notes" placeholder="Enter any additional notes" rows="3"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-right">
+                            <button type="submit" class="btn btn-primary">Create Admin</button>
+                        </div>
                     </form>
                 </div>
             </div>
