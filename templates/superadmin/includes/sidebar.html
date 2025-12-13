@@ -20,13 +20,13 @@
       </a>
     </li>
 
-    <li class="nav-item {% if request.resolver_match.url_name in 'gym_list,add_gym' %}active{% endif %}">
-      <a class="nav-link" data-toggle="collapse" href="#gym-management" aria-expanded="false" aria-controls="gym-management">
+    <li class="nav-item {% if request.resolver_match.url_name in 'gym_list,add_gym,update_gym' %}active{% endif %}">
+      <a class="nav-link" data-toggle="collapse" href="#gym-management" aria-expanded="{% if request.resolver_match.url_name in 'gym_list,add_gym,update_gym' %}true{% else %}false{% endif %}" aria-controls="gym-management">
         <i class="mdi mdi-office-building menu-icon"></i>
         <span class="menu-title">Gym Management</span>
         <i class="menu-arrow"></i>
       </a>
-      <div class="collapse" id="gym-management">
+      <div class="collapse {% if request.resolver_match.url_name in 'gym_list,add_gym,update_gym' %}show{% endif %}" id="gym-management">
         <ul class="nav flex-column sub-menu">
           <li class="nav-item">
             <a class="nav-link {% if request.resolver_match.url_name == 'gym_list' %}active{% endif %}" href="{% url 'superadmin:gym_list' %}">Gyms</a>
@@ -38,13 +38,13 @@
       </div>
     </li>
 
-    <li class="nav-item {% if request.resolver_match.url_name in 'subscription_plan_list,add_subscription_plan' %}active{% endif %}">
-      <a class="nav-link" data-toggle="collapse" href="#subscription-management" aria-expanded="false" aria-controls="subscription-management">
+    <li class="nav-item {% if request.resolver_match.url_name in 'subscription_plan_list,add_subscription_plan,update_subscription_plan' %}active{% endif %}">
+      <a class="nav-link" data-toggle="collapse" href="#subscription-management" aria-expanded="{% if request.resolver_match.url_name in 'subscription_plan_list,add_subscription_plan,update_subscription_plan' %}true{% else %}false{% endif %}" aria-controls="subscription-management">
         <i class="mdi mdi-currency-usd menu-icon"></i>
         <span class="menu-title">Subscriptions</span>
         <i class="menu-arrow"></i>
       </a>
-      <div class="collapse" id="subscription-management">
+      <div class="collapse {% if request.resolver_match.url_name in 'subscription_plan_list,add_subscription_plan,update_subscription_plan' %}show{% endif %}" id="subscription-management">
         <ul class="nav flex-column sub-menu">
           <li class="nav-item">
             <a class="nav-link {% if request.resolver_match.url_name == 'subscription_plan_list' %}active{% endif %}" href="{% url 'superadmin:subscription_plan_list' %}">

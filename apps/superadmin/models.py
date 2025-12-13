@@ -40,6 +40,7 @@ class GymAdmin(models.Model):
         return f'{self.user.username} - {self.gym.name}'
 
 class SubscriptionPlan(models.Model):
+    gym = models.ForeignKey(Gym, on_delete=models.CASCADE, related_name='subscription_plans', null=True)
     name = models.CharField(max_length=100)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     duration_months = models.IntegerField(help_text="Duration in months", default=1)

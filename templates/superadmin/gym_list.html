@@ -19,6 +19,7 @@
 </nav>
 
 <div class="container-fluid">
+   
     <div class="row">
         <div class="col-md-12">
             <div class="card">
@@ -98,4 +99,13 @@
 
 {% block scripts %}
 <script src="{% static 'js/delete_confirmation.js' %}"></script>
+<script>
+    // Auto-hide success messages after 5 seconds
+    setTimeout(function() {
+        let alert = document.querySelector('.alert-success');
+        if (alert) {
+            alert.style.display = 'none';
+        }
+    }, 5000);
+</script>
 {% endblock %}

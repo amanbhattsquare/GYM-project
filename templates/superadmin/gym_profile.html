@@ -1,7 +1,10 @@
 {% extends "superadmin/base.html" %}
 {% load static %}
 
+{% block title %}Gym Profile{% endblock %}
+
 {% block content %}
+
 <!-- Compact Breadcrumb Navigation -->
 <nav aria-label="breadcrumb" class="custom-breadcrumb mb-3">
     <ol class="breadcrumb">
@@ -10,140 +13,282 @@
                 <i class="mdi mdi-home-outline mdi-18px"></i> Dashboard
             </a>
         </li>
-        <li class="breadcrumb-item">
+        <li class="breadcrumb-item active" aria-current="page">
             <a href="{% url 'superadmin:gym_list' %}" class="text-decoration-none">
-                <i class="mdi mdi-account-multiple-outline mdi-18px"></i> Gyms List
+                 <i class="mdi mdi-dumbbell mdi-18px"></i> All Gyms
             </a>
         </li>
         <li class="breadcrumb-item active" aria-current="page">
-            <i class="mdi mdi-account-multiple-outline mdi-18px"></i> Gym Profile
+            <i class="mdi mdi-office-building mdi-18px"></i> {{ gym.name }} 
         </li>
     </ol>
 </nav>
-<div class="row">
-    <div class="col-md-3">
-        <div class="card card-primary card-outline">
-            <div class="card-body box-profile">
-                <div class="text-center">
-                    {% if gym.logo %}
-                        <img class="profile-user-img img-fluid img-circle" src="{{ gym.logo.url }}" alt="User profile picture">
-                    {% endif %}
-                </div>
-                <h3 class="profile-username text-center">{{ gym.name }}</h3>
-                <p class="text-muted text-center">{{ gym.slogan }}</p>
-            </div>
-        </div>
-        <div class="card card-primary">
-            <div class="card-header">
-                <h3 class="card-title">About Gym</h3>
-            </div>
-            <div class="card-body">
-                <strong><i class="fas fa-book mr-1"></i> Address</strong>
-                <p class="text-muted">{{ gym.address }}</p>
-                <hr>
-                <strong><i class="fas fa-map-marker-alt mr-1"></i> Phone</strong>
-                <p class="text-muted">{{ gym.phone }}</p>
-                <hr>
-                <strong><i class="fas fa-pencil-alt mr-1"></i> Email</strong>
-                <p class="text-muted">{{ gym.email }}</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-9">
-        <div class="card">
-            <div class="card-header p-2">
-                <ul class="nav nav-pills">
-                    <li class="nav-item"><a class="nav-link active" href="#activity" data-toggle="tab">Activity</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#timeline" data-toggle="tab">Timeline</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#settings" data-toggle="tab">Settings</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#admin_credentials" data-toggle="tab">Admin Credentials</a></li>
-                </ul>
-            </div>
-            <div class="card-body">
-                <div class="tab-content">
-                    <div class="active tab-pane" id="activity">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Name</th>
-                                    <th>Mobile</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for member in members %}
-                                    <tr>
-                                        <td>{{ member.member_id }}</td>
-                                        <td>{{ member.first_name }} {{ member.last_name }}</td>
-                                        <td>{{ member.mobile_number }}</td>
-                                        <td>
-                                            {% if member.is_active %}
-                                                <span class="badge badge-success">Active</span>
-                                            {% else %}
-                                                <span class="badge badge-danger">Inactive</span>
-                                            {% endif %}
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+<div class="page-wrapper">
+    <div class="page-content">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                        <h2 class="mb-0 h4">Gym Profile</h2>
+                        <div class="d-flex">
+                            <a href="{% url 'superadmin:update_gym' gym.id %}" class="btn btn-sm btn-warning mr-2"><i class="mdi mdi-pencil"></i> </a>
+                            <a href="{% url 'superadmin:create_gym_admin' gym.id %}" class="btn btn-sm btn-success mr-2" data-toggle="tooltip" title="Create gym admin">
+                                <i class="mdi mdi-account-plus"></i>
+                            </a>
+                            
+                            <a href="#" class="btn btn-sm btn-dark" data-toggle="tooltip" title="Freeze gym account">
+                                <i class="mdi mdi-account-lock"></i>  
+                            </a>
+                        </div>
                     </div>
-                    <div class="tab-pane" id="timeline">
-                        <div class="timeline timeline-inverse">
-                            {% for event in membership_history %}
-                                <div class="time-label">
-                                    <span class="bg-danger">{{ event.created_at|date:"d M. Y" }}</span>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <div class="border-bottom text-center pb-4">
+                                    <img src="{% if gym.logo %}{{ gym.logo.url }}{% else %}{% static 'images/gym.png' %}{% endif %}" alt="Admin" class="img-lg rounded-circle mb-3" width="110">
+                                    <div class="mt-3">
+                                        <h4>{{ gym.name }}</h4>
+                                        <p class="text-dark mb-1">{{ gym.slogan }}</p>
+                                        <p class="text-muted font-size-sm">{{ gym.address }}</p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <i class="fas fa-user bg-primary"></i>
-                                    <div class="timeline-item">
-                                        <span class="time"><i class="far fa-clock"></i> {{ event.created_at|time:"H:i" }}</span>
-                                        <h3 class="timeline-header"><a href="#">{{ event.member.first_name }} {{ event.member.last_name }}</a> purchased a new membership</h3>
-                                        <div class="timeline-body">
-                                            {{ event.plan.plan_name }} for {{ event.plan.duration_months }} months
+                                <div class="py-4">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span><i class="mdi mdi-phone mr-2 text-primary"></i>Phone</span>
+                                        <span class="text-dark">{{ gym.phone }}</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span><i class="mdi mdi-email-outline mr-2 text-primary"></i>Mail</span>
+                                        <span class="text-dark">{{ gym.email }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-8">
+                                <div class="mt-4 py-2">
+                                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                        <li class="nav-item" role="presentation">
+                                            <a class="nav-link active" data-bs-toggle="tab" href="#personal-info" role="tab" aria-selected="true">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="tab-icon"><i class='bx bx-user font-18 me-1'></i></div>
+                                                    <div class="tab-title">Personal Info</div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item" role="presentation">
+                                            <a class="nav-link" data-bs-toggle="tab" href="#subscription-plan" role="tab" aria-selected="false">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="tab-icon"><i class='bx bx-wallet font-18 me-1'></i></div>
+                                                    <div class="tab-title">Subscription Plan</div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item" role="presentation">
+                                            <a class="nav-link" data-bs-toggle="tab" href="#admin-credentials" role="tab" aria-selected="false">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="tab-icon"><i class='bx bx-key font-18 me-1'></i></div>
+                                                    <div class="tab-title">Admin Credentials</div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item" role="presentation">
+                                            <a class="nav-link" data-bs-toggle="tab" href="#payment-history" role="tab" aria-selected="false">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="tab-icon"><i class='bx bx-history font-18 me-1'></i></div>
+                                                    <div class="tab-title">Payment History</div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item" role="presentation">
+                                            <a class="nav-link" data-bs-toggle="tab" href="#settings" role="tab" aria-selected="false">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="tab-icon"><i class='bx bx-cog font-18 me-1'></i></div>
+                                                    <div class="tab-title">Settings</div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                    <div class="tab-content py-3">
+                                        <div class="tab-pane fade show active" id="personal-info" role="tabpanel">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">Personal Information</h5>
+                                                    <div class="row mb-3">
+                                                        <div class="col-sm-3">
+                                                            <h6 class="mb-0">Gym Name</h6>
+                                                        </div>
+                                                        <div class="col-sm-9 text-dark">
+                                                            {{ gym.name }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mb-3">
+                                                        <div class="col-sm-3">
+                                                            <h6 class="mb-0">Slogan</h6>
+                                                        </div>
+                                                        <div class="col-sm-9 text-dark">
+                                                            {{ gym.slogan }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mb-3">
+                                                        <div class="col-sm-3">
+                                                            <h6 class="mb-0">Address</h6>
+                                                        </div>
+                                                        <div class="col-sm-9 text-dark">
+                                                            {{ gym.address }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mb-3">
+                                                        <div class="col-sm-3">
+                                                            <h6 class="mb-0">Phone</h6>
+                                                        </div>
+                                                        <div class="col-sm-9 text-dark">
+                                                            {{ gym.phone }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mb-3">
+                                                        <div class="col-sm-3">
+                                                            <h6 class="mb-0">Email</h6>
+                                                        </div>
+                                                        <div class="col-sm-9 text-dark">
+                                                            {{ gym.email }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane fade" id="subscription-plan" role="tabpanel">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                                        <h5 class="card-title mb-0">Subscription Plans</h5>
+                                                        <a href="{% url 'superadmin:subscription_plan_list' %}" class="btn btn-primary">Manage Plans</a>
+                                                    </div>
+                                                    <div class="table-responsive">
+                                                        <table class="table table-striped">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Plan Name</th>
+                                                                    <th>Duration</th>
+                                                                    <th>Price</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                {% for plan in subscription_plans %}
+                                                                <tr>
+                                                                    <td>{{ plan.name }}</td>
+                                                                    <td>{{ plan.duration_days }} days</td>
+                                                                    <td>{{ plan.price }}</td>
+                                                                </tr>
+                                                                {% empty %}
+                                                                <tr>
+                                                                    <td colspan="3" class="text-center">No subscription plans found.</td>
+                                                                </tr>
+                                                                {% endfor %}
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane fade" id="admin-credentials" role="tabpanel">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">Admin Credentials</h5>
+                                                    <div class="table-responsive">
+                                                        <table class="table table-striped">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Name</th>
+                                                                    <th>Phone</th>
+                                                                    <th>Department</th>
+                                                                    <th>Username</th>
+                                                                    <th>Action</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                {% for admin in gym_admins %}
+                                                                <tr>
+                                                                    <td>{{ admin.name }}</td>
+                                                                    <td>{{ admin.Phone_number }}</td>
+                                                                    <td>{{ admin.Department }}</td>
+                                                                    <td>{{ admin.user.username }}</td>
+                                                                    <td>
+                                                                        <a href="{% url 'superadmin:reset_admin_password' admin.id %}" class="btn btn-warning btn-sm">Reset Password</a>
+                                                                    </td>
+                                                                </tr>
+                                                                {% empty %}
+                                                                <tr>
+                                                                    <td colspan="5" class="text-center">No admin credentials found.</td>
+                                                                </tr>
+                                                                {% endfor %}
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane fade" id="payment-history" role="tabpanel">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">Payment History</h5>
+                                                    <div class="table-responsive">
+                                                        <table class="table table-striped">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Member</th>
+                                                                    <th>Plan</th>
+                                                                    <th>Amount</th>
+                                                                    <th>Date</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                {% for payment in payment_history %}
+                                                                <tr>
+                                                                    <td>{{ payment.member.name }}</td>
+                                                                    <td>{{ payment.plan.name }}</td>
+                                                                    <td>{{ payment.amount }}</td>
+                                                                    <td>{{ payment.payment_date|date:"d M, Y" }}</td>
+                                                                </tr>
+                                                                {% empty %}
+                                                                <tr>
+                                                                    <td colspan="4" class="text-center">No payment history found.</td>
+                                                                </tr>
+                                                                {% endfor %}
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane fade" id="settings" role="tabpanel">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">Settings</h5>
+                                                    <p>Here you can configure gym-specific settings.</p>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            {% endfor %}
-                            <div>
-                                <i class="far fa-clock bg-gray"></i>
                             </div>
                         </div>
-                    </div>
-                    <div class="tab-pane" id="admin_credentials">
-                        {% if gym_admin %}
-                            <p><strong>Username:</strong> {{ gym_admin.user.username }}</p>
-                            <hr>
-                            <h5>Reset Password</h5>
-                            <form action="{% url 'superadmin:reset_admin_password' gym_admin.id %}" method="post">
-                                {% csrf_token %}
-                                {{ admin_form.as_p }}
-                                <button type="submit" class="btn btn-primary">Reset Password</button>
-                            </form>
-                        {% else %}
-                            <h5>Create Admin</h5>
-                            <form action="{% url 'superadmin:create_gym_admin' gym.id %}" method="post">
-                                {% csrf_token %}
-                                {{ admin_form.as_p }}
-                                <button type="submit" class="btn btn-success">Create Admin</button>
-                            </form>
-                        {% endif %}
-                    </div>
-                    <div class="tab-pane" id="settings">
-                        <form class="form-horizontal" action="{% url 'superadmin:update_gym' gym.id %}" method="post" enctype="multipart/form-data">
-                            {% csrf_token %}
-                            {{ form.as_p }}
-                            <div class="form-group row">
-                                <div class="offset-sm-2 col-sm-10">
-                                    <button type="submit" class="btn btn-danger">Submit</button>
-                                </div>
-                            </div>
-                        </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+function togglePassword() {
+    var passwordSpan = document.getElementById("admin-password");
+    var password = passwordSpan.getAttribute("data-password");
+    if (passwordSpan.innerHTML === "********") {
+        passwordSpan.innerHTML = password;
+        event.target.innerHTML = "Hide";
+    } else {
+        passwordSpan.innerHTML = "********";
+        event.target.innerHTML = "Show";
+    }
+}
+</script>
 {% endblock %}

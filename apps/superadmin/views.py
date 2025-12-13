@@ -4,11 +4,13 @@ from django.contrib.auth.models import User
 from .forms import GymForm, GymAdminForm, SubscriptionPlanForm
 from .models import Gym, GymAdmin, SubscriptionPlan
 from apps.members.models import Member, MembershipHistory
+from apps.billing.models import Payment
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from .decorators import superadmin_required
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
+
 
 
 @login_required
@@ -37,7 +39,7 @@ def add_gym(request):
             return redirect('superadmin:create_gym_admin', gym_id=gym.id)
     else:
         form = GymForm()
-    return render(request, 'superadmin/add_gym.html', {'form': form})
+    return render(request, 'superadmin/add_gym.html', {'form': form, 'page_title': 'Add Gym', 'button_text': 'Add Gym'})
 
 
 @login_required
@@ -111,11 +113,12 @@ def update_gym(request, gym_id):
     if request.method == 'POST':
         form = GymForm(request.POST, request.FILES, instance=gym)
         if form.is_valid():
-            form.save()
+            gym = form.save()
+            messages.success(request, f"Gym '{gym.name}' has been updated successfully.")
             return redirect('superadmin:gym_list')
     else:
         form = GymForm(instance=gym)
-    return render(request, 'superadmin/add_gym.html', {'form': form})
+    return render(request, 'superadmin/add_gym.html', {'form': form, 'page_title': 'Update Gym', 'button_text': 'Update Gym'})
 
 @login_required
 @superadmin_required
@@ -135,16 +138,28 @@ def delete_gym(request, gym_id):
 def gym_profile(request, gym_id):
     gym = get_object_or_404(Gym, pk=gym_id)
     form = GymForm(instance=gym)
-    members = Member.objects.filter(gym=gym)
-    membership_history = MembershipHistory.objects.filter(gym=gym).order_by('-created_at')
-    gym_admin = GymAdmin.objects.filter(gym=gym).first()
+
+    # Paginate payment history
+    payment_list = Payment.objects.filter(member__gym=gym).order_by('-payment_date')
+    paginator_payments = Paginator(payment_list, 10)  # Show 10 payments per page
+    page_payments = request.GET.get('page_payments')
+    try:
+        payment_history = paginator_payments.page(page_payments)
+    except PageNotAnInteger:
+        payment_history = paginator_payments.page(1)
+    except EmptyPage:
+        payment_history = paginator_payments.page(paginator_payments.num_pages)
+
+    subscription_plans = SubscriptionPlan.objects.filter(gym=gym)
+    gym_admins = GymAdmin.objects.filter(gym=gym)
     admin_form = GymAdminForm()
+
     return render(request, 'superadmin/gym_profile.html', {
-        'gym': gym, 
-        'form': form, 
-        'members': members, 
-        'membership_history': membership_history,
-        'gym_admin': gym_admin,
+        'gym': gym,
+        'form': form,
+        'payment_history': payment_history,
+        'subscription_plans': subscription_plans,
+        'gym_admins': gym_admins,
         'admin_form': admin_form
     })
 

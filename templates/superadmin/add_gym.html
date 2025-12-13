@@ -13,10 +13,10 @@
         </li>
         <li class="breadcrumb-item">
             <a href="{% url 'superadmin:gym_list' %}" class="text-decoration-none">
-                <i class="mdi mdi-dumbbell mdi-18px"></i> Gyms
+                <i class="mdi mdi-dumbbell mdi-18px"></i> All Gyms
             </a>
         <li class="breadcrumb-item active" aria-current="page">
-            <i class="mdi mdi-plus-circle-outline mdi-18px"></i> Add New Gym
+            <i class="mdi mdi-plus-circle-outline mdi-18px"></i> {{ page_title }}
         </li>
     </ol>
 </nav>
@@ -26,21 +26,13 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header bg-primary text-white">
-                    <h4 class="card-title mb-0">Add New Gym</h4>
+                    <h4 class="card-title mb-0">{{ page_title }}</h4>
                 </div>
                 <div class="card-body">
                         <fieldset class="border p-4 rounded mb-4">  
                      <legend class="w-auto px-2 h5">Personal Info</legend>
                     <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
-
-                        {% if form.non_field_errors %}
-                            <div class="alert alert-danger">
-                                {% for error in form.non_field_errors %}
-                                    <p>{{ error }}</p>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
 
                         <div class="row">
                             <div class="col-md-6">
@@ -255,7 +247,7 @@
                             </div>
                         </div>
 
-                        <button type="submit" class="btn btn-primary btn-fill pull-right">Save</button>
+                        <button type="submit" class="btn btn-primary btn-fill pull-right">{{ button_text }}</button>
                         <div class="clearfix"></div>
                     </form>
                 </div>
