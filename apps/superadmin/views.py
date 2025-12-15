@@ -232,3 +232,32 @@ def delete_subscription_plan(request, plan_id):
     except Exception as e:
         messages.error(request, f'An error occurred: {e}')
         return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+
+@login_required
+@superadmin_required
+def assign_subscription(request):
+    if request.method == 'POST':
+        gym_id = request.POST.get('gym')
+        subscription_id = request.POST.get('subscription')
+        start_date = request.POST.get('start_date')
+        end_date = request.POST.get('end_date')
+
+        gym = get_object_or_404(Gym, id=gym_id)
+        subscription = get_object_or_404(SubscriptionPlan, id=subscription_id)
+
+        GymSubscription.objects.create(
+            gym=gym,
+            subscription=subscription,
+            start_date=start_date,
+            end_date=end_date
+        )
+        messages.success(request, f'Subscription assigned to {gym.name} successfully.')
+        return redirect('superadmin:gym_list')
+
+    else:
+        gyms = Gym.objects.all()
+        subscriptions = SubscriptionPlan.objects.all()
+        return render(request, 'superadmin/assign_subscription.html', {
+            'gyms': gyms,
+            'subscriptions': subscriptions
+        })

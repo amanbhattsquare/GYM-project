@@ -25,9 +25,11 @@
             <div class="card">
                 <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                     <h4 class="mb-0">Gyms List</h4>
-                    <a href="{% url 'superadmin:add_gym' %}" class="btn btn-light btn-sm">
-                        <i class="mdi mdi-plus"></i> Add Gym
-                    </a>
+                    <div>
+                        <a href="{% url 'superadmin:add_gym' %}" class="btn btn-light btn-sm">
+                            <i class="mdi mdi-plus"></i> Add Gym
+                        </a>
+                    </div>
                 </div>
                 <div class="card-body">
                     {% csrf_token %}

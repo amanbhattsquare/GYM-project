@@ -1,0 +1,44 @@
+{% extends 'superadmin/base.html' %}
+{% load static %}
+
+{% block title %}Assign Subscription{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Assign Subscription to Gym</h2>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group mb-3">
+                    <label for="gym">Select Gym</label>
+                    <select class="form-control" id="gym" name="gym">
+                        {% for gym in gyms %}
+                            <option value="{{ gym.id }}">{{ gym.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="subscription">Select Subscription Plan</label>
+                    <select class="form-control" id="subscription" name="subscription">
+                        {% for subscription in subscriptions %}
+                            <option value="{{ subscription.id }}">{{ subscription.plan_name }} - {{ subscription.price }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="start_date">Start Date</label>
+                    <input type="date" class="form-control" id="start_date" name="start_date" required>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="end_date">End Date</label>
+                    <input type="date" class="form-control" id="end_date" name="end_date" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Assign Subscription</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -31,9 +31,12 @@
                     <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                         <h2 class="mb-0 h4">Gym Profile</h2>
                         <div class="d-flex">
-                            <a href="{% url 'superadmin:update_gym' gym.id %}" class="btn btn-sm btn-warning mr-2"><i class="mdi mdi-pencil"></i> </a>
+                            <a href="{% url 'superadmin:update_gym' gym.id %}" class="btn btn-sm btn-light mr-2"><i class="mdi mdi-pencil"></i> </a>
                             <a href="{% url 'superadmin:create_gym_admin' gym.id %}" class="btn btn-sm btn-success mr-2" data-toggle="tooltip" title="Create gym admin">
                                 <i class="mdi mdi-account-plus"></i>
+                            </a>
+                            <a href="{% url 'superadmin:assign_subscription' %}" class="btn btn-warning btn-sm mr-2" data-toggle="tooltip" title="Assign subscription plan">
+                                <i class="mdi mdi-tag-plus"></i> 
                             </a>
                             
                             <a href="#" class="btn btn-sm btn-dark" data-toggle="tooltip" title="Freeze gym account">
@@ -172,7 +175,7 @@
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
-                                                                {% for plan in subscription_plans %}
+                                                                {% comment %} {% for plan in subscription_plans %}
                                                                 <tr>
                                                                     <td>{{ plan.name }}</td>
                                                                     <td>{{ plan.duration_days }} days</td>
@@ -182,7 +185,7 @@
                                                                 <tr>
                                                                     <td colspan="3" class="text-center">No subscription plans found.</td>
                                                                 </tr>
-                                                                {% endfor %}
+                                                                {% endfor %} {% endcomment %}
                                                             </tbody>
                                                         </table>
                                                     </div>
