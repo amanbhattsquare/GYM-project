@@ -1,0 +1,129 @@
+{% extends 'superadmin/base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Compact Breadcrumb Navigation -->
+<nav aria-label="breadcrumb" class="custom-breadcrumb mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{% url 'superadmin:dashboard' %}" class="text-decoration-none">
+                <i class="mdi mdi-home-outline mdi-18px"></i> Dashboard
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <i class="mdi mdi-account-group mdi-18px"></i> Billing
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <i class="mdi mdi-currency-usd mdi-18px"></i> Submit Due Payment
+        </li>
+    </ol>
+</nav>
+
+<div class="col-md-12 grid-margin">
+<div class="container">
+    <div class="card">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">Due Payment List</h4>
+        </div>
+        <div class="card-body">
+        
+            <div class="table-responsive">
+               <table class="table table-hover table-sm table-stack-on-mobile">
+                    <thead>
+                        <tr>
+                            <th class="font-weight-semibold py-2">#</th>
+                            <th class="font-weight-semibold py-2">Logo</th>
+                            <th class="font-weight-semibold py-2">Gym </th>
+                            <th class="font-weight-semibold py-2">Contact No</th>
+                            <th class="font-weight-semibold py-2">Admin Name</th>
+                            <th class="font-weight-semibold py-2">Amount</th>
+                            <th class="font-weight-semibold py-2">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for gym in gyms %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                           <td data-label="Logo">
+                                        <img src="{% if gym.logo %}{{ gym.logo.url }}{% else %}{% static 'images/gym-logo.jpg' %}{% endif %}"
+                                            class="rounded-circle border" style="width: 40px; height: 40px; object-fit: cover;"
+                                            alt="{{ gym.name }}">
+                                    </td>
+                                    <td data-label="Name">
+                                        <strong><a href="{% url 'superadmin:gym_profile' gym.id %}" class="text-decoration-none">{{ gym.name }}</a></strong><br>
+                                        <small class="text-muted">#{{ gym.gym_id }}</small>
+                                    </td>
+                            <td>{{ gym.contact_no }}</td>
+                            <td>{{ gym.admin_name }}</td>
+                            <td>
+                                <span class="text-primary">Total: {{ gym.total_subscription_amount|default:"0" }}</span><br>
+                                <span class="text-success">Submitted: {{ gym.total_paid_amount|default:"0" }}</span><br>
+                                <span class="text-danger">Due: {{ gym.total_due|default:"0" }}</span>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#payModal-{{ gym.id }}">
+                                    Pay
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            {% if gyms.has_other_pages %}
+                {% include 'includes/pagination.html' with page_obj=gyms query=query %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% for gym in gyms %}
+<div class="modal fade" id="payModal-{{ gym.id }}" tabindex="-1" role="dialog" aria-labelledby="payModalLabel-{{ gym.id }}" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="payModalLabel-{{ gym.id }}">Submit Due for {{ gym.name }}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="{% url 'superadmin:submit_due' %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="gym" value="{{ gym.id }}">
+                    <div class="form-group">
+                        <label for="dueAmount-{{ gym.id }}">Due Amount</label>
+                        <input type="text" class="form-control" id="dueAmount-{{ gym.id }}" value="{{ gym.total_due }}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="amountToPay-{{ gym.id }}">Amount to Pay</label>
+                        <input type="number" class="form-control" id="amountToPay-{{ gym.id }}" name="amount_to_pay" min="1" max="{{ gym.total_due }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="paymentMethod-{{ gym.id }}">Payment Method</label>
+                        <select class="form-control" id="paymentMethod-{{ gym.id }}" name="payment_method">
+                            <option value="cash">Cash</option>
+                            <option value="upi">UPI</option>
+                            <option value="credit_card">Credit Card</option>
+                            <option value="debit_card">Debit Card</option>
+                            <option value="net_banking">Net Banking</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="notes-{{ gym.id }}">Notes</label>
+                        <textarea class="form-control" id="notes-{{ gym.id }}" name="notes" rows="3"></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Submit Payment</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock content %}

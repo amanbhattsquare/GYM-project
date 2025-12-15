@@ -5,13 +5,15 @@ from .forms import GymForm, GymAdminForm, SubscriptionPlanForm
 from .models import Gym, GymAdmin, SubscriptionPlan, GymSubscription
 from apps.members.models import Member, MembershipHistory
 from apps.billing.models import Payment
-from django.db.models import Q
+from django.db.models import Q, Sum
 from django.contrib.auth.decorators import login_required
 from .decorators import superadmin_required
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
-from datetime import datetime, timedelta, date
-
+from django.db.models import Sum, OuterRef, Subquery, F
+from apps.billing.models import Payment
+from decimal import Decimal
+from datetime import date, timedelta
 
 @login_required
 @superadmin_required
@@ -140,7 +142,7 @@ def gym_profile(request, gym_id):
     form = GymForm(instance=gym)
 
     # Paginate payment history
-    payment_list = Payment.objects.filter(member__gym=gym).order_by('-payment_date')
+    payment_list = Payment.objects.filter(gym=gym).order_by('-payment_date')
     paginator_payments = Paginator(payment_list, 10)  # Show 10 payments per page
     page_payments = request.GET.get('page_payments')
     try:
@@ -155,6 +157,13 @@ def gym_profile(request, gym_id):
     gym_admins = GymAdmin.objects.filter(gym=gym)
     admin_form = GymAdminForm()
 
+    # Calculate due amount
+    aggregation = gym_subscriptions.aggregate(
+        total_amount=Sum('total_amount'),
+        paid_amount=Sum('paid_amount')
+    )
+    due_amount = (aggregation['total_amount'] or 0) - (aggregation['paid_amount'] or 0)
+
     return render(request, 'superadmin/gym_profile.html', {
         'gym': gym,
         'form': form,
@@ -162,7 +171,8 @@ def gym_profile(request, gym_id):
         'gym_subscriptions': gym_subscriptions,
         'active_subscription': active_subscription,
         'gym_admins': gym_admins,
-        'admin_form': admin_form
+        'admin_form': admin_form,
+        'due_amount': due_amount
     })
 
 @login_required
@@ -277,3 +287,137 @@ def assign_subscription(request):
             'gyms': gyms,
             'subscriptions': subscriptions
         })
+
+
+@login_required
+@superadmin_required
+def billing_history(request):
+    query = request.GET.get('q')
+    status_filter = request.GET.get('status')
+    type_filter = request.GET.get('type')
+
+    base_queryset = GymSubscription.objects.all() if request.user.is_superuser else GymSubscription.objects.filter(gym=request.user.gymadmin.gym)
+
+    subscriptions = base_queryset.annotate(
+        due_amount_calculated=F('total_amount') - F('paid_amount')
+    ).order_by('-start_date')
+
+    if query:
+        subscriptions = subscriptions.filter(gym__name__icontains=query)
+
+    if status_filter:
+        if status_filter == 'paid':
+            subscriptions = subscriptions.filter(due_amount_calculated=0)
+        elif status_filter == 'unpaid':
+            subscriptions = subscriptions.filter(due_amount_calculated__gt=0)
+
+    payments = Payment.objects.filter(gym__in=subscriptions.values('gym')).order_by('-payment_date')
+
+    if type_filter == 'subscription':
+        history = list(subscriptions)
+    elif type_filter == 'payment':
+        history = list(payments)
+    else:
+        history = sorted(
+            list(subscriptions) + list(payments),
+            key=lambda item: item.start_date if isinstance(item, GymSubscription) else item.payment_date.date(),
+            reverse=True
+        )
+
+    paginator = Paginator(history, 10)
+    page = request.GET.get('page')
+    try:
+        history_page = paginator.page(page)
+    except PageNotAnInteger:
+        history_page = paginator.page(1)
+    except EmptyPage:
+        history_page = paginator.page(paginator.num_pages)
+
+    context = {
+        'history': history_page,
+        'query': query,
+        'status_filter': status_filter,
+        'type_filter': type_filter,
+    }
+    return render(request, 'superadmin/billing_history.html', context)
+
+
+@login_required
+@superadmin_required
+def submit_due(request):
+    if request.method == 'POST':
+        gym_id = request.POST.get('gym')
+        amount_to_pay = request.POST.get('amount_to_pay')
+        payment_method = request.POST.get('payment_method')
+        notes = request.POST.get('notes')
+        
+        if gym_id and amount_to_pay:
+            gym = get_object_or_404(Gym, id=gym_id)
+            amount_to_pay_decimal = Decimal(amount_to_pay)
+
+            # Total due for the gym
+            aggregation = GymSubscription.objects.filter(gym=gym).aggregate(
+                total_amount=Sum('total_amount'),
+                paid_amount=Sum('paid_amount')
+            )
+            gym_total_due = (aggregation['total_amount'] or 0) - (aggregation['paid_amount'] or 0)
+
+            if amount_to_pay_decimal > gym_total_due:
+                messages.error(request, 'Amount to pay cannot be greater than the total due amount.')
+            else:
+                # Apply payment to subscriptions, oldest first
+                subscriptions = GymSubscription.objects.filter(gym=gym).annotate(
+                    due=F('total_amount') - F('paid_amount')
+                ).filter(due__gt=0).order_by('start_date')
+                
+                payment_to_apply = amount_to_pay_decimal
+                for sub in subscriptions:
+                    if payment_to_apply <= 0:
+                        break
+                    
+                    current_due = sub.total_amount - sub.paid_amount
+                    payable = min(payment_to_apply, current_due)
+                    sub.paid_amount += payable
+                    sub.save()
+                    payment_to_apply -= payable
+
+                Payment.objects.create(
+                    gym=gym,
+                    amount=amount_to_pay_decimal,
+                    payment_date=date.today(),
+                    payment_mode=payment_method,
+                    comment=notes
+                )
+                messages.success(request, 'Due amount submitted successfully.')
+        
+        return redirect('superadmin:submit_due')
+
+    gyms_with_due = Gym.objects.annotate(
+        total_subscription_amount=Sum('gymsubscription__total_amount'),
+        total_paid_amount=Sum('gymsubscription__paid_amount')
+    ).filter(total_subscription_amount__gt=F('total_paid_amount')).annotate(
+        total_due=F('total_subscription_amount') - F('total_paid_amount'),
+        admin_name=F('gymadmin__name'),
+        contact_no=F('phone'),
+    )
+
+    query = request.GET.get('q')
+    if query:
+        gyms_with_due = gyms_with_due.filter(
+            Q(name__icontains=query) |
+            Q(gym_id__icontains=query) |
+            Q(admin_name__icontains=query)
+        ).distinct()
+
+    return render(request, 'superadmin/submit_due.html', {'gyms': gyms_with_due, 'query': query})
+
+@login_required
+@superadmin_required
+def get_due_amount(request, gym_id):
+    gym = get_object_or_404(Gym, id=gym_id)
+    aggregation = GymSubscription.objects.filter(gym=gym).aggregate(
+        total_amount=Sum('total_amount'),
+        paid_amount=Sum('paid_amount')
+    )
+    due_amount = (aggregation['total_amount'] or 0) - (aggregation['paid_amount'] or 0)
+    return JsonResponse({'due_amount': due_amount})

@@ -68,5 +68,10 @@ class GymSubscription(models.Model):
     transaction_id = models.CharField(max_length=100, blank=True, null=True)
     remark = models.TextField(blank=True, null=True)
 
-    def __str__(self):
-        return f'{self.gym.name} - {self.subscription.name}'
+    @property
+    def is_subscription(self):
+        return True
+
+    @property
+    def due_amount(self):
+        return self.total_amount - self.paid_amount

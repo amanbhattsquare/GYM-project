@@ -54,10 +54,13 @@
                                         <p class="text-dark mb-1">{{ gym.slogan }}</p>
                                         <p class="text-muted font-size-sm">{{ gym.address }}</p>
                                         {% if active_subscription %}
-                                            <span class="badge bg-success">Active Plan: {{ active_subscription.subscription.name }}</span>
+                                            <span class="badge bg-success text-white">Active Plan: {{ active_subscription.subscription.name }}</span>
                                         {% else %}
-                                            <span class="badge bg-danger">No Active Plan</span>
+                                            <span class="badge bg-danger text-white">No Active Plan</span>
                                         {% endif %}
+                                        <div class="mt-2">
+                                            <span class="badge bg-danger text-white">Due Amount: ₹{{ due_amount|floatformat:2 }}</span>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="py-4">
@@ -247,8 +250,7 @@
                                                         <table class="table table-striped">
                                                             <thead>
                                                                 <tr>
-                                                                    <th>Member</th>
-                                                                    <th>Plan</th>
+                                                                    <th>#</th>
                                                                     <th>Amount</th>
                                                                     <th>Date</th>
                                                                     <th>Payment Mode</th>
@@ -258,8 +260,7 @@
                                                             <tbody>
                                                                 {% for payment in payment_history %}
                                                                 <tr>
-                                                                    <td>{{ payment.member.name }}</td>
-                                                                    <td>{{ payment.plan.name }}</td>
+                                                                    <td>{{ forloop.counter }}</td>
                                                                     <td>{{ payment.amount }}</td>
                                                                     <td>{{ payment.payment_date|date:"d M, Y" }}</td>
                                                                     <td>{{ payment.payment_mode }}</td>

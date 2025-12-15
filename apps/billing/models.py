@@ -13,7 +13,7 @@ class Payment(models.Model):
         ('other', 'Other'),
     ]
 
-    member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name='payments')
+    member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name='payments', null=True, blank=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     payment_date = models.DateTimeField(auto_now_add=True)
     payment_mode = models.CharField(max_length=50, choices=PAYMENT_MODE_CHOICES, default='cash')
@@ -21,5 +21,6 @@ class Payment(models.Model):
     comment = models.TextField(blank=True, null=True)
     follow_up_date = models.DateField(blank=True, null=True)
 
-    def __str__(self):
-        return f'Payment of {self.amount} for {self.member} on {self.payment_date.strftime("%Y-%m-%d")}'
+    @property
+    def is_subscription(self):
+        return False
