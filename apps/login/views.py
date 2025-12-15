@@ -55,3 +55,9 @@ def user_logout(request):
         del request.session['role']
     logout(request)
     return redirect('index')
+
+def add_subadmin(request):
+    return render(request, 'login/add_gym_subadmin.html')
+
+def view_subadmins(request):
+    return render(request, 'login/view_subadmins.html')

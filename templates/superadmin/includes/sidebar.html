@@ -13,48 +13,47 @@
     <p class="company-slogan small text-muted py-2">Manage Smarter. Train Better.</p>
   </div>
   <ul class="nav">
-
-
     <li class="nav-item {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
-      <a class="nav-link" href="#">
+      <a class="nav-link" href="{% url 'superadmin:dashboard' %}">
         <i class="mdi mdi-view-dashboard menu-icon"></i>
         <span class="menu-title">Dashboard</span>
       </a>
     </li>
 
-    <li class="nav-item">
-      <a class="nav-link" data-toggle="collapse" href="#gym-management" aria-expanded="false" aria-controls="gym-management">
+    <li class="nav-item {% if request.resolver_match.url_name in 'gym_list,add_gym,update_gym' %}active{% endif %}">
+      <a class="nav-link" data-toggle="collapse" href="#gym-management" aria-expanded="{% if request.resolver_match.url_name in 'gym_list,add_gym,update_gym' %}true{% else %}false{% endif %}" aria-controls="gym-management">
         <i class="mdi mdi-office-building menu-icon"></i>
         <span class="menu-title">Gym Management</span>
         <i class="menu-arrow"></i>
       </a>
-      <div class="collapse" id="gym-management">
+      <div class="collapse {% if request.resolver_match.url_name in 'gym_list,add_gym,update_gym' %}show{% endif %}" id="gym-management">
         <ul class="nav flex-column sub-menu">
           <li class="nav-item">
             <a class="nav-link {% if request.resolver_match.url_name == 'gym_list' %}active{% endif %}" href="{% url 'superadmin:gym_list' %}">Gyms</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'add_gym' %}active{% endif %}" href="{% url 'superadmin:add_gym' %}">Add Gym</a>
           </li>
         </ul>
       </div>
     </li>
 
-    <li class="nav-item">
-      <a class="nav-link" data-toggle="collapse" href="#subscription-management" aria-expanded="false" aria-controls="subscription-management">
+    <li class="nav-item {% if request.resolver_match.url_name in 'subscription_plan_list,add_subscription_plan,update_subscription_plan' %}active{% endif %}">
+      <a class="nav-link" data-toggle="collapse" href="#subscription-management" aria-expanded="{% if request.resolver_match.url_name in 'subscription_plan_list,add_subscription_plan,update_subscription_plan' %}true{% else %}false{% endif %}" aria-controls="subscription-management">
         <i class="mdi mdi-currency-usd menu-icon"></i>
         <span class="menu-title">Subscriptions</span>
         <i class="menu-arrow"></i>
       </a>
-      <div class="collapse" id="subscription-management">
+      <div class="collapse {% if request.resolver_match.url_name in 'subscription_plan_list,add_subscription_plan,update_subscription_plan' %}show{% endif %}" id="subscription-management">
         <ul class="nav flex-column sub-menu">
-          
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'superadmin:subscription_plan_list' %}">
+            <a class="nav-link {% if request.resolver_match.url_name == 'subscription_plan_list' %}active{% endif %}" href="{% url 'superadmin:subscription_plan_list' %}">
               <span class="menu-title">Subscription Plans</span>
             </a>
           </li>
-            <li class="nav-item">
-            <a class="nav-link" href="{% url 'superadmin:add_subscription_plan' %}">
-            
-              <span class="menu-title"> Add Plans</span>
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'add_subscription_plan' %}active{% endif %}" href="{% url 'superadmin:add_subscription_plan' %}">
+              <span class="menu-title">Add Plans</span>
             </a>
           </li>
         </ul>
@@ -65,6 +64,12 @@
       <a class="nav-link" href="{% url 'logout' %}">
         <i class="mdi mdi-logout menu-icon"></i>
         <span class="menu-title">Logout</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="http://127.0.0.1:8000/" target="_blank">
+        <i class="mdi mdi-web menu-icon"></i>
+        <span class="menu-title">Website</span>
       </a>
     </li>
   </ul>

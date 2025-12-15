@@ -18,18 +18,31 @@
         <li class="breadcrumb-item active" aria-current="page">
             <i class="mdi mdi-account-multiple-outline mdi-18px"></i> Member Profile
         </li>
+
     </ol>
 </nav>  
 <div class="row">
     <div class="col-12">
         <div class="card">
-            <div class="card-header bg-primary text-white">
-                <h2 class="mb-0 justify-content-start">Member Profile</h2>
-                 <div class="d-flex justify-content-end">
-                                <a href="{% url 'edit_member' member.id %}" class="btn btn-sm btn-secondary mr-2">Edit</a>
-                                <a href="{% url 'assign_membership_plan' member.id %}" class="btn btn-success mr-2">Assign Plan</a>      
-                                <a href="{% url 'assign_pt_trainer' member.id %}" class="btn btn-danger mr-2">Assign Personal Trainer</a>      
-                            </div>
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h2 class="mb-0">Member Profile</h2>
+                <div class="d-flex">
+                    <a href="{% url 'edit_member' member.id %}" class="btn btn-sm btn-secondary mr-2" data-toggle="tooltip" title="Edit Member">
+                        <i class="mdi mdi-pencil"></i>
+                    </a>
+                    <a href="{% url 'assign_membership_plan' member.id %}" class="btn btn-sm btn-success mr-2" data-toggle="tooltip" title="Assign Membership Plan">
+                        <i class="mdi mdi-file-document-box-plus-outline"></i>
+                    </a>
+                    <a href="{% url 'assign_pt_trainer' member.id %}" class="btn btn-sm btn-danger mr-2" data-toggle="tooltip" title="Assign Personal Trainer">
+                        <i class="mdi mdi-account-plus"></i>
+                    </a>
+                    <button type="button" class="btn btn-sm btn-info mr-2" data-toggle="modal" data-target="#paymentModal-{{ member.id }}" title="Submit Due Payment">
+                        <i class="mdi mdi-currency-usd"></i> 
+                    </button>
+                    <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete('{{ member.id }}', '{{ member.first_name }} {{ member.last_name }}', '{% url 'delete_member' member.id %}')" data-toggle="tooltip" title="Delete">
+                        <i class="mdi mdi-delete-outline"></i>
+                    </button>
+                </div>
             </div>
             <div class="card-body">
                 <div class="row">
@@ -48,52 +61,52 @@
                            
                         </div>
                         <div class="py-4">
-                            <p class="clearfix">
-                                <span class="float-left">Status</span>
-                                <span class="float-right text-muted">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span><i class="mdi mdi-checkbox-marked-circle-outline mr-2 text-primary"></i>Status</span>
+                                <span class="text-muted">
                                     {% if member.is_active %}
                                         <span class="badge badge-success">Active</span>
                                     {% else %}
                                         <span class="badge badge-danger">Inactive</span>
                                     {% endif %}
                                 </span>
-                            </p>
-                            <p class="clearfix">
-                                <span class="float-left">Phone</span>
-                                <span class="float-right text-muted">{{ member.mobile_number }}</span>
-                            </p>
-                            <p class="clearfix">
-                                <span class="float-left">Mail</span>
-                                <span class="float-right text-muted">{{ member.email }}</span>
-                            </p>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span><i class="mdi mdi-phone mr-2 text-primary"></i>Phone</span>
+                                <span class="text-muted">{{ member.mobile_number }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span><i class="mdi mdi-email-outline mr-2 text-primary"></i>Mail</span>
+                                <span class="text-muted">{{ member.email }}</span>
+                            </div>
                         </div>
                         <div class="py-4">
-                            <h4>Current Membership Plan</h4>
+                            <h5 class="mb-3">Current Membership Plan</h5>
                             {% if membership_history %}
-                                <p class="clearfix">
-                                    <span class="float-left">Plan</span>
-                                    <span class="float-right text-muted">{{ membership_plan.title }}</span>
-                                </p>
-                                <p class="clearfix">
-                                    <span class="float-left">End Date</span>
-                                    <span class="float-right text-muted">{{ membership_history.get_end_date|date:"d-m-Y" }}</span>
-                                </p>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span><i class="mdi mdi-trophy-award mr-2 text-primary"></i>Plan</span>
+                                    <span class="text-muted">{{ membership_plan.title }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span><i class="mdi mdi-calendar-clock mr-2 text-primary"></i>End Date</span>
+                                    <span class="text-muted">{{ membership_history.get_end_date|date:"d-m-Y" }}</span>
+                                </div>
                             {% else %}
                                 <p class="text-muted">No active membership plan.</p>
                             {% endif %}
                         </div>
                         <div class="py-4">
-                            <h4>Personal Trainer Info</h4>
+                            <h5 class="mb-3">Personal Trainer Info</h5>
                             {% if pt_member.first %}
                                 {% with pt=pt_member.first %}
-                                <p class="clearfix">
-                                    <span class="float-left">Trainer</span>
-                                    <span class="float-right text-muted">{{ pt.trainer.name }}</span>
-                                </p>
-                                <p class="clearfix">
-                                    <span class="float-left">End Date</span>
-                                    <span class="float-right text-muted">{{ pt.get_end_date|date:"d-m-Y" }}</span>
-                                </p>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span><i class="mdi mdi-account-star mr-2 text-primary"></i>Trainer</span>
+                                    <span class="text-muted">{{ pt.trainer.name }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span><i class="mdi mdi-calendar-clock mr-2 text-primary"></i>End Date</span>
+                                    <span class="text-muted">{{ pt.get_end_date|date:"d-m-Y" }}</span>
+                                </div>
                                 {% endwith %}
                             {% else %}
                                 <p class="text-muted">No personal trainer assigned.</p>
@@ -197,12 +210,10 @@
                                                 <p><strong>Profession:</strong> {{ member.profession }}</p>
                                             </div>
                                             <div class="col-md-6">
-                                                <div class="form-group row">
-                                                    <label class="col-sm-3 col-form-label">Address</label>
-                                                    <div class="col-sm-9">
-                                                        <p class="form-control-static">{{ member.address }}</p>
-                                                    </div>
-                                                </div>
+                                                <p><strong>Address:</strong></p>
+                                                <p>{{ member.address }}</p>
+                                                <p>{{ member.area }}</p>
+                                                <p>{{ member.city }}, {{ member.state }} - {{ member.pincode }}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -444,7 +455,7 @@
                                                                 <td>{{ payment.get_payment_mode_display }}</td>
                                                                 <td>{{ payment.transaction_id|default_if_none:"N/A" }}</td>
                                                                 <td>
-                                                                    <a href="#" class="btn btn-sm btn-primary"><i class="fas fa-eye"></i></a>
+                                                                    <a href="#" class="btn btn-sm btn-primary"><i class="mdi mdi-eye"></i></a>
                                                                 </td>
                                                             </tr>
                                                         {% empty %}
@@ -480,4 +491,94 @@
         </div>
     </div>
 </div>
+
+<!-- Payment Modal -->
+<div class="modal fade" id="paymentModal-{{ member.id }}" tabindex="-1" role="dialog" aria-labelledby="paymentModalLabel-{{ member.id }}" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="paymentModalLabel-{{ member.id }}">Submit Payment for {{ member.first_name }} {{ member.last_name }}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="paymentForm-{{ member.id }}" method="post" action="{% url 'billing:submit_due' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="member_id" value="{{ member.id }}">
+                    <div class="form-group">
+                        <label>Total Due</label>
+                        <input type="text" class="form-control" value="{{ due_amount }}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="amount_paid">Amount</label>
+                        <input type="number" class="form-control" id="amount_paid" name="amount_paid" max="{{ due_amount }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="payment_mode">Payment Mode</label>
+                        <select class="form-control" id="payment_mode" name="payment_mode" required>
+                            <option value="cash">Cash</option>
+                            <option value="upi">UPI</option>
+                            <option value="credit_card">Credit Card</option>
+                            <option value="debit_card">Debit Card</option>
+                            <option value="net_banking">Net Banking</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="transaction_id">Transaction ID</label>
+                        <input type="text" class="form-control" id="transaction_id" name="transaction_id">
+                    </div>
+                    <div class="form-group">
+                        <label for="follow_up_date">Next Follow-up Date</label>
+                        <input type="date" class="form-control" id="follow_up_date" name="follow_up_date">
+                    </div>
+                    <div class="form-group">
+                        <label for="comment">Comment</label>
+                        <textarea class="form-control" id="comment" name="comment" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit Payment</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();
+});
+
+function confirmDelete(memberId, memberName, url) {
+    if (confirm("Are you sure you want to delete " + memberName + "?")) {
+        window.location.href = url;
+    }
+}
+
+$('#paymentForm-{{ member.id }}').on('submit', function(e) {
+    e.preventDefault();
+    var form = $(this);
+    $.ajax({
+        type: form.attr('method'),
+        url: form.attr('action'),
+        data: form.serialize(),
+        success: function(response) {
+            // Assuming the server returns a JSON response with a status key
+            if (response.status === 'success') {
+                // You can redirect or show a success message here
+                window.location.href = response.redirect_url;
+            } else {
+                // Handle errors, maybe display a message in the modal
+                alert(response.message);
+            }
+        },
+        error: function(xhr, status, error) {
+            // Handle AJAX errors
+            alert('An error occurred: ' + error);
+        }
+    });
+});
+</script>
 {% endblock %}

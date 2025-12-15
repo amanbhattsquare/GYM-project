@@ -9,6 +9,8 @@ from django.core.paginator import Paginator
 from django.contrib import messages
 from decimal import Decimal
 from datetime import date
+from django.http import JsonResponse
+from django.urls import reverse
 
 
 @never_cache
@@ -130,6 +132,8 @@ def submit_due(request):
                 payment_left -= payable_amount
 
             messages.success(request, 'Payment submitted successfully.')
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({'status': 'success', 'redirect_url': reverse('billing:payment_invoice', args=[payment.id])})
             return redirect('billing:payment_invoice', payment_id=payment.id)
 
     context = {
@@ -302,8 +306,6 @@ def invoices_list(request):
         'status_filter': status_filter,
         'query': query,
     })
-
-from django.http import JsonResponse
 
 @login_required
 def delete_invoice(request, invoice_type, invoice_id):

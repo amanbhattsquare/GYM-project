@@ -44,8 +44,19 @@ class Enquiry(models.Model):
     interested_in = models.CharField(max_length=20, choices=INTERESTED_IN_CHOICES, default='gym')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     next_follow_up_date = models.DateField(blank=True, null=True)
-    assigned_to = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, related_name='enquiries')
+    # assigned_to = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, related_name='enquiries')
     enquiry_note = models.TextField()
 
     def __str__(self):
         return self.name
+
+    def get_status_color_class(self):
+        if self.status == 'pending':
+            return 'badge-warning'
+        elif self.status == 'follow_up':
+            return 'badge-info'
+        elif self.status == 'converted':
+            return 'badge-success'
+        elif self.status == 'lost':
+            return 'badge-danger'
+        return ''

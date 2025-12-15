@@ -4,9 +4,28 @@ from django.contrib.auth.models import User
 from .forms import GymForm, GymAdminForm, SubscriptionPlanForm
 from .models import Gym, GymAdmin, SubscriptionPlan
 from apps.members.models import Member, MembershipHistory
+from apps.billing.models import Payment
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from .decorators import superadmin_required
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+
+
+
+@login_required
+@superadmin_required
+def dashboard(request):
+    total_gyms = Gym.objects.count()
+    total_members = Member.objects.count()
+    active_subscriptions = MembershipHistory.objects.filter(status='active').count()
+
+    context = {
+        'total_gyms': total_gyms,
+        'total_members': total_members,
+        'active_subscriptions': active_subscriptions,
+    }
+    return render(request, 'superadmin/dashboard.html', context)
 
 
 @login_required
@@ -16,22 +35,38 @@ def add_gym(request):
         form = GymForm(request.POST, request.FILES)
         if form.is_valid():
             gym = form.save()
+            messages.success(request, f"Gym '{gym.name}' has been added successfully.")
             return redirect('superadmin:create_gym_admin', gym_id=gym.id)
     else:
         form = GymForm()
-    return render(request, 'superadmin/add_gym.html', {'form': form})
+    return render(request, 'superadmin/add_gym.html', {'form': form, 'page_title': 'Add Gym', 'button_text': 'Add Gym'})
+
 
 @login_required
 @superadmin_required
 def create_gym_admin(request, gym_id):
     gym = get_object_or_404(Gym, id=gym_id)
     if request.method == 'POST':
-        form = GymAdminForm(request.POST)
+        form = GymAdminForm(request.POST, request.FILES)
         if form.is_valid():
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password']
-            user = User.objects.create_user(username=username, password=password)
-            GymAdmin.objects.create(user=user, gym=gym)
+            user = form.save()
+            user.is_staff = True
+            user.save()
+
+            gym_admin = GymAdmin.objects.create(
+                user=user,
+                gym=gym,
+                name=form.cleaned_data['name'],
+                Phone_number=form.cleaned_data['Phone_number'],
+                Department=form.cleaned_data.get('Department'),
+                notes=form.cleaned_data.get('notes')
+            )
+
+            if 'photo' in request.FILES:
+                gym_admin.photo = request.FILES['photo']
+                gym_admin.save()
+
+            messages.success(request, f"Admin for '{gym.name}' has been created successfully.")
             return redirect('superadmin:gym_list')
     else:
         form = GymAdminForm()
@@ -42,7 +77,17 @@ def create_gym_admin(request, gym_id):
 @login_required
 @superadmin_required
 def gym_list(request):
-    gyms = Gym.objects.all()
+    query = request.GET.get('q')
+    if query:
+        gyms = Gym.objects.filter(
+            Q(name__icontains=query) |
+            Q(gym_id__icontains=query) |
+            Q(address__icontains=query) |
+            Q(admin_name__icontains=query)
+        ).distinct()
+    else:
+        gyms = Gym.objects.all()
+
     for gym in gyms:
         admin = GymAdmin.objects.filter(gym=gym).first()
         if admin:
@@ -68,34 +113,53 @@ def update_gym(request, gym_id):
     if request.method == 'POST':
         form = GymForm(request.POST, request.FILES, instance=gym)
         if form.is_valid():
-            form.save()
+            gym = form.save()
+            messages.success(request, f"Gym '{gym.name}' has been updated successfully.")
             return redirect('superadmin:gym_list')
     else:
         form = GymForm(instance=gym)
-    return render(request, 'superadmin/add_gym.html', {'form': form})
+    return render(request, 'superadmin/add_gym.html', {'form': form, 'page_title': 'Update Gym', 'button_text': 'Update Gym'})
 
 @login_required
 @superadmin_required
+@require_POST
 def delete_gym(request, gym_id):
     gym = get_object_or_404(Gym, pk=gym_id)
-    gym.delete()
-    return redirect('superadmin:gym_list')
+    try:
+        gym.delete()
+        messages.success(request, 'Gym has been deleted successfully.')
+        return JsonResponse({'status': 'success', 'message': 'Gym deleted successfully.'})
+    except Exception as e:
+        messages.error(request, f'An error occurred: {e}')
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
 
 @login_required
 @superadmin_required
 def gym_profile(request, gym_id):
     gym = get_object_or_404(Gym, pk=gym_id)
     form = GymForm(instance=gym)
-    members = Member.objects.filter(gym=gym)
-    membership_history = MembershipHistory.objects.filter(gym=gym).order_by('-created_at')
-    gym_admin = GymAdmin.objects.filter(gym=gym).first()
+
+    # Paginate payment history
+    payment_list = Payment.objects.filter(member__gym=gym).order_by('-payment_date')
+    paginator_payments = Paginator(payment_list, 10)  # Show 10 payments per page
+    page_payments = request.GET.get('page_payments')
+    try:
+        payment_history = paginator_payments.page(page_payments)
+    except PageNotAnInteger:
+        payment_history = paginator_payments.page(1)
+    except EmptyPage:
+        payment_history = paginator_payments.page(paginator_payments.num_pages)
+
+    subscription_plans = SubscriptionPlan.objects.filter(gym=gym)
+    gym_admins = GymAdmin.objects.filter(gym=gym)
     admin_form = GymAdminForm()
+
     return render(request, 'superadmin/gym_profile.html', {
-        'gym': gym, 
-        'form': form, 
-        'members': members, 
-        'membership_history': membership_history,
-        'gym_admin': gym_admin,
+        'gym': gym,
+        'form': form,
+        'payment_history': payment_history,
+        'subscription_plans': subscription_plans,
+        'gym_admins': gym_admins,
         'admin_form': admin_form
     })
 
@@ -117,8 +181,18 @@ def reset_admin_password(request, admin_id):
 @login_required
 @superadmin_required
 def subscription_plan_list(request):
-    plans = SubscriptionPlan.objects.all()
+    query = request.GET.get('q')
+    if query:
+        plans = SubscriptionPlan.objects.filter(
+            Q(name__icontains=query) |
+            Q(price__icontains=query) |
+            Q(duration_months__icontains=query)
+        ).distinct()
+    else:
+        plans = SubscriptionPlan.objects.all()
     return render(request, 'superadmin/subscription_plan_list.html', {'plans': plans})
+
+from django.contrib import messages
 
 @login_required
 @superadmin_required
@@ -127,6 +201,7 @@ def add_subscription_plan(request):
         form = SubscriptionPlanForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request, "Subscription plan created successfully.")
             return redirect('superadmin:subscription_plan_list')
     else:
         form = SubscriptionPlanForm()
@@ -147,7 +222,42 @@ def update_subscription_plan(request, plan_id):
 
 @login_required
 @superadmin_required
+@require_POST
 def delete_subscription_plan(request, plan_id):
     plan = get_object_or_404(SubscriptionPlan, id=plan_id)
-    plan.delete()
-    return redirect('superadmin:subscription_plan_list')
+    try:
+        plan.delete()
+        messages.success(request, 'Subscription plan has been deleted successfully.')
+        return JsonResponse({'status': 'success', 'message': 'Subscription plan deleted successfully.'})
+    except Exception as e:
+        messages.error(request, f'An error occurred: {e}')
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+
+@login_required
+@superadmin_required
+def assign_subscription(request):
+    if request.method == 'POST':
+        gym_id = request.POST.get('gym')
+        subscription_id = request.POST.get('subscription')
+        start_date = request.POST.get('start_date')
+        end_date = request.POST.get('end_date')
+
+        gym = get_object_or_404(Gym, id=gym_id)
+        subscription = get_object_or_404(SubscriptionPlan, id=subscription_id)
+
+        GymSubscription.objects.create(
+            gym=gym,
+            subscription=subscription,
+            start_date=start_date,
+            end_date=end_date
+        )
+        messages.success(request, f'Subscription assigned to {gym.name} successfully.')
+        return redirect('superadmin:gym_list')
+
+    else:
+        gyms = Gym.objects.all()
+        subscriptions = SubscriptionPlan.objects.all()
+        return render(request, 'superadmin/assign_subscription.html', {
+            'gyms': gyms,
+            'subscriptions': subscriptions
+        })

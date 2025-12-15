@@ -6,10 +6,10 @@ class WorkoutPlanForm(forms.ModelForm):
         model = WorkoutPlan
         exclude = ['gym']
         widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control'}),
-            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
-            'duration_minutes': forms.NumberInput(attrs={'class': 'form-control'}),
-            'difficulty': forms.Select(attrs={'class': 'form-control'}),
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your name'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Enter your description'}),
+            'duration_minutes': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter your duration in minutes'}),
+            'difficulty': forms.Select(attrs={'class': 'form-control', 'placeholder': 'Select your difficulty'}),
         }
 
 
@@ -18,12 +18,12 @@ class MembershipPlanForm(forms.ModelForm):
         model = MembershipPlan
         exclude = ['gym']
         widgets = {
-            'title': forms.TextInput(attrs={'class': 'form-control'}),
-            'amount': forms.NumberInput(attrs={'class': 'form-control'}),
-            'discount': forms.NumberInput(attrs={'class': 'form-control'}),
-            'duration': forms.Select(attrs={'class': 'form-control'}),
-            'add_on_days': forms.NumberInput(attrs={'class': 'form-control'}),
-            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your title'}),
+            'amount': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter your amount'}),
+            'discount': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter your discount'}),
+            'duration': forms.Select(attrs={'class': 'form-control', 'placeholder': 'Select your duration'}),
+            'add_on_days': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter your add-on days'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Enter your description'}),
         }
 
 class DietPlanForm(forms.ModelForm):
@@ -31,9 +31,9 @@ class DietPlanForm(forms.ModelForm):
         model = DietPlan
         exclude = ['gym']
         widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control'}),
-            'target': forms.Select(attrs={'class': 'form-control'}),
-            'daily_calories': forms.NumberInput(attrs={'class': 'form-control'}),
-            'duration_weeks': forms.NumberInput(attrs={'class': 'form-control'}),
-            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your name'}),
+            'target': forms.Select(attrs={'class': 'form-control', 'placeholder': 'Select your target'}),
+            'daily_calories': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter your daily calories'}),
+            'duration_weeks': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter your duration in weeks'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Enter your description'}),
         }

@@ -9,23 +9,23 @@ class MemberForm(forms.ModelForm):
         model = Member
         fields = ['first_name', 'last_name', 'mobile_number', 'email', 'age', 'gender', 'date_of_birth', 'profile_picture', 'address', 'area', 'state', 'city', 'pincode', 'profession', 'sign', 'identity_type', 'identity_no', 'identity_document_image']
         widgets = {
-            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'mobile_number': forms.TextInput(attrs={'class': 'form-control'}),
-            'email': forms.EmailInput(attrs={'class': 'form-control'}),
-            'age': forms.NumberInput(attrs={'class': 'form-control'}),
-            'gender': forms.Select(attrs={'class': 'form-select'}),
-            'date_of_birth': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'profile_picture': forms.FileInput(attrs={'class': 'form-control'}),
-            'address': forms.TextInput(attrs={'class': 'form-control'}),
-            'area': forms.TextInput(attrs={'class': 'form-control'}),
-            'state': forms.TextInput(attrs={'class': 'form-control'}),
-            'city': forms.TextInput(attrs={'class': 'form-control'}),
-            'pincode': forms.TextInput(attrs={'class': 'form-control'}),
-            'profession': forms.TextInput(attrs={'class': 'form-control'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your first name'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your last name'}),
+            'mobile_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your mobile number'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Enter your email'}),
+            'age': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter your age'}),
+            'gender': forms.Select(attrs={'class': 'form-select', 'placeholder': 'Select your gender'}),
+            'date_of_birth': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'placeholder': 'Select your date of birth'}),
+            'profile_picture': forms.FileInput(attrs={'class': 'form-control', 'placeholder': 'Upload your profile picture'}),
+            'address': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your address'}),
+            'area': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your area'}),
+            'state': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your state'}),
+            'city': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your city'}),
+            'pincode': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your pincode'}),
+            'profession': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your profession'}),
             'sign': forms.FileInput(attrs={'class': 'form-control'}),
-            'identity_type': forms.TextInput(attrs={'class': 'form-control'}),
-            'identity_no': forms.TextInput(attrs={'class': 'form-control'}),
+            'identity_type': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your identity type'}),
+            'identity_no': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your identity number'}),
             'identity_document_image': forms.FileInput(attrs={'class': 'form-control'}),
         }
     def __init__(self, *args, **kwargs):
@@ -41,9 +41,9 @@ class MedicalHistoryForm(forms.ModelForm):
         model = MedicalHistory
         fields = ['condition', 'type', 'since']
         widgets = {
-            'condition': forms.TextInput(attrs={'class': 'form-control'}),
-            'type': forms.TextInput(attrs={'class': 'form-control'}),
-            'since': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'condition': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your condition'}),
+            'type': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your type'}),
+            'since': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'placeholder': 'Select your since date'}),
         }
     def __init__(self, *args, **kwargs):
         super(MedicalHistoryForm, self).__init__(*args, **kwargs)
@@ -56,9 +56,9 @@ class EmergencyContactForm(forms.ModelForm):
         model = EmergencyContact
         fields = ['name', 'mobile', 'relation']
         widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control'}),
-            'mobile': forms.TextInput(attrs={'class': 'form-control'}),
-            'relation': forms.TextInput(attrs={'class': 'form-control'}),
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your name'}),
+            'mobile': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your mobile number'}),
+            'relation': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your relation'}),
         }
 
 
@@ -67,15 +67,15 @@ class MembershipHistoryForm(forms.ModelForm):
         model = MembershipHistory
         fields = ['plan', 'registration_fee', 'membership_start_date', 'add_on_days', 'discount', 'total_amount', 'paid_amount', 'payment_mode', 'comment']
         widgets = {
-            'plan': forms.Select(attrs={'class': 'form-control'}),
-            'registration_fee': forms.NumberInput(attrs={'class': 'form-control'}),
-            'membership_start_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'add_on_days': forms.NumberInput(attrs={'class': 'form-control'}),
-            'discount': forms.NumberInput(attrs={'class': 'form-control'}),
-            'total_amount': forms.NumberInput(attrs={'class': 'form-control', 'readonly': True}),
-            'paid_amount': forms.NumberInput(attrs={'class': 'form-control'}),
-            'payment_mode': forms.Select(attrs={'class': 'form-control'}),
-            'comment': forms.Textarea(attrs={'class': 'form-control'}),
+            'plan': forms.Select(attrs={'class': 'form-control', 'placeholder': 'Select your plan'}),
+            'registration_fee': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter your registration fee'}),
+            'membership_start_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'placeholder': 'Select your membership start date'}),  
+            'add_on_days': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter your add on days'}),
+            'discount': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter your discount'}),
+            'total_amount': forms.NumberInput(attrs={'class': 'form-control', 'readonly': True, 'placeholder': 'Total amount'}),
+            'paid_amount': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter your paid amount'}),
+            'payment_mode': forms.Select(attrs={'class': 'form-control', 'placeholder': 'Select your payment mode'}),
+            'comment': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Enter your comment'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -90,14 +90,14 @@ class PersonalTrainerForm(forms.ModelForm):
         fields = ['trainer', 'months', 'trainer_fee', 'gym_charges', 'pt_start_date', 'discount', 'total_amount', 'paid_amount', 'payment_mode']
         widgets = {
             'trainer': forms.Select(attrs={'class': 'form-control'}),
-            'months': forms.NumberInput(attrs={'class': 'form-control'}),
-            'trainer_fee': forms.NumberInput(attrs={'class': 'form-control', 'readonly': True}),
-            'gym_charges': forms.NumberInput(attrs={'class': 'form-control'}),
-            'pt_start_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'discount': forms.NumberInput(attrs={'class': 'form-control'}),
-            'total_amount': forms.NumberInput(attrs={'class': 'form-control', 'readonly': True}),
-            'paid_amount': forms.NumberInput(attrs={'class': 'form-control'}),
-            'payment_mode': forms.Select(attrs={'class': 'form-control'}),
+            'months': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter your months'}),
+            'trainer_fee': forms.NumberInput(attrs={'class': 'form-control', 'readonly': True, 'placeholder': 'Trainer fee'}),
+            'gym_charges': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter your gym charges'}),
+            'pt_start_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'placeholder': 'Select your pt start date'}),
+            'discount': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter your discount'}),
+            'total_amount': forms.NumberInput(attrs={'class': 'form-control', 'readonly': True, 'placeholder': 'Total amount'}),
+            'paid_amount': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter your paid amount'}),
+            'payment_mode': forms.Select(attrs={'class': 'form-control', 'placeholder': 'Select your payment mode'}),
         }
 
     def __init__(self, *args, **kwargs):

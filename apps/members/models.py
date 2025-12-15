@@ -3,9 +3,6 @@ from datetime import timedelta
 from django.utils import timezone
 from apps.trainers.models import Trainer
 from apps.superadmin.models import Gym
-from django.db.models.signals import pre_save
-from django.dispatch import receiver
-import random
 
 
 class Member(models.Model):
@@ -15,7 +12,8 @@ class Member(models.Model):
     mobile_number = models.CharField(max_length=15, unique=True)
     email = models.EmailField(unique=True, null=True, blank=True)
     age = models.PositiveIntegerField(null=True, blank=True)
-    gender = models.CharField(max_length=10, choices=[('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')], null=True, blank=True)
+    gender = models.CharField(max_length=10, choices=[('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')],
+                              null=True, blank=True)
     date_of_birth = models.DateField(null=True, blank=True)
     profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
     address = models.CharField(max_length=255, null=True, blank=True)
@@ -28,19 +26,30 @@ class Member(models.Model):
     identity_type = models.CharField(max_length=50, null=True, blank=True)
     identity_no = models.CharField(max_length=50, null=True, blank=True)
     identity_document_image = models.ImageField(upload_to='identity_docs/', blank=True, null=True)
+
+    # Keep unique=True (works correctly now)
     member_id = models.CharField(max_length=100, unique=True, editable=False)
+
     def save(self, *args, **kwargs):
+        """
+        Auto-generate Member ID:
+        Format: GYM-PREFIX-MEM-YY-000001
+        Example: BGT-MEM-25-000001
+        """
         if not self.member_id:
-            # get current year last two digits
             year = timezone.now().strftime("%y")
 
-            # count existing members for this year
-            count = Member.objects.filter(gym=self.gym, member_id__startswith=f"{self.gym.gym_id_prefix}-{year}-").count() + 1
+            # Count existing members for this gym in this year
+            prefix = f"{self.gym.gym_id_prefix}-MEM-{year}-"
+            count = Member.objects.filter(
+                gym=self.gym,
+                member_id__startswith=prefix
+            ).count() + 1
 
-            # format ID (6 digits counter)
+            # 6-digit sequence number
             counter = str(count).zfill(6)
 
-            self.member_id = f"{self.gym.gym_id_prefix}-MEM-{year}-{counter}"
+            self.member_id = f"{prefix}{counter}"
 
         super().save(*args, **kwargs)
 
@@ -62,6 +71,7 @@ class Member(models.Model):
             return False
         return latest.get_end_date() >= timezone.now().date()
 
+
 class MedicalHistory(models.Model):
     gym = models.ForeignKey(Gym, on_delete=models.CASCADE, null=True)
     member = models.ForeignKey(Member, related_name='medical_history', on_delete=models.CASCADE)
@@ -71,6 +81,7 @@ class MedicalHistory(models.Model):
 
     def __str__(self):
         return f'{self.member} - {self.condition}'
+
 
 class EmergencyContact(models.Model):
     gym = models.ForeignKey(Gym, on_delete=models.CASCADE, null=True)
@@ -82,6 +93,7 @@ class EmergencyContact(models.Model):
     def __str__(self):
         return f'{self.member} - {self.name}'
 
+
 class MembershipHistory(models.Model):
     gym = models.ForeignKey(Gym, on_delete=models.CASCADE, null=True)
     member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name='membership_history')
@@ -92,11 +104,17 @@ class MembershipHistory(models.Model):
     discount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
     paid_amount = models.DecimalField(max_digits=10, decimal_places=2)
-    payment_mode = models.CharField(max_length=50, choices=[('cash', 'Cash'), ('upi', 'UPI'), ('credit_card', 'Credit Card'), ('debit_card', 'Debit Card'), ('net_banking', 'Net Banking'),('other', 'Other')], default='cash')
+    payment_mode = models.CharField(max_length=50,
+         choices=[('cash', 'Cash'), ('upi', 'UPI'),
+                 ('credit_card', 'Credit Card'),
+                 ('debit_card', 'Debit Card'), 
+                 ('net_banking', 'Net Banking'),
+                 ('other', 'Other')], default='cash')
     transaction_id = models.CharField(max_length=100, blank=True, null=True)
     comment = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=10, choices=[('active', 'Active'), ('inactive', 'Inactive')], default='active')
+    status = models.CharField(max_length=10, choices=[('active', 'Active'), ('inactive', 'Inactive')],
+                              default='active')
 
     def __str__(self):
         return f"{self.member} - {self.plan}"
@@ -112,20 +130,23 @@ class MembershipHistory(models.Model):
 
         total_add_on_days = self.add_on_days + self.plan.add_on_days
 
-        if duration_unit == 'day' or duration_unit == 'days':
+        if duration_unit in ['day', 'days']:
             return self.membership_start_date + timedelta(days=duration_value + total_add_on_days)
-        elif duration_unit == 'week' or duration_unit == 'weeks':
-            return self.membership_start_date + timedelta(weeks=duration_value) + timedelta(days=total_add_on_days)
-        elif duration_unit == 'month' or duration_unit == 'months':
-            # This is an approximation, for more accurate calculations, consider using dateutil.relativedelta
-            return self.membership_start_date + timedelta(days=30 * duration_value) + timedelta(days=total_add_on_days)
-        elif duration_unit == 'year' or duration_unit == 'years':
-            return self.membership_start_date + timedelta(days=365 * duration_value) + timedelta(days=total_add_on_days)
+
+        if duration_unit in ['week', 'weeks']:
+            return self.membership_start_date + timedelta(weeks=duration_value) + timedelta(
+                days=total_add_on_days)
+
+        if duration_unit in ['month', 'months']:
+            return self.membership_start_date + timedelta(days=30 * duration_value) + timedelta(
+                days=total_add_on_days)
+
+        if duration_unit in ['year', 'years']:
+            return self.membership_start_date + timedelta(days=365 * duration_value) + timedelta(
+                days=total_add_on_days)
+
         return None
 
-    @property
-    def total_add_on_days(self):
-        return self.add_on_days + self.plan.add_on_days
 
 class PersonalTrainer(models.Model):
     gym = models.ForeignKey(Gym, on_delete=models.CASCADE, null=True)
@@ -138,11 +159,15 @@ class PersonalTrainer(models.Model):
     discount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
     paid_amount = models.DecimalField(max_digits=10, decimal_places=2)
-    payment_mode = models.CharField(max_length=50, choices=[('cash', 'Cash'), ('upi', 'UPI'), ('credit_card', 'Credit Card'), ('debit_card', 'Debit Card'), ('net_banking', 'Net Banking'),('other', 'Other')], default='cash')
+    payment_mode = models.CharField(max_length=50,
+                                    choices=[('cash', 'Cash'), ('upi', 'UPI'), ('credit_card', 'Credit Card'),
+                                             ('debit_card', 'Debit Card'), ('net_banking', 'Net Banking'),
+                                             ('other', 'Other')], default='cash')
     transaction_id = models.CharField(max_length=100, blank=True, null=True)
     comment = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=10, choices=[('active', 'Active'), ('inactive', 'Inactive')], default='active')
+    status = models.CharField(max_length=10, choices=[('active', 'Active'), ('inactive', 'Inactive')],
+                              default='active')
 
     def __str__(self):
         return f"{self.member} - {self.trainer}"
@@ -153,15 +178,3 @@ class PersonalTrainer(models.Model):
     @property
     def due_amount(self):
         return self.total_amount - self.paid_amount
-
-
-@receiver(pre_save, sender=Member)
-def create_member_id(sender, instance, **kwargs):
-    if not instance.member_id:
-        gym_id_part = "GD"  # Default value
-        if instance.gym and instance.gym.gym_id_prefix:
-            gym_id_part = instance.gym.gym_id_prefix
-
-        present_year = timezone.now().strftime('%y')
-        random_number = ''.join([str(random.randint(0, 9)) for _ in range(6)])
-        instance.member_id = f"{gym_id_part}-MEM-{present_year}-{random_number}"
