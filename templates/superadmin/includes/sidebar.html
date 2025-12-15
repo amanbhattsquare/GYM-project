@@ -59,6 +59,29 @@
         </ul>
       </div>
     </li>
+    
+
+     <li class="nav-item {% if request.resolver_match.url_name in 'billing_history,submit_due' %}active{% endif %}">
+      <a class="nav-link" data-toggle="collapse" href="#billing-management" aria-expanded="{% if request.resolver_match.url_name in 'billing_history,submit_due' %}true{% else %}false{% endif %}" aria-controls="billing-management">
+        <i class="mdi mdi-currency-usd menu-icon"></i>
+        <span class="menu-title">Billings</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse {% if request.resolver_match.url_name in 'billing_history,submit_due' %}show{% endif %}" id="billing-management">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'billing_history' %}active{% endif %}" href="{% url 'superadmin:billing_history' %}">
+              <span class="menu-title">Billing History</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'submit_due' %}active{% endif %}" href="{% url 'superadmin:submit_due' %}">
+              <span class="menu-title">Submit Due</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </li>
 
     <li class="nav-item">
       <a class="nav-link" href="{% url 'logout' %}">

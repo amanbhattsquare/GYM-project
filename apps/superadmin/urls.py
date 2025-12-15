@@ -15,4 +15,7 @@ urlpatterns = [
     path('subscription_plans/update/<int:plan_id>/', views.update_subscription_plan, name='update_subscription_plan'),
     path('subscription_plans/delete/<int:plan_id>/', views.delete_subscription_plan, name='delete_subscription_plan'),
     path('assign_subscription/', views.assign_subscription, name='assign_subscription'),
+    path('billing_history/', views.billing_history, name='billing_history'),
+    path('submit_due/', views.submit_due, name='submit_due'),
+    path('get_due_amount/<int:gym_id>/', views.get_due_amount, name='get_due_amount'),
 ]

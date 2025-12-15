@@ -45,7 +45,7 @@ class Enquiry(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     next_follow_up_date = models.DateField(blank=True, null=True)
     # assigned_to = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, related_name='enquiries')
-    enquiry_note = models.TextField()
+    enquiry_note = models.TextField( null=True, blank=True)
 
     def __str__(self):
         return self.name
