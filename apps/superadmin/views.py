@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.models import User
 from .forms import GymForm, GymAdminForm, SubscriptionPlanForm
-from .models import Gym, GymAdmin, SubscriptionPlan
+from .models import Gym, GymAdmin, SubscriptionPlan, GymSubscription
 from apps.members.models import Member, MembershipHistory
 from apps.billing.models import Payment
 from django.db.models import Q
@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 from .decorators import superadmin_required
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
-
+from datetime import datetime, timedelta, date
 
 
 @login_required
@@ -150,7 +150,8 @@ def gym_profile(request, gym_id):
     except EmptyPage:
         payment_history = paginator_payments.page(paginator_payments.num_pages)
 
-    subscription_plans = SubscriptionPlan.objects.filter(gym=gym)
+    gym_subscriptions = GymSubscription.objects.filter(gym=gym)
+    active_subscription = gym_subscriptions.filter(start_date__lte=date.today(), end_date__gte=date.today()).first()
     gym_admins = GymAdmin.objects.filter(gym=gym)
     admin_form = GymAdminForm()
 
@@ -158,7 +159,8 @@ def gym_profile(request, gym_id):
         'gym': gym,
         'form': form,
         'payment_history': payment_history,
-        'subscription_plans': subscription_plans,
+        'gym_subscriptions': gym_subscriptions,
+        'active_subscription': active_subscription,
         'gym_admins': gym_admins,
         'admin_form': admin_form
     })
@@ -240,16 +242,30 @@ def assign_subscription(request):
         gym_id = request.POST.get('gym')
         subscription_id = request.POST.get('subscription')
         start_date = request.POST.get('start_date')
-        end_date = request.POST.get('end_date')
+        discount = request.POST.get('discount')
+        total_amount = request.POST.get('total_amount')
+        paid_amount = request.POST.get('paid_amount')
+        payment_mode = request.POST.get('payment_mode')
+        transaction_id = request.POST.get('transaction_id')
+        remark = request.POST.get('remark')
 
         gym = get_object_or_404(Gym, id=gym_id)
         subscription = get_object_or_404(SubscriptionPlan, id=subscription_id)
+
+        start_date_obj = datetime.strptime(start_date, '%Y-%m-%d').date()
+        end_date = start_date_obj + timedelta(days=subscription.duration_months * 30)
 
         GymSubscription.objects.create(
             gym=gym,
             subscription=subscription,
             start_date=start_date,
-            end_date=end_date
+            end_date=end_date,
+            discount=discount,
+            total_amount=total_amount,
+            paid_amount=paid_amount,
+            payment_mode=payment_mode,
+            transaction_id=transaction_id,
+            remark=remark
         )
         messages.success(request, f'Subscription assigned to {gym.name} successfully.')
         return redirect('superadmin:gym_list')

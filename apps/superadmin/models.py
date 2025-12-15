@@ -40,7 +40,6 @@ class GymAdmin(models.Model):
         return f'{self.user.username} - {self.gym.name}'
 
 class SubscriptionPlan(models.Model):
-    gym = models.ForeignKey(Gym, on_delete=models.CASCADE, related_name='subscription_plans', null=True)
     name = models.CharField(max_length=100)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     duration_months = models.IntegerField(help_text="Duration in months", default=1)
@@ -48,3 +47,26 @@ class SubscriptionPlan(models.Model):
 
     def __str__(self):
         return self.name
+
+class GymSubscription(models.Model):
+    PAYMENT_MODE_CHOICES = [
+        ('cash', 'Cash'),
+        ('upi', 'UPI'),
+        ('credit_card', 'Credit Card'),
+        ('debit_card', 'Debit Card'),
+        ('net_banking', 'Net Banking'),
+        ('other', 'Other'),
+    ]  
+    gym = models.ForeignKey(Gym, on_delete=models.CASCADE)
+    subscription = models.ForeignKey(SubscriptionPlan, on_delete=models.CASCADE)
+    start_date = models.DateField()
+    end_date = models.DateField()
+    discount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    total_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    paid_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    payment_mode = models.CharField(max_length=50, choices=PAYMENT_MODE_CHOICES, default='cash') 
+    transaction_id = models.CharField(max_length=100, blank=True, null=True)
+    remark = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f'{self.gym.name} - {self.subscription.name}'
