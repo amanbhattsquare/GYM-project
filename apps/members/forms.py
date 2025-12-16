@@ -1,5 +1,4 @@
 from django import forms
-
 from apps.management.models import MembershipPlan
 from .models import Member, MedicalHistory, EmergencyContact, MembershipHistory, PersonalTrainer
 from apps.trainers.models import Trainer
