@@ -155,9 +155,8 @@
       </a>
     </li>
 
-    <!--  Reports -->
-    <li class="nav-item">
-      <a class="nav-link" href="pages/reports.html">
+    <li class="nav-item {% if request.resolver_match.url_name == 'business_report' %}active{% endif %}">
+      <a class="nav-link" href="{% url 'business_report' %}">
         <i class="mdi mdi-chart-bar menu-icon"></i>
         <span class="menu-title">Business Report</span>
       </a>

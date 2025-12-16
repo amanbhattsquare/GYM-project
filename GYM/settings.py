@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'apps.expenses',
     'apps.settings',
     'apps.superadmin',
+    'apps.business_report',
    
 ]
 
