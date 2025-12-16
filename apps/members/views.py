@@ -21,6 +21,7 @@ from django.views.decorators.cache import never_cache
 @login_required(login_url='login')
 def add_new_member(request):
     gym = getattr(request, 'gym', None)
+    
     MedicalHistoryFormSet = modelformset_factory(MedicalHistory, form=MedicalHistoryForm, extra=1, can_delete=True)
     if request.method == 'POST':
         member_form = MemberForm(request.POST, request.FILES)
