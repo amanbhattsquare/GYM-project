@@ -20,11 +20,19 @@ def business_report(request):
 
     # Time-based filters
     today = timezone.now().date()
-    this_month_start = today.replace(day=1)
+    from_date_str = request.GET.get('from_date')
+    to_date_str = request.GET.get('to_date')
+
+    try:
+        start_date = datetime.strptime(from_date_str, '%Y-%m-%d').date() if from_date_str else today.replace(day=1)
+        end_date = datetime.strptime(to_date_str, '%Y-%m-%d').date() if to_date_str else today
+    except (ValueError, TypeError):
+        start_date = today.replace(day=1)
+        end_date = today
 
     # KPI Calculations
-    total_income = Payment.objects.filter(member__gym=gym, payment_date__gte=this_month_start).aggregate(Sum('amount'))['amount__sum'] or 0
-    total_expense = Expense.objects.filter(gym=gym, date__gte=this_month_start).aggregate(Sum('amount'))['amount__sum'] or 0
+    total_income = Payment.objects.filter(member__gym=gym, payment_date__date__range=[start_date, end_date]).aggregate(Sum('amount'))['amount__sum'] or 0
+    total_expense = Expense.objects.filter(gym=gym, date__range=[start_date, end_date]).aggregate(Sum('amount'))['amount__sum'] or 0
     gross_income = total_income - total_expense
 
     membership_dues = MembershipHistory.objects.filter(member__gym=gym).annotate(due=F('total_amount') - F('paid_amount')).aggregate(total_due=Sum('due'))['total_due'] or 0
@@ -32,9 +40,9 @@ def business_report(request):
     total_due = membership_dues + pt_dues
 
     # Fetching latest transactions for the tables
-    latest_invoices = MembershipHistory.objects.filter(member__gym=gym, membership_start_date__gte=this_month_start).order_by('-membership_start_date')
-    latest_expenses = Expense.objects.filter(gym=gym, date__gte=this_month_start).order_by('-date')[:10]
-    latest_payments = Payment.objects.filter(member__gym=gym, payment_date__gte=this_month_start).order_by('-payment_date')
+    latest_invoices = MembershipHistory.objects.filter(member__gym=gym, membership_start_date__range=[start_date, end_date]).order_by('-membership_start_date')
+    latest_expenses = Expense.objects.filter(gym=gym, date__range=[start_date, end_date]).order_by('-date')[:10]
+    latest_payments = Payment.objects.filter(member__gym=gym, payment_date__date__range=[start_date, end_date]).order_by('-payment_date')
 
     transactions = []
     for invoice in latest_invoices:
@@ -79,7 +87,7 @@ def business_report(request):
 
     # Chart Data: Expense breakdown for the current month
     expense_breakdown = (
-        Expense.objects.filter(gym=gym, date__gte=this_month_start)
+        Expense.objects.filter(gym=gym, date__range=[start_date, end_date])
         .values('category')
         .annotate(total=Sum('amount'))
         .order_by('-total')
