@@ -32,9 +32,32 @@ def business_report(request):
     total_due = membership_dues + pt_dues
 
     # Fetching latest transactions for the tables
-    latest_invoices = MembershipHistory.objects.filter(member__gym=gym, membership_start_date__gte=this_month_start).order_by('-membership_start_date')[:10]
+    latest_invoices = MembershipHistory.objects.filter(member__gym=gym, membership_start_date__gte=this_month_start).order_by('-membership_start_date')
     latest_expenses = Expense.objects.filter(gym=gym, date__gte=this_month_start).order_by('-date')[:10]
-    latest_payments = Payment.objects.filter(member__gym=gym, payment_date__gte=this_month_start).order_by('-payment_date')[:10]
+    latest_payments = Payment.objects.filter(member__gym=gym, payment_date__gte=this_month_start).order_by('-payment_date')
+
+    transactions = []
+    for invoice in latest_invoices:
+        transactions.append({
+            'date': invoice.membership_start_date,
+            'type': 'Invoice',
+            'member': invoice.member.name,
+            'amount': invoice.total_amount,
+            'due': invoice.due_amount,
+            'status': 'Paid' if invoice.due_amount <= 0 else 'Pending'
+        })
+
+    for payment in latest_payments:
+        transactions.append({
+            'date': payment.payment_date.date(),
+            'type': 'Payment',
+            'member': payment.member.name,
+            'amount': payment.amount,
+            'due': 0,
+            'status': 'Completed'
+        })
+    
+    transactions.sort(key=lambda item: item['date'], reverse=True)
 
     # Chart Data: Income vs. Expense for the last 6 months
     labels = []
@@ -70,9 +93,8 @@ def business_report(request):
         'total_expense': total_expense,
         'gross_income': gross_income,
         'total_due': total_due,
-        'latest_invoices': latest_invoices,
+        'latest_transactions': transactions,
         'latest_expenses': latest_expenses,
-        'latest_payments': latest_payments,
         'line_chart_labels': json.dumps(labels),
         'line_chart_income_data': json.dumps(income_data),
         'line_chart_expense_data': json.dumps(expense_data),

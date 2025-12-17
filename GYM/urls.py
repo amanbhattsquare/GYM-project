@@ -19,7 +19,9 @@ from django.urls import path, include
 from apps.dashboard import views
 from django.conf import settings
 from django.conf.urls.static import static
+handler404 = 'GYM.views.handler404'
 from .views import help_view
+
 
 urlpatterns = [
     path('', include('apps.website.urls')),
