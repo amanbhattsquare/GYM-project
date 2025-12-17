@@ -148,12 +148,12 @@
     </li>
 
       <!--  Schedule -->
-    <li class="nav-item">
+    {% comment %} <li class="nav-item">
       <a class="nav-link" href="pages/schedule.html">
         <i class="mdi mdi-calendar-clock menu-icon"></i>
         <span class="menu-title">Schedule</span>
       </a>
-    </li>
+    </li> {% endcomment %}
 
     <li class="nav-item {% if request.resolver_match.url_name == 'business_report' %}active{% endif %}">
       <a class="nav-link" href="{% url 'business_report' %}">

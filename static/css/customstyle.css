@@ -7,7 +7,7 @@
   --success-color: #00cccd;
   --info-color: #198ae3;
   --warning-color: #ffab2d;
-  --danger-color: #ff3ca6;
+  --danger-color: #ac0661;
   --light-color: #f8f9fa;
   --dark-color: #3e4b5b;
   --white: #ffffff;
@@ -785,4 +785,8 @@ legend {
 .modal-footer .btn-danger {
     background-color: #f15e5e;
     border-color: #f15e5e;
+}
+
+.nav-link.active {
+    color: var(--danger-color) !important;
 }

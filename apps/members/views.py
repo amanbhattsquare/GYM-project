@@ -74,7 +74,6 @@ def member_profile(request, member_id):
     latest_membership = membership_histories.first()
     payments = Payment.objects.filter(member=member, gym=gym).order_by('-payment_date')
 
-
     # Calculate the total due amount for membership
     membership_due_amount = membership_histories.filter(status='active').aggregate(
         total_due=Sum(F('total_amount') - F('paid_amount'))
@@ -228,6 +227,17 @@ def assign_membership_plan(request, member_id):
             history.gym = gym
             history.transaction_id = request.POST.get('transaction_id')
             history.save()
+
+            if history.paid_amount > 0:
+                Payment.objects.create(
+                    gym=gym,
+                    member=member,
+                    amount=history.paid_amount,
+                    payment_mode=history.payment_mode,
+                    transaction_id=history.transaction_id,
+                    comment=f"Initial payment for {history.plan.title}"
+                )
+
             member.membership_plan = history.plan
             member.save()
             messages.success(request, f'Membership plan "{history.plan.title}" assigned to {member.first_name} {member.last_name}.')
