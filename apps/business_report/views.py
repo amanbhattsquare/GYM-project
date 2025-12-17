@@ -7,24 +7,34 @@ from apps.expenses.models import Expense
 from apps.members.models import MembershipHistory, PersonalTrainer
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
+from django.contrib.auth.decorators import login_required
+from apps.superadmin.models import GymAdmin
 
+@login_required
 def business_report(request):
+    try:
+        gym_admin = GymAdmin.objects.get(user=request.user)
+        gym = gym_admin.gym
+    except GymAdmin.DoesNotExist:
+        return render(request, 'error.html', {'message': 'Gym admin not found.'})
+
     # Time-based filters
     today = timezone.now().date()
     this_month_start = today.replace(day=1)
 
     # KPI Calculations
-    total_income = Payment.objects.filter(payment_date__gte=this_month_start).aggregate(Sum('amount'))['amount__sum'] or 0
-    total_expense = Expense.objects.filter(date__gte=this_month_start).aggregate(Sum('amount'))['amount__sum'] or 0
+    total_income = Payment.objects.filter(member__gym=gym, payment_date__gte=this_month_start).aggregate(Sum('amount'))['amount__sum'] or 0
+    total_expense = Expense.objects.filter(gym=gym, date__gte=this_month_start).aggregate(Sum('amount'))['amount__sum'] or 0
     gross_income = total_income - total_expense
 
-    membership_dues = MembershipHistory.objects.annotate(due=F('total_amount') - F('paid_amount')).aggregate(total_due=Sum('due'))['total_due'] or 0
-    pt_dues = PersonalTrainer.objects.annotate(due=F('total_amount') - F('paid_amount')).aggregate(total_due=Sum('due'))['total_due'] or 0
+    membership_dues = MembershipHistory.objects.filter(member__gym=gym).annotate(due=F('total_amount') - F('paid_amount')).aggregate(total_due=Sum('due'))['total_due'] or 0
+    pt_dues = PersonalTrainer.objects.filter(member__gym=gym).annotate(due=F('total_amount') - F('paid_amount')).aggregate(total_due=Sum('due'))['total_due'] or 0
     total_due = membership_dues + pt_dues
 
     # Fetching latest transactions for the tables
-    latest_invoices = MembershipHistory.objects.filter(membership_start_date__gte=this_month_start).order_by('-membership_start_date')[:10]
-    latest_expenses = Expense.objects.filter(date__gte=this_month_start).order_by('-date')[:10]
+    latest_invoices = MembershipHistory.objects.filter(member__gym=gym, membership_start_date__gte=this_month_start).order_by('-membership_start_date')[:10]
+    latest_expenses = Expense.objects.filter(gym=gym, date__gte=this_month_start).order_by('-date')[:10]
+    latest_payments = Payment.objects.filter(member__gym=gym, payment_date__gte=this_month_start).order_by('-payment_date')[:10]
 
     # Chart Data: Income vs. Expense for the last 6 months
     labels = []
@@ -38,15 +48,15 @@ def business_report(request):
 
         labels.append(month.strftime("%b %Y"))
 
-        monthly_income = Payment.objects.filter(payment_date__range=[month_start, month_end]).aggregate(Sum('amount'))['amount__sum'] or 0
+        monthly_income = Payment.objects.filter(member__gym=gym, payment_date__range=[month_start, month_end]).aggregate(Sum('amount'))['amount__sum'] or 0
         income_data.append(float(monthly_income))
 
-        monthly_expense = Expense.objects.filter(date__range=[month_start, month_end]).aggregate(Sum('amount'))['amount__sum'] or 0
+        monthly_expense = Expense.objects.filter(gym=gym, date__range=[month_start, month_end]).aggregate(Sum('amount'))['amount__sum'] or 0
         expense_data.append(float(monthly_expense))
 
     # Chart Data: Expense breakdown for the current month
     expense_breakdown = (
-        Expense.objects.filter(date__gte=this_month_start)
+        Expense.objects.filter(gym=gym, date__gte=this_month_start)
         .values('category')
         .annotate(total=Sum('amount'))
         .order_by('-total')
@@ -62,6 +72,7 @@ def business_report(request):
         'total_due': total_due,
         'latest_invoices': latest_invoices,
         'latest_expenses': latest_expenses,
+        'latest_payments': latest_payments,
         'line_chart_labels': json.dumps(labels),
         'line_chart_income_data': json.dumps(income_data),
         'line_chart_expense_data': json.dumps(expense_data),

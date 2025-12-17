@@ -99,8 +99,8 @@
     </div>
 
     <!-- Tables -->
-    <div class="row">
-        <div class="col-lg-6">
+    <div class="container-fluid">
+        <div class="col-lg-12">
             <div class="card shadow-sm mb-4">
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">Latest Invoices/Payments</h6>
@@ -137,7 +137,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-6">
+        <div class="col-lg-12">
             <div class="card shadow-sm mb-4">
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-danger">Latest Expenses</h6>
@@ -164,6 +164,41 @@
                                 {% empty %}
                                 <tr>
                                     <td colspan="4" class="text-center">No recent expenses.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-12">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-success">Latest Receipts</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Member</th>
+                                    <th>Amount</th>
+                                    <th>Payment Method</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for payment in latest_payments %}
+                                <tr>
+                                    <td>{{ payment.payment_date|date:"Y-m-d" }}</td>
+                                    <td>{{ payment.member.name }}</td>
+                                    <td>₹ {{ payment.amount|floatformat:2 }}</td>
+                                    <td>{{ payment.get_payment_method_display }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-center">No recent receipts.</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
