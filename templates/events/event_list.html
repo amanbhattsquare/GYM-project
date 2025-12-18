@@ -29,63 +29,84 @@
             {% csrf_token %}
             <!-- Search form -->
             {% include 'includes/search_form.html' %}
-            <div class="table-responsive">
-                <table class="table table-hover table-sm table-stack-on-mobile">
-                    <thead>
-                        <tr>
-                            <th class="font-weight-semibold py-2">#</th>
-                            <th class="font-weight-semibold py-2">Event Name</th>
-                            <th class="font-weight-semibold py-2">Event Type</th>
-                            <th class="font-weight-semibold py-2">Date & Time</th>
-                            <th class="font-weight-semibold py-2">Address</th>
-                            <th class="font-weight-semibold py-2">Max Participants</th>
-                            <th class="font-weight-semibold py-2">Registered Members</th>
-                            <th class="font-weight-semibold py-2">Status</th>
-                            <th class="font-weight-semibold text-center py-2">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for event in events %}
-                        <tr>
-                            <td data-label="SR. No.">{{ forloop.counter }}</td>
-                            <td data-label="Event Name">{{ event.event_name }}</td>
-                            <td data-label="Event Type">{{ event.get_event_type_display }}</td>
-                            <td data-label="Date & Time">{{ event.start_date|date:"d-m-Y H:i" }}</td>
-                            <td data-label="Address">{{ event.address }}</td>
-                            <td data-label="Max Participants">{{ event.max_participants }}</td>
-                            <td data-label="Registered Members">{{ event.registered_members.count }}</td>
-                            <td data-label="Status">
-                                <span class="badge {% if event.status == 'Upcoming' %}badge-info{% elif event.status == 'Ongoing' %}badge-success{% elif event.status == 'Completed' %}badge-secondary{% endif %}">
-                                    {{ event.get_status_display }}
-                                </span>
-                            </td>
-                            <td data-label="Actions" class="text-center">
-                                
-                                <a href="{% url 'events:event_registration' event.id %}" class="btn btn-info btn-sm" target="_blank" data-toggle="tooltip" title="Register"><i class="mdi mdi-account-plus"></i></a>
-                                <a href="#" onclick="confirmAction('{% url 'events:edit_event' event.id %}', 'edit')" class="btn btn-primary btn-sm" data-toggle="tooltip" title="Edit"><i class="mdi mdi-pencil-outline"></i></a>
-                                <a href="#" onclick="confirmAction('{% url 'events:export_attendees' event.id %}', 'export')" class="btn btn-success btn-sm" data-toggle="tooltip" title="Export Attendees"><i class="mdi mdi-export"></i></a>
-                                <a href="#" onclick="confirmAction('{% url 'events:notify_members' event.id %}', 'notify')" class="btn btn-warning btn-sm" data-toggle="tooltip" title="Notify Members"><i class="mdi mdi-bell-ring"></i></a>
-                                <a href="#" onclick="confirmAction('{% url 'events:duplicate_event' event.id %}', 'duplicate')" class="btn btn-secondary btn-sm" data-toggle="tooltip" title="Duplicate"><i class="mdi mdi-content-copy"></i></a>
-                                <a href="#" onclick="confirmAction('{% url 'events:cancel_event' event.id %}', 'cancel')" class="btn btn-danger btn-sm" data-toggle="tooltip" title="Cancel"><i class="mdi mdi-cancel"></i></a>
-                                
-                            </td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="9" class="text-center py-4">
-                                <div class="text-muted">
-                                    <i class="mdi mdi-calendar-remove-outline mdi-36px mb-2"></i>
-                                    <h6 class="mb-2">No events found</h6>
-                                    <p class="mb-2 small">No events have been created yet.</p>
-                                    <a href="{% url 'events:create_event' %}" class="btn btn-primary btn-sm">
-                                        <i class="mdi mdi-plus"></i> Create Event
-                                    </a>
+            <div class="row" id="event-list">
+                {% for event in events %}
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <h5 class="card-title mb-1">{{ event.event_name }}</h5>
+                                    <p class="card-subtitle text-muted">{{ event.get_event_type_display }}</p>
                                 </div>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                                <div class="btn-group" role="group" aria-label="Event Actions">
+                                    <a href="{% url 'events:event_registration' event.id %}" class="btn btn-info btn-sm" target="_blank" data-toggle="tooltip" title="Register"><i class="mdi mdi-account-plus"></i></a>
+                                    <a href="#" onclick="confirmAction('{% url 'events:edit_event' event.id %}', 'edit')" class="btn btn-primary btn-sm" data-toggle="tooltip" title="Edit"><i class="mdi mdi-pencil-outline"></i></a>
+                                    <a href="#" onclick="confirmAction('{% url 'events:notify_members' event.id %}', 'notify')" class="btn btn-warning btn-sm" data-toggle="tooltip" title="Notify Members"><i class="mdi mdi-bell-ring"></i></a>
+                                    <a href="#" onclick="confirmAction('{% url 'events:cancel_event' event.id %}', 'cancel')" class="btn btn-danger btn-sm" data-toggle="tooltip" title="Cancel"><i class="mdi mdi-cancel"></i></a>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <p class="mb-1"><strong>Dates:</strong></p>
+                                    <p class="text-muted small">
+                                        {{ event.start_date|date:"d-m-Y H:i" }} to<br>
+                                        {{ event.end_date|date:"d-m-Y H:i" }}
+                                    </p>
+
+                                    <p class="mb-1 mt-2"><strong>Registration:</strong></p>
+                                    <p class="text-muted small">
+                                        Deadline: {{ event.registration_deadline|date:"d-m-Y H:i" }}<br>
+                                        Limit: {{ event.max_participants }} / Registered: {{ event.registered_members.count }}
+                                    </p>
+                                </div>
+                                <div class="col-sm-6">
+                                    <p class="mb-1"><strong>Details:</strong></p>
+                                    <p class="text-muted small">
+                                        Trainer: {{ event.trainer_name }}<br>
+                                        Address: {{ event.address }}
+                                    </p>
+
+                                    <p class="mb-1 mt-2"><strong>Billing:</strong></p>
+                                    <p class="small">
+                                        <span class="badge {% if event.status == 'Upcoming' %}badge-info{% elif event.status == 'Ongoing' %}badge-success{% elif event.status == 'Completed' %}badge-secondary{% endif %}">
+                                            {{ event.get_status_display }}
+                                        </span>
+                                        <br>
+                                        {% if event.fee_amount %}
+                                            <span class="text-muted">₹{{ event.fee_amount|floatformat:2 }}</span>
+                                        {% else %}
+                                            <span class="text-muted">Free</span>
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                            {% if event.description %}
+                            <div class="row mt-2">
+                                <div class="col-12">
+                                    <p class="mb-1"><strong>Description:</strong></p>
+                                    <p class="text-muted small">{{ event.description|truncatewords:20 }}</p>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12">
+                    <div class="text-center py-4">
+                        <div class="text-muted">
+                            <i class="mdi mdi-calendar-remove-outline mdi-36px mb-2"></i>
+                            <h6 class="mb-2">No events found</h6>
+                            <p class="mb-2 small">No events have been created yet.</p>
+                            <a href="{% url 'events:create_event' %}" class="btn btn-primary btn-sm">
+                                <i class="mdi mdi-plus"></i> Create Event
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
             </div>
         </div>
     </div>

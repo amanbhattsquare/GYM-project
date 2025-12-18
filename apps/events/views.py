@@ -121,28 +121,19 @@ def cancel_event(request, event_id):
     messages.success(request, f"Event '{event.event_name}' has been canceled successfully.")
     return redirect('events:event_list')
 
-@login_required
-def duplicate_event(request, event_id):
-    event = get_object_or_404(Event, id=event_id)
-    event.pk = None
-    event.event_name = f"{event.event_name} (Copy)"
-    event.save()
-    messages.success(request, f"Event '{event.event_name}' has been duplicated successfully.")
-    return redirect('events:event_list')
+# @login_required
+# def export_attendees(request, event_id):
+#     event = get_object_or_404(Event, id=event_id)
+#     response = HttpResponse(content_type='text/csv')
+#     response['Content-Disposition'] = f'attachment; filename="{event.event_name}_attendees.csv"'
 
-@login_required
-def export_attendees(request, event_id):
-    event = get_object_or_404(Event, id=event_id)
-    response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = f'attachment; filename="{event.event_name}_attendees.csv"'
+#     writer = csv.writer(response)
+#     writer.writerow(['Member ID', 'Name', 'Email', 'Mobile Number'])
 
-    writer = csv.writer(response)
-    writer.writerow(['Member ID', 'Name', 'Email', 'Mobile Number'])
+#     for member in event.registered_members.all():
+#         writer.writerow([member.member_id, member.name, member.email, member.mobile_number])
 
-    for member in event.registered_members.all():
-        writer.writerow([member.member_id, member.name, member.email, member.mobile_number])
-
-    return response
+#     return response
 
 @login_required
 def notify_members(request, event_id):

@@ -18,11 +18,9 @@ class Event(models.Model):
         DRAFT = 'Draft', _('Draft')
         PUBLISHED = 'Published', _('Published')
 
-
     event_name = models.CharField(max_length=255)
     event_type = models.CharField(
         max_length=20, choices=EventType.choices, default=EventType.WORKOUT)
-    event_category = models.CharField(max_length=100, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     banner_image = models.ImageField(
         upload_to='event_banners/', null=True, blank=True)

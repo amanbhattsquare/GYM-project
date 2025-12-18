@@ -52,10 +52,7 @@
                     <label for="id_description">Description</label>
                     <textarea class="form-control" id="id_description" name="description" rows="4"></textarea>
                 </div>
-                <div class="form-group">
-                    <label for="id_banner_image">Event Banner Image</label>
-                    <input type="file" class="form-control-file" id="id_banner_image" name="banner_image">
-                </div>
+                
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
@@ -114,6 +111,19 @@
                                 {% endfor %}
                             </select>
                         </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="id_banner_image">Event Banner Image</label>
+                            <input type="file" class="form-control-file" id="id_banner_image" name="banner_image">
+                        </div>
+                    </div>
+                  
+                    <div class="col-md-6">  
+                        <div class="form-group      ">
+                            <label for="id_payment_qr">Payment QR Code</label>
+                            <input type="file" class="form-control-file" id="id_payment_qr" name="payment_qr">  
+                        </div>      
                     </div>
                 </div>
                 <button type="submit" class="btn btn-primary">Create Event</button>
