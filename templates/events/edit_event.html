@@ -82,12 +82,8 @@
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="id_location">Location</label>
-                            <select class="form-control" id="id_location" name="location">
-                                {% for location in locations %}
-                                <option value="{{ location.0 }}" {% if event.location == location.0 %}selected{% endif %}>{{ location.1 }}</option>
-                                {% endfor %}
-                            </select>
+                            <label for="id_address">Address</label>
+                            <input type="text" class="form-control" id="id_address" name="address" value="{{ event.address }}">
                         </div>
                     </div>
                 </div>
@@ -109,11 +105,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="id_fee">Fee</label>
-                            <select class="form-control" id="id_fee" name="fee">
-                                {% for fee in fees %}
-                                <option value="{{ fee.0 }}" {% if event.fee == fee.0 %}selected{% endif %}>{{ fee.1 }}</option>
-                                {% endfor %}
-                            </select>
+                            <input type="number" step="0.01" class="form-control" id="id_fee" name="fee_amount" value="{{ event.fee_amount }}">
                         </div>
                     </div>
                     <div class="col-md-6">

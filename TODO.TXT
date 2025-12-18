@@ -78,3 +78,7 @@ like members, trainers, invoice, receipt etc.
 I want Active, Expire and freeze, Status. Active - when gym ko koi membership plan 
 asssing ho, expire - jab koi plan assign ho, and  freeze - superadmin karne par uss gym ko koi login nhi kar skta hai.
  add thease function profection way and indrustry ready 
+
+
+
+ create Public Link for Mermber registration and Event Registration

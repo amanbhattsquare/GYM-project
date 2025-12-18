@@ -1,13 +1,42 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Event
+from .models import Event, EventParticipant
+from .forms import EventParticipantForm
 from django.contrib.auth.decorators import login_required
 import csv
 from django.http import HttpResponse
 from django.contrib import messages
+from apps.superadmin.models import GymAdmin
+
+
+def event_registration(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+    available_seats = event.max_participants - event.participants.count()
+
+    if request.method == 'POST':
+        form = EventParticipantForm(request.POST)
+        if form.is_valid():
+            participant = form.save(commit=False)
+            participant.event = event
+            participant.save()
+            messages.success(request, 'You have successfully registered for the event!')
+            return redirect('events:event_list')  # Redirect to a success page or event list
+    else:
+        form = EventParticipantForm()
+
+    return render(request, 'events/event_registration_form.html', {'form': form, 'event': event, 'available_seats': available_seats})
+
+@login_required
+def all_event_registrations(request):
+    user = request.user
+    gym_admin = GymAdmin.objects.get(user=user)
+    registrations = EventParticipant.objects.filter(event__gym=gym_admin.gym)
+    return render(request, 'events/all_event_registrations.html', {'registrations': registrations})
 
 @login_required
 def event_list(request):
-    events = Event.objects.all()
+    user = request.user
+    gym_admin = GymAdmin.objects.get(user=user)
+    events = Event.objects.filter(gym=gym_admin.gym)
     return render(request, 'events/event_list.html', {'events': events})
 
 @login_required
@@ -20,11 +49,14 @@ def create_event(request):
         start_date = request.POST.get('start_date')
         end_date = request.POST.get('end_date')
         trainer_name = request.POST.get('trainer_name')
-        location = request.POST.get('location')
+        address = request.POST.get('address')
         max_participants = request.POST.get('max_participants')
         registration_deadline = request.POST.get('registration_deadline')
-        fee = request.POST.get('fee')
+        fee_amount = request.POST.get('fee_amount')
         status = request.POST.get('status')
+
+        user = request.user
+        gym_admin = GymAdmin.objects.get(user=user)
 
         Event.objects.create(
             event_name=event_name,
@@ -34,23 +66,20 @@ def create_event(request):
             start_date=start_date,
             end_date=end_date,
             trainer_name=trainer_name,
-            location=location,
+            address=address,
             max_participants=max_participants,
             registration_deadline=registration_deadline,
-            fee=fee,
+            fee_amount=fee_amount   ,
             status=status,
+            gym=gym_admin.gym
         )
         return redirect('events:event_list')
 
     event_types = Event.EventType.choices
-    locations = Event.EventLocation.choices
-    fees = Event.EventFee.choices
     statuses = Event.EventStatus.choices
 
     context = {
         'event_types': event_types,
-        'locations': locations,
-        'fees': fees,
         'statuses': statuses,
     }
     return render(request, 'events/create_event.html', context)
@@ -67,24 +96,20 @@ def edit_event(request, event_id):
         event.start_date = request.POST.get('start_date')
         event.end_date = request.POST.get('end_date')
         event.trainer_name = request.POST.get('trainer_name')
-        event.location = request.POST.get('location')
+        event.address = request.POST.get('address')     
         event.max_participants = request.POST.get('max_participants')
         event.registration_deadline = request.POST.get('registration_deadline')
-        event.fee = request.POST.get('fee')
+        event.fee_amount = request.POST.get('fee_amount')
         event.status = request.POST.get('status')
         event.save()
         return redirect('events:event_list')
 
-    event_types = Event.EventType.choices
-    locations = Event.EventLocation.choices
-    fees = Event.EventFee.choices
+    event_types = Event.EventType.choices   
     statuses = Event.EventStatus.choices
 
     context = {
         'event': event,
         'event_types': event_types,
-        'locations': locations,
-        'fees': fees,
         'statuses': statuses,
     }
     return render(request, 'events/edit_event.html', context)
@@ -93,6 +118,7 @@ def edit_event(request, event_id):
 def cancel_event(request, event_id):
     event = get_object_or_404(Event, id=event_id)
     event.delete()
+    messages.success(request, f"Event '{event.event_name}' has been canceled successfully.")
     return redirect('events:event_list')
 
 @login_required
@@ -101,6 +127,7 @@ def duplicate_event(request, event_id):
     event.pk = None
     event.event_name = f"{event.event_name} (Copy)"
     event.save()
+    messages.success(request, f"Event '{event.event_name}' has been duplicated successfully.")
     return redirect('events:event_list')
 
 @login_required

@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">All Event Registrations</h4>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="datatable" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>Event</th>
+                                    <th>Participant Name</th>
+                                    <th>Email</th>
+                                    <th>Mobile Number</th>
+                                    <th>Registration Date</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for registration in registrations %}
+                                <tr>
+                                    <td>{{ registration.event.event_name }}</td>
+                                    <td>{{ registration.full_name }}</td>
+                                    <td>{{ registration.email }}</td>
+                                    <td>{{ registration.mobile_number }}</td>
+                                    <td>{{ registration.registered_at|date:"d-m-Y H:i" }}</td>
+                                    <td><span class="badge badge-success">{{ registration.status }}</span></td>
+                                    <td>
+                                        <a href="#" class="btn btn-sm btn-primary">View</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
