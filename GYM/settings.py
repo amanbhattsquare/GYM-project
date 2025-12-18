@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'apps.settings',
     'apps.superadmin',
     'apps.business_report',
+    'apps.events',
    
 ]
 

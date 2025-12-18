@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/customstyle.css' %}">
+<!-- Compact Breadcrumb Navigation -->
+<nav aria-label="breadcrumb" class="custom-breadcrumb mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{% url 'dashboard' %}" class="text-decoration-none">
+                <i class="mdi mdi-home-outline mdi-18px"></i> Dashboard
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{% url 'events:event_list' %}" class="text-decoration-none">
+                <i class="mdi mdi-calendar-multiple-check mdi-18px"></i> Events
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <i class="mdi mdi-pencil-circle-outline mdi-18px"></i> Edit Event
+        </li>
+    </ol>
+</nav>
+
+<div class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Edit Event</h4>
+        </div>
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="id_event_name">Event Name</label>
+                            <input type="text" class="form-control" id="id_event_name" name="event_name" value="{{ event.event_name }}" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="id_event_type">Event Type</label>
+                            <select class="form-control" id="id_event_type" name="event_type">
+                                {% for type in event_types %}
+                                <option value="{{ type.0 }}" {% if event.event_type == type.0 %}selected{% endif %}>{{ type.1 }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="id_description">Description</label>
+                    <textarea class="form-control" id="id_description" name="description" rows="4">{{ event.description }}</textarea>
+                </div>
+                <div class="form-group">
+                    <label for="id_banner_image">Event Banner Image</label>
+                    <input type="file" class="form-control-file" id="id_banner_image" name="banner_image">
+                    {% if event.banner_image %}
+                    <img src="{{ event.banner_image.url }}" class="mt-2" style="max-width: 200px;"/>
+                    {% endif %}
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="id_start_date">Start Date & Time</label>
+                            <input type="datetime-local" class="form-control" id="id_start_date" name="start_date" value="{{ event.start_date|date:'Y-m-d\TH:i' }}" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="id_end_date">End Date & Time</label>
+                            <input type="datetime-local" class="form-control" id="id_end_date" name="end_date" value="{{ event.end_date|date:'Y-m-d\TH:i' }}" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="id_trainer_name">Trainer / Guest Name</label>
+                            <input type="text" class="form-control" id="id_trainer_name" name="trainer_name" value="{{ event.trainer_name }}">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="id_location">Location</label>
+                            <select class="form-control" id="id_location" name="location">
+                                {% for location in locations %}
+                                <option value="{{ location.0 }}" {% if event.location == location.0 %}selected{% endif %}>{{ location.1 }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="id_max_participants">Max Participants</label>
+                            <input type="number" class="form-control" id="id_max_participants" name="max_participants" value="{{ event.max_participants }}" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="id_registration_deadline">Registration Deadline</label>
+                            <input type="datetime-local" class="form-control" id="id_registration_deadline" name="registration_deadline" value="{{ event.registration_deadline|date:'Y-m-d\TH:i' }}" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="id_fee">Fee</label>
+                            <select class="form-control" id="id_fee" name="fee">
+                                {% for fee in fees %}
+                                <option value="{{ fee.0 }}" {% if event.fee == fee.0 %}selected{% endif %}>{{ fee.1 }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="id_status">Status</label>
+                            <select class="form-control" id="id_status" name="status">
+                                {% for status in statuses %}
+                                <option value="{{ status.0 }}" {% if event.status == status.0 %}selected{% endif %}>{{ status.1 }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Update Event</button>
+                <a href="{% url 'events:event_list' %}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
