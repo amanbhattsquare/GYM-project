@@ -13,10 +13,14 @@ def event_registration(request, event_id):
     available_seats = event.max_participants - event.participants.count()
 
     if request.method == 'POST':
-        form = EventParticipantForm(request.POST)
+        form = EventParticipantForm(request.POST, request.FILES)
         if form.is_valid():
             participant = form.save(commit=False)
             participant.event = event
+            participant.payment_method = request.POST.get('payment_method')
+            participant.transaction_id = request.POST.get('transaction_id')
+            participant.payment_amount = request.POST.get('payment_amount') if request.POST.get('payment_amount') else None
+            participant.payment_screenshot = request.FILES.get('payment_screenshot')
             participant.save()
             messages.success(request, 'You have successfully registered for the event!')
             return redirect('events:event_list')  # Redirect to a success page or event list

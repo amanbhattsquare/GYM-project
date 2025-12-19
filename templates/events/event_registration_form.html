@@ -329,12 +329,10 @@
               <span class="label-text font-semibold">Payment Method <span class="text-error">*</span></span>
             </label>
             <select name="payment_method" class="select select-bordered w-full" required>
-              <option value="" disabled selected>Select payment method</option>
-              <option value="Online">Online Payment</option>
-              <option value="Cash">Cash</option>
-              <option value="Bank Transfer">Bank Transfer</option>
               <option value="UPI">UPI</option>
-              <option value="Card">Credit/Debit Card</option>
+              <option value="Cash">Cash</option>
+              <option value="Card">Card</option>
+              <option value="Other">Other</option>
             </select>
           </div>
           
@@ -352,18 +350,17 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="form-control">
               <label class="label">
-                <span class="label-text font-semibold">Payment Date</span>
-              </label>
-              <input type="date" name="payment_date" class="input input-bordered w-full" />
-            </div>
-            
-            <div class="form-control">
-              <label class="label">
                 <span class="label-text font-semibold">Payment Amount (₹)</span>
               </label>
               <input type="number" name="payment_amount" value="{{ event.fee_amount }}" class="input input-bordered w-full" placeholder="Amount paid" />
             </div>
           </div>
+          <div class="form-control">
+              <label class="label">
+                <span class="label-text font-semibold">Payment Screenshot</span>
+              </label>
+              <input type="file" name="payment_screenshot" class="input input-bordered w-full" />
+            </div>
           
           <!-- Payment Instructions -->
           <div class="alert alert-info mt-4">
