@@ -18,7 +18,7 @@
                                     <th>Email</th>
                                     <th>Mobile Number</th>
                                     <th>Registration Date</th>
-                                    <th>Status</th>
+                                    <th>Payment Status</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -30,9 +30,15 @@
                                     <td>{{ registration.email }}</td>
                                     <td>{{ registration.mobile_number }}</td>
                                     <td>{{ registration.registered_at|date:"d-m-Y H:i" }}</td>
-                                    <td><span class="badge badge-success">{{ registration.status }}</span></td>
                                     <td>
-                                        <a href="#" class="btn btn-sm btn-primary">View</a>
+                                        <span class="badge {% if registration.payment_status == 'Pending' %}badge-warning{% else %}badge-success{% endif %}">
+                                            {{ registration.payment_status }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#registrationModal-{{ registration.id }}">
+                                            View
+                                        </button>
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -44,4 +50,59 @@
         </div>
     </div>
 </div>
+
+{% for registration in registrations %}
+<div class="modal fade" id="registrationModal-{{ registration.id }}" tabindex="-1" role="dialog" aria-labelledby="registrationModalLabel-{{ registration.id }}" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="registrationModalLabel-{{ registration.id }}">Registration Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Event:</strong> {{ registration.event.event_name }}</p>
+                        <p><strong>Participant Name:</strong> {{ registration.full_name }}</p>
+                        <p><strong>Mobile Number:</strong> {{ registration.mobile_number }}</p>
+                        <p><strong>Email:</strong> {{ registration.email }}</p>
+                        <p><strong>Gender:</strong> {{ registration.gender }}</p>
+                        <p><strong>Date of Birth:</strong> {{ registration.dob|date:"d-m-Y" }}</p>
+                        <p><strong>Gym Member:</strong> {{ registration.is_gym_member }}</p>
+                        {% if registration.is_gym_member == 'Yes' %}
+                        <p><strong>Current Gym Name:</strong> {{ registration.current_gym_name }}</p>
+                        {% endif %}
+                        <p><strong>Fitness Level:</strong> {{ registration.fitness_level }}</p>
+                        <p><strong>Years of Training:</strong> {{ registration.years_of_training }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Emergency Contact Name:</strong> {{ registration.emergency_contact_name }}</p>
+                        <p><strong>Emergency Contact Number:</strong> {{ registration.emergency_contact_number }}</p>
+                        <p><strong>Medical Conditions:</strong> {{ registration.medical_conditions }}</p>
+                        <p><strong>Injuries:</strong> {{ registration.injuries }}</p>
+                        <p><strong>Payment Method:</strong> {{ registration.payment_method }}</p>
+                        <p><strong>Transaction ID:</strong> {{ registration.transaction_id }}</p>
+                        <p><strong>Payment Amount:</strong> {{ registration.payment_amount }}</p>
+                        <p><strong>Payment Status:</strong> {{ registration.payment_status }}</p>
+                        {% if registration.payment_screenshot %}
+                        <p><strong>Payment Screenshot:</strong></p>
+                        <img src="{{ registration.payment_screenshot.url }}" alt="Payment Screenshot" class="img-fluid">
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <form action="{% url 'events:update_payment_status' registration.id %}" method="POST">
+                    {% csrf_token %}
+                    <button type="submit" name="status" value="Successful" class="btn btn-success">Mark as Successful</button>
+                    <button type="submit" name="status" value="Failed" class="btn btn-danger">Mark as Failed</button>
+                </form>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
 {% endblock %}

@@ -132,23 +132,22 @@ def cancel_event(request, event_id):
     messages.success(request, f"Event '{event.event_name}' has been canceled successfully.")
     return redirect('events:event_list')
 
-# @login_required
-# def export_attendees(request, event_id):
-#     event = get_object_or_404(Event, id=event_id)
-#     response = HttpResponse(content_type='text/csv')
-#     response['Content-Disposition'] = f'attachment; filename="{event.event_name}_attendees.csv"'
-
-#     writer = csv.writer(response)
-#     writer.writerow(['Member ID', 'Name', 'Email', 'Mobile Number'])
-
-#     for member in event.registered_members.all():
-#         writer.writerow([member.member_id, member.name, member.email, member.mobile_number])
-
-#     return response
-
 @login_required
 def notify_members(request, event_id):
     event = get_object_or_404(Event, id=event_id)
     # Placeholder for sending notifications
     messages.success(request, f"Notifications for {event.event_name} will be sent to all registered members.")
     return redirect('events:event_list')
+
+@login_required
+def update_payment_status(request, registration_id):
+    registration = get_object_or_404(EventParticipant, id=registration_id)
+    if request.method == 'POST':
+        status = request.POST.get('status')
+        if status in ['Successful', 'Failed']:
+            registration.payment_status = status
+            registration.save()
+            messages.success(request, f"Payment status for {registration.full_name} has been updated to {status}.")
+        else:
+            messages.error(request, "Invalid status update.")
+    return redirect('events:all_event_registrations')
