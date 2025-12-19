@@ -54,6 +54,8 @@ def create_event(request):
         registration_deadline = request.POST.get('registration_deadline')
         fee_amount = request.POST.get('fee_amount')
         status = request.POST.get('status')
+        payment_qr_code = request.FILES.get('payment_qr_code')
+        upi_id = request.POST.get('upi_id')
 
         user = request.user
         gym_admin = GymAdmin.objects.get(user=user)
@@ -71,6 +73,8 @@ def create_event(request):
             registration_deadline=registration_deadline,
             fee_amount=fee_amount   ,
             status=status,
+            payment_qr_code=payment_qr_code,
+            upi_id=upi_id,
             gym=gym_admin.gym
         )
         return redirect('events:event_list')
@@ -101,6 +105,9 @@ def edit_event(request, event_id):
         event.registration_deadline = request.POST.get('registration_deadline')
         event.fee_amount = request.POST.get('fee_amount')
         event.status = request.POST.get('status')
+        if request.FILES.get('payment_qr_code'):
+            event.payment_qr_code = request.FILES.get('payment_qr_code')
+        event.upi_id = request.POST.get('upi_id')
         event.save()
         return redirect('events:event_list')
 

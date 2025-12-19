@@ -33,6 +33,9 @@
                 {% for event in events %}
                 <div class="col-md-6 mb-4">
                     <div class="card h-100">
+                        {% if event.banner_image %}
+                        <img src="{{ event.banner_image.url }}" class="card-img-top" alt="{{ event.event_name }}" style="max-height: 200px; object-fit: cover;">
+                        {% endif %}
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-start mb-3">
                                 <div>
@@ -79,7 +82,19 @@
                                         {% else %}
                                             <span class="text-muted">Free</span>
                                         {% endif %}
+                                        <br>
+                                        {% if event.upi_id %}
+                                            <span class="text-muted">UPI: {{ event.upi_id }}</span>
+                                        {% endif %}
                                     </p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    {% if event.payment_qr_code %}
+                                        <p class="mb-1"><strong>QR Code:</strong></p>
+                                        <img src="{{ event.payment_qr_code.url }}" class="img-fluid" style="max-width: 100px;"/>
+                                    {% endif %}
                                 </div>
                             </div>
                             {% if event.description %}

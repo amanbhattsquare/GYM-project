@@ -37,6 +37,11 @@
       <!-- Event Summary Card (Left Sidebar) -->
       <div class="lg:col-span-1">
         <div class="card bg-base-100 shadow-xl sticky top-8">
+          {% if event.banner_image %}
+          <figure>
+            <img src="{{ event.banner_image.url }}" alt="{{ event.event_name }} banner" class="max-h-48 w-full object-cover">
+          </figure>
+          {% endif %}
           <div class="card-body">
             <h2 class="card-title text-2xl mb-4">Event Details</h2>
             
@@ -290,49 +295,141 @@
             </div>
           </div>
           
-          <!-- Payment Section (Conditional) -->
-          {% if event.fee == 'Paid' %}
-          <div class="card bg-base-100 shadow-xl">
-            <div class="card-body">
-              <div class="flex items-center gap-3 mb-4">
-                <div class="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="h-5 w-5 text-primary">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                  </svg>
-                </div>
-                <h3 class="text-xl font-bold">Payment Information</h3>
-              </div>
-              
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="form-control">
-                  <label class="label">
-                    <span class="label-text font-semibold">Payment Method</span>
-                  </label>
-                  <select name="payment_method" class="select select-bordered w-full">
-                    <option value="UPI">UPI</option>
-                    <option value="Cash">Cash</option>
-                    <option value="Card">Card</option>
-                    <option value="Other">Other</option>
-                  </select>
-                </div>
-                
-                <div class="form-control">
-                  <label class="label">
-                    <span class="label-text font-semibold">Transaction ID</span>
-                  </label>
-                    <input type="text" name="transaction_id" class="input input-bordered w-full" placeholder="Enter transaction reference" />
-                </div>
-              </div>
-              
-              <div class="mt-6 p-4 bg-primary/5 rounded-lg">
-                <div class="flex justify-between items-center">
-                  <span class="font-semibold">Total Amount Due:</span>
-                  <span class="text-2xl font-bold text-primary">₹{{ event.fee_amount }}</span>
-                </div>
-              </div>
+         <!-- Payment Section (Conditional) -->
+{% if event.fee_amount and event.fee_amount > 0 %}
+<div class="card bg-base-100 shadow-xl">
+  <div class="card-body">
+    <div class="flex items-center gap-3 mb-4">
+      <div class="h-10 w-10 rounded-full bg-warning/10 flex items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="h-5 w-5 text-warning">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="text-xl font-bold">Payment Information</h3>
+    </div>
+    
+    <!-- Amount Display -->
+    <div class="bg-base-200 rounded-lg p-6 mb-6">
+      <div class="flex justify-between items-center">
+        <div>
+          <p class="text-lg font-semibold">Registration Fee</p>
+          <p class="text-sm opacity-70">Includes event participation</p>
+        </div>
+        <p class="text-3xl font-bold text-primary">₹{{ event.fee_amount }}</p>
+      </div>
+    </div>
+    
+    <!-- Form and QR Code Side by Side -->
+    <div class="flex flex-col lg:flex-row gap-8">
+      <!-- Form Section (Left) -->
+      <div class="lg:w-2/3">
+        <div class="space-y-4">
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text font-semibold">Payment Method <span class="text-error">*</span></span>
+            </label>
+            <select name="payment_method" class="select select-bordered w-full" required>
+              <option value="" disabled selected>Select payment method</option>
+              <option value="Online">Online Payment</option>
+              <option value="Cash">Cash</option>
+              <option value="Bank Transfer">Bank Transfer</option>
+              <option value="UPI">UPI</option>
+              <option value="Card">Credit/Debit Card</option>
+            </select>
+          </div>
+          
+          <div class="form-control">
+            <label class="label">
+              <span class="label-text font-semibold">Transaction ID/Reference</span>
+            </label>
+            <input type="text" name="transaction_id" class="input input-bordered w-full" placeholder="Enter transaction ID or reference number" />
+            <label class="label">
+              <span class="label-text-alt">Required for online payments</span>
+            </label>
+          </div>
+          
+          <!-- Additional Payment Details -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="form-control">
+              <label class="label">
+                <span class="label-text font-semibold">Payment Date</span>
+              </label>
+              <input type="date" name="payment_date" class="input input-bordered w-full" />
+            </div>
+            
+            <div class="form-control">
+              <label class="label">
+                <span class="label-text font-semibold">Payment Amount (₹)</span>
+              </label>
+              <input type="number" name="payment_amount" value="{{ event.fee_amount }}" class="input input-bordered w-full" placeholder="Amount paid" />
             </div>
           </div>
-          {% endif %}
+          
+          <!-- Payment Instructions -->
+          <div class="alert alert-info mt-4">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 h-6 w-6">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <div>
+              <h4 class="font-bold">Payment Instructions</h4>
+              <ul class="text-sm list-disc pl-4 mt-1">
+                <li>For online payments, please keep your transaction ID ready</li>
+                <li>Cash payments can be made at the gym reception</li>
+                <li>Bank transfers should include your name as reference</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- QR Code Section (Right) -->
+      {% if event.payment_qr_code %}
+      <div class="lg:w-1/3">
+        <div class="card bg-base-200 border-2 border-base-300">
+          <div class="card-body items-center text-center">
+            <h4 class="card-title text-lg font-semibold mb-2">Scan to Pay via UPI</h4>
+            <p class="text-sm opacity-70 mb-4">Use any UPI app to scan</p>
+            
+            <!-- QR Code Display -->
+            <div class="p-4 bg-white rounded-lg shadow-sm mb-4">
+              <img src="{{ event.payment_qr_code.url }}" 
+                   alt="Payment QR Code" 
+                   class="w-48 h-48 object-contain">
+            </div>
+            
+            <!-- Payment Details -->
+            <div class="space-y-2 text-sm w-full">
+              <div class="flex justify-between">
+                <span class="opacity-70">Amount:</span>
+                <span class="font-semibold">₹{{ event.fee_amount }}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="opacity-70">UPI ID:</span>
+                <span class="font-mono text-xs">{{ event.gym.upi_id|default:"gym@upi" }}</span>
+              </div>
+            </div>
+            
+            
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+    
+    <!-- Note for non-QR payments -->
+    {% if not event.payment_qr_code %}
+    <div class="mt-6">
+      <div class="alert alert-warning">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 h-6 w-6">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.998-.833-2.732 0L4.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+        </svg>
+        <span class="text-sm">Please contact the gym directly for payment details and account information.</span>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endif %}
           
           <!-- Consent Section -->
           <div class="card bg-base-100 shadow-xl">

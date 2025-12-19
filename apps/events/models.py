@@ -33,6 +33,9 @@ class Event(models.Model):
     fee_amount =  models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     status = models.CharField(
         max_length=20, choices=EventStatus.choices, default=EventStatus.UPCOMING)
+    payment_qr_code = models.ImageField(
+        upload_to='event_qr_codes/', null=True, blank=True)
+    upi_id = models.CharField(max_length=50, null=True, blank=True)
     registered_members = models.ManyToManyField(
         settings.AUTH_USER_MODEL, related_name='registered_events', blank=True)
     gym = models.ForeignKey(Gym, on_delete=models.CASCADE, null=True, blank=True)
