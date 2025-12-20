@@ -19,7 +19,9 @@ from django.urls import path, include
 from apps.dashboard import views
 from django.conf import settings
 from django.conf.urls.static import static
+handler404 = 'GYM.views.handler404'
 from .views import help_view
+
 
 urlpatterns = [
     path('', include('apps.website.urls')),
@@ -36,7 +38,8 @@ urlpatterns = [
     path('management/', include('apps.management.urls')),
     path('expenses/', include('apps.expenses.urls')),
     path('settings/', include(('apps.settings.urls', 'settings'), namespace='settings')),
- 
+    path('business_report/', include('apps.business_report.urls')),
+    path('events/', include('apps.events.urls')),
     path('help/', help_view, name='help'),
 ]
 

@@ -32,7 +32,7 @@
             <!-- Search form -->
             {% include 'includes/search_form.html' %}</div>
                     <div class="col-md-3">
-                        <select name="status" class="form-control">
+                        <select name="status" class="form-control" onchange="this.form.submit()">
                             <option value="">All Statuses</option>
                             <option value="paid" {% if status_filter == 'paid' %}selected{% endif %}>Paid</option>
                             <option value="unpaid" {% if status_filter == 'unpaid' %}selected{% endif %}>Unpaid</option>
@@ -42,7 +42,6 @@
                         </select>
                     </div>
                     <div class="col-md-3">
-                        <button type="submit" class="btn btn-primary">Filter</button>
                         <a href="{% url 'billing:invoices_list' %}" class="btn btn-secondary">Clear</a>
                     </div>
                 </div>

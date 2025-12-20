@@ -21,6 +21,7 @@ from django.views.decorators.cache import never_cache
 @login_required(login_url='login')
 def add_new_member(request):
     gym = getattr(request, 'gym', None)
+    
     MedicalHistoryFormSet = modelformset_factory(MedicalHistory, form=MedicalHistoryForm, extra=1, can_delete=True)
     if request.method == 'POST':
         member_form = MemberForm(request.POST, request.FILES)
@@ -72,7 +73,6 @@ def member_profile(request, member_id):
     pt_member = PersonalTrainer.objects.select_related('trainer').filter(member=member, status='active', gym=gym).order_by('-id')
     latest_membership = membership_histories.first()
     payments = Payment.objects.filter(member=member, gym=gym).order_by('-payment_date')
-
 
     # Calculate the total due amount for membership
     membership_due_amount = membership_histories.filter(status='active').aggregate(
@@ -227,6 +227,17 @@ def assign_membership_plan(request, member_id):
             history.gym = gym
             history.transaction_id = request.POST.get('transaction_id')
             history.save()
+
+            if history.paid_amount > 0:
+                Payment.objects.create(
+                    gym=gym,
+                    member=member,
+                    amount=history.paid_amount,
+                    payment_mode=history.payment_mode,
+                    transaction_id=history.transaction_id,
+                    comment=f"Initial payment for {history.plan.title}"
+                )
+
             member.membership_plan = history.plan
             member.save()
             messages.success(request, f'Membership plan "{history.plan.title}" assigned to {member.first_name} {member.last_name}.')

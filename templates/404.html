@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row h-100 align-items-center justify-content-center" style="min-height: 100vh;">
+        <div class="col-12 ">
+            <div class="bg-secondary rounded p-4 p-sm-5 text-center">
+                <h1 class="display-1 fw-bold">404</h1>
+                <h3 class="mb-4">Page Not Found</h3>
+                <p class="mb-4">We’re sorry, the page you have looked for does not exist in our website! Maybe go to our home page or try to use a search?</p>
+                <a class="btn btn-primary rounded-pill py-3 px-5" href="{% url 'dashboard' %}">Go Back To Home</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

@@ -11012,7 +11012,7 @@ code {
   justify-content: stretch; }
   .stretch-card > .card {
     width: 100%;
-    min-width: 100%; }
+    min-width: 100%; }  
 
 @media (min-width: 576px) {
   .border-right-sm {

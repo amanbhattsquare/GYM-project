@@ -43,15 +43,6 @@ class Expense(models.Model):
     receipt_image = models.ImageField(upload_to="expense_receipts/", blank=True, null=True)
 
 
-    vendor_name = models.CharField(max_length=200, blank=True, null=True)
-    vendor_phone = models.CharField(max_length=20, blank=True, null=True)
-    vendor_bill_number = models.CharField(max_length=100, blank=True, null=True)
-
-    payment_mode = models.CharField(max_length=20, choices=PAYMENT_MODES, default='other')
-    transaction_id = models.CharField(max_length=100, blank=True, null=True)
-
-    receipt_image = models.ImageField(upload_to="expense_receipts/", blank=True, null=True)
-
     added_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="expenses_added")
     is_deleted = models.BooleanField(default=False)  # For Trash Page
 

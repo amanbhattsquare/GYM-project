@@ -133,31 +133,31 @@
       </div>
     </li>
     <!--  Events -->
-    <li class="nav-item">
-      <a class="nav-link" data-toggle="collapse" href="#events" aria-expanded="false" aria-controls="events">
+    <li class="nav-item {% if request.resolver_match.app_name == 'events' %}active{% endif %}">
+      <a class="nav-link" data-toggle="collapse" href="#events" aria-expanded="{% if request.resolver_match.app_name == 'events' %}true{% else %}false{% endif %}" aria-controls="events">
         <i class="mdi mdi-calendar-star menu-icon"></i>
         <span class="menu-title">Events</span>
         <i class="menu-arrow"></i>
       </a>
-      <div class="collapse" id="events">
+      <div class="collapse {% if request.resolver_match.app_name == 'events' %}show{% endif %}" id="events">
         <ul class="nav flex-column sub-menu">
-          <li class="nav-item"><a class="nav-link" href="pages/events/all.html">All Events</a></li>
-          <li class="nav-item"><a class="nav-link" href="pages/events/add.html">Create Event</a></li>
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'event_list' %}active{% endif %}" href="{% url 'events:event_list' %}">All Events</a></li>
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'create_event' %}active{% endif %}" href="{% url 'events:create_event' %}">Create Event</a></li>
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'all_event_registrations' %}active{% endif %}" href="{% url 'events:all_event_registrations' %}">All Registrations</a></li>
         </ul>
       </div>
     </li>
 
       <!--  Schedule -->
-    <li class="nav-item">
+    {% comment %} <li class="nav-item">
       <a class="nav-link" href="pages/schedule.html">
         <i class="mdi mdi-calendar-clock menu-icon"></i>
         <span class="menu-title">Schedule</span>
       </a>
-    </li>
+    </li> {% endcomment %}
 
-    <!--  Reports -->
-    <li class="nav-item">
-      <a class="nav-link" href="pages/reports.html">
+    <li class="nav-item {% if request.resolver_match.url_name == 'business_report' %}active{% endif %}">
+      <a class="nav-link" href="{% url 'business_report' %}">
         <i class="mdi mdi-chart-bar menu-icon"></i>
         <span class="menu-title">Business Report</span>
       </a>
