@@ -27,8 +27,20 @@
         </div>
         <div class="card-body">
             {% csrf_token %}
-            <!-- Search form -->
-            {% include 'includes/search_form.html' %}
+            <!-- Search and filter form -->
+            <div class="d-flex justify-content-between mb-3">
+                <form method="get" action="{% url 'events:event_list' %}" class="form-inline ml-3">
+                    <div class="form-group">
+                        <select name="status" class="form-control form-control-sm" onchange="this.form.submit()">
+                            <option value="">All Statuses</option>
+                            {% for status in statuses %}
+                                <option value="{{ status }}" {% if status == status_filter %}selected{% endif %}>{{ status }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                     <a href="{% url 'events:event_list' %}" class="btn btn-secondary ml-2">Clear</a>
+                </form>
+            </div>
             <div class="row" id="event-list">
                 {% for event in events %}
                 <div class="col-md-6 mb-4">

@@ -34,14 +34,52 @@ def all_event_registrations(request):
     user = request.user
     gym_admin = GymAdmin.objects.get(user=user)
     registrations = EventParticipant.objects.filter(event__gym=gym_admin.gym)
-    return render(request, 'events/all_event_registrations.html', {'registrations': registrations})
+
+    # Get distinct payment statuses and events for filter dropdowns
+    payment_statuses = EventParticipant.objects.filter(event__gym=gym_admin.gym).values_list('payment_status', flat=True).distinct()
+    events = Event.objects.filter(gym=gym_admin.gym)
+
+    # Get filter parameters from request
+    payment_status_filter = request.GET.get('payment_status')
+    event_filter = request.GET.get('event')
+
+    # Apply filters
+    if payment_status_filter:
+        registrations = registrations.filter(payment_status=payment_status_filter)
+    if event_filter:
+        registrations = registrations.filter(event__id=event_filter)
+
+    context = {
+        'registrations': registrations,
+        'payment_statuses': payment_statuses,
+        'events': events,
+        'payment_status_filter': payment_status_filter,
+        'event_filter': event_filter,
+    }
+    return render(request, 'events/all_event_registrations.html', context)
 
 @login_required
 def event_list(request):
     user = request.user
     gym_admin = GymAdmin.objects.get(user=user)
     events = Event.objects.filter(gym=gym_admin.gym)
-    return render(request, 'events/event_list.html', {'events': events})
+    
+    # Get distinct statuses for filter dropdown
+    statuses = Event.objects.filter(gym=gym_admin.gym).values_list('status', flat=True).distinct()
+    
+    # Get filter parameter from request
+    status_filter = request.GET.get('status')
+    
+    # Apply filter
+    if status_filter:
+        events = events.filter(status=status_filter)
+        
+    context = {
+        'events': events,
+        'statuses': statuses,
+        'status_filter': status_filter,
+    }
+    return render(request, 'events/event_list.html', context)
 
 @login_required
 def create_event(request):
