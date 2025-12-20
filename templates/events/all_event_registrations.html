@@ -25,7 +25,7 @@
                         
                         <div class="form-group mr-3">
                             <label for="event" class="mr-2">Event</label>
-                            <select name="event" id="event" class="form-control">
+                            <select name="event" id="event" class="form-control" onchange="this.form.submit()">
                                 <option value="">All</option>
                                 {% for event in events %}
                                     <option value="{{ event.id }}" {% if event.id|stringformat:"s" == event_filter %}selected{% endif %}>{{ event.event_name }}</option>
@@ -34,14 +34,13 @@
                         </div>
                         <div class="form-group mr-3">
                             <label for="payment_status" class="mr-2">Payment Status</label>
-                            <select name="payment_status" id="payment_status" class="form-control">
+                            <select name="payment_status" id="payment_status" class="form-control" onchange="this.form.submit()">
                                 <option value="">All</option>
                                 {% for status in payment_statuses %}
                                     <option value="{{ status }}" {% if status == payment_status_filter %}selected{% endif %}>{{ status }}</option>
                                 {% endfor %}
                             </select>
                         </div>
-                        <button type="submit" class="btn btn-primary">Filter</button>
                         <a href="{% url 'events:all_event_registrations' %}" class="btn btn-secondary ml-2">Clear</a>
                     </form>
 
