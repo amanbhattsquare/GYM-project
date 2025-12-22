@@ -136,7 +136,7 @@
                                     <a class="nav-link" id="personal-trainer-tab" data-toggle="tab" href="#personal-trainer" role="tab" aria-controls="personal-trainer" aria-selected="false">Personal Trainer Info</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" id="invoices-tab" data-toggle="tab" href="#invoices" role="tab" aria-controls="invoices" aria-selected="false">Invoice/ Receipt History</a>
+                                    <a class="nav-link" id="invoices-tab" data-toggle="tab" href="#invoices" role="tab" aria-controls="invoices" aria-selected="false">Invoice/ Payment History</a>
                                 </li>
                             </ul>
                             <div class="tab-content" id="myTabContent">
@@ -432,7 +432,7 @@
                                         {% endif %}
 
                                         <hr>
-                                        <h4 class="mt-3">Receipt History</h4>
+                                        <h4 class="mt-3">Payment History</h4>
                                         {% if payments %}
                                             <div class="table-responsive">
                                                 <table class="table table-striped">
@@ -443,7 +443,7 @@
                                                             <th>Amount</th>
                                                             <th>Mode</th>
                                                             <th>Transaction ID</th>
-                                                            <th>Actions</th>
+                                                            {% comment %} <th>Actions</th> {% endcomment %}
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -454,9 +454,9 @@
                                                                 <td>₹{{ payment.amount }}</td>
                                                                 <td>{{ payment.get_payment_mode_display }}</td>
                                                                 <td>{{ payment.transaction_id|default_if_none:"N/A" }}</td>
-                                                                <td>
+                                                                {% comment %} <td>
                                                                     <a href="#" class="btn btn-sm btn-primary"><i class="mdi mdi-eye"></i></a>
-                                                                </td>
+                                                                </td> {% endcomment %}
                                                             </tr>
                                                         {% empty %}
                                                             <tr>

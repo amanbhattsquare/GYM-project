@@ -105,11 +105,24 @@ def submit_due(request):
 
             payment_left = amount_paid
 
-            # Pay off membership dues first
             outstanding_memberships = selected_member.membership_history.annotate(
                 due=F('total_amount') - F('paid_amount')
             ).filter(due__gt=0, gym=gym).order_by('membership_start_date')
 
+            outstanding_pts = selected_member.personal_trainer.annotate(
+                due=F('total_amount') - F('paid_amount')
+            ).filter(due__gt=0, gym=gym).order_by('pt_start_date')
+
+            redirect_url = None
+            if outstanding_memberships.exists():
+                redirect_url = reverse('billing:invoice', args=[selected_member.id, outstanding_memberships.first().id])
+            elif outstanding_pts.exists():
+                redirect_url = reverse('billing:pt_invoice', args=[selected_member.id, outstanding_pts.first().id])
+            else:
+                redirect_url = reverse('billing:submit_due')
+
+
+            # Pay off membership dues first
             for history in outstanding_memberships:
                 if payment_left == 0:
                     break
@@ -119,10 +132,6 @@ def submit_due(request):
                 payment_left -= payable_amount
 
             # Pay off personal training dues next
-            outstanding_pts = selected_member.personal_trainer.annotate(
-                due=F('total_amount') - F('paid_amount')
-            ).filter(due__gt=0, gym=gym).order_by('pt_start_date')
-
             for pt in outstanding_pts:
                 if payment_left == 0:
                     break
@@ -133,8 +142,8 @@ def submit_due(request):
 
             messages.success(request, 'Payment submitted successfully.')
             if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-                return JsonResponse({'status': 'success', 'redirect_url': reverse('billing:payment_invoice', args=[payment.id])})
-            return redirect('billing:payment_invoice', payment_id=payment.id)
+                return JsonResponse({'status': 'success', 'redirect_url': redirect_url})
+            return redirect(redirect_url)
 
     context = {
         'members': members_page,
@@ -172,17 +181,6 @@ def update_follow_up(request, member_id):
             messages.error(request, "No follow-up date provided.")
     
     return redirect('billing:submit_due')
-
-
-@never_cache
-@login_required(login_url='login')
-def payment_invoice(request, payment_id):
-    gym = getattr(request, 'gym', None)
-    payment = get_object_or_404(Payment, id=payment_id, gym=gym)
-    context = {
-        'payment': payment,
-    }
-    return render(request, 'billing/payment_invoice.html', context)
 
 
 @never_cache
@@ -246,7 +244,7 @@ def invoices_list(request):
         due_amount=F('total_amount') - F('paid_amount'),
         invoice_id=F('id'),
         plan_title=F('plan__title')
-    ).values('invoice_id', 'date', 'type', 'amount', 'member_id', 'member__member_id', 'member__first_name', 'member__last_name', 'plan_title', 'due_amount')
+    ).values('invoice_id', 'date', 'type', 'amount', 'paid_amount', 'due_amount', 'member_id', 'member__member_id', 'member__first_name', 'member__last_name', 'plan_title')
 
     # Fetch personal training invoices
     pt_invoices = PersonalTrainer.objects.select_related('member', 'trainer').filter(status='active', gym=gym).annotate(
@@ -258,18 +256,9 @@ def invoices_list(request):
         plan_title=F('trainer__name')
     ).values('invoice_id', 'date', 'type', 'amount', 'member_id', 'member__member_id', 'member__first_name', 'member__last_name', 'plan_title', 'due_amount')
 
-    # Fetch payment invoices
-    payment_invoices = Payment.objects.select_related('member').filter(gym=gym).annotate(
-        date=F('payment_date'),
-        type=Value('payment', output_field=models.CharField()),
-        plan_title=Value('N/A', output_field=models.CharField()),
-        due_amount=Value(0, output_field=models.DecimalField()),
-        invoice_id=F('id')
-    ).values('invoice_id', 'date', 'type', 'amount', 'member_id', 'member__member_id', 'member__first_name', 'member__last_name', 'plan_title', 'due_amount')
-
     # Combine and sort invoices
     all_invoices = sorted(
-        list(membership_invoices) + list(pt_invoices) + list(payment_invoices),
+        list(membership_invoices) + list(pt_invoices),
         key=lambda x: x['date'],
         reverse='-' in sort_by
     )
