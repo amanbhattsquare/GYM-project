@@ -450,7 +450,7 @@
                                                         {% for payment in payments %}
                                                             <tr>
                                                                 <td>#{{ payment.id }}</td>
-                                                                <td>{{ payment.payment_date|date:"d M, Y" }}</td>
+                                                                <td>{{ payment.payment_date|date:"d M, Y H:i" }}</td>
                                                                 <td>₹{{ payment.amount }}</td>
                                                                 <td>{{ payment.get_payment_mode_display }}</td>
                                                                 <td>{{ payment.transaction_id|default_if_none:"N/A" }}</td>

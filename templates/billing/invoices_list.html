@@ -85,7 +85,7 @@
                                 {% endif %}
                             </td>
                             <td data-label="Amount">₹{{ invoice.amount|floatformat:2 }}</td>
-                            <td data-label="Date">{{ invoice.date|date:"d-m-Y" }}</td>
+                            <td data-label="Date">{{ invoice.date|date:"d-m-Y H:i" }}</td>
                             <td data-label="Status">
                                 {% if invoice.due_amount <= 0 %}
                                     <span class="badge badge-success">Paid</span>

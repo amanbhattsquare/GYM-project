@@ -42,6 +42,7 @@ def business_report(request):
 
     # Fetching latest transactions for the tables
     latest_invoices = MembershipHistory.objects.filter(member__gym=gym, membership_start_date__range=[start_date, end_date]).order_by('-membership_start_date')
+    latest_pt_invoices = PersonalTrainer.objects.filter(member__gym=gym, pt_start_date__range=[start_date, end_date]).order_by('-pt_start_date')
     latest_expenses = Expense.objects.filter(gym=gym, date__range=[start_date, end_date]).order_by('-date')[:10]
     latest_payments = Payment.objects.filter(member__gym=gym, payment_date__date__range=[start_date, end_date]).order_by('-payment_date')
 
@@ -52,41 +53,79 @@ def business_report(request):
             'invoice': invoice,
             'profile': invoice.member.profile_picture.url if invoice.member.profile_picture else None,
             'member': invoice.member,
-            'amount': invoice.total_amount,  # Total amount for this specific invoice
-            'paid': invoice.paid_amount,  # Total paid for this invoice
-            'due': invoice.due_amount,  # Due amount for this invoice
+            'amount': invoice.total_amount,
+            'paid': invoice.paid_amount,
+            'due': invoice.due_amount,
             'status': 'Paid' if invoice.due_amount <= 0 else 'Pending',
             'mode': invoice.payment_mode,
             'type': 'New' if is_new_registration else 'Subscription',
             'date': invoice.membership_start_date,
+            'invoice_type': 'membership'
+        })
+
+    for invoice in latest_pt_invoices:
+        transactions.append({
+            'invoice': invoice,
+            'profile': invoice.member.profile_picture.url if invoice.member.profile_picture else None,
+            'member': invoice.member,
+            'amount': invoice.total_amount,
+            'paid': invoice.paid_amount,
+            'due': invoice.due_amount,
+            'status': 'Paid' if invoice.due_amount <= 0 else 'Pending',
+            'mode': invoice.payment_mode,
+            'type': 'Personal Training',
+            'date': invoice.pt_start_date,
+            'invoice_type': 'pt'
         })
 
     for payment in latest_payments:
-        # This logic assumes that a payment without a related invoice is a due payment.
-        if not MembershipHistory.objects.filter(member=payment.member, membership_start_date=payment.payment_date.date()).exists():
+        if payment.membership_history:
+            invoice = payment.membership_history
+            transactions.append({
+                'invoice': invoice,
+                'profile': invoice.member.profile_picture.url if invoice.member.profile_picture else None,
+                'member': invoice.member,
+                'amount': invoice.total_amount,
+                'paid': payment.amount,
+                'due': invoice.due_amount,
+                'status': 'Paid',
+                'mode': payment.payment_mode,
+                'type': 'Due',
+                'date': payment.payment_date.date(),
+                'invoice_type': 'membership'
+            })
+        elif payment.personal_trainer:
+            invoice = payment.personal_trainer
+            transactions.append({
+                'invoice': invoice,
+                'profile': invoice.member.profile_picture.url if invoice.member.profile_picture else None,
+                'member': invoice.member,
+                'amount': invoice.total_amount,
+                'paid': payment.amount,
+                'due': invoice.due_amount,
+                'status': 'Paid',
+                'mode': payment.payment_mode,
+                'type': 'Due',
+                'date': payment.payment_date.date(),
+                'invoice_type': 'pt'
+            })
+        elif not MembershipHistory.objects.filter(member=payment.member, membership_start_date=payment.payment_date.date()).exists():
             member = payment.member
-
-            # Calculate total due for the member AFTER the payment has been applied
             membership_due = member.membership_history.filter(status='active', gym=gym).aggregate(
                 total=Sum(F('total_amount') - F('paid_amount'))
             )['total'] or 0
-
             pt_due = member.personal_trainer.filter(status='active', gym=gym).aggregate(
                 total=Sum(F('total_amount') - F('paid_amount'))
             )['total'] or 0
-            
             total_due_after = membership_due + pt_due
-            
-            # Calculate total due BEFORE the payment
             total_due_before = total_due_after + payment.amount
-
             transactions.append({
                 'invoice': None,
                 'profile': member.profile_picture.url if member.profile_picture else None,
                 'member': member,
-                'amount': total_due_before,  # Member's total due before this payment
-                'paid': payment.amount,      # The actual amount paid now
-                'due': total_due_after,       # Member's total due after this payment
+                'amount': total_due_before,
+                'paid': payment.amount,
+                'due': total_due_after,
                 'status': 'Completed',
                 'mode': payment.payment_mode,
                 'type': 'Due',

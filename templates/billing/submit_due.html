@@ -94,18 +94,18 @@
                                 {% with membership_due=member.membership_due|default:0 pt_due=member.pt_due|default:0 %}
                                     {{ membership_due|add:pt_due }}
                                 {% endwith %}
-                            </td> 
+                            </td>
                             <td data-label="Follow Up Date">
                                 {% if member.latest_follow_up_date %}
-                                    {{ member.latest_follow_up_date|date:"d-m-Y" }}
+                                    {{ member.latest_follow_up_date|date:"d-m-Y H:i" }}
                                 {% else %}
                                     No Follow Up
                                 {% endif %}
                             </td>
                             <td data-label="Actions">
-                                <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#followUpModal-{{ member.id }}" title="Update Follow Up Date">
+                                <a href="#" class="btn btn-info btn-sm" data-toggle="modal" data-target="#followUpModal-{{ member.id }}" title="Update Follow Up Date">
                                     <i class="mdi mdi-calendar-edit"></i> 
-                                </button>
+                                </a>
                                 <a href="https://wa.me/{{ member.mobile_number }}" target="_blank" class="btn btn-success btn-sm" title="WhatsApp">
                                     <i class="mdi mdi-whatsapp"></i>
                                 </a>

@@ -78,7 +78,7 @@
                         <tr class="{% if item.is_subscription %}subscription-row{% else %}payment-row{% endif %}">
                             <td>{{ forloop.counter0|add:history.start_index }}</td>
                             {% if item.is_subscription %}
-                                <td data-label="Date">{{ item.start_date|date:'d-m-Y' }}</td>
+                                <td data-label="Date">{{ item.start_date|date:'d-m-Y H:i' }}</td>
                                 <td data-label="Type"><i class="mdi mdi-file-document-box"></i> Subscription</td>
                                 <td data-label="Gym Name">{{ item.gym.name }}</td>
                                 <td data-label="Amount">₹{{ item.total_amount|floatformat:2 }}</td>
@@ -91,7 +91,7 @@
                                 </td>
                                 <td data-label="Notes/Plan">{{ item.subscription.name }}</td>
                             {% else %}
-                                <td data-label="Date">{{ item.payment_date|date:'d-m-Y' }}</td>
+                                <td data-label="Date">{{ item.payment_date|date:'d-m-Y H:i' }}</td>
                                 <td data-label="Type"><i class="mdi mdi-currency-usd"></i> Payment</td>
                                 <td data-label="Gym Name">{{ item.gym.name }}</td>
                                 <td data-label="Amount">₹{{ item.amount|floatformat:2 }}</td>
