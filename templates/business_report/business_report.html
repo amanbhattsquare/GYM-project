@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block content %}
 
 <!-- Compact Breadcrumb Navigation -->
@@ -120,8 +120,8 @@
 
     <!-- Charts -->
     <div class="row">
-        <div class="col-lg-8">
-            <div class="card shadow-sm mb-4">
+        <div class="col-lg-8 d-flex align-items-stretch">
+            <div class="card shadow-sm mb-4 w-100">
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">Income vs. Expense (Last 6 Months)</h6>
                 </div>
@@ -130,8 +130,8 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-4">
-            <div class="card shadow-sm mb-4">
+        <div class="col-lg-4 d-flex align-items-stretch">
+            <div class="card shadow-sm mb-4 w-100">
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">Expense Breakdown (Current Month)</h6>
                 </div>
@@ -151,44 +151,68 @@
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-bordered" width="100%" cellspacing="0">
+                        <table class="table table-hover table-sm table-stack-on-mobile" width="100%" cellspacing="0">
                             <thead>
                                 <tr>
-                                    <th>#</th>
-                                    <th>Date</th>
-                                    <th>Type</th>
-                                    <th>Member</th>
-                                    <th>Amount</th>
-                                    <th>Due</th>
-                                    <th>Status</th>
+                                    <th class="font-weight-semibold py-2">#</th>
+                                    <th class="font-weight-semibold py-2">Invoice</th>
+                                    <th class="font-weight-semibold py-2">Profile</th>
+                                    <th class="font-weight-semibold py-2">Member</th>
+                                    <th class="font-weight-semibold py-2">Amount</th>
+                                    <th class="font-weight-semibold py-2">Paid</th>
+                                    <th class="font-weight-semibold py-2">Due</th>
+                                    <th class="font-weight-semibold py-2">Status / Mode</th>
+                                    <th class="font-weight-semibold py-2">Type</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for transaction in latest_transactions|slice:":10" %}
+                                {% for transaction in latest_transactions %}
                                 <tr>
                                     <td>{{ forloop.counter }}</td>
-                                    <td>{{ transaction.date|date:"Y-m-d" }}</td>
-                                    <td>{{ transaction.type }}</td>
-                                    <td>{{ transaction.member }}</td>
+                                    <td>
+                                        {% if transaction.invoice %}
+                                            <a href="{% url 'billing:invoice_detail' transaction.invoice.id %}">#{{ transaction.invoice.id }}</a>
+                                        {% else %}
+                                            N/A
+                                        {% endif %}
+                                    </td>
+                                   <td data-label="Profile">
+                                <img src="{% if invoice.member__profile_picture %}{{ invoice.member__profile_picture.url }}{% else %}{% static 'images/member_DP.jpg' %}{% endif %}"
+                                    class="rounded-circle border" style="width: 40px; height: 40px; object-fit: cover;"
+                                    alt="{{ invoice.member__first_name }} {{ invoice.member__last_name }}">
+                            </td>
+                                    <td>
+                                        <a href="{% url 'member_profile' transaction.member.id %}" class="text-decoration-none">
+                                            <strong>{{ transaction.member.name }}</strong>
+                                        </a>
+                                        <br>
+                                        <small class="text-muted">#{{ transaction.member.member_id }}</small>
+                                    </td>
                                     <td>₹ {{ transaction.amount|floatformat:2 }}</td>
+                                    <td>₹ {{ transaction.paid|floatformat:2 }}</td>
                                     <td>₹ {{ transaction.due|floatformat:2 }}</td>
-                                    <td><span class="badge badge-{% if transaction.status == 'Paid' or transaction.status == 'Completed' %}success{% else %}warning{% endif %}">{{ transaction.status }}</span></td>
+                                    <td>
+                                        <span class="badge badge-{% if transaction.status == 'Paid' or transaction.status == 'Completed' %}success{% else %}warning{% endif %}">
+                                            {{ transaction.status }}
+                                        </span> / {{ transaction.mode|default:'N/A' }}
+                                    </td>
+                                    <td>{{ transaction.type }}</td>
                                 </tr>
                                 {% empty %}
                                 <tr>
-                                    <td colspan="7" class="text-center">No recent transactions.</td>
+                                    <td colspan="9" class="text-center">No recent transactions.</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
-                        <div class="text-center mt-3">
-                            <a href="#" class="btn btn-primary">See All</a>
-                        </div>
+                        {% if latest_transactions.has_other_pages %}
+                            {% include 'includes/pagination.html' with page_obj=latest_transactions %}
+                        {% endif %}
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-lg-12">
+        <div class="col-lg-12"> 
             <div class="card shadow-sm mb-4">
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-danger">Latest Expenses</h6>
