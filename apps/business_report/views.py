@@ -9,6 +9,7 @@ from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from django.contrib.auth.decorators import login_required
 from apps.superadmin.models import GymAdmin
+from django.core.paginator import Paginator
 
 @login_required
 def business_report(request):
@@ -41,31 +42,102 @@ def business_report(request):
 
     # Fetching latest transactions for the tables
     latest_invoices = MembershipHistory.objects.filter(member__gym=gym, membership_start_date__range=[start_date, end_date]).order_by('-membership_start_date')
+    latest_pt_invoices = PersonalTrainer.objects.filter(member__gym=gym, pt_start_date__range=[start_date, end_date]).order_by('-pt_start_date')
     latest_expenses = Expense.objects.filter(gym=gym, date__range=[start_date, end_date]).order_by('-date')[:10]
     latest_payments = Payment.objects.filter(member__gym=gym, payment_date__date__range=[start_date, end_date]).order_by('-payment_date')
 
     transactions = []
     for invoice in latest_invoices:
+        is_new_registration = not MembershipHistory.objects.filter(member=invoice.member, pk__lt=invoice.pk).exists()
         transactions.append({
-            'date': invoice.membership_start_date,
-            'type': 'Invoice',
-            'member': invoice.member.name,
+            'invoice': invoice,
+            'profile': invoice.member.profile_picture.url if invoice.member.profile_picture else None,
+            'member': invoice.member,
             'amount': invoice.total_amount,
+            'paid': invoice.paid_amount,
             'due': invoice.due_amount,
-            'status': 'Paid' if invoice.due_amount <= 0 else 'Pending'
+            'status': 'Paid' if invoice.due_amount <= 0 else 'Pending',
+            'mode': invoice.payment_mode,
+            'type': 'New' if is_new_registration else 'Subscription',
+            'date': invoice.membership_start_date,
+            'invoice_type': 'membership'
+        })
+
+    for invoice in latest_pt_invoices:
+        transactions.append({
+            'invoice': invoice,
+            'profile': invoice.member.profile_picture.url if invoice.member.profile_picture else None,
+            'member': invoice.member,
+            'amount': invoice.total_amount,
+            'paid': invoice.paid_amount,
+            'due': invoice.due_amount,
+            'status': 'Paid' if invoice.due_amount <= 0 else 'Pending',
+            'mode': invoice.payment_mode,
+            'type': 'Personal Training',
+            'date': invoice.pt_start_date,
+            'invoice_type': 'pt'
         })
 
     for payment in latest_payments:
-        transactions.append({
-            'date': payment.payment_date.date(),
-            'type': 'Payment',
-            'member': payment.member.name,
-            'amount': payment.amount,
-            'due': 0,
-            'status': 'Completed'
-        })
+        if payment.membership_history:
+            invoice = payment.membership_history
+            transactions.append({
+                'invoice': invoice,
+                'profile': invoice.member.profile_picture.url if invoice.member.profile_picture else None,
+                'member': invoice.member,
+                'amount': invoice.total_amount,
+                'paid': payment.amount,
+                'due': invoice.due_amount,
+                'status': 'Paid',
+                'mode': payment.payment_mode,
+                'type': 'Due',
+                'date': payment.payment_date.date(),
+                'invoice_type': 'membership'
+            })
+        elif payment.personal_trainer:
+            invoice = payment.personal_trainer
+            transactions.append({
+                'invoice': invoice,
+                'profile': invoice.member.profile_picture.url if invoice.member.profile_picture else None,
+                'member': invoice.member,
+                'amount': invoice.total_amount,
+                'paid': payment.amount,
+                'due': invoice.due_amount,
+                'status': 'Paid',
+                'mode': payment.payment_mode,
+                'type': 'Due',
+                'date': payment.payment_date.date(),
+                'invoice_type': 'pt'
+            })
+        elif not MembershipHistory.objects.filter(member=payment.member, membership_start_date=payment.payment_date.date()).exists():
+            member = payment.member
+            membership_due = member.membership_history.filter(status='active', gym=gym).aggregate(
+                total=Sum(F('total_amount') - F('paid_amount'))
+            )['total'] or 0
+            pt_due = member.personal_trainer.filter(status='active', gym=gym).aggregate(
+                total=Sum(F('total_amount') - F('paid_amount'))
+            )['total'] or 0
+            total_due_after = membership_due + pt_due
+            total_due_before = total_due_after + payment.amount
+            transactions.append({
+                'invoice': None,
+                'profile': member.profile_picture.url if member.profile_picture else None,
+                'member': member,
+                'amount': total_due_before,
+                'paid': payment.amount,
+                'due': total_due_after,
+                'status': 'Completed',
+                'mode': payment.payment_mode,
+                'type': 'Due',
+                'date': payment.payment_date.date(),
+            })
     
     transactions.sort(key=lambda item: item['date'], reverse=True)
+
+    # Paginate the transactions
+    paginator = Paginator(transactions, 10)  # Show 10 transactions per page
+    page_number = request.GET.get('page')
+    latest_transactions = paginator.get_page(page_number)
 
     # Chart Data: Income vs. Expense for the last 6 months
     labels = []
@@ -101,7 +173,7 @@ def business_report(request):
         'total_expense': total_expense,
         'gross_income': gross_income,
         'total_due': total_due,
-        'latest_transactions': transactions,
+        'latest_transactions': latest_transactions,
         'latest_expenses': latest_expenses,
         'line_chart_labels': json.dumps(labels),
         'line_chart_income_data': json.dumps(income_data),

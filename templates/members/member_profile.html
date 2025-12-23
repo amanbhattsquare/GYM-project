@@ -36,9 +36,9 @@
                     <a href="{% url 'assign_pt_trainer' member.id %}" class="btn btn-sm btn-danger mr-2" data-toggle="tooltip" title="Assign Personal Trainer">
                         <i class="mdi mdi-account-plus"></i>
                     </a>
-                    <button type="button" class="btn btn-sm btn-info mr-2" data-toggle="modal" data-target="#paymentModal-{{ member.id }}" title="Submit Due Payment">
+                    <a href="{% url 'billing:pay_due_payment' member.id %}" class="btn btn-sm btn-info mr-2" data-toggle="tooltip" title="Submit Due Payment">
                         <i class="mdi mdi-currency-usd"></i> 
-                    </button>
+                    </a>
                     <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete('{{ member.id }}', '{{ member.first_name }} {{ member.last_name }}', '{% url 'delete_member' member.id %}')" data-toggle="tooltip" title="Delete">
                         <i class="mdi mdi-delete-outline"></i>
                     </button>
@@ -136,7 +136,7 @@
                                     <a class="nav-link" id="personal-trainer-tab" data-toggle="tab" href="#personal-trainer" role="tab" aria-controls="personal-trainer" aria-selected="false">Personal Trainer Info</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" id="invoices-tab" data-toggle="tab" href="#invoices" role="tab" aria-controls="invoices" aria-selected="false">Invoice/ Receipt History</a>
+                                    <a class="nav-link" id="invoices-tab" data-toggle="tab" href="#invoices" role="tab" aria-controls="invoices" aria-selected="false">Invoice/ Payment History</a>
                                 </li>
                             </ul>
                             <div class="tab-content" id="myTabContent">
@@ -432,7 +432,7 @@
                                         {% endif %}
 
                                         <hr>
-                                        <h4 class="mt-3">Receipt History</h4>
+                                        <h4 class="mt-3">Payment History</h4>
                                         {% if payments %}
                                             <div class="table-responsive">
                                                 <table class="table table-striped">
@@ -443,20 +443,20 @@
                                                             <th>Amount</th>
                                                             <th>Mode</th>
                                                             <th>Transaction ID</th>
-                                                            <th>Actions</th>
+                                                            {% comment %} <th>Actions</th> {% endcomment %}
                                                         </tr>
                                                     </thead>
                                                     <tbody>
                                                         {% for payment in payments %}
                                                             <tr>
                                                                 <td>#{{ payment.id }}</td>
-                                                                <td>{{ payment.payment_date|date:"d M, Y" }}</td>
+                                                                <td>{{ payment.payment_date|date:"d M, Y H:i" }}</td>
                                                                 <td>₹{{ payment.amount }}</td>
                                                                 <td>{{ payment.get_payment_mode_display }}</td>
                                                                 <td>{{ payment.transaction_id|default_if_none:"N/A" }}</td>
-                                                                <td>
+                                                                {% comment %} <td>
                                                                     <a href="#" class="btn btn-sm btn-primary"><i class="mdi mdi-eye"></i></a>
-                                                                </td>
+                                                                </td> {% endcomment %}
                                                             </tr>
                                                         {% empty %}
                                                             <tr>
@@ -492,93 +492,4 @@
     </div>
 </div>
 
-<!-- Payment Modal -->
-<div class="modal fade" id="paymentModal-{{ member.id }}" tabindex="-1" role="dialog" aria-labelledby="paymentModalLabel-{{ member.id }}" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="paymentModalLabel-{{ member.id }}">Submit Payment for {{ member.first_name }} {{ member.last_name }}</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="paymentForm-{{ member.id }}" method="post" action="{% url 'billing:submit_due' %}">
-                    {% csrf_token %}
-                    <input type="hidden" name="member_id" value="{{ member.id }}">
-                    <div class="form-group">
-                        <label>Total Due</label>
-                        <input type="text" class="form-control" value="{{ due_amount }}" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label for="amount_paid">Amount</label>
-                        <input type="number" class="form-control" id="amount_paid" name="amount_paid" max="{{ due_amount }}" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="payment_mode">Payment Mode</label>
-                        <select class="form-control" id="payment_mode" name="payment_mode" required>
-                            <option value="cash">Cash</option>
-                            <option value="upi">UPI</option>
-                            <option value="credit_card">Credit Card</option>
-                            <option value="debit_card">Debit Card</option>
-                            <option value="net_banking">Net Banking</option>
-                            <option value="other">Other</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="transaction_id">Transaction ID</label>
-                        <input type="text" class="form-control" id="transaction_id" name="transaction_id">
-                    </div>
-                    <div class="form-group">
-                        <label for="follow_up_date">Next Follow-up Date</label>
-                        <input type="date" class="form-control" id="follow_up_date" name="follow_up_date">
-                    </div>
-                    <div class="form-group">
-                        <label for="comment">Comment</label>
-                        <textarea class="form-control" id="comment" name="comment" rows="3"></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Submit Payment</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-{% endblock %}
-
-{% block extra_js %}
-<script>
-$(document).ready(function(){
-    $('[data-toggle="tooltip"]').tooltip();
-});
-
-function confirmDelete(memberId, memberName, url) {
-    if (confirm("Are you sure you want to delete " + memberName + "?")) {
-        window.location.href = url;
-    }
-}
-
-$('#paymentForm-{{ member.id }}').on('submit', function(e) {
-    e.preventDefault();
-    var form = $(this);
-    $.ajax({
-        type: form.attr('method'),
-        url: form.attr('action'),
-        data: form.serialize(),
-        success: function(response) {
-            // Assuming the server returns a JSON response with a status key
-            if (response.status === 'success') {
-                // You can redirect or show a success message here
-                window.location.href = response.redirect_url;
-            } else {
-                // Handle errors, maybe display a message in the modal
-                alert(response.message);
-            }
-        },
-        error: function(xhr, status, error) {
-            // Handle AJAX errors
-            alert('An error occurred: ' + error);
-        }
-    });
-});
-</script>
 {% endblock %}

@@ -1,5 +1,5 @@
 from django.db import models
-from apps.members.models import Member
+from apps.members.models import Member, MembershipHistory, PersonalTrainer
 from apps.superadmin.models import Gym
 
 class Payment(models.Model):
@@ -14,6 +14,8 @@ class Payment(models.Model):
     ]
 
     member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name='payments', null=True, blank=True)
+    membership_history = models.ForeignKey(MembershipHistory, on_delete=models.CASCADE, related_name='payments', null=True, blank=True)
+    personal_trainer = models.ForeignKey(PersonalTrainer, on_delete=models.CASCADE, related_name='payments', null=True, blank=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     payment_date = models.DateTimeField(auto_now_add=True)
     payment_mode = models.CharField(max_length=50, choices=PAYMENT_MODE_CHOICES, default='cash')

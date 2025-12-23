@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.db import models
 from django.db.models import Q, Sum, F, Value, CharField, Case, When, DecimalField
+from django.db.models.functions import Coalesce
 from django.core.paginator import Paginator
 from django.contrib import messages
 from decimal import Decimal
@@ -13,24 +14,39 @@ from django.http import JsonResponse
 from django.urls import reverse
 
 
+
+
 @never_cache
 @login_required(login_url='login')
 def submit_due(request):
     gym = getattr(request, 'gym', None)
+
+    # Subquery for membership due
+    membership_due_subquery = MembershipHistory.objects.filter(
+        member=models.OuterRef('pk'),
+        status='active',
+        gym=gym
+    ).values('member').annotate(
+        total_due=Sum(F('total_amount') - F('paid_amount'))
+    ).values('total_due')
+
+    # Subquery for personal trainer due
+    pt_due_subquery = PersonalTrainer.objects.filter(
+        member=models.OuterRef('pk'),
+        status='active',
+        gym=gym
+    ).values('member').annotate(
+        total_due=Sum(F('total_amount') - F('paid_amount'))
+    ).values('total_due')
+
     latest_follow_up = Payment.objects.filter(
         member=models.OuterRef('pk'),
         gym=gym
     ).order_by('-follow_up_date').values('follow_up_date')[:1]
 
     members_with_due = Member.objects.filter(gym=gym).annotate(
-        membership_due=Sum(
-            F('membership_history__total_amount') - F('membership_history__paid_amount'),
-            filter=Q(membership_history__status='active', membership_history__gym=gym)
-        ),
-        pt_due=Sum(
-            F('personal_trainer__total_amount') - F('personal_trainer__paid_amount'),
-            filter=Q(personal_trainer__status='active', personal_trainer__gym=gym)
-        ),
+        membership_due=Coalesce(models.Subquery(membership_due_subquery, output_field=DecimalField()), Value(0, output_field=DecimalField())),
+        pt_due=Coalesce(models.Subquery(pt_due_subquery, output_field=DecimalField()), Value(0, output_field=DecimalField())),
         latest_follow_up_date=models.Subquery(latest_follow_up)
     ).filter(Q(membership_due__gt=0) | Q(pt_due__gt=0)).distinct()
 
@@ -57,85 +73,6 @@ def submit_due(request):
     page_number = request.GET.get('page')
     members_page = paginator.get_page(page_number)
 
-    if request.method == 'POST' and 'amount_paid' in request.POST:
-        member_id = request.POST.get('member_id')
-        selected_member = get_object_or_404(Member, id=member_id, gym=gym)
-
-        # Calculate total due amount for the selected member
-        membership_due_info = selected_member.membership_history.filter(status='active', gym=gym).aggregate(
-            total_due=Sum(F('total_amount') - F('paid_amount'))
-        )
-        membership_due = membership_due_info['total_due'] or 0
-
-        pt_due_info = selected_member.personal_trainer.filter(status='active', gym=gym).aggregate(
-            total_due=Sum(F('total_amount') - F('paid_amount'))
-        )
-        pt_due = pt_due_info['total_due'] or 0
-
-        total_due_amount = membership_due + pt_due
-
-        amount_paid_str = request.POST.get('amount_paid')
-        payment_mode = request.POST.get('payment_mode')
-        transaction_id = request.POST.get('transaction_id')
-        comment = request.POST.get('comment')
-        follow_up_date_str = request.POST.get('follow_up_date')
-        follow_up_date = date.fromisoformat(follow_up_date_str) if follow_up_date_str and follow_up_date_str.strip() else None
-
-
-        try:
-            amount_paid = Decimal(amount_paid_str)
-        except (ValueError, TypeError):
-            messages.error(request, 'Invalid amount paid.')
-            return redirect(f"/billing/submit_due/?member_id={member_id}")
-
-        if amount_paid <= 0:
-            messages.error(request, 'Amount paid must be a positive number.')
-        elif amount_paid > total_due_amount:
-            messages.error(request, f'Amount paid cannot be greater than the due amount of {total_due_amount}.')
-        else:
-            payment = Payment.objects.create(
-                member=selected_member,
-                amount=amount_paid,
-                payment_mode=payment_mode,
-                transaction_id=transaction_id,
-                comment=comment,
-                follow_up_date=follow_up_date,
-                gym=gym
-            )
-
-            payment_left = amount_paid
-
-            # Pay off membership dues first
-            outstanding_memberships = selected_member.membership_history.annotate(
-                due=F('total_amount') - F('paid_amount')
-            ).filter(due__gt=0, gym=gym).order_by('membership_start_date')
-
-            for history in outstanding_memberships:
-                if payment_left == 0:
-                    break
-                payable_amount = min(history.due, payment_left)
-                history.paid_amount += payable_amount
-                history.save()
-                payment_left -= payable_amount
-
-            # Pay off personal training dues next
-            outstanding_pts = selected_member.personal_trainer.annotate(
-                due=F('total_amount') - F('paid_amount')
-            ).filter(due__gt=0, gym=gym).order_by('pt_start_date')
-
-            for pt in outstanding_pts:
-                if payment_left == 0:
-                    break
-                payable_amount = min(pt.due, payment_left)
-                pt.paid_amount += payable_amount
-                pt.save()
-                payment_left -= payable_amount
-
-            messages.success(request, 'Payment submitted successfully.')
-            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-                return JsonResponse({'status': 'success', 'redirect_url': reverse('billing:payment_invoice', args=[payment.id])})
-            return redirect('billing:payment_invoice', payment_id=payment.id)
-
     context = {
         'members': members_page,
         'query': query,
@@ -144,6 +81,62 @@ def submit_due(request):
         'follow_up_date': follow_up_date_filter,
     }
     return render(request, 'billing/submit_due.html', context)
+
+@login_required
+def pay_due_payment(request, member_id):
+    gym = getattr(request, 'gym', None)
+    member = get_object_or_404(Member, id=member_id, gym=gym)
+
+    membership_invoices = MembershipHistory.objects.filter(member=member, status='active', gym=gym).exclude(paid_amount=F('total_amount')).annotate(due=F('total_amount') - F('paid_amount'))
+    pt_invoices = PersonalTrainer.objects.filter(member=member, status='active', gym=gym).exclude(paid_amount=F('total_amount')).annotate(due=F('total_amount') - F('paid_amount'))
+
+    if request.method == 'POST':
+        invoice_type = request.POST.get('invoice_type')
+        invoice_id = request.POST.get('invoice_id')
+        amount_paid = Decimal(request.POST.get('amount_paid'))
+        payment_mode = request.POST.get('payment_mode')
+        transaction_id = request.POST.get('transaction_id')
+        comment = request.POST.get('comment')
+
+        invoice = None
+        if invoice_type == 'membership':
+            invoice = get_object_or_404(MembershipHistory, id=invoice_id, member=member, gym=gym)
+        elif invoice_type == 'pt':
+            invoice = get_object_or_404(PersonalTrainer, id=invoice_id, member=member, gym=gym)
+
+        if invoice:
+            due_amount = invoice.total_amount - invoice.paid_amount
+            if amount_paid > due_amount:
+                messages.error(request, f'Amount paid cannot be greater than the due amount of {due_amount}.')
+            else:
+                invoice.paid_amount += amount_paid
+                invoice.save()
+
+                Payment.objects.create(
+                    member=member,
+                    amount=amount_paid,
+                    payment_mode=payment_mode,
+                    transaction_id=transaction_id,
+                    comment=comment,
+                    gym=gym,
+                    membership_history=invoice if invoice_type == 'membership' else None,
+                    personal_trainer=invoice if invoice_type == 'pt' else None
+                )
+                messages.success(request, 'Payment submitted successfully.')
+
+                if invoice_type == 'pt':
+                    return redirect('billing:pt_invoice', member_id=member.id, pt_invoice_id=invoice.id)
+                else:
+                    return redirect('billing:submit_due')
+        else:
+            messages.error(request, 'Invalid invoice selected.')
+
+    context = {
+        'member': member,
+        'membership_invoices': membership_invoices,
+        'pt_invoices': pt_invoices,
+    }
+    return render(request, 'billing/pay_due_payment.html', context)
 
 @login_required
 def update_follow_up(request, member_id):
@@ -172,17 +165,6 @@ def update_follow_up(request, member_id):
             messages.error(request, "No follow-up date provided.")
     
     return redirect('billing:submit_due')
-
-
-@never_cache
-@login_required(login_url='login')
-def payment_invoice(request, payment_id):
-    gym = getattr(request, 'gym', None)
-    payment = get_object_or_404(Payment, id=payment_id, gym=gym)
-    context = {
-        'payment': payment,
-    }
-    return render(request, 'billing/payment_invoice.html', context)
 
 
 @never_cache
@@ -246,7 +228,7 @@ def invoices_list(request):
         due_amount=F('total_amount') - F('paid_amount'),
         invoice_id=F('id'),
         plan_title=F('plan__title')
-    ).values('invoice_id', 'date', 'type', 'amount', 'member_id', 'member__member_id', 'member__first_name', 'member__last_name', 'plan_title', 'due_amount')
+    ).values('invoice_id', 'date', 'type', 'amount', 'paid_amount', 'due_amount', 'member_id', 'member__member_id', 'member__first_name', 'member__last_name', 'plan_title')
 
     # Fetch personal training invoices
     pt_invoices = PersonalTrainer.objects.select_related('member', 'trainer').filter(status='active', gym=gym).annotate(
@@ -258,18 +240,9 @@ def invoices_list(request):
         plan_title=F('trainer__name')
     ).values('invoice_id', 'date', 'type', 'amount', 'member_id', 'member__member_id', 'member__first_name', 'member__last_name', 'plan_title', 'due_amount')
 
-    # Fetch payment invoices
-    payment_invoices = Payment.objects.select_related('member').filter(gym=gym).annotate(
-        date=F('payment_date'),
-        type=Value('payment', output_field=models.CharField()),
-        plan_title=Value('N/A', output_field=models.CharField()),
-        due_amount=Value(0, output_field=models.DecimalField()),
-        invoice_id=F('id')
-    ).values('invoice_id', 'date', 'type', 'amount', 'member_id', 'member__member_id', 'member__first_name', 'member__last_name', 'plan_title', 'due_amount')
-
     # Combine and sort invoices
     all_invoices = sorted(
-        list(membership_invoices) + list(pt_invoices) + list(payment_invoices),
+        list(membership_invoices) + list(pt_invoices),
         key=lambda x: x['date'],
         reverse='-' in sort_by
     )
@@ -287,13 +260,9 @@ def invoices_list(request):
     # Apply status filter
     if status_filter:
         if status_filter == 'paid':
-            all_invoices = [inv for inv in all_invoices if inv['type'] == 'payment' or (inv['type'] == 'membership' and inv['due_amount'] == 0)]
+            all_invoices = [inv for inv in all_invoices if inv['due_amount'] == 0]
         elif status_filter == 'unpaid':
-            all_invoices = [inv for inv in all_invoices if inv['type'] == 'membership' and inv['due_amount'] > 0]
-        elif status_filter == 'receipt':
-            all_invoices = [inv for inv in all_invoices if inv['type'] == 'payment']
-        elif status_filter == 'invoice':
-            all_invoices = [inv for inv in all_invoices if inv['type'] in ['membership', 'pt']]
+            all_invoices = [inv for inv in all_invoices if inv['due_amount'] > 0]
 
     # Pagination
     paginator = Paginator(all_invoices, 15)
@@ -321,23 +290,11 @@ def delete_invoice(request, invoice_type, invoice_id):
 
             invoice.status = 'inactive'
             invoice.save()
-            return JsonResponse({'status': 'success', 'message': 'Invoice deleted successfully.'})
+            return JsonResponse({'status': 'success', 'message': 'Invoice moved to trash successfully.'})
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
-
-    # Keep the old GET request logic for other purposes if needed, but it won't be used by the new delete button.
-    if invoice_type == 'membership':
-        invoice = get_object_or_404(MembershipHistory, id=invoice_id, gym=gym)
-    elif invoice_type == 'pt':
-        invoice = get_object_or_404(PersonalTrainer, id=invoice_id, gym=gym)
-    else:
-        messages.error(request, 'Invalid invoice type.')
-        return redirect('billing:invoices_list')
-
-    invoice.status = 'inactive'
-    invoice.save()
-    messages.success(request, 'Invoice deleted successfully.')
-    return redirect('billing:invoices_list')
+    
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method.'}, status=405)
 
 @login_required
 def trash_invoices(request):

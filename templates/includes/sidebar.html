@@ -1,18 +1,31 @@
 {% load static %}
-<nav class="sidebar sidebar-offcanvas " id="sidebar">
-  <div class="text-center sidebar-brand-wrapper d-flex align-items-center">
+<nav class="sidebar sidebar-offcanvas" id="sidebar">
+  {% comment %} <div class="text-center sidebar-brand-wrapper d-flex align-items-center">
     <a class="sidebar-brand brand-logo" href="{% url 'dashboard' %}">
-      <img src="{% static 'images/SquareFitLogo.png' %}" alt="BhattSquare Logo" />
+      {% if gym.logo %}
+        <img src="{{ gym.logo.url }}" alt="{{ gym.name }} Logo" />
+      {% else %}
+        <img src="{% static 'images/SquareFitLogo.png' %}" alt="BhattSquare Logo" />
+      {% endif %}
     </a>
     <a class="sidebar-brand brand-logo-mini pl-4 pt-3" href="{% url 'dashboard' %}">
-      <img src="{% static 'images/SquareFitLogo.png' %}" alt="Mini Logo" />
+      {% if gym.logo %}
+        <img src="{{ gym.logo.url }}" alt="{{ gym.name }} Logo" />
+      {% else %}
+        <img src="{% static 'images/SquareFitLogo.png' %}" alt="Mini Logo" />
+      {% endif %}
     </a>
+  </div> {% endcomment %}
+  <div class="sidebar-company-info text-center py-3">
+    {% if gym.logo %}
+      <img src="{{ gym.logo.url }}" alt="{{ gym.name }} Logo" class="img-fluid rounded-circle mb-2" style="width: 80px; height: 80px; object-fit: cover; border: 3px solid #fff; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+    {% endif %}
+  
+    <h5 class="text-primary font-weight-bold mb-1">{{ gym.name|default:'GYM Name' }}</h5>
+    <p class="company-slogan small text-muted">{{ gym.slogan|default:'Manage Smarter. Train Better.' }}</p>
   </div>
-<div class="sidebar-company-info text-center py-0">
-      {% comment %} <h5 class="text-primary  mb-1">SquareFit GYM management system</h5> {% endcomment %}
-      <p class="company-slogan small text-muted py-2">Manage Smarter. Train Better.</p>
-    </div>
   <ul class="nav">
+ 
 
     <!-- 1. Dashboard -->
     <li class="nav-item {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
