@@ -79,10 +79,12 @@ def member_profile(request, member_id):
         total_due=Sum(F('total_amount') - F('paid_amount'))
     )['total_due'] or 0
 
+
     # Calculate the total due amount for personal training
     pt_due_amount = pt_member.filter(status='active').aggregate(
         total_due=Sum(F('total_amount') - F('paid_amount'))
     )['total_due'] or 0
+
 
     total_due_amount = membership_due_amount + pt_due_amount
 
@@ -163,12 +165,7 @@ def edit_member(request, member_id):
 @login_required(login_url='login') 
 def member_list(request):
     gym = getattr(request, 'gym', None)
-    member_list = Member.objects.filter(gym=gym).annotate(
-        membership_due=Coalesce(Sum(F('membership_history__total_amount') - F('membership_history__paid_amount'), filter=Q(membership_history__status='active')), Value(0, output_field=DecimalField())),
-        pt_due=Coalesce(Sum(F('personal_trainer__total_amount') - F('personal_trainer__paid_amount'), filter=Q(personal_trainer__status='active')), Value(0, output_field=DecimalField()))
-    ).annotate(
-        total_due=F('membership_due') + F('pt_due')
-    ).order_by('-id')
+    member_list = Member.objects.filter(gym=gym).order_by('-id')
     query = request.GET.get('q')
     if query:
         member_list = member_list.filter(
@@ -179,6 +176,13 @@ def member_list(request):
         ).distinct()
 
     for member in member_list:
+        membership_due_amount = member.membership_history.filter(status='active').aggregate(
+            total_due=Sum(F('total_amount') - F('paid_amount'))
+        )['total_due'] or 0
+        pt_due_amount = member.personal_trainer.filter(status='active').aggregate(
+            total_due=Sum(F('total_amount') - F('paid_amount'))
+        )['total_due'] or 0
+        member.total_due = membership_due_amount + pt_due_amount
         latest_history = member.membership_history.filter(gym=gym).order_by('-id').first()
         member.latest_membership_history = latest_history
 
