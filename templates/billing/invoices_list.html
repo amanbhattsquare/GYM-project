@@ -36,9 +36,6 @@
                             <option value="">All Statuses</option>
                             <option value="paid" {% if status_filter == 'paid' %}selected{% endif %}>Paid</option>
                             <option value="unpaid" {% if status_filter == 'unpaid' %}selected{% endif %}>Unpaid</option>
-                            <option value="overdue" {% if status_filter == 'overdue' %}selected{% endif %}>Overdue</option>
-                            <option value="receipt" {% if status_filter == 'receipt' %}selected{% endif %}>Receipt</option>
-                            <option value="invoice" {% if status_filter == 'invoice' %}selected{% endif %}>Invoice</option>
                         </select>
                     </div>
                     <div class="col-md-3">
@@ -82,15 +79,15 @@
                             </td>
                             <td data-label="Plan">
                                 {% if invoice.type == 'membership' %}
-                                    {{ invoice.plan__title }}
-                                {% else %}
-                                    Payment
+                                    Membership Plan
+                                {% elif invoice.type == 'pt' %}
+                                    Personal Training
                                 {% endif %}
                             </td>
                             <td data-label="Amount">₹{{ invoice.amount|floatformat:2 }}</td>
                             <td data-label="Date">{{ invoice.date|date:"d-m-Y" }}</td>
                             <td data-label="Status">
-                                {% if invoice.type == 'payment' or invoice.due_amount == 0 %}
+                                {% if invoice.due_amount <= 0 %}
                                     <span class="badge badge-success">Paid</span>
                                 {% else %}
                                     <span class="badge badge-warning">Unpaid</span>
@@ -103,8 +100,6 @@
                                 {% elif invoice.type == 'pt' %}
                                     <a href="{% url 'billing:pt_invoice' invoice.member_id invoice.invoice_id %}" class="btn btn-primary btn-sm">View Invoice</a>
                                     <a href="#" class="btn btn-danger btn-sm" title="Delete this invoice" onclick="confirmDelete('{{ invoice.invoice_id }}', '{{ invoice.invoice_id }}', '{% url 'billing:delete_invoice' 'pt' invoice.invoice_id %}')"><i class="mdi mdi-delete-outline"></i></a>
-                                {% else %}
-                                    <a href="{% url 'billing:payment_invoice' invoice.invoice_id %}" class="btn btn-primary btn-sm">View Receipt</a>
                                 {% endif %}
                             </td>
                         </tr>

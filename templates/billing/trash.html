@@ -65,16 +65,12 @@
                                 {% endif %}
                             </td>
                             <td data-label="Plan">
-                                {% if invoice.type == 'membership' %}
-                                    {{ invoice.plan__title }}
-                                {% else %}
-                                    Payment
-                                {% endif %}
+                                {{ invoice.plan_title }}
                             </td>
                             <td data-label="Amount">₹{{ invoice.amount|floatformat:2 }}</td>
                             <td data-label="Date">{{ invoice.date|date:"d-m-Y" }}</td>
                             <td data-label="Status">
-                                {% if invoice.type == 'payment' or invoice.due_amount == 0 %}
+                                {% if invoice.due_amount <= 0 %}
                                     <span class="badge badge-success">Paid</span>
                                 {% else %}
                                     <span class="badge badge-warning">Unpaid</span>

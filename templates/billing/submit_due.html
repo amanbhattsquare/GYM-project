@@ -13,7 +13,7 @@
             <i class="mdi mdi-account-group mdi-18px"></i> Billing
         </li>
         <li class="breadcrumb-item active" aria-current="page">
-            <i class="mdi mdi-currency-usd mdi-18px"></i> Submit Due Payment
+            <i class="mdi mdi-currency-usd mdi-18px"></i> Due Payment List
         </li>
     </ol>
 </nav>
@@ -94,7 +94,7 @@
                                 {% with membership_due=member.membership_due|default:0 pt_due=member.pt_due|default:0 %}
                                     {{ membership_due|add:pt_due }}
                                 {% endwith %}
-                            </td>
+                            </td> 
                             <td data-label="Follow Up Date">
                                 {% if member.latest_follow_up_date %}
                                     {{ member.latest_follow_up_date|date:"d-m-Y" }}
@@ -112,9 +112,10 @@
                                 <a href="tel:{{ member.mobile_number }}" class="btn btn-secondary btn-sm" title="Call">
                                     <i class="mdi mdi-phone"></i>
                                 </a>
-                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#paymentModal-{{ member.id }}" title="Submit Payment">
-                                    <i class="mdi mdi-cash-multiple"></i> Pay
-                                </button>
+                                
+                                        <a class="btn btn-primary btn-sm" href="{% url 'billing:pay_due_payment' member.id %}"> Pay Due</a>
+                               
+                                </div>
                             </td>
                         </tr>
                         {% endfor %}
@@ -131,59 +132,7 @@
 </div>
 
 {% for member in members %}
-<!-- Payment Modal -->
-<div class="modal fade" id="paymentModal-{{ member.id }}" tabindex="-1" role="dialog" aria-labelledby="paymentModalLabel-{{ member.id }}" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="paymentModalLabel-{{ member.id }}">Submit Payment for {{ member.first_name }} {{ member.last_name }}</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form method="post" action="{% url 'billing:submit_due' %}">
-                    {% csrf_token %}
-                    <input type="hidden" name="member_id" value="{{ member.id }}">
-                    <div class="form-group">
-                        <label>Total Due</label>
-                        <input type="text" class="form-control" value="{% with membership_due=member.membership_due|default:0 pt_due=member.pt_due|default:0 %}{{ membership_due|add:pt_due }}{% endwith %}" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label for="amount_paid">Amount to Pay</label>
-                        <input type="number" class="form-control" name="amount_paid" step="0.01" min="0.01" max="{% with membership_due=member.membership_due|default:0 pt_due=member.pt_due|default:0 %}{{ membership_due|add:pt_due }}{% endwith %}" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="payment_mode">Payment Mode</label>
-                        <select class="form-control" name="payment_mode" required>
-                            <option value="cash">Cash</option>
-                            <option value="upi">UPI</option>
-                            <option value="credit_card">Credit Card</option>
-                            <option value="debit_card">Debit Card</option>
-                            <option value="net_banking">Net Banking</option>
-                            <option value="other">Other</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="transaction_id">Transaction ID</label>
-                        <input type="text" class="form-control" name="transaction_id">
-                    </div>
-                    <div class="form-group">
-                        <label for="follow_up_date">Follow Up Date</label>
-                        <input type="date" class="form-control" name="follow_up_date">
-                    </div>
-                    <div class="form-group">
-                        <label for="comment">Comment</label>
-                        <textarea class="form-control" name="comment" rows="3"></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Submit Payment</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Follow Up Modal -->
+<!-- Follow-up Modal -->
 <div class="modal fade" id="followUpModal-{{ member.id }}" tabindex="-1" role="dialog" aria-labelledby="followUpModalLabel-{{ member.id }}" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
