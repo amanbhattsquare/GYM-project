@@ -177,13 +177,13 @@
     </li>
 
     <!-- 15. Notifications -->
-    <li class="nav-item">
+    {% comment %} <li class="nav-item">
       <a class="nav-link" href="pages/notifications.html">
         <i class="mdi mdi-bell menu-icon"></i>
         <span class="menu-title">Notifications</span>
         <span class="badge badge-pill badge-danger ml-auto">2</span>
       </a>
-    </li>
+    </li> {% endcomment %}
 <!-- 16. management -->
     <li class="nav-item {% if request.resolver_match.url_name == 'membership_plans' or request.resolver_match.url_name == 'diet_plans' or request.resolver_match.url_name == 'workout_plans' %}active{% endif %}">
       <a class="nav-link" data-toggle="collapse" href="#management" aria-expanded="{% if request.resolver_match.url_name == 'membership_plans' or request.resolver_match.url_name == 'diet_plans' or request.resolver_match.url_name == 'workout_plans' %}true{% else %}false{% endif %}" aria-controls="management">
