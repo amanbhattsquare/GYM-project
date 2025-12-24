@@ -66,8 +66,8 @@
                             <td data-label="Email">{{ member.email }}</td>
                             <td data-label="Mobile">{{ member.mobile_number }}</td>
                             <td data-label="Due Amount">
-                                {% if member.membership_due > 0 %}
-                                <span class="badge badge-danger">₹{{ member.membership_due|floatformat:2 }}</span>
+                                {% if member.total_due > 0 %}
+                                <span class="badge badge-danger">₹{{ member.total_due|floatformat:2 }}</span>
                                 {% else %}
                                 <span class="badge badge-success">₹0.00</span>
                                 {% endif %}

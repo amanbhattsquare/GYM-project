@@ -156,6 +156,7 @@
                                 <tr>
                                     <th class="font-weight-semibold py-2">#</th>
                                     <th class="font-weight-semibold py-2">Invoice</th>
+                                    <th class="font-weight-semibold py-2">Date</th>
                                     <th class="font-weight-semibold py-2">Profile</th>
                                     <th class="font-weight-semibold py-2">Member</th>
                                     <th class="font-weight-semibold py-2">Amount</th>
@@ -180,6 +181,7 @@
                                             N/A
                                         {% endif %}
                                     </td>
+                                    <td>{{ transaction.date|date:"d-m-Y" }}</td>
                                     <td data-label="Profile">
                                         <img src="{% if transaction.member.profile_picture %}{{ transaction.member.profile_picture.url }}{% else %}{% static 'images/member_DP.jpg' %}{% endif %}"
                                             class="rounded-circle border" style="width: 40px; height: 40px; object-fit: cover;"
@@ -204,7 +206,7 @@
                                 </tr>
                                 {% empty %}
                                 <tr>
-                                    <td colspan="9" class="text-center">No recent transactions.</td>
+                                    <td colspan="10" class="text-center">No recent transactions.</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>

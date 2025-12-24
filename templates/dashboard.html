@@ -95,10 +95,12 @@
 
         <!-- MEMBER GROWTH CHART -->
         <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 font-weight-bold">Member Growth</h5>
+                <small>Last 6 Months</small>
+            </div>
             <div class="card-body">
-                <h5 class="mb-2">Member Growth</h5>
-                <p class="text-muted">Static preview chart</p>
-                <canvas id="member-growth-chart"></canvas>
+                <canvas id="member-growth-chart" style="height: 300px;"></canvas>
             </div>
         </div>
 
@@ -141,124 +143,91 @@
 
             <div class="col-xl-4 mb-4">
                 <div class="card shadow-sm h-100">
-                    <div class="card-body">
-                        <h5 class="mb-3">Today's Classes</h5>
-                        <ul class="list-group">
-                            <li class="list-group-item d-flex justify-content-between">
-                                <span>Yoga</span>
-                                <small class="text-muted">10:00 - 11:00 AM</small>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between">
-                                <span>Zumba</span>
-                                <small class="text-muted">05:00 - 06:00 PM</small>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between">
-                                <span>Strength Training</span>
-                                <small class="text-muted">07:00 - 08:00 PM</small>
-                            </li>
-                        </ul>
-                        <a href="#" class="text-primary font-weight-bold mt-3 d-block">View all classes</a>
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="mb-3">Today's Attendance</h5>
+                        <div class="chart-container my-auto">
+                            <canvas id="attendance-chart"></canvas>
+                        </div>
+                        
                     </div>
                 </div>
             </div>
+
+          
         </div>
 
-        <!-- EXPIRING MEMBERS -->
+        <!-- Expiries Section -->
         <div class="card shadow-sm mb-4">
-            <div class="card-body">
-                <h5 class="mb-3">Upcoming Expiries (Next 7 Days)</h5>
-                <table class="table table-sm">
-                    <thead class="thead-light">
-                        <tr>
-                            <th>Member</th>
-                            <th>Plan</th>
-                            <th>Expiry Date</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Rahul Mehra</td>
-                            <td>Monthly</td>
-                            <td>25 Nov 2025</td>
-                            <td><span class="badge badge-warning">Expiring Soon</span></td>
-                        </tr>
-                        <tr>
-                            <td>Simran Kaur</td>
-                            <td>Quarterly</td>
-                            <td>26 Nov 2025</td>
-                            <td><span class="badge badge-warning">Expiring Soon</span></td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="card-header bg-white">
+                <h5 class="mb-0 font-weight-bold">Memership Expiries</h5>
             </div>
-        </div>
-
-        <!-- EQUIPMENT MAINTENANCE -->
-        <div class="card shadow-sm mb-4">
             <div class="card-body">
-                <h5 class="mb-3">Equipment Maintenance</h5>
-                <table class="table table-sm">
-                    <thead class="thead-light">
-                        <tr>
-                            <th>Equipment</th>
-                            <th>Last Serviced</th>
-                            <th>Next Due</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Treadmill #1</td>
-                            <td>10 Oct 2025</td>
-                            <td>10 Dec 2025</td>
-                            <td><span class="badge badge-success">OK</span></td>
-                        </tr>
-                        <tr>
-                            <td>Lat Pull Machine</td>
-                            <td>28 Aug 2025</td>
-                            <td>28 Nov 2025</td>
-                            <td><span class="badge badge-warning">Due Soon</span></td>
-                        </tr>
-                        <tr>
-                            <td>Stationary Bike</td>
-                            <td>01 Sep 2025</td>
-                            <td>01 Dec 2025</td>
-                            <td><span class="badge badge-success">OK</span></td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="font-weight-bold">Expired</h6>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-hover">
+                                <thead class="bg-danger text-white">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Member</th>
+                                        <th>Plan</th>
+                                        <th>Expiry Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for member in expired_members %}
+                                    <tr>
+                                        <td>{{ forloop.counter }}</td>
+                                        <td>{{ member.name }}</td>
+                                        <td>{{ member.latest_membership.plan.title }}</td>
+                                        <td>{{ member.latest_membership.get_end_date|date:"d M Y" }}</td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="3" class="text-center">No data available</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="font-weight-bold">Upcoming</h6>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-hover">
+                                <thead class="bg-warning text-white">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Member</th>
+                                        <th>Plan</th>
+                                        <th>Expiry Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for member in upcoming_expiries %}
+                                    <tr>
+                                        <td>{{ forloop.counter }}</td>
+                                        <td>{{ member.first_name }} {{ member.last_name }}</td>
+                                        <td>{{ member.latest_membership.plan.title }}</td>
+                                        <td>{{ member.latest_membership.get_end_date|date:"d M Y" }}</td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="3" class="text-center">No data available</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
         <!-- TRAINERS, RECENT PAYMENTS & ENQUIRIES -->
         <div class="row">
-            <div class="col-xl-4 mb-4">
-                <div class="card shadow-sm h-100">
-                    <div class="card-body">
-                        <h5 class="mb-3">Trainer Overview</h5>
-                        <div class="d-flex align-items-center mb-3">
-                            <img src="{% static 'images/trainer1.jpg' %}" alt="trainer" class="rounded-circle" width="50" height="50">
-                            <div class="ml-3">
-                                <h6 class="mb-0">Rahul Kumar</h6>
-                                <small class="text-muted">Clients: 35</small>
-                            </div>
-                        </div>
-
-                        <div class="d-flex align-items-center mb-3">
-                            <img src="{% static 'images/trainer2.jpg' %}" alt="trainer" class="rounded-circle" width="50" height="50">
-                            <div class="ml-3">
-                                <h6 class="mb-0">Sneha Patel</h6>
-                                <small class="text-muted">Clients: 28</small>
-                            </div>
-                        </div>
-
-                        <a href="#" class="text-primary font-weight-bold">Manage Trainers</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-xl-5 mb-4">
+            <div class="col-xl-8 mb-4">
                 <div class="card shadow-sm h-100">
                     <div class="card-body overflow-auto">
                         <h5 class="mb-3">Recent Payments</h5>
@@ -297,7 +266,7 @@
                 </div>
             </div>
 
-            <div class="col-xl-3 mb-4">
+            <div class="col-xl-4     mb-4">
                 <div class="card shadow-sm h-100">
                     <div class="card-body">
                         <h5 class="mb-3">Enquiries & Follow-ups</h5>
@@ -342,36 +311,152 @@
 <!-- Chart.js CDN (ensure base.html doesn't already include) -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
 <script>
-// Static sample data for Member Growth chart
+// Enhanced Member Growth Chart
 const ctx = document.getElementById('member-growth-chart').getContext('2d');
+
+// Creating a gradient for the fill
+const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+gradient.addColorStop(0, 'rgba(54, 162, 235, 0.25)');
+gradient.addColorStop(1, 'rgba(54, 162, 235, 0)');
+
 const memberGrowthChart = new Chart(ctx, {
     type: 'line',
     data: {
-        labels: ['Jun','Jul','Aug','Sep','Oct','Nov'],
+        labels: ['Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov'],
         datasets: [{
             label: 'New Members',
             data: [12, 18, 22, 30, 25, 18],
             tension: 0.3,
             fill: true,
-            backgroundColor: 'rgba(54, 162, 235, 0.12)',
-            borderColor: 'rgba(54, 162, 235, 1)',
-            pointRadius: 3
+            backgroundColor: gradient,
+            borderColor: '#36A2EB',
+            pointBackgroundColor: '#fff',
+            pointBorderColor: '#36A2EB',
+            pointHoverRadius: 6,
+            pointHoverBackgroundColor: '#36A2EB',
+            pointRadius: 4,
+            borderWidth: 2,
         }, {
             label: 'Active Members',
             data: [80, 85, 90, 105, 115, 120],
             tension: 0.3,
             fill: false,
-            borderColor: 'rgba(75, 192, 192, 1)',
-            pointRadius: 3
+            borderColor: '#4BC0C0',
+            pointBackgroundColor: '#fff',
+            pointBorderColor: '#4BC0C0',
+            pointHoverRadius: 6,
+            pointHoverBackgroundColor: '#4BC0C0',
+            pointRadius: 4,
+            borderWidth: 2,
         }]
     },
     options: {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
-            legend: { position: 'top' }
+            legend: {
+                position: 'top',
+                labels: {
+                    font: {
+                        size: 14,
+                        family: "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif"
+                    }
+                }
+            },
+            tooltip: {
+                enabled: true,
+                mode: 'index',
+                intersect: false,
+                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                titleFont: {
+                    size: 16,
+                    weight: 'bold',
+                },
+                bodyFont: {
+                    size: 14,
+                },
+                callbacks: {
+                    label: function(context) {
+                        let label = context.dataset.label || '';
+                        if (label) {
+                            label += ': ';
+                        }
+                        if (context.parsed.y !== null) {
+                            label += context.parsed.y;
+                        }
+                        return label;
+                    }
+                }
+            }
         },
         scales: {
-            y: { beginAtZero: true }
+            y: {
+                beginAtZero: true,
+                grid: {
+                    color: 'rgba(200, 200, 200, 0.2)', // Lighter grid lines
+                },
+                ticks: {
+                    font: {
+                        size: 12,
+                    }
+                }
+            },
+            x: {
+                grid: {
+                    display: false, // Hide x-axis grid lines
+                },
+                ticks: {
+                    font: {
+                        size: 12,
+                    }
+                }
+            }
+        },
+        interaction: {
+            mode: 'nearest',
+            axis: 'x',
+            intersect: false
+        }
+    }
+});
+
+// Static sample data for Attendance doughnut chart
+const attendanceCtx = document.getElementById('attendance-chart').getContext('2d');
+const attendanceChart = new Chart(attendanceCtx, {
+    type: 'doughnut',
+    data: {
+        labels: ['Present', 'Absent'],
+        datasets: [{
+            label: 'Attendance',
+            data: [2, 1], // Sample data: 2 present, 1 absent
+            backgroundColor: [
+                'rgba(9, 155, 155, 0.95)', // Success color
+                'rgba(226, 168, 20, 0.87)', // Warning color
+                
+            ],
+            borderColor: [
+                'rgba(75, 192, 192, 1)',
+                'rgba(255, 206, 86, 1)',
+                
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: {
+                    font: {
+                        size: 12
+                    }
+                }
+            },
+            tooltip: {
+                enabled: true,
+            }
         }
     }
 });

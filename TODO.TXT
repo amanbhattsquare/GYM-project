@@ -82,3 +82,8 @@ asssing ho, expire - jab koi plan assign ho, and  freeze - superadmin karne par 
 
 
  create Public Link for Mermber registration and Event Registration
+
+GST Add in superadmin - that add in when any invoice are generated , i will show also in   invoice page
+
+
+
