@@ -101,6 +101,7 @@ coverage.xml
 # ==========================
 Pipfile.lock
 poetry.lock
+requirements.txt
 
 # ==========================
 # 🔧 DJANGO SPECIFIC

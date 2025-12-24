@@ -87,7 +87,3 @@ GST Add in superadmin - that add in when any invoice are generated , i will show
 
 
 
- ssh bds_dev@93.127.206.42
-
- password DB_user#9919
- 
