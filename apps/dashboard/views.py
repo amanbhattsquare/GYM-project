@@ -9,6 +9,7 @@ from django.http import JsonResponse
 from django.db.models.functions import TruncMonth
 from django.db.models import Count
 from apps.superadmin.models import GymAdmin
+from django.db import models
 
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
@@ -33,11 +34,34 @@ def dashboard(request):
     # Count the number of members who joined in the last 30 days
     new_members_last_30_days = Member.objects.filter(gym=gym, membership_history__membership_start_date__gte=thirty_days_ago).distinct().count()
 
+    # Upcoming and Expired Members
+    today = timezone.now().date()
+    seven_days_from_now = today + timedelta(days=7)
+
+    upcoming_expiries = []
+    expired_members = []
+
+    for member in members:
+        latest_membership = member.latest_membership
+        if latest_membership:
+            end_date = latest_membership.get_end_date()
+            if end_date:
+                if today <= end_date <= seven_days_from_now:
+                    upcoming_expiries.append(member)
+                elif end_date < today:
+                    expired_members.append(member)
+
+    # Sort and limit the lists
+    upcoming_expiries = sorted(upcoming_expiries, key=lambda m: m.latest_membership.get_end_date())[:10]
+    expired_members = sorted(expired_members, key=lambda m: m.latest_membership.get_end_date(), reverse=True)[:10]
+
     context = {
         'total_members': total_members,
         'active_members': active_members,
         'inactive_members': inactive_members,
         'new_members_last_30_days': new_members_last_30_days,
+        'upcoming_expiries': upcoming_expiries,
+        'expired_members': expired_members,
     }
     return render(request, "dashboard.html", context)
 
