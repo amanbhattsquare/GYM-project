@@ -80,12 +80,8 @@
                                 {% endif %}
                             </td>
                             <td data-label="Status">
-                                <span class="badge {% if member.is_active %}badge-success{% else %}badge-danger{% endif %}">
-                                    {% if member.is_active %}
-                                    Active
-                                    {% else %}
-                                    Inactive
-                                    {% endif %}
+                                <span class="badge {% if member.current_status == 'Active' %}badge-success{% elif member.current_status == 'Expired' %}badge-danger{% elif member.current_status == 'Freezed' %}badge-warning{% else %}badge-secondary{% endif %}">
+                                    {{ member.current_status }}
                                 </span>
                             </td>
                             <td data-label="Actions" class="text-center">

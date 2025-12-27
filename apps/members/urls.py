@@ -10,5 +10,7 @@ urlpatterns = [
     path('toggle-status/<int:member_id>/', views.toggle_member_status, name='toggle_member_status'),
     path('assign-membership/<int:member_id>/', views.assign_membership_plan, name='assign_membership_plan'),
     path('assign-pt-trainer/<int:member_id>/', views.assign_pt_trainer, name='assign_pt_trainer'),
+    path('membership/freeze/<int:membership_id>/', views.freeze_membership, name='freeze_membership'),
+    path('membership/unfreeze/<int:membership_id>/', views.unfreeze_membership, name='unfreeze_membership'),
 
 ]
