@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import MemberForm, MedicalHistoryForm, EmergencyContactForm, MembershipHistoryForm, PersonalTrainerForm
-from .models import Member, MedicalHistory, EmergencyContact, MembershipHistory, PersonalTrainer
+from .models import Member, MedicalHistory, EmergencyContact, MembershipHistory, PersonalTrainer, MembershipFreeze
 from apps.management.models import MembershipPlan
 from apps.trainers.models import Trainer
 from apps.billing.models import Payment
@@ -15,6 +15,7 @@ from django.views.decorators.http import require_POST
 
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
+from django.utils import timezone
 
 
 @never_cache
@@ -69,26 +70,32 @@ def add_new_member(request):
 def member_profile(request, member_id):
     gym = getattr(request, 'gym', None)
     member = get_object_or_404(Member, id=member_id, gym=gym)
-    membership_histories = MembershipHistory.objects.filter(member=member, status='active', gym=gym).order_by('-id')
-    pt_member = PersonalTrainer.objects.select_related('trainer').filter(member=member, status='active', gym=gym).order_by('-id')
+    
+    # Fetch both active and frozen memberships
+    membership_histories = MembershipHistory.objects.filter(
+        member=member, status__in=['active', 'frozen'], gym=gym
+    ).order_by('-id')
+    
+    pt_member = PersonalTrainer.objects.select_related('trainer').filter(
+        member=member, status='active', gym=gym
+    ).order_by('-id')
+    
+    # The latest membership can be active or frozen
     latest_membership = membership_histories.first()
+    
     payments = Payment.objects.filter(member=member, gym=gym).order_by('-payment_date')
 
-    # Calculate the total due amount for membership
+    # Calculate the total due amount for active memberships only
     membership_due_amount = membership_histories.filter(status='active').aggregate(
         total_due=Sum(F('total_amount') - F('paid_amount'))
     )['total_due'] or 0
-
 
     # Calculate the total due amount for personal training
     pt_due_amount = pt_member.filter(status='active').aggregate(
         total_due=Sum(F('total_amount') - F('paid_amount'))
     )['total_due'] or 0
 
-
     total_due_amount = membership_due_amount + pt_due_amount
-
-
 
     return render(request, 'members/member_profile.html', {
         'member': member, 
@@ -100,7 +107,6 @@ def member_profile(request, member_id):
         'payments': payments,
         'membership_plan': latest_membership.plan if latest_membership else None
     })
-
 
 
 @never_cache
@@ -274,3 +280,52 @@ def assign_pt_trainer(request, member_id):
         form = PersonalTrainerForm(gym=gym) # Pass gym to the form
     
     return render(request, 'members/assign_PT_trainer.html', {'member': member, 'trainers': trainers, 'trainers_json': trainers_json, 'form': form})
+
+
+@login_required(login_url='login')
+def unfreeze_membership(request, membership_id):
+    membership = get_object_or_404(MembershipHistory, id=membership_id)
+    
+    if request.method == 'POST':
+        freeze = MembershipFreeze.objects.filter(membership=membership, unfreeze_date__isnull=True).first()
+        if freeze:
+            freeze.unfreeze_date = timezone.now().date()
+            freeze.save()
+            
+            membership.status = 'active'
+            membership.save()
+            
+            messages.success(request, "Membership has been unfrozen.")
+        else:
+            messages.error(request, "No active freeze found for this membership.")
+        
+        return redirect('member_profile', member_id=membership.member.id)
+    
+    return redirect('member_profile', member_id=membership.member.id)
+
+
+@login_required(login_url='login')
+def freeze_membership(request, membership_id):
+    membership = get_object_or_404(MembershipHistory, id=membership_id)
+    
+    if request.method == 'POST':
+        reason = request.POST.get('reason', '')
+        
+        # Check if the membership is already frozen
+        if membership.is_frozen:
+            messages.error(request, "This membership is already frozen.")
+            return redirect('member_profile', member_id=membership.member.id)
+
+        MembershipFreeze.objects.create(
+            membership=membership,
+            freeze_date=timezone.now().date(),
+            reason=reason
+        )
+        
+        membership.status = 'frozen'
+        membership.save()
+        
+        messages.success(request, "Membership has been frozen.")
+        return redirect('member_profile', member_id=membership.member.id)
+    
+    return redirect('member_profile', member_id=membership.member.id)

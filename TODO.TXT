@@ -87,3 +87,9 @@ GST Add in superadmin - that add in when any invoice are generated , i will show
 
 
 
+Freeze or Unfreeze a Membership 
+this button are in Mermber's profile
+In the member's profile, you will find an option to change their membership status. You can select "Freeze" and specify a reason and duration.
+ To reactivate, simply select "Unfreeze". When membership are freeze then membership end date are also expend 
+ freeze- upfreeze = 6 days then  membership end date are also expend  6 days 
+

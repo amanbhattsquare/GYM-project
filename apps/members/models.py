@@ -65,6 +65,20 @@ class Member(models.Model):
         return self.membership_history.order_by('-membership_start_date').first()
 
     @property
+    def current_status(self):
+        latest = self.latest_membership
+        if not latest:
+            return "No Membership"
+
+        if latest.is_frozen:
+            return "Freezed"
+        
+        if latest.get_end_date() < timezone.now().date():
+            return "Expired"
+
+        return "Active"
+
+    @property
     def is_active(self):
         latest = self.latest_membership
         if not latest:
@@ -113,11 +127,15 @@ class MembershipHistory(models.Model):
     transaction_id = models.CharField(max_length=100, blank=True, null=True)
     comment = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=10, choices=[('active', 'Active'), ('inactive', 'Inactive')],
+    status = models.CharField(max_length=10, choices=[('active', 'Active'), ('inactive', 'Inactive'), ('frozen', 'Frozen')],
                               default='active')
 
     def __str__(self):
         return f"{self.member} - {self.plan}"
+
+    @property
+    def is_frozen(self):
+        return self.freezes.filter(unfreeze_date__isnull=True).exists()
 
     @property
     def due_amount(self):
@@ -131,21 +149,18 @@ class MembershipHistory(models.Model):
         total_add_on_days = self.add_on_days + self.plan.add_on_days
 
         if duration_unit in ['day', 'days']:
-            return self.membership_start_date + timedelta(days=duration_value + total_add_on_days)
+            base_end_date = self.membership_start_date + timedelta(days=duration_value + total_add_on_days)
+        elif duration_unit in ['week', 'weeks']:
+            base_end_date = self.membership_start_date + timedelta(weeks=duration_value) + timedelta(days=total_add_on_days)
+        elif duration_unit in ['month', 'months']:
+            base_end_date = self.membership_start_date + timedelta(days=30 * duration_value) + timedelta(days=total_add_on_days)
+        elif duration_unit in ['year', 'years']:
+            base_end_date = self.membership_start_date + timedelta(days=365 * duration_value) + timedelta(days=total_add_on_days)
+        else:
+            return None
 
-        if duration_unit in ['week', 'weeks']:
-            return self.membership_start_date + timedelta(weeks=duration_value) + timedelta(
-                days=total_add_on_days)
-
-        if duration_unit in ['month', 'months']:
-            return self.membership_start_date + timedelta(days=30 * duration_value) + timedelta(
-                days=total_add_on_days)
-
-        if duration_unit in ['year', 'years']:
-            return self.membership_start_date + timedelta(days=365 * duration_value) + timedelta(
-                days=total_add_on_days)
-
-        return None
+        total_freeze_duration = sum(freeze.duration for freeze in self.freezes.all())
+        return base_end_date + timedelta(days=total_freeze_duration)
 
 
 class PersonalTrainer(models.Model):
@@ -178,3 +193,20 @@ class PersonalTrainer(models.Model):
     @property
     def due_amount(self):
         return self.total_amount - self.paid_amount
+
+
+class MembershipFreeze(models.Model):
+    membership = models.ForeignKey(MembershipHistory, on_delete=models.CASCADE, related_name='freezes')
+    freeze_date = models.DateField()
+    unfreeze_date = models.DateField(null=True, blank=True)
+    reason = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.membership.member.name} - Freeze from {self.freeze_date}"
+
+    @property
+    def duration(self):
+        if self.unfreeze_date:
+            return (self.unfreeze_date - self.freeze_date).days
+        return (timezone.now().date() - self.freeze_date).days
