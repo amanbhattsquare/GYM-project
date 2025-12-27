@@ -1,5 +1,5 @@
 {% load static %}
-<nav class="sidebar sidebar-offcanvas" id="sidebar">
+<nav class="sidebar sidebar-offcanvas " id="sidebar"  >
   {% comment %} <div class="text-center sidebar-brand-wrapper d-flex align-items-center">
     <a class="sidebar-brand brand-logo" href="{% url 'dashboard' %}">
       {% if gym.logo %}
@@ -224,7 +224,7 @@
     <!--  Sign Out -->
     <li class="nav-item sidebar-actions">
       <div class="nav-link">
-        <div class="mt-2">
+        <div class="mt-2 ">
           <a href="{% url 'logout' %}" class="btn btn-block btn-signout btn-lg font-weight-medium">
             <i class="mdi mdi-logout"></i> Sign Out
           </a>
