@@ -97,7 +97,7 @@
                             </td>
                             <td data-label="Follow Up Date">
                                 {% if member.latest_follow_up_date %}
-                                    {{ member.latest_follow_up_date|date:"d-m-Y H:i" }}
+                                    {{ member.latest_follow_up_date|date:"d-m-Y" }}
                                 {% else %}
                                     No Follow Up
                                 {% endif %}
