@@ -16,6 +16,7 @@ from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.utils import timezone
+from decimal import Decimal, ROUND_HALF_UP
 
 
 @never_cache
@@ -229,6 +230,7 @@ def assign_membership_plan(request, member_id):
     member = get_object_or_404(Member, id=member_id, gym=gym)
     plans = MembershipPlan.objects.filter(gym=gym)
     plans_json = serialize('json', plans)
+    gym_json = serialize('json', [gym])
     if request.method == 'POST':
         form = MembershipHistoryForm(request.POST, gym=gym)
         if form.is_valid():
@@ -236,6 +238,14 @@ def assign_membership_plan(request, member_id):
             history.member = member
             history.gym = gym
             history.transaction_id = request.POST.get('transaction_id')
+            
+            # Calculate total amount with GST
+            plan_fee = history.plan.plan_fee
+            gst_rate = gym.gst_rate if gym.gst_enabled else 0
+            gst_amount = (plan_fee * gst_rate) / 100
+            total_amount = plan_fee + gst_amount
+            history.total_amount = Decimal(total_amount).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+
             history.save()
 
             if history.paid_amount > 0:
@@ -254,7 +264,7 @@ def assign_membership_plan(request, member_id):
             return redirect('billing:invoice', member_id=member.id, history_id=history.id)
     else:
         form = MembershipHistoryForm(gym=gym)
-    return render(request, 'members/membership_plan_assign.html', {'member': member, 'plans': plans, 'plans_json': plans_json, 'form': form})
+    return render(request, 'members/membership_plan_assign.html', {'member': member, 'plans': plans, 'plans_json': plans_json, 'form': form, 'gym_json': gym_json})
 
 @never_cache
 @login_required(login_url='login')

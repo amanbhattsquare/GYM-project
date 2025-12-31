@@ -6,7 +6,7 @@ class GymForm(forms.ModelForm):
 
     class Meta:
         model = Gym
-        fields = ['name', 'gym_id_prefix', 'slogan', 'logo', 'pincode', 'address', 'area', 'city', 'state', 'phone', 'landline', 'email', 'website', 'note']
+        fields = ['name', 'gym_id_prefix', 'slogan', 'logo', 'pincode', 'address', 'area', 'city', 'state', 'phone', 'landline', 'email', 'website', 'note', 'gst_enabled', 'gst_rate', 'gst_number']
 
     def clean_username(self):
         username = self.cleaned_data.get('username')
@@ -25,8 +25,13 @@ class GymForm(forms.ModelForm):
         self.fields['email'].widget.attrs['placeholder'] = 'Enter the email address'
         self.fields['website'].widget.attrs['placeholder'] = 'Enter the website URL'
         self.fields['note'].widget.attrs['placeholder'] = 'Enter any additional notes'
+        self.fields['gst_rate'].widget.attrs['placeholder'] = 'Enter GST Rate'
+        self.fields['gst_number'].widget.attrs['placeholder'] = 'Enter GST Number'
         for field_name, field in self.fields.items():
-            field.widget.attrs['class'] = 'form-control'
+            if field_name == 'gst_enabled':
+                field.widget.attrs.update({'class': 'form-check-input', 'role': 'switch'})
+            else:
+                field.widget.attrs.update({'class': 'form-control'})
 
 class GymAdminForm(forms.ModelForm):
     name = forms.CharField(max_length=150, required=True)

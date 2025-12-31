@@ -141,6 +141,16 @@
                                 <td><strong>Discount on Total</strong></td>
                                 <td class="text-right">- ₹{{ history.discount }}</td>
                             </tr>
+                            {% if sgst > 0 and cgst > 0 %}
+                            <tr>
+                                <td><strong>SGST ({{ sgst_rate|floatformat:2 }}%)</strong></td>
+                                <td class="text-right">₹{{ sgst|floatformat:2 }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>CGST ({{ cgst_rate|floatformat:2 }}%)</strong></td>
+                                <td class="text-right">₹{{ cgst|floatformat:2 }}</td>
+                            </tr>
+                            {% endif %}
                             <tr class="bg-light">
                                 <td><strong>Total</strong></td>
                                 <td class="text-right"><strong>₹{{ history.total_amount }}</strong></td>

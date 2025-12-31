@@ -8,7 +8,7 @@ from django.db.models import Q, Sum, F, Value, CharField, Case, When, DecimalFie
 from django.db.models.functions import Coalesce
 from django.core.paginator import Paginator
 from django.contrib import messages
-from decimal import Decimal
+from decimal import Decimal, ROUND_HALF_UP
 from datetime import date
 from django.http import JsonResponse
 from django.urls import reverse
@@ -181,11 +181,32 @@ def invoice(request, member_id, history_id):
     previous_invoice = member_invoices[current_invoice_index - 1] if current_invoice_index > 0 else None
     next_invoice = member_invoices[current_invoice_index + 1] if current_invoice_index < len(member_invoices) - 1 else None
 
+    sgst = 0
+    cgst = 0
+    sgst_rate = 0
+    cgst_rate = 0
+    if gym.gst_enabled:
+        gst_rate = gym.gst_rate
+        total_amount = history.total_amount
+        gst_amount = (total_amount * gst_rate) / 100
+        sgst = (gst_amount / 2)
+        cgst = (gst_amount / 2)
+
+        sgst = Decimal(sgst).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+        cgst = Decimal(cgst).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+
+        sgst_rate = gst_rate / 2
+        cgst_rate = gst_rate / 2
+
     context = {
         'member': member,
         'history': history,
         'previous_invoice': previous_invoice,
         'next_invoice': next_invoice,
+        'sgst': sgst,
+        'cgst': cgst,
+        'sgst_rate': sgst_rate,
+        'cgst_rate': cgst_rate,
     }
     return render(request, 'billing/invoice.html', context)
 

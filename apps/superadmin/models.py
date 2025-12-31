@@ -19,6 +19,9 @@ class Gym(models.Model):
     landline = models.CharField(max_length=20, blank=True)
     email = models.EmailField(blank=True)
     website = models.URLField(blank=True)
+    gst_number = models.CharField(max_length=15, blank=True, null=True)
+    gst_enabled = models.BooleanField(default=False)
+    gst_rate = models.PositiveIntegerField(default=0, blank=True, null=True)
     note = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 

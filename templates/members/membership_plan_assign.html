@@ -74,6 +74,26 @@
                             </div>
                         </div>
                         <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>GST Rate</label>
+                                    <input type="text" id="gst_rate" class="form-control" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>SGST</label>
+                                    <input type="text" id="sgst" class="form-control" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>CGST</label>
+                                    <input type="text" id="cgst" class="form-control" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="id_payment_mode">Payment Mode</label>
@@ -113,12 +133,16 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const plansData = JSON.parse('{{ plans_json|escapejs|default:"[]" }}');
+    const gymData = JSON.parse('{{ gym_json|escapejs|default:"[]" }}')[0];
     
     const planSelect = document.getElementById('id_plan');
     const registrationFeeInput = document.getElementById('id_registration_fee');
     const discountInput = document.getElementById('id_discount');
     const totalAmountInput = document.getElementById('id_total_amount');
     const totalDisplay = document.getElementById('total_display');
+    const gstRateInput = document.getElementById('gst_rate');
+    const sgstInput = document.getElementById('sgst');
+    const cgstInput = document.getElementById('cgst');
     
     function updateTotalAmount() {
         const selectedPlanId = planSelect.value;
@@ -133,7 +157,21 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
         
-        const totalAmount = planOfferPrice + registrationFee - discount;
+        const baseAmount = planOfferPrice + registrationFee - discount;
+        
+        let gstRate = 0;
+        if (gymData && gymData.fields.gst_enabled) {
+            gstRate = parseFloat(gymData.fields.gst_rate) || 0;
+        }
+        
+        const gstAmount = (baseAmount * gstRate) / 100;
+        const sgst = gstAmount / 2;
+        const cgst = gstAmount / 2;
+        const totalAmount = baseAmount + gstAmount;
+        
+        gstRateInput.value = gstRate.toFixed(2) + '%';
+        sgstInput.value = sgst.toFixed(2);
+        cgstInput.value = cgst.toFixed(2);
         totalAmountInput.value = totalAmount.toFixed(2);
         totalDisplay.textContent = totalAmount.toFixed(2);
     }
