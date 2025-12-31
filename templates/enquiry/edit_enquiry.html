@@ -31,31 +31,29 @@
             <form method="post" class="needs-validation" novalidate>
                 {% csrf_token %}
                 <div class="row">
-                    <div class="col-md-6 mb-3">
+                    <div class="col-md-4 mb-3">
                         <label for="id_name" class="form-label">Name</label>
                         {{ form.name }}
                     </div>
-                    <div class="col-md-6 mb-3">
+                    <div class="col-md-4 mb-3">
                         <label for="id_contact_number" class="form-label">Contact Number</label>
                         {{ form.contact_number }}
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6 mb-3">
+                    <div class="col-md-4 mb-3">
                         <label for="id_email" class="form-label">Email</label>
                         {{ form.email }}
                     </div>
-                    <div class="col-md-6 mb-3">
+                </div>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
                         <label for="id_gender" class="form-label">Gender</label>
                         {{ form.gender }}
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6 mb-3">
+                    <div class="col-md-4 mb-3">
                         <label for="id_date_of_birth" class="form-label">Date of Birth</label>
                         {{ form.date_of_birth }}
                     </div>
-                    <div class="col-md-6 mb-3">
+                    <div class="col-md-4 mb-3">
                         <label for="id_source" class="form-label">Source</label>
                         {{ form.source }}
                     </div>
@@ -65,23 +63,17 @@
                     {{ form.address }}
                 </div>
                 <div class="row">
-                    <div class="col-md-6 mb-3">
+                    <div class="col-md-4 mb-3">
                         <label for="id_interested_in" class="form-label">Query For</label> 
                         {{ form.interested_in }}
                     </div>
-                    <div class="col-md-6 mb-3">
+                    <div class="col-md-4 mb-3">
                         <label for="id_status" class="form-label">Status</label>
                         {{ form.status }}
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-6 mb-3">
+                    <div class="col-md-4 mb-3">
                         <label for="id_next_follow_up_date" class="form-label">Next Follow-up Date</label>
                         {{ form.next_follow_up_date }}
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label for="id_assigned_to" class="form-label">Assigned To</label>
-                        {{ form.assigned_to }}
                     </div>
                 </div>
                 <div class="mb-3">

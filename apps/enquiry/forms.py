@@ -16,6 +16,5 @@ class EnquiryForm(forms.ModelForm):
             'interested_in': forms.Select(attrs={'class': 'form-control', 'placeholder': 'Select your interested in'}),
             'status': forms.Select(attrs={'class': 'form-control', 'placeholder': 'Select your status'}),
             'next_follow_up_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'placeholder': 'Select your next follow up date'}),
-            'assigned_to': forms.Select(attrs={'class': 'form-control', 'placeholder': 'Select your assigned to'}),
             'enquiry_note': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Enter your enquiry note'}),   
         }

@@ -35,7 +35,7 @@ def add_new_enquiry(request):
 @login_required
 def enquiry_list(request):
     gym = getattr(request, 'gym', None)
-    enquiry_list = Enquiry.objects.filter(gym=gym)
+    enquiry_list = Enquiry.objects.filter(gym=gym).order_by('-enquiry_date')
     
     # Search functionality
     query = request.GET.get('q')

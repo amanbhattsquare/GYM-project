@@ -27,7 +27,6 @@ class Enquiry(models.Model):
     ]
 
     STATUS_CHOICES = [
-        ('pending', 'Pending'),
         ('follow_up', 'Follow-up'),
         ('converted', 'Converted'),
         ('lost', 'Lost'),
@@ -42,7 +41,7 @@ class Enquiry(models.Model):
     enquiry_date = models.DateField(auto_now_add=True)
     source = models.CharField(max_length=20, choices=SOURCE_CHOICES, default='walk_in')
     interested_in = models.CharField(max_length=20, choices=INTERESTED_IN_CHOICES, default='gym')
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES)
     next_follow_up_date = models.DateField(blank=True, null=True)
     # assigned_to = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, related_name='enquiries')
     enquiry_note = models.TextField( null=True, blank=True)
@@ -51,9 +50,7 @@ class Enquiry(models.Model):
         return self.name
 
     def get_status_color_class(self):
-        if self.status == 'pending':
-            return 'badge-warning'
-        elif self.status == 'follow_up':
+        if self.status == 'follow_up':
             return 'badge-info'
         elif self.status == 'converted':
             return 'badge-success'
