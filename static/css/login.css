@@ -35,3 +35,15 @@ body {
 .auth-link {
     font-size: 14px;
 }
+
+#toggle-password {
+    cursor: pointer;
+    background: transparent;
+    border: 1px solid #d7d7d7;
+    border-radius: 10%;
+    border-left: 0;
+}
+
+#toggle-password:hover {
+    background-color: #f2f2f2;
+}
