@@ -14,9 +14,13 @@
         </li>
         <li class="breadcrumb-item">
             <a href="{% url 'member_list' %}" class="text-decoration-none">
-                <i class="mdi mdi-account-multiple-outline mdi-18px"></i> Members
+                <i class="mdi mdi-account-multiple-outline mdi-18px"></i> Members List
             </a>
         </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'member_profile' member.id %}" class="text-decoration-none">
+                    <i class="mdi mdi-account-outline mdi-18px"></i> {{ member.first_name }} {{ member.last_name }}
+                </a>
         <li class="breadcrumb-item active" aria-current="page">
             <i class="mdi mdi-account-plus-outline mdi-18px"></i> Edit Member
         </li>

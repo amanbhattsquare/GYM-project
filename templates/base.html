@@ -14,11 +14,32 @@
   <link rel="stylesheet" href="{% static 'css/style.css' %}" /> 
   <link rel="stylesheet" href="{% static 'css/login.css' %}" /> 
   <link rel="stylesheet" href="{% static 'css/customstyle.css' %}" /> 
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
   <link rel="shortcut icon" href="{% static 'images/favicon.png' %}" />
+  <style>
+    .codex-loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #ffffffcb;
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  </style>
 </head>
 
 <body>
+    <!-- Loader Start-->
+  <div class="codex-loader">
+    <img src="{% static 'images/loader.gif' %}" alt="" class="img-fluid">
+  </div>
+
+
   <div class="container-scroller">
     {% include 'includes/sidebar.html' %}
     <div class="container-fluid page-body-wrapper">
@@ -69,6 +90,13 @@
   {% block javascript %}
   {% include 'includes/swal_messages.html' %}
   {% endblock javascript %}
+  <script>
+    // Hide loader when page is fully loaded
+    window.addEventListener('load', function() {
+      const loader = document.querySelector('.codex-loader');
+      loader.style.display = 'none';
+    });
+  </script>
   </body>
 
 </html>

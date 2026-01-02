@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 
 <head>
@@ -60,8 +61,8 @@
 
     <!-- Left: Logo -->
     <div class="flex-none">
-      <a href="/" class="btn btn-ghost text-xl font-bold text-primary normal-case gap-2">
-        <i class="fas fa-dumbbell text-2xl"></i>
+      <a href="/" class="btn btn-ghost text-xl font-bold text-dark normal-case gap-2">
+        <img src="{% static 'images/SFLogo.png' %}" class="h-12 w-auto">
         SquareFit
       </a>
     </div>
@@ -81,7 +82,7 @@
     <div class="flex-none flex items-center gap-3">
 
       <!-- Login Button (Visible on larger screens) -->
-      <a href="{% url 'login' %}" class="btn btn-ghost btn-sm hidden sm:flex gap-2">
+      <a href="{% url 'login' %}" class="btn btn-sm btn-secondary hidden sm:flex gap-2">
         <i class="fas fa-sign-in-alt"></i>
         Login
       </a>
@@ -90,7 +91,7 @@
       <a href="#pricing" class="btn btn-primary btn-sm gap-2 shadow-lg">
         <i class="fas fa-rocket"></i>
         <span class="hidden sm:inline">Get Started</span>
-        <span class="sm:hidden">Start</span>
+        {% comment %} <span class="sm:hidden">Start</span> {% endcomment %}
       </a>
       
 
@@ -120,8 +121,9 @@
   <ul class="menu p-6 w-80 h-full bg-base-100 text-base-content shadow-2xl">
     <!-- Mobile Logo + Close -->
     <div class="flex justify-between items-center mb-8">
-      <a href="/" class="text-2xl font-bold text-primary flex items-center gap-2">
-        <i class="fas fa-dumbbell"></i> SquareFit
+      <a href="/" class="btn btn-ghost text-xl font-bold text-dark normal-case gap-2">
+        <img src="{% static 'images/SFLogo.png' %}" class="h-12 w-auto">
+        SquareFit
       </a>
       <label for="mobile-drawer" class="btn btn-circle btn-ghost">
         <i class="fas fa-times text-xl"></i>
@@ -149,15 +151,11 @@
 
     <!-- Mobile Buttons -->
     <li>
-      <a href="{% url 'login' %}" class="btn btn-ghost text-lg">
+      <a href="{% url 'login' %}" class="btn btn-secondary text-lg">
         <i class="fas fa-sign-in-alt mr-2"></i> Login
       </a>
     </li>
-    <li>
-      <a href="#pricing" class="btn btn-primary text-lg shadow-lg">
-        <i class="fas fa-rocket mr-2"></i> Get Started
-      </a>
-    </li>
+    
   </ul>
 </div>
 
@@ -229,39 +227,7 @@
       <div class="relative flex justify-center lg:justify-end">
         <!-- Floating Dashboard Mockup -->
         <div class="relative mockup-browser border border-base-300 shadow-2xl w-full max-w-lg bg-base-100">
-          <div class="mockup-browser-toolbar">
-            <div class="input border border-base-300">https://app.SquareFit.com/dashboard</div>
-          </div>
-          <div class="flex justify-center px-4 py-12 bg-gradient-to-br from-primary/10 to-secondary/10">
-            <div class="text-center space-y-4">
-              <div class="stats shadow-lg bg-white/90 backdrop-blur">
-                <div class="stat place-items-center">
-                  <div class="stat-title">Active Members</div>
-                  <div class="stat-value text-primary">1,247</div>
-                  <div class="stat-desc text-success">+12% this month</div>
-                </div>
-                <div class="stat place-items-center">
-                  <div class="stat-title">Revenue</div>
-                  <div class="stat-value text-secondary">₹48,920</div>
-                  <div class="stat-desc">This month</div>
-                </div>
-              </div>
-              <div class="grid grid-cols-3 gap-4">
-                <div class="bg-white/80 rounded-2xl p-4 shadow">
-                  <i class="fas fa-users text-3xl text-primary mb-2"></i>
-                  <p class="font-bold">Members</p>
-                </div>
-                <div class="bg-white/80 rounded-2xl p-4 shadow">
-                  <i class="fas fa-calendar-check text-3xl text-success mb-2"></i>
-                  <p class="font-bold">Attendance</p>
-                </div>
-                <div class="bg-white/80 rounded-2xl p-4 shadow">
-                  <i class="fas fa-dollar-sign text-3xl text-warning mb-2"></i>
-                  <p class="font-bold">Billing</p>
-                </div>
-              </div>
-            </div>
-          </div>
+           <img src="{% static 'images/hero_img.jpg' %}" alt="SquareFit Dashboard" class="w-full rounded-b-lg">
         </div>
 
         <!-- Floating Elements -->
@@ -765,14 +731,19 @@
 
                 <!-- Brand + Description -->
                 <div class="lg:col-span-2">
-                    <a href="/" class="flex items-center gap-3 text-2xl font-bold text-primary mb-6">
-                        <i class="fas fa-dumbbell text-3xl"></i>
+                    <a href="/" class="flex items-center gap-3 text-2xl font-bold text-dark mb-6">
+                         <img src="{% static 'images/SFLogo.png' %}" class="h-12 w-auto">
                         SquareFit
                     </a>
+                   
                     <p class="text-base-content/70 max-w-xs leading-relaxed">
                         India’s fastest-growing gym & fitness studio management software. Member check-in, billing,
-                        class booking, trainer app – sab ek jagah.
+                        class booking, trainer app – in one place.
                     </p>
+                     <div class="flex items-center gap-2 text-sm text-base-content/50">
+                       <span>Powered by</span>
+                           <a href="https://bhattsquare.com/" target="_blank" rel="noopener noreferrer" class="hover:text-secondary font-medium">BhattSquare </a>
+                      </div>
 
                     <!-- Social Icons -->
                     <div class="flex gap-3 mt-6">

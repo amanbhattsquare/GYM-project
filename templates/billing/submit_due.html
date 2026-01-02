@@ -97,7 +97,7 @@
                             </td>
                             <td data-label="Follow Up Date">
                                 {% if member.latest_follow_up_date %}
-                                    {{ member.latest_follow_up_date|date:"d-m-Y H:i" }}
+                                    {{ member.latest_follow_up_date|date:"d-m-Y" }}
                                 {% else %}
                                     No Follow Up
                                 {% endif %}
@@ -112,13 +112,11 @@
                                 <a href="tel:{{ member.mobile_number }}" class="btn btn-secondary btn-sm" title="Call">
                                     <i class="mdi mdi-phone"></i>
                                 </a>
-                                
                                         <a class="btn btn-primary btn-sm" href="{% url 'billing:pay_due_payment' member.id %}"> Pay Due</a>
-                               
                                 </div>
                             </td>
                         </tr>
-                        {% endfor %}
+                        {% endfor %} 
                     </tbody>
                 </table>
             </div>

@@ -142,9 +142,9 @@
                                                     <div class="row mb-3">
                                                         <div class="col-sm-3">
                                                             <h6 class="mb-0">Address</h6>
-                                                        </div>
+                                                        </div> 
                                                         <div class="col-sm-9 text-dark">
-                                                            {{ gym.address }}
+                                                            {{ gym.address }}, {{ gym.area }}, {{ gym.city }}, {{ gym.state }} - {{ gym.pincode }}
                                                         </div>
                                                     </div>
                                                     <div class="row mb-3">
@@ -163,6 +163,41 @@
                                                             {{ gym.email }}
                                                         </div>
                                                     </div>
+                                                </div>
+                                            </div>
+                                            <div class="card mt-3">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">GST Information</h5>
+                                                    <div class="row mb-3">
+                                                        <div class="col-sm-3">
+                                                            <h6 class="mb-0">GST Enabled</h6>
+                                                        </div>
+                                                        <div class="col-sm-9 text-dark">
+                                                            {% if gym.gst_enabled %}
+                                                                <span class="badge bg-success">Yes</span>
+                                                            {% else %}
+                                                                <span class="badge bg-danger">No</span>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                    {% if gym.gst_enabled %}
+                                                        <div class="row mb-3">
+                                                            <div class="col-sm-3">
+                                                                <h6 class="mb-0">GST Rate</h6>
+                                                            </div>
+                                                            <div class="col-sm-9 text-dark">
+                                                                {{ gym.gst_rate }}%
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mb-3">
+                                                            <div class="col-sm-3">
+                                                                <h6 class="mb-0">GST Number</h6>
+                                                            </div>
+                                                            <div class="col-sm-9 text-dark">
+                                                                {{ gym.gst_number }}
+                                                            </div>
+                                                        </div>
+                                                    {% endif %}
                                                 </div>
                                             </div>
                                         </div>

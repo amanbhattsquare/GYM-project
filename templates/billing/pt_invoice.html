@@ -55,15 +55,18 @@
             <!-- ================= Invoice Header ================= -->
             <div class="row mb-5">
                 <div class="col-sm-6">
-                    <img src="{% static 'images/SquareFitLogo.png' %}" alt="logo" style="max-height: 70px;">
-                    <p class="mt-3 mb-1 text-muted">Manage Smarter. Train Better.</p>
+                      {% if gym.logo %}
+                        <img src="{{ gym.logo.url }}" alt="{{ gym.name }} Logo" style="max-height: 70px; margin-bottom: 15px;">
+                    {% endif %}
+                    <p class="mb-1"><strong>{{ gym.name }}</strong></p>
+                    <p class="mt-3 mb-1 text-muted">{{ gym.slogan }}</p>
                 </div>
 
                 <div class="col-sm-6 text-sm-right text-start invoice-header">
                     <h2 class="mb-3">PT Invoice #{{ pt_invoice.id }}</h2>
 
                     <p class="mb-1"><strong>Date:</strong> {{ pt_invoice.created_at|date:"d M, Y" }}</p>
-                    <p class="mb-2"><strong>Due Date:</strong> {{ pt_invoice.pt_end_date|date:"d M, Y" }}</p>
+                   
 
                     <div class="mt-3">
                         {% if pt_invoice.due_amount <= 0 %}
@@ -79,10 +82,10 @@
             <div class="row mb-5">
                 <div class="col-sm-6">
                     <h6 class="mb-3 text-uppercase fw-bold">From:</h6>
-                    <p class="mb-1"><strong>Bhatt Gym</strong></p>
-                    <p class="mb-1">Gomti Nagar, Lucknow</p>
-                    <p class="mb-1">Email: bhattsqure@gmail.com</p>
-                    <p>Phone: +91 97256 18549</p>
+                    <p class="mb-1"><strong>{{ gym.name }}</strong></p>
+                    <p class="mb-1">{{ gym.address }}, {{ gym.city }}, {{ gym.state }}, {{ gym.country }} {{ gym.pincode }}</p>
+                    <p class="mb-1">Email: {{ gym.email }}</p>
+                    <p>Phone: {{ gym.phone }}</p>
                 </div>
                 <div class="col-sm-6">
                     <h6 class="mb-3 text-uppercase fw-bold">Bill To:</h6>

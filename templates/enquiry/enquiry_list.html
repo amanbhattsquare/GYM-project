@@ -37,8 +37,9 @@
                             <th class="font-weight-semibold py-2">#</th>
                             <th class="font-weight-semibold py-2">Name</th>
                             <th class="font-weight-semibold py-2">Contact Number</th>
-                            <th class="font-weight-semibold py-2">Email</th>
                             <th class="font-weight-semibold py-2">Interested In</th>
+                            <th class="font-weight-semibold py-2">Enquiry Date</th>
+                            <th class="font-weight-semibold py-2">Follow-up Date</th>
                             <th class="font-weight-semibold py-2">Status</th>
 
                             <th>Actions</th>
@@ -50,8 +51,9 @@
                             <td data-label="SR. No.">{{ forloop.counter0|add:enquiries.start_index }}</td>
                             <td data-label="Name">{{ enquiry.name }}</td>
                             <td data-label="Contact Number">{{ enquiry.contact_number }}</td>
-                            <td data-label="Email">{{ enquiry.email }}</td>
                             <td data-label="Interested In">{{ enquiry.get_interested_in_display }}</td>
+                            <td data-label="Enquiry Date">{{ enquiry.enquiry_date|date:"d-m-Y" }}</td>
+                            <td data-label="Follow-up Date">{{ enquiry.next_follow_up_date|date:"d-m-Y" }}</td>
                             <td data-label="Status">
                                 <form action="{% url 'update_enquiry_status' enquiry.id %}" method="POST" class="status-form">
                                     {% csrf_token %}
@@ -107,7 +109,7 @@
                 <p><strong>Interested In:</strong> {{ enquiry.get_interested_in_display }}</p>
                 <p><strong>Status:</strong> <span class="badge {{ enquiry.get_status_color_class }}">{{ enquiry.get_status_display }}</span></p>
                 <p><strong>Next Follow-up Date:</strong> {{ enquiry.next_follow_up_date }}</p>
-                <p><strong>Enquiry Note:</strong> {{ enquiry.enquiry_note }}</p>
+                <p><strong>Remark: </strong> {{ enquiry.enquiry_note }}</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

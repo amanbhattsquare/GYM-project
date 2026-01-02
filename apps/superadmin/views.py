@@ -14,6 +14,7 @@ from django.db.models import Sum, OuterRef, Subquery, F
 from apps.billing.models import Payment
 from decimal import Decimal
 from datetime import date, datetime, timedelta
+from django.contrib import messages
 
 @login_required
 @superadmin_required
@@ -36,7 +37,20 @@ def add_gym(request):
     if request.method == 'POST':
         form = GymForm(request.POST, request.FILES)
         if form.is_valid():
-            gym = form.save()
+            gym = form.save(commit=False)
+            
+            # Handle GST fields
+            gst_enabled = form.cleaned_data.get('gst_enabled', False)
+            if gst_enabled:
+                gym.gst_enabled = True
+                gym.gst_rate = form.cleaned_data.get('gst_rate')
+                gym.gst_number = form.cleaned_data.get('gst_number')
+            else:
+                gym.gst_enabled = False
+                gym.gst_rate = None
+                gym.gst_number = None
+
+            gym.save()
             messages.success(request, f"Gym '{gym.name}' has been added successfully.")
             return redirect('superadmin:create_gym_admin', gym_id=gym.id)
     else:
@@ -203,8 +217,6 @@ def subscription_plan_list(request):
     else:
         plans = SubscriptionPlan.objects.all()
     return render(request, 'superadmin/subscription_plan_list.html', {'plans': plans})
-
-from django.contrib import messages
 
 @login_required
 @superadmin_required
