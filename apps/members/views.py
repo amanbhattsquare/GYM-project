@@ -227,10 +227,13 @@ def delete_member(request, member_id):
 @login_required(login_url='login')
 def assign_membership_plan(request, member_id):
     gym = getattr(request, 'gym', None)
-    member = get_object_or_404(Member, id=member_id, gym=gym)
+    # gym = request.user.gymadmin.gym  # Correctly get the gym object
+    member = get_object_or_404(Member, id=member_id)
+   
     plans = MembershipPlan.objects.filter(gym=gym)
     plans_json = serialize('json', plans)
     gym_json = serialize('json', [gym])
+
     if request.method == 'POST':
         form = MembershipHistoryForm(request.POST, gym=gym)
         if form.is_valid():
@@ -238,9 +241,12 @@ def assign_membership_plan(request, member_id):
             history.member = member
             history.gym = gym
             history.transaction_id = request.POST.get('transaction_id')
-            
+
             # Calculate total amount with GST
-            plan_fee = history.plan.plan_fee
+            plan_fee = history.plan.offer_price
+            registration_fee = form.cleaned_data.get('registration_fee', 0) or 0
+            discount = form.cleaned_data.get('discount', 0) or 0
+            total_amount = plan_fee + registration_fee - discount
             gst_rate = gym.gst_rate if gym.gst_enabled else 0
             gst_amount = (plan_fee * gst_rate) / 100
             total_amount = plan_fee + gst_amount

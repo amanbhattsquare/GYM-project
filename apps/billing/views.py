@@ -229,6 +229,7 @@ def pt_invoice(request, member_id, pt_invoice_id):
         'pt_invoice': pt_invoice,
         'previous_invoice': previous_invoice,
         'next_invoice': next_invoice,
+        'gym': gym
     }
     return render(request, 'billing/pt_invoice.html', context)
 

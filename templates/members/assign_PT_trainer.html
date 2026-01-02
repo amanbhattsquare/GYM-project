@@ -3,17 +3,29 @@
 {% load form_tags %}
 
 {% block content %}
+   <nav aria-label="breadcrumb" class="custom-breadcrumb mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{% url 'dashboard' %}" class="text-decoration-none">
+                <i class="mdi mdi-home-outline mdi-18px"></i> Dashboard
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{% url 'member_list' %}" class="text-decoration-none">
+                <i class="mdi mdi-account-multiple-outline mdi-18px"></i> Members List
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{% url 'member_profile' member.id %}" class="text-decoration-none">
+                <i class="mdi mdi-account-outline mdi-18px"></i> Member Profile
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <i class="mdi mdi-account-plus-outline mdi-18px"></i> Assign Personal Trainer
+        </li>
+    </ol>
+</nav>
 <div class="container-fluid">
-    <div class="page-header">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{% url 'dashboard' %}"><i class="mdi mdi-home"></i> Dashboard</a></li>
-                <li class="breadcrumb-item"><a href="{% url 'member_list' %}"><i class="mdi mdi-account-multiple"></i> Members</a></li>
-                <li class="breadcrumb-item"><a href="{% url 'member_profile' member.id %}"><i class="mdi mdi-account"></i> {{ member.first_name }} {{ member.last_name }}</a></li>
-                <li class="breadcrumb-item active" aria-current="page"><i class="mdi mdi-account-plus"></i> Assign PT Trainer</li>
-            </ol>
-        </nav>
-    </div>
     <div class="row">
         <div class="col-md-12">
             <div class="card">
