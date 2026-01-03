@@ -57,97 +57,77 @@
         </div>
 
 
-        <!-- QUICK ACTION CARDS - Bootstrap Auto Layout -->
-         <h3 class="mb-4">Quick Actions</h3>
-<div class="row mb-4">
-    <div class="col mb-3">
-        <a href="#" class="card quick-action-card text-center border-0 shadow-sm h-100 text-decoration-none">
-            <div class="card-body p-2">
-                <div class="icon-wrapper mb-2">
-                    <i class="fas fa-user-plus fa-2x text-primary"></i>
+        <!-- QUICK ACTION CARDS -->
+        <div class="quick-actions-container">
+            <h4 class="section-title">Quick Actions</h4>
+            <div class="row row-cols-2 row-cols-sm-4 row-cols-lg-8 g-3">
+                <div class="col">
+                    <a href="{% url 'add_new_member' %}" class="quick-action-card">
+                        <div class="icon-wrapper bg-primary-soft">
+                            <i class="fas fa-user-plus text-primary"></i>
+                        </div>
+                        <span>Add Member</span>
+                    </a>
                 </div>
-                <h6 class="card-title mb-0" style="font-size: 0.85rem;">Add Member</h6>
-            </div>
-        </a>
-    </div>
-    
-    <div class="col mb-3">
-        <a href="#" class="card quick-action-card text-center border-0 shadow-sm h-100 text-decoration-none">
-            <div class="card-body p-2">
-                <div class="icon-wrapper mb-2">
-                    <i class="fas fa-comment-alt fa-2x text-info"></i>
+                <div class="col">
+                    <a href="{% url 'add_new_enquiry' %}" class="quick-action-card">
+                        <div class="icon-wrapper bg-info-soft">
+                            <i class="fas fa-comment-alt text-info"></i>
+                        </div>
+                        <span>New Enquiry</span>
+                    </a>
                 </div>
-                <h6 class="card-title mb-0" style="font-size: 0.85rem;">New Enquiry</h6>
-            </div>
-        </a>
-    </div>
-    
-    <div class="col mb-3">
-        <a href="#" class="card quick-action-card text-center border-0 shadow-sm h-100 text-decoration-none">
-            <div class="card-body p-2">
-                <div class="icon-wrapper mb-2">
-                    <i class="fas fa-money-bill-wave fa-2x text-success"></i>
+                <div class="col">
+                    <a href="{% url 'billing:submit_due' %}" class="quick-action-card">
+                        <div class="icon-wrapper bg-success-soft">
+                            <i class="fas fa-money-bill-wave text-success"></i>
+                        </div>
+                        <span>Make Payment</span>
+                    </a>
                 </div>
-                <h6 class="card-title mb-0" style="font-size: 0.85rem;">Make Payment</h6>
-            </div>
-        </a>
-    </div>
-    
-    <div class="col mb-3">
-        <a href="#" class="card quick-action-card text-center border-0 shadow-sm h-100 text-decoration-none">
-            <div class="card-body p-2">
-                <div class="icon-wrapper mb-2">
-                    <i class="fas fa-file-invoice-dollar fa-2x text-danger"></i>
+                <div class="col">
+                    <a href="{% url 'expense_add' %}" class="quick-action-card">
+                        <div class="icon-wrapper bg-danger-soft">
+                            <i class="fas fa-file-invoice-dollar text-danger"></i>
+                        </div>
+                        <span>Add Expense</span>
+                    </a>
                 </div>
-                <h6 class="card-title mb-0" style="font-size: 0.85rem;">Add Expense</h6>
-            </div>
-        </a>
-    </div>
-    
-    <div class="col mb-3">
-        <a href="#" class="card quick-action-card text-center border-0 shadow-sm h-100 text-decoration-none">
-            <div class="card-body p-2">
-                <div class="icon-wrapper mb-2">
-                    <i class="fas fa-users fa-2x text-warning"></i>
+                
+                <div class="col">
+                    <a href="{% url 'member_list' %}" class="quick-action-card">
+                        <div class="icon-wrapper bg-warning-soft">
+                            <i class="fas fa-users text-warning"></i>
+                        </div>
+                        <span>All Members</span>
+                    </a>
                 </div>
-                <h6 class="card-title mb-0" style="font-size: 0.85rem;">All Members</h6>
-            </div>
-        </a>
-    </div>
-    
-    <div class="col mb-3">
-        <a href="#" class="card quick-action-card text-center border-0 shadow-sm h-100 text-decoration-none">
-            <div class="card-body p-2">
-                <div class="icon-wrapper mb-2">
-                    <i class="fas fa-clipboard-check fa-2x text-purple"></i>
+                <div class="col">
+                    <a href="{% url 'member_attendance' %}" class="quick-action-card">
+                        <div class="icon-wrapper bg-purple-soft">
+                            <i class="fas fa-clipboard-check text-purple"></i>
+                        </div>
+                        <span>Attendance</span>
+                    </a>
                 </div>
-                <h6 class="card-title mb-0" style="font-size: 0.85rem;">Attendance</h6>
-            </div>
-        </a>
-    </div>
-    
-    <div class="col mb-3">
-        <a href="#" class="card quick-action-card text-center border-0 shadow-sm h-100 text-decoration-none">
-            <div class="card-body p-2">
-                <div class="icon-wrapper mb-2">
-                    <i class="fas fa-user-tie fa-2x text-teal"></i>
+                <div class="col">
+                    <a href="{% url 'trainer_list' %}" class="quick-action-card">
+                        <div class="icon-wrapper bg-teal-soft">
+                            <i class="fas fa-user-tie text-teal"></i>
+                        </div>
+                        <span>Trainers</span>
+                    </a>
                 </div>
-                <h6 class="card-title mb-0" style="font-size: 0.85rem;">Trainers</h6>
-            </div>
-        </a>
-    </div>
-    
-    <div class="col mb-3">
-        <a href="#" class="card quick-action-card text-center border-0 shadow-sm h-100 text-decoration-none">
-            <div class="card-body p-2">
-                <div class="icon-wrapper mb-2">
-                    <i class="fas fa-dumbbell fa-2x text-orange"></i>
+                <div class="col">
+                    <a href="{% url 'workout_plans' %}" class="quick-action-card">
+                        <div class="icon-wrapper bg-orange-soft">
+                            <i class="fas fa-dumbbell text-orange"></i>
+                        </div>
+                        <span>Workout Plans</span>
+                    </a>
                 </div>
-                <h6 class="card-title mb-0" style="font-size: 0.85rem;">Workout Plans</h6>
             </div>
-        </a>
-    </div>
-</div>
+        </div>
 
 
 
@@ -522,19 +502,13 @@ const gradient = ctx.createLinearGradient(0, 0, 0, 300);
 gradient.addColorStop(0, 'rgba(54, 162, 235, 0.25)');
 gradient.addColorStop(1, 'rgba(54, 162, 235, 0)');
 
-// Sample growth data (replace with dynamic data from backend)
-const monthlyGrowthData = {
-    new_members: [{{ new_members_monthly.0|default:"12" }}, {{ new_members_monthly.1|default:"18" }}, {{ new_members_monthly.2|default:"22" }}, {{ new_members_monthly.3|default:"30" }}, {{ new_members_monthly.4|default:"25" }}, {{ new_members_monthly.5|default:"18" }}],
-    active_members: [{{ active_members_monthly.0|default:"80" }}, {{ active_members_monthly.1|default:"85" }}, {{ active_members_monthly.2|default:"90" }}, {{ active_members_monthly.3|default:"105" }}, {{ active_members_monthly.4|default:"115" }}, {{ active_members_monthly.5|default:"120" }}]
-};
-
 const memberGrowthChart = new Chart(ctx, {
     type: 'line',
     data: {
-        labels: ['{{ month_labels.0|default:"Jun" }}', '{{ month_labels.1|default:"Jul" }}', '{{ month_labels.2|default:"Aug" }}', '{{ month_labels.3|default:"Sep" }}', '{{ month_labels.4|default:"Oct" }}', '{{ month_labels.5|default:"Nov" }}'],
+        labels: {{ month_labels|safe }},
         datasets: [{
             label: 'New Members',
-            data: monthlyGrowthData.new_members,
+            data: {{ new_member_counts|safe }},
             tension: 0.3,
             fill: true,
             backgroundColor: gradient,
@@ -547,7 +521,7 @@ const memberGrowthChart = new Chart(ctx, {
             borderWidth: 2,
         }, {
             label: 'Active Members',
-            data: monthlyGrowthData.active_members,
+            data: {{ active_member_counts|safe }},
             tension: 0.3,
             fill: false,
             borderColor: '#4BC0C0',
