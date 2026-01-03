@@ -56,29 +56,100 @@
             </div>
         </div>
 
-        <!-- QUICK ACTION BUTTONS -->
-        <div class="row mb-4">
-            <div class="col-md-3">
-                <a href="{% url 'add_new_member' %}" class="btn btn-outline-primary btn-block shadow-sm ">
-                    <i class="fas fa-user-plus mr-2"></i> Add Member
-                </a>
+
+        <!-- QUICK ACTION CARDS - Bootstrap Auto Layout -->
+         <h3 class="mb-4">Quick Actions</h3>
+<div class="row mb-4">
+    <div class="col mb-3">
+        <a href="#" class="card quick-action-card text-center border-0 shadow-sm h-100 text-decoration-none">
+            <div class="card-body p-2">
+                <div class="icon-wrapper mb-2">
+                    <i class="fas fa-user-plus fa-2x text-primary"></i>
+                </div>
+                <h6 class="card-title mb-0" style="font-size: 0.85rem;">Add Member</h6>
             </div>
-            <div class="col-md-3">
-                <a href="{% url 'add_new_enquiry' %}" class="btn btn-outline-info btn-block shadow-sm ">
-                    <i class="fas fa-comment-dollar mr-2"></i> New Enquiry
-                </a>
+        </a>
+    </div>
+    
+    <div class="col mb-3">
+        <a href="#" class="card quick-action-card text-center border-0 shadow-sm h-100 text-decoration-none">
+            <div class="card-body p-2">
+                <div class="icon-wrapper mb-2">
+                    <i class="fas fa-comment-alt fa-2x text-info"></i>
+                </div>
+                <h6 class="card-title mb-0" style="font-size: 0.85rem;">New Enquiry</h6>
             </div>
-            <div class="col-md-3">
-                <a href="{% url 'billing:submit_due' %}" class="btn btn-outline-success btn-block shadow-sm ">
-                    <i class="fas fa-money-bill-wave mr-2"></i> Make a Payment
-                </a>
+        </a>
+    </div>
+    
+    <div class="col mb-3">
+        <a href="#" class="card quick-action-card text-center border-0 shadow-sm h-100 text-decoration-none">
+            <div class="card-body p-2">
+                <div class="icon-wrapper mb-2">
+                    <i class="fas fa-money-bill-wave fa-2x text-success"></i>
+                </div>
+                <h6 class="card-title mb-0" style="font-size: 0.85rem;">Make Payment</h6>
             </div>
-            <div class="col-md-3">
-                <a href="{% url 'expense_add' %}" class="btn btn-outline-danger btn-block shadow-sm ">
-                    <i class="fas fa-file-invoice-dollar mr-2"></i> Add Expense
-                </a>
+        </a>
+    </div>
+    
+    <div class="col mb-3">
+        <a href="#" class="card quick-action-card text-center border-0 shadow-sm h-100 text-decoration-none">
+            <div class="card-body p-2">
+                <div class="icon-wrapper mb-2">
+                    <i class="fas fa-file-invoice-dollar fa-2x text-danger"></i>
+                </div>
+                <h6 class="card-title mb-0" style="font-size: 0.85rem;">Add Expense</h6>
             </div>
-        </div>
+        </a>
+    </div>
+    
+    <div class="col mb-3">
+        <a href="#" class="card quick-action-card text-center border-0 shadow-sm h-100 text-decoration-none">
+            <div class="card-body p-2">
+                <div class="icon-wrapper mb-2">
+                    <i class="fas fa-users fa-2x text-warning"></i>
+                </div>
+                <h6 class="card-title mb-0" style="font-size: 0.85rem;">All Members</h6>
+            </div>
+        </a>
+    </div>
+    
+    <div class="col mb-3">
+        <a href="#" class="card quick-action-card text-center border-0 shadow-sm h-100 text-decoration-none">
+            <div class="card-body p-2">
+                <div class="icon-wrapper mb-2">
+                    <i class="fas fa-clipboard-check fa-2x text-purple"></i>
+                </div>
+                <h6 class="card-title mb-0" style="font-size: 0.85rem;">Attendance</h6>
+            </div>
+        </a>
+    </div>
+    
+    <div class="col mb-3">
+        <a href="#" class="card quick-action-card text-center border-0 shadow-sm h-100 text-decoration-none">
+            <div class="card-body p-2">
+                <div class="icon-wrapper mb-2">
+                    <i class="fas fa-user-tie fa-2x text-teal"></i>
+                </div>
+                <h6 class="card-title mb-0" style="font-size: 0.85rem;">Trainers</h6>
+            </div>
+        </a>
+    </div>
+    
+    <div class="col mb-3">
+        <a href="#" class="card quick-action-card text-center border-0 shadow-sm h-100 text-decoration-none">
+            <div class="card-body p-2">
+                <div class="icon-wrapper mb-2">
+                    <i class="fas fa-dumbbell fa-2x text-orange"></i>
+                </div>
+                <h6 class="card-title mb-0" style="font-size: 0.85rem;">Workout Plans</h6>
+            </div>
+        </a>
+    </div>
+</div>
+
+
 
         <!-- MEMBER GROWTH CHART -->
         <div class="card shadow-sm mb-4">
@@ -192,9 +263,9 @@
                                                 <td>{{ forloop.counter }}</td>
                                                 <td>
                                                     <div>
-                                                        <strong>{{ member.name }}</strong>
+                                                         <strong> <a href="{% url 'member_profile' member.id %}" class="text-decoration-none">{{ member.name }}</a></strong><br>
                                                         <br>
-                                                        <small class="text-muted">{{ member.phone|default:"No phone" }}</small>
+                                                        <small class="text-muted">{{ member.member_id|default:"No ID" }}</small>
                                                     </div>
                                                 </td>
                                                 <td>
@@ -260,9 +331,8 @@
                                                 <td>{{ forloop.counter }}</td>
                                                 <td>
                                                     <div>
-                                                        <strong>{{ member.first_name }} {{ member.last_name }}</strong>
-                                                        <br>
-                                                        <small class="text-muted">{{ member.email|default:"No email" }}</small>
+                                                         <strong> <a href="{% url 'member_profile' member.id %}" class="text-decoration-none">{{ member.first_name }} {{ member.last_name }}</a></strong><br>
+                                                        <small class="text-muted">{{ member.member_id|default:"No ID" }}</small>
                                                     </div>
                                                 </td>
                                                 <td>
