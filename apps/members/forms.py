@@ -1,19 +1,26 @@
+from datetime import date
 from django import forms
 from apps.management.models import MembershipPlan
 from .models import Member, MedicalHistory, EmergencyContact, MembershipHistory, PersonalTrainer
 from apps.trainers.models import Trainer
+import re
 
 class MemberForm(forms.ModelForm):
     class Meta:
         model = Member
-        fields = ['first_name', 'last_name', 'mobile_number', 'email', 'age', 'gender', 'date_of_birth', 'profile_picture', 'address', 'area', 'state', 'city', 'pincode', 'profession', 'sign', 'identity_type', 'identity_no', 'identity_document_image']
+        fields = [
+            'first_name', 'last_name', 'mobile_number', 'email', 'age', 'gender',
+            'date_of_birth', 'profile_picture', 'address', 'state', 'city',
+            'pincode', 'profession', 'sign', 'identity_type', 'identity_no',
+            'identity_document_image'
+        ]
         widgets = {
             'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your first name'}),
             'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your last name'}),
             'mobile_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your mobile number'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Enter your email'}),
             'age': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter your age'}),
-            'gender': forms.Select(attrs={'class': 'form-select', 'placeholder': 'Select your gender'}),
+            'gender': forms.Select(attrs={'class': 'form-control', 'placeholder': 'Select your gender'}),
             'date_of_birth': forms.DateInput(attrs={'class': 'form-control', 'type': 'date', 'placeholder': 'Select your date of birth'}),
             'profile_picture': forms.FileInput(attrs={'class': 'form-control', 'placeholder': 'Upload your profile picture'}),
             'address': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your address'}),
@@ -34,6 +41,29 @@ class MemberForm(forms.ModelForm):
         self.fields['identity_type'].required = False
         self.fields['identity_no'].required = False
         self.fields['identity_document_image'].required = False
+        self.fields['date_of_birth'].required = False
+
+
+        required_fields = [
+            'first_name',
+            'last_name',
+            'mobile_number',
+            'gender',
+            'age',
+        ]
+
+        for field in required_fields:
+            self.fields[field].required = True
+            self.fields[field].label = f"{self.fields[field].label} *"
+
+    def clean(self):
+        cleaned_data = super().clean()
+        date_of_birth = cleaned_data.get("date_of_birth")
+        if date_of_birth:
+            today = date.today()
+            age = today.year - date_of_birth.year - ((today.month, today.day) < (date_of_birth.month, date_of_birth.day))
+            cleaned_data["age"] = age
+        return cleaned_data
 
 class MedicalHistoryForm(forms.ModelForm):
     class Meta:
@@ -59,6 +89,11 @@ class EmergencyContactForm(forms.ModelForm):
             'mobile': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your mobile number'}),
             'relation': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your relation'}),
         }
+    def __init__(self, *args, **kwargs):
+        super(EmergencyContactForm, self).__init__(*args, **kwargs)
+        self.fields['name'].required = False
+        self.fields['mobile'].required = False
+        self.fields['relation'].required = False
 
 
 class MembershipHistoryForm(forms.ModelForm):
