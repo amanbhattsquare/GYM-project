@@ -33,7 +33,7 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="id_event_name">Event Name</label>
+                            <label for="id_event_name">Event Name <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="id_event_name" name="event_name"
                                 value="{{ event.event_name }}" required>
                         </div>
@@ -43,8 +43,7 @@
                             <label for="id_event_type">Event Type</label>
                             <select class="form-control" id="id_event_type" name="event_type">
                                 {% for type in event_types %}
-                                <option value="{{ type.0 }}" {% if event.event_type == type.0 %}selected{% endif %}>{{
-                                    type.1 }}</option>
+                                <option value="{{ type.0 }}" {% if event.event_type == type.0 %}selected{% endif %}>{{ type.1 }}</option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -59,14 +58,14 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="id_start_date">Start Date & Time</label>
+                            <label for="id_start_date">Start Date & Time <span class="text-danger">*</span></label>
                             <input type="datetime-local" class="form-control" id="id_start_date" name="start_date"
                                 value="{{ event.start_date|date:'Y-m-d\TH:i' }}" required>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="id_end_date">End Date & Time</label>
+                            <label for="id_end_date">End Date & Time <span class="text-danger">*</span></label>
                             <input type="datetime-local" class="form-control" id="id_end_date" name="end_date"
                                 value="{{ event.end_date|date:'Y-m-d\TH:i' }}" required>
                         </div>
@@ -82,23 +81,23 @@
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="id_address">Address</label>
+                            <label for="id_address">Address <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="id_address" name="address"
-                                value="{{ event.address }}">
+                                value="{{ event.address }}" required>
                         </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="id_max_participants">Max Participants</label>
+                            <label for="id_max_participants">Max Participants <span class="text-danger">*</span></label>
                             <input type="number" class="form-control" id="id_max_participants" name="max_participants"
                                 value="{{ event.max_participants }}" required>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="id_registration_deadline">Registration Deadline</label>
+                            <label for="id_registration_deadline">Registration Deadline <span class="text-danger">*</span></label>
                             <input type="datetime-local" class="form-control" id="id_registration_deadline"
                                 name="registration_deadline" value="{{ event.registration_deadline|date:'Y-m-d\TH:i' }}"
                                 required>
@@ -118,8 +117,7 @@
                             <label for="id_status">Status</label>
                             <select class="form-control" id="id_status" name="status">
                                 {% for status in statuses %}
-                                <option value="{{ status.0 }}" {% if event.status == status.0 %}selected{% endif %}>{{
-                                    status.1 }}</option>
+                                <option value="{{ status.0 }}" {% if event.status == status.0 %}selected{% endif %}>{{ status.1 }}</option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -153,8 +151,10 @@
                         </div>
                     </div>
                 </div>
-                <button type="submit" class="btn btn-primary">Update Event</button>
-                <a href="{% url 'events:event_list' %}" class="btn btn-secondary">Cancel</a>
+                <div class="d-flex justify-content-end">
+                    <a href="{% url 'events:event_list' %}" class="btn btn-secondary mr-2">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Update Event</button>
+                </div>
             </form>
         </div>
     </div>
