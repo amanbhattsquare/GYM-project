@@ -44,7 +44,7 @@
                 {% endif %}
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label for="id_name" class="form-label">Name</label>
+                        <label for="id_name" class="form-label">Name <span class="text-danger">*</span></label>
                         {{ form.name }}
                     </div>
                     <div class="col-md-6 mb-3">
@@ -54,7 +54,7 @@
                 </div>
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label for="id_phone" class="form-label">Phone</label>
+                        <label for="id_phone" class="form-label">Phone <span class="text-danger">*</span></label>
                         {{ form.phone }}
                     </div>
                     <div class="col-md-6 mb-3">
@@ -64,7 +64,7 @@
                 </div>
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label for="id_joining_date" class="form-label">Joining Date</label>
+                        <label for="id_joining_date" class="form-label">Joining Date <span class="text-danger">*</span></label>
                         {{ form.joining_date }}
                     </div>
                     <div class="col-md-6 mb-3">
@@ -73,12 +73,13 @@
                     </div>
                 </div>
                 <div class="row">
+
                     <div class="col-md-6 mb-3">
                         <label for="id_specialization" class="form-label">Specialization</label>
                         {{ form.specialization }}
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label for="id_personal_training_monthly_amount" class="form-label">Personal Training Monthly Amount</label>
+                        <label for="id_personal_training_monthly_amount" class="form-label">Personal Training Monthly Amount <span class="text-danger">*</span></label>
                         {{ form.personal_training_monthly_amount }}
                     </div>
                     
@@ -93,7 +94,7 @@
                     </div>
                 </div>
                 <div class="d-flex justify-content-end">
-                    <button type="submit" class="btn btn-primary me-2">Update</button>
+                    <button type="submit" class="btn btn-primary me-2">Submit</button>
                     <a href="{% url 'trainer_list' %}" class="btn btn-light">Cancel</a>
                 </div>
             </form>

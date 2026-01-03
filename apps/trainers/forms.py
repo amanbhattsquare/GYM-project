@@ -13,6 +13,6 @@ class TrainerForm(forms.ModelForm):
             'joining_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'salary': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter salary'}),
             'personal_training_monthly_amount': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter personal training monthly amount'}),
-            'specialization': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g., Yoga, CrossFit'}),
+            'specialization': forms.Select(attrs={'class': 'form-control'}, choices=Trainer.SPECIALIZATION_CHOICES),
             'photo': forms.FileInput(attrs={'class': 'form-control'}),
         }
