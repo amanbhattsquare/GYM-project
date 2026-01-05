@@ -152,17 +152,22 @@
     </li>
 
     <!--  Inventory -->
-    <li class="nav-item">
-      <a class="nav-link" data-toggle="collapse" href="#inventory" aria-expanded="false" aria-controls="inventory">
+    <li class="nav-item {% if request.resolver_match.app_name == 'inventory' %}active{% endif %}">
+      <a class="nav-link" data-toggle="collapse" href="#inventory" aria-expanded="{% if request.resolver_match.app_name == 'inventory' %}true{% else %}false{% endif %}" aria-controls="inventory">
         <i class="mdi mdi-package-variant menu-icon"></i>
         <span class="menu-title">Inventory</span>
         <i class="menu-arrow"></i>
       </a>
-      <div class="collapse" id="inventory">
+      <div class="collapse {% if request.resolver_match.app_name == 'inventory' %}show{% endif %}" id="inventory">
         <ul class="nav flex-column sub-menu">
-          <li class="nav-item"><a class="nav-link" href="pages/inventory/items.html">All Items</a></li>
-          <li class="nav-item"><a class="nav-link" href="pages/inventory/add.html">Add Item</a></li>
-          <li class="nav-item"><a class="nav-link" href="pages/inventory/low-stock.html">Low Stock</a></li>
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'inventory_dashboard' %}active{% endif %}" href="{% url 'inventory:inventory_dashboard' %}">Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'all_items' %}active{% endif %}" href="{% url 'inventory:all_items' %}">All Items</a></li>
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'add_edit_item' %}active{% endif %}" href="{% url 'inventory:add_edit_item' %}">Add / Edit Item</a></li>
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'stock_in' %}active{% endif %}" href="{% url 'inventory:stock_in' %}">Stock In</a></li>
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'stock_out' %}active{% endif %}" href="{% url 'inventory:stock_out' %}">Stock Out</a></li>
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'low_stock' %}active{% endif %}" href="{% url 'inventory:low_stock' %}">Low Stock</a></li>
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'expiring_soon' %}active{% endif %}" href="{% url 'inventory:expiring_soon' %}">Expiring Soon</a></li>
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'suppliers' %}active{% endif %}" href="{% url 'inventory:suppliers' %}">Suppliers</a></li>
         </ul>
       </div>
     </li>
