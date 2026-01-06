@@ -1,43 +1,210 @@
-from django.shortcuts import render, redirect
-from .models import Equipment, Maintenance
-from .forms import EquipmentForm
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Item, StockLog, Equipment, Maintenance
+from .forms import ItemForm, StockInForm, StockOutForm, EquipmentForm, MaintenanceForm
+from django.contrib import messages
+from django.db.models import Q, F
 
 def inventory_dashboard(request):
-    return render(request, 'inventory/dashboard.html')
-
+    return render(request, 'inventory/inventory_dashboard.html')    
 def all_items(request):
-    return render(request, 'inventory/all_items.html')
+    query = request.GET.get('q')
+    category = request.GET.get('category')
+    supplier = request.GET.get('supplier')
+    stock_status = request.GET.get('status')
 
-def add_edit_item(request):
-    return render(request, 'inventory/add_edit_item.html')
+    items = Item.objects.filter(is_deleted=False)
 
-def stock_in(request):
-    return render(request, 'inventory/stock_in.html')
+    if query:
+        items = items.filter(
+            Q(name__icontains=query) |
+            Q(sku__icontains=query)
+        )
+    
+    if category:
+        items = items.filter(category__iexact=category)
+    
+    if supplier:
+        items = items.filter(supplier__iexact=supplier)
 
-def stock_out(request):
-    return render(request, 'inventory/stock_out.html')
+    if stock_status:
+        # This requires a more complex query based on the status property
+        if stock_status == 'in_stock':
+            items = items.filter(current_stock__gt=F('reorder_level'))
+        elif stock_status == 'low_stock':
+            items = items.filter(current_stock__lte=F('reorder_level'), current_stock__gt=0)
+        elif stock_status == 'out_of_stock':
+            items = items.filter(current_stock=0)
 
-def suppliers(request):
-    return render(request, 'inventory/suppliers.html')
+    context = {
+        'items': items,
+        'categories': Item.objects.values_list('category', flat=True).distinct(),
+        'suppliers': Item.objects.values_list('supplier', flat=True).distinct(),
+    }
+    return render(request, 'inventory/all_items.html', context)
 
-def all_equipment(request):
-    equipments = Equipment.objects.all()
-    return render(request, 'inventory/all_equipment.html', {'equipments': equipments})
-
-def add_edit_equipment(request, id=None):
+def add_edit_item(request, id=None):
     if id:
-        equipment = Equipment.objects.get(id=id)
-        form = EquipmentForm(request.POST or None, instance=equipment)
+        item = get_object_or_404(Item, id=id)
+        form = ItemForm(request.POST or None, request.FILES or None, instance=item)
     else:
-        form = EquipmentForm(request.POST or None)
+        form = ItemForm(request.POST or None, request.FILES or None)
 
     if request.method == 'POST':
         if form.is_valid():
-            form.save()
-            return redirect('inventory:all_equipment')
+            instance = form.save(commit=False)
+            instance.added_by = request.user
+            instance.save()
+            messages.success(request, 'Item saved successfully!')
+            return redirect('inventory:all_items')
+        else:
+            messages.error(request, 'Please correct the errors below.')
 
-    return render(request, 'inventory/add_edit_equipment.html', {'form': form})
+    item_suppliers = Item.objects.values_list('supplier', flat=True).distinct()
+    equipment_suppliers = Equipment.objects.values_list('supplier', flat=True).distinct()
+    suppliers = sorted([s for s in set(list(item_suppliers) + list(equipment_suppliers)) if s])
+
+    context = {
+        'form': form,
+        'suppliers': suppliers
+    }
+    return render(request, 'inventory/add_inventory_item.html', context)
+
+def _get_suppliers():
+    """Returns a sorted list of unique suppliers from both Item and Equipment."""
+    item_suppliers = Item.objects.values_list('supplier', flat=True).distinct()
+    equipment_suppliers = Equipment.objects.values_list('supplier', flat=True).distinct()
+    suppliers = sorted([s for s in set(list(item_suppliers) + list(equipment_suppliers)) if s])
+    return suppliers
+
+def stock_in_view(request, item_id=None):
+    if request.method == 'POST':
+        form = StockInForm(request.POST)
+        if form.is_valid():
+            stock_log = form.save(commit=False)
+            stock_log.transaction_type = 'stock_in'
+            stock_log.added_by = request.user
+            stock_log.save()
+            
+            item = stock_log.item
+            item.current_stock += stock_log.quantity
+            item.save()
+            
+            messages.success(request, f'{item.name} has been stocked in successfully.')
+            return redirect('inventory:stock_log', item_id=item.id)
+    else:
+        initial_data = {}
+        if item_id:
+            initial_data['item'] = get_object_or_404(Item, id=item_id)
+        form = StockInForm(initial=initial_data)
+
+    context = {
+        'form': form,
+        'suppliers': _get_suppliers()
+    }
+    return render(request, 'inventory/stock_in.html', context)
+
+def stock_out_view(request, item_id=None):
+    if request.method == 'POST':
+        form = StockOutForm(request.POST)
+        if form.is_valid():
+            stock_log = form.save(commit=False)
+            stock_log.transaction_type = 'stock_out'
+            stock_log.added_by = request.user
+            
+            item = stock_log.item
+            if item.current_stock < stock_log.quantity:
+                messages.error(request, f'Not enough stock for {item.name}.')
+                return redirect('inventory:stock_out')
+
+            item.current_stock -= stock_log.quantity
+            item.save()
+            
+            stock_log.save()
+            
+            messages.success(request, f'{item.name} has been stocked out successfully.')
+            return redirect('inventory:stock_log', item_id=item.id)
+    else:
+        initial_data = {}
+        if item_id:
+            initial_data['item'] = get_object_or_404(Item, id=item_id)
+        form = StockOutForm(initial=initial_data)
+    
+    context = {
+        'form': form,
+        'suppliers': _get_suppliers()
+    }
+    return render(request, 'inventory/stock_out.html', context)
+
+def stock_log_view(request, item_id):
+    item = get_object_or_404(Item, id=item_id)
+    logs = StockLog.objects.filter(item=item).order_by('-timestamp')
+    context = {
+        'item': item,
+        'logs': logs
+    }
+    return render(request, 'inventory/stock_log.html', context)
+
+def all_equipment(request):
+    query = request.GET.get('q')
+    category = request.GET.get('category')
+    status = request.GET.get('status')
+
+    equipments = Equipment.objects.filter(is_deleted=False)
+
+    if query:
+        equipments = equipments.filter(
+            Q(name__icontains=query) |
+            Q(serial_number__icontains=query)
+        )
+    
+    if category:
+        equipments = equipments.filter(category__iexact=category)
+
+    if status:
+        equipments = equipments.filter(status__iexact=status)
+
+    context = {
+        'equipments': equipments,
+        'categories': Equipment.objects.values_list('category', flat=True).distinct(),
+    }
+    return render(request, 'inventory/all_equipment.html', context)
+
+def add_edit_equipment(request, id=None):
+    if id:
+        equipment = get_object_or_404(Equipment, id=id)
+        form = EquipmentForm(request.POST or None, request.FILES or None, instance=equipment)
+    else:
+        form = EquipmentForm(request.POST or None, request.FILES or None)
+
+    if request.method == 'POST':
+        if form.is_valid():
+            instance = form.save(commit=False)
+            instance.added_by = request.user
+            instance.save()
+            messages.success(request, 'Equipment saved successfully!')
+            return redirect('inventory:all_equipment')
+        else:
+            messages.error(request, 'Please correct the errors below.')
+
+    context = {
+        'form': form,
+        'suppliers': _get_suppliers()
+    }
+    return render(request, 'inventory/add_equipment.html', context)
 
 def maintenance_log(request):
-    maintenances = Maintenance.objects.all()
-    return render(request, 'inventory/maintenance_log.html', {'maintenances': maintenances})
+    form = MaintenanceForm(request.POST or None)
+    if request.method == 'POST':
+        if form.is_valid():
+            maintenance = form.save(commit=False)
+            maintenance.added_by = request.user
+            maintenance.save()
+            messages.success(request, 'Maintenance log added successfully!')
+            return redirect('inventory:maintenance_log')
+
+    logs = Maintenance.objects.all().order_by('-service_date')
+    context = {
+        'form': form,
+        'logs': logs
+    }
+    return render(request, 'inventory/maintenance_log.html', context)
