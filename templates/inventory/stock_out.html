@@ -4,12 +4,23 @@
 {% block title %}Stock Out{% endblock title %}
 
 {% block content %}
-<!-- Breadcrumb Navigation -->
-<nav aria-label="breadcrumb" class="mb-4">
+<link rel="stylesheet" href="{% static 'css/customstyle.css' %}">
+<!-- Compact Breadcrumb Navigation -->
+<nav aria-label="breadcrumb" class="custom-breadcrumb mb-3">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
-        <li class="breadcrumb-item"><a href="{% url 'inventory:all_items' %}">Inventory</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Stock Out</li>
+        <li class="breadcrumb-item">
+            <a href="{% url 'dashboard' %}" class="text-decoration-none">
+                <i class="mdi mdi-home-outline mdi-18px"></i> Dashboard
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{% url 'inventory:all_items' %}" class="text-decoration-none">
+                <i class="mdi mdi-store-outline "></i> Inventory
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <i class="mdi mdi-package-variant-closed-minus "></i> Stock Out
+        </li>
     </ol>
 </nav>
 
@@ -37,7 +48,7 @@
                 <fieldset class="border p-4 rounded mb-4">
                     <legend class="w-auto px-2 h5">Stock Details</legend>
                     <div class="row">
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-4 mb-3">
                             <label for="{{ form.item.id_for_label }}" class="form-label">
                                 <i class="mdi mdi-tag-outline"></i> {{ form.item.label }}
                             </label>
@@ -50,7 +61,7 @@
                                 </div>
                             {% endif %}
                         </div>
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-4 mb-3">
                             <label for="{{ form.quantity.id_for_label }}" class="form-label">
                                 <i class="mdi mdi-counter"></i> {{ form.quantity.label }}
                             </label>
@@ -63,9 +74,7 @@
                                 </div>
                             {% endif %}
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-4 mb-3">
                             <label for="{{ form.reason.id_for_label }}" class="form-label">
                                 <i class="mdi mdi-help-circle-outline"></i> {{ form.reason.label }}
                             </label>
@@ -78,7 +87,9 @@
                                 </div>
                             {% endif %}
                         </div>
-                        <div class="col-md-6 mb-3">
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
                             <label for="{{ form.issued_to.id_for_label }}" class="form-label">
                                 <i class="mdi mdi-account-outline"></i> {{ form.issued_to.label }}
                             </label>
@@ -91,9 +102,20 @@
                                 </div>
                             {% endif %}
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-4 mb-3">
+                            <label for="{{ form.phone_number.id_for_label }}" class="form-label">
+                                <i class="mdi mdi-phone"></i> {{ form.phone_number.label }}
+                            </label>
+                            {{ form.phone_number }}
+                            {% if form.phone_number.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.phone_number.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4 mb-3">
                             <label for="{{ form.date.id_for_label }}" class="form-label">
                                 <i class="mdi mdi-calendar-check-outline"></i> {{ form.date.label }}
                             </label>
@@ -126,7 +148,7 @@
 
                 <div class="mt-4 pt-3 border-top d-flex justify-content-end">
                     <button type="submit" class="btn btn-primary me-2">
-                        <i class="mdi mdi-content-save-outline"></i> Remove Stock
+                        <i class="mdi mdi-package-variant-closed-minus"></i>  Stock Out
                     </button>
                     <a href="{% url 'inventory:all_items' %}" class="btn btn-secondary">
                         <i class="mdi mdi-cancel"></i> Cancel

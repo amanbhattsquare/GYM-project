@@ -4,6 +4,7 @@
 {% block title %}All Products & Consumables{% endblock title %}
 
 {% block content %}
+<link rel="stylesheet" href="{% static 'css/customstyle.css' %}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
 <!-- Breadcrumb Navigation -->
@@ -26,7 +27,6 @@
             <h4 class="mb-0">All Products & Consumables</h4>
             <div class="btn-group">
                 <a href="{% url 'inventory:add_item' %}" class="btn btn-secondary"><i class="fas fa-plus-circle"></i> Add New Item</a>
-                <a href="{% url 'inventory:stock_in' %}" class="btn btn-success"><i class="fas fa-dolly-flatbed"></i> Stock In</a>
                 <a href="{% url 'inventory:stock_out' %}" class="btn btn-warning"><i class="fas fa-people-carry"></i> Stock Out</a>
             </div>
         </div>
@@ -73,7 +73,6 @@
                             <th class="font-weight-semibold py-2">Category</th>
                             <th class="font-weight-semibold py-2">SKU</th>
                             <th class="font-weight-semibold py-2">Current Stock</th>
-                            <th class="font-weight-semibold py-2">Reorder Level</th>
                             <th class="font-weight-semibold py-2">Status</th>
                             <th class="font-weight-semibold text-center py-2">Actions</th>
                         </tr>
@@ -99,7 +98,6 @@
                             <td data-label="Category">{{ item.category.name }}</td>
                             <td data-label="SKU">{{ item.sku }}</td>
                             <td data-label="Current Stock">{{ item.current_stock }} {{ item.unit }}</td>
-                            <td data-label="Reorder Level">{{ item.reorder_level }}</td>
                             <td data-label="Status">
                                 {% if item.current_stock <= 0 %}
                                 <span class="badge bg-danger">Out of Stock</span>
@@ -114,9 +112,7 @@
                                     <a href="{% url 'inventory:edit_item' item.id %}" class="btn btn-outline-primary btn-sm" data-bs-toggle="tooltip" title="Edit">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <a href="{% url 'inventory:stock_in_item' item.id %}" class="btn btn-outline-success btn-sm" data-bs-toggle="tooltip" title="Stock In">
-                                        <i class="fas fa-plus"></i>
-                                    </a>
+                                   
                                     <a href="{% url 'inventory:stock_out_item' item.id %}" class="btn btn-outline-warning btn-sm" data-bs-toggle="tooltip" title="Stock Out">
                                         <i class="fas fa-minus"></i>
                                     </a>

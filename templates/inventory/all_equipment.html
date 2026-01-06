@@ -4,6 +4,20 @@
 {% block title %}All Equipment{% endblock title %}
 
 {% block content %}
+<link rel="stylesheet" href="{% static 'css/customstyle.css' %}">
+<!-- Compact Breadcrumb Navigation -->
+<nav aria-label="breadcrumb" class="custom-breadcrumb mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{% url 'dashboard' %}" class="text-decoration-none">
+                <i class="mdi mdi-home-outline mdi-18px"></i> Dashboard
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <i class="mdi mdi-dumbbell mdi-18px"></i> All Equipment
+        </li>
+    </ol>
+</nav>
 <div class="col-lg-12 px-0">
     <div class="card">
         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">

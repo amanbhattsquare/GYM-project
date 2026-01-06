@@ -1,159 +1,208 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% load static %}
-<link rel="stylesheet" href="{% static 'css/inventory_dashboard.css' %}" /> 
-{% block content %}
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="d-flex justify-content-between align-items-center">
-                <h2 class="page-title">Inventory Dashboard</h2>
-                <div class="d-flex">
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Start Date" id="startDate">
-                        <input type="text" class="form-control" placeholder="End Date" id="endDate">
-                        <button class="btn btn-primary" type="button" onclick="filterData()">Filter</button>
-<script>
-    function filterData() {
-        var startDate = document.getElementById('startDate').value;
-        var endDate = document.getElementById('endDate').value;
-        window.location.href = `?startDate=${startDate}&endDate=${endDate}`;
+
+{% block title %}Inventory Dashboard{% endblock title %}
+
+{% block head %}
+<style>
+    .card-hover:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 20px 0 rgba(0,0,0,0.12);
+        transition: all 0.3s ease-in-out;
     }
-</script>
+</style>
+{% endblock head %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/customstyle.css' %}">
+<!-- Compact Breadcrumb Navigation -->
+<nav aria-label="breadcrumb" class="custom-breadcrumb mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{% url 'dashboard' %}" class="text-decoration-none">
+                <i class="mdi mdi-home-outline mdi-18px"></i> Dashboard
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <i class="mdi mdi-store-24-hour mdi-18px"></i> Inventory Dashboard
+        </li>
+    </ol>
+</nav>
+
+<div class="row mb-4">
+    <div class="col-md-12 d-flex justify-content-between align-items-center">
+        <h2 class="h4 font-weight-bold mb-0">
+            <i class="mdi mdi-store-24-hour"></i> Inventory Overview
+        </h2>
+        <div class="d-flex align-items-center">
+            <a href="{% url 'inventory:all_items' %}" class="btn btn-outline-secondary btn-sm me-2">
+                <i class="mdi mdi-format-list-bulleted"></i> View All Items
+            </a>
+            <a href="{% url 'inventory:add_item' %}" class="btn btn-primary btn-sm me-2">
+                <i class="mdi mdi-plus-circle-outline"></i> Add Item
+            </a>
+            <a href="{% url 'inventory:add_equipment' %}" class="btn btn-info btn-sm me-2">
+                <i class="mdi mdi-plus-circle-outline"></i> Add Equipment
+            </a>
+            <a href="{% url 'inventory:stock_out' %}" class="btn btn-success btn-sm">
+                <i class="mdi mdi-package-variant-closed-minus"></i> Stock Out
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Cards -->
+<div class="row">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2 card-hover">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Products</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_products }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="mdi mdi-package-variant-closed mdi-36px text-gray-300"></i>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="row mt-4">
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Total Products</h5>
-                    <p class="card-text">{{ total_products }}</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Total Equipment</h5>
-                    <p class="card-text">{{ total_equipment }}</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Low Stock</h5>
-                    <p class="card-text">{{ low_stock_items }}</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Stock In Today</h5>
-                    <p class="card-text">{{ stock_in_today }}</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Stock Out Today</h5>
-                    <p class="card-text">{{ stock_out_today }}</p>
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2 card-hover">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Total Equipment</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_equipment }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="mdi mdi-dumbbell mdi-36px text-gray-300"></i>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="row mt-4">
-        <div class="col-md-12">
-            <div class="d-flex justify-content-end">
-                <button class="btn btn-primary me-2">Add Item</button>
-                <button class="btn btn-primary me-2">Add Equipment</button>
-                <button class="btn btn-success me-2">Stock In</button>
-                <button class="btn btn-danger">Stock Out</button>
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2 card-hover">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Low Stock Items</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ low_stock_items }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="mdi mdi-alert-outline mdi-36px text-gray-300"></i>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="row mt-4">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Monthly Stock Usage</h5>
-                    <canvas id="monthlyStockUsage"></canvas>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Equipment Status</h5>
-                    <canvas id="equipmentStatus"></canvas>
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-danger shadow h-100 py-2 card-hover">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Out of Stock Items</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ out_of_stock_items }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="mdi mdi-package-variant-closed-remove mdi-36px text-gray-300"></i>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+<!-- Charts -->
+<div class="row">
+    <div class="col-lg-8 mb-4">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h6 class="m-0 font-weight-bold"><i class="mdi mdi-chart-bar"></i> Monthly Stock Usage</h6>
+                <span class="badge bg-light text-dark">Last 30 Days</span>
+            </div>
+            <div class="card-body">
+                <canvas id="monthlyStockUsage"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 mb-4">
+        <div class="card shadow">
+            <div class="card-header bg-success text-white">
+                <h6 class="m-0 font-weight-bold"><i class="mdi mdi-chart-pie"></i> Equipment Status</h6>
+            </div>
+            <div class="card-body">
+                <canvas id="equipmentStatus"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
 {% block javascript %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
-    flatpickr("#startDate, #endDate", {
-        dateFormat: "d-m-Y",
-        defaultDate: ["{{ start_date }}", "{{ end_date }}"]
-    });
-
-    // Monthly Stock Usage Chart
-    var ctx1 = document.getElementById('monthlyStockUsage').getContext('2d');
-    var monthlyStockUsage = new Chart(ctx1, {
-        type: 'bar',
-        data: {
-            labels: [{% for item in monthly_stock_usage %} '{{ item.product__name }}', {% endfor %}],
-            datasets: [{
-                label: 'Stock Usage',
-                data: [{% for item in monthly_stock_usage %} '{{ item.total_quantity }}', {% endfor %}],
-                backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
+    document.addEventListener("DOMContentLoaded", function() {
+        // Monthly Stock Usage Chart
+        var monthlyStockCtx = document.getElementById('monthlyStockUsage').getContext('2d');
+        var monthlyStockUsage = new Chart(monthlyStockCtx, {
+            type: 'bar',
+            data: {
+                labels: [{% for item in monthly_stock_usage %} '{{ item.product__name }}', {% endfor %}],
+                datasets: [{
+                    label: 'Stock Usage',
+                    data: [{% for item in monthly_stock_usage %} '{{ item.total_quantity }}', {% endfor %}],
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1,
+                    hoverBackgroundColor: 'rgba(54, 162, 235, 0.8)',
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
                 }
             }
-        }
-    });
+        });
 
-    // Equipment Status Chart
-    var ctx2 = document.getElementById('equipmentStatus').getContext('2d');
-    var equipmentStatus = new Chart(ctx2, {
-        type: 'pie',
-        data: {
-            labels: [{% for item in equipment_status %} '{{ item.status }}', {% endfor %}],
-            datasets: [{
-                label: 'Equipment Status',
-                data: [{% for item in equipment_status %} '{{ item.count }}', {% endfor %}],
-                backgroundColor: [
-                    'rgba(75, 192, 192, 0.6)',
-                    'rgba(255, 206, 86,.6)',
-                    'rgba(255, 99, 132, 0.6)'
-                ],
-                borderColor: [
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(255, 99, 132, 1)'
-                ],
-                borderWidth: 1
-            }]
-        }
+        // Equipment Status Chart
+        var equipmentStatusCtx = document.getElementById('equipmentStatus').getContext('2d');
+        var equipmentStatus = new Chart(equipmentStatusCtx, {
+            type: 'doughnut',
+            data: {
+                labels: [{% for item in equipment_status %} '{{ item.status }}', {% endfor %}],
+                datasets: [{
+                    label: 'Equipment Status',
+                    data: [{% for item in equipment_status %} '{{ item.count }}', {% endfor %}],
+                    backgroundColor: [
+                        'rgba(75, 192, 192, 0.6)',
+                        'rgba(255, 206, 86, 0.6)',
+                        'rgba(255, 99, 132, 0.6)'
+                    ],
+                    borderColor: [
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(255, 99, 132, 1)'
+                    ],
+                    borderWidth: 1,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+            }
+        });
     });
 </script>
 {% endblock javascript %}
-{% endblock content %}

@@ -11,9 +11,23 @@ class Item(models.Model):
         ('pcs', 'Pieces'),
         ('unit', 'Unit'),
     ]
+    CATEGORY_CHOICES = [
+    ('supplements', 'Supplements & Nutrition'),
+    ('beverages', 'Beverages'),
+    ('equipment', 'Gym Equipment (Assets)'),
+    ('accessories', 'Gym Accessories'),
+    ('cleaning', 'Cleaning & Hygiene'),
+    ('medical', 'Medical & First Aid'),
+    ('merchandise', 'Merchandise'),
+    ('office', 'Office & Stationery'),
+    ('maintenance', 'Maintenance & Repair'),
+    ('electronics', 'Electronics'),
+    ('other', 'Other'),
+]
+
 
     name = models.CharField(max_length=100, unique=True)
-    category = models.CharField(max_length=100)
+    category = models.CharField(max_length=100, choices=CATEGORY_CHOICES)
     sku = models.CharField(max_length=50, unique=True, blank=True)
     current_stock = models.PositiveIntegerField(default=0)
     unit = models.CharField(max_length=10, choices=UNIT_CHOICES)
@@ -54,8 +68,8 @@ class StockLog(models.Model):
         ('stock_out', 'Stock Out'),
     ]
     REASON_CHOICES = [
-        ('purchase', 'Purchase'),
         ('sale', 'Sale'),
+        ('purchase', 'Purchase'),
         ('internal_use', 'Internal Use'),
         ('damage', 'Damage'),
         ('expired', 'Expired'),
@@ -69,8 +83,9 @@ class StockLog(models.Model):
     supplier = models.CharField(max_length=100, blank=True, null=True)
     invoice_number = models.CharField(max_length=50, blank=True, null=True)
     purchase_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    reason = models.CharField(max_length=20, choices=REASON_CHOICES, blank=True, null=True)
+    reason = models.CharField(max_length=20, choices=REASON_CHOICES, blank=True, null=True, default='sale')
     issued_to = models.CharField(max_length=100, blank=True, null=True)
+    phone_number = models.CharField(max_length=15, blank=True, null=True)
     remarks = models.TextField(blank=True, null=True)
     added_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
 

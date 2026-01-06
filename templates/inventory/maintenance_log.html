@@ -4,6 +4,25 @@
 {% block title %}Equipment Maintenance Log{% endblock title %}
 
 {% block content %}
+<link rel="stylesheet" href="{% static 'css/customstyle.css' %}">
+<!-- Compact Breadcrumb Navigation -->
+<nav aria-label="breadcrumb" class="custom-breadcrumb mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{% url 'dashboard' %}" class="text-decoration-none">
+                <i class="mdi mdi-home-outline mdi-18px"></i> Dashboard
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{% url 'inventory:all_equipment' %}" class="text-decoration-none">
+                <i class="mdi mdi-dumbbell mdi-18px"></i> All Equipment
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <i class="mdi mdi-wrench mdi-18px"></i> Maintenance Log
+        </li>
+    </ol>
+</nav>
 <div class="row">
     <!-- Add Maintenance Log Form -->
     <div class="col-lg-4">
@@ -16,7 +35,7 @@
                     {% csrf_token %}
                     {{ form.as_p }}
                     <button type="submit" class="btn btn-primary w-100 mt-3">
-                        <i class="mdi mdi-content-save"></i> Save Log
+                        <i class="mdi mdi-content-save-outline"></i> Save Log
                     </button>
                 </form>
             </div>

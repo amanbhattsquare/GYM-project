@@ -1,61 +1,91 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% load static %}
 
-{% block title %}Stock Log for {{ item.name }}{% endblock %}
+{% block title %}Stock Log for {{ item.name }}{% endblock title %}
 
 {% block content %}
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header card-header-primary">
-                    <h4 class="card-title">Stock Log for {{ item.name }}</h4>
-                    <p class="card-category">A complete history of stock movements for this item.</p>
-                </div>
-                <div class="card-body">
-                    <div class="row mb-3">
-                        <div class="col-md-12">
-                            <a href="{% url 'inventory:all_items' %}" class="btn btn-light">
-                                <i class="material-icons">arrow_back</i> Back to All Items
-                            </a>
-                        </div>
-                    </div>
+<link rel="stylesheet" href="{% static 'css/customstyle.css' %}">
+<!-- Compact Breadcrumb Navigation -->
+<nav aria-label="breadcrumb" class="custom-breadcrumb mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{% url 'dashboard' %}" class="text-decoration-none">
+                <i class="mdi mdi-home-outline mdi-18px"></i> Dashboard
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{% url 'inventory:all_items' %}" class="text-decoration-none">
+                <i class="mdi mdi-store-outline "></i> Inventory
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <i class="mdi mdi-history "></i> Stock Log for {{ item.name }}
+        </li>
+    </ol>
+</nav>
 
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead class="text-primary">
-                                <th>Timestamp</th>
-                                <th>Type</th>
-                                <th>Quantity</th>
-                                <th>User</th>
-                                <th>Remarks</th>
-                            </thead>
-                            <tbody>
-                                {% for log in logs %}
-                                <tr>
-                                    <td>{{ log.timestamp|date:"Y-m-d H:i" }}</td>
-                                    <td>
-                                        {% if log.transaction_type == 'stock_in' %}
-                                            <span class="badge badge-success">Stock In</span>
-                                        {% else %}
-                                            <span class="badge badge-warning">Stock Out</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>{{ log.quantity }}</td>
-                                    <td>{{ log.added_by.username }}</td>
-                                    <td>{{ log.remarks }}</td>
-                                </tr>
-                                {% empty %}
-                                <tr>
-                                    <td colspan="5" class="text-center">No stock history found for this item.</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+<div class="col-lg-12 px-0">
+    <div class="card">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">
+                <i class="mdi mdi-history"></i> Stock Log: <span class="fw-bold">{{ item.name }}</span>
+            </h4>
+            <a href="{% url 'inventory:all_items' %}" class="btn btn-light btn-sm">
+                <i class="mdi mdi-arrow-left"></i> Back to Inventory
+            </a>
+        </div>
+
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover table-sm table-stack-on-mobile">
+                    <thead>
+                        <tr>
+                            <th> #</th>
+                            <th scope="col"><i class="mdi mdi-calendar-clock"></i> Date & Time</th>
+                            <th scope="col"><i class="mdi mdi-swap-horizontal"></i> Type</th>
+                            <th scope="col"><i class="mdi mdi-counter"></i> Quantity</th>
+                            <th scope="col"><i class="mdi mdi-account-outline"></i> Issued To</th>
+                            <th scope="col"><i class="mdi mdi-phone"></i> Phone Number</th>
+                            <th scope="col"><i class="mdi mdi-help-circle-outline"></i> Reason</th>
+                            <th scope="col"><i class="mdi mdi-comment-text-outline"></i> Remarks</th>
+                            <th scope="col"><i class="mdi mdi-account-edit-outline"></i> User</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for log in logs %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ log.date|date:"d M Y, H:i" }}</td>
+                            <td>
+                                {% if log.transaction_type == 'stock_in' %}
+                                    <span class="badge bg-success-soft text-success">
+                                        <i class="mdi mdi-package-variant-closed-plus"></i> Stock In
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-danger-soft text-danger">
+                                        <i class="mdi mdi-package-variant-closed-minus"></i> Stock Out
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td>{{ log.quantity }} {{ item.unit }}</td>
+                            <td>{{ log.issued_to|default:"N/A" }}</td>
+                            <td>{{ log.phone_number|default:"N/A" }}</td>
+                            <td>{{ log.get_reason_display|default:"N/A" }}</td>
+                            <td>{{ log.remarks|default:"No remarks" }}</td>
+                            <td>{{ log.added_by.username|default:"System" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="8" class="text-center py-4">
+                                <i class="mdi mdi-information-outline mdi-24px text-muted"></i>
+                                <p class="mb-0 text-muted">No stock history found for this item.</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 </div>
-{% endblock %}
+{% endblock content %}

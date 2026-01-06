@@ -10,8 +10,6 @@ urlpatterns = [
     path('edit-item/<int:id>/', views.add_edit_item, name='edit_item'),
 
     # Stock Management
-    path('stock-in/', views.stock_in_view, name='stock_in'),
-    path('stock-in/<int:item_id>/', views.stock_in_view, name='stock_in_item'),
     path('stock-out/', views.stock_out_view, name='stock_out'),
     path('stock-out/<int:item_id>/', views.stock_out_view, name='stock_out_item'),
 

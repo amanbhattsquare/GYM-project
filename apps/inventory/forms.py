@@ -5,15 +5,19 @@ class ItemForm(forms.ModelForm):
     class Meta:
         model = Item
         fields = [
-            'name', 'category', 'sku', 'unit', 'reorder_level', 'supplier', 
+            'name', 'category', 'sku', 'unit', 'current_stock', 'supplier', 
             'purchase_price', 'selling_price', 'expiry_date', 'image', 'description'
         ]
+        labels = {
+            'current_stock': 'Stock Quantity',
+        }
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g., Whey Protein, Yoga Mat'}),
-            'category': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g., Supplements, Equipment'}),
+            'category': forms.Select(attrs={'class': 'form-control'}),
             'sku': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g., WP-001'}),
-            'unit': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g., kg, pcs, box'}),
-            'reorder_level': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'e.g., 10'}),
+            'unit': forms.Select(attrs={'class': 'form-control'}),
+            'current_stock': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'e.g., 100'}),
+
             'supplier': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g., Global Fitness', 'list': 'supplier-list'}),
             'purchase_price': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '0.00'}),
             'selling_price': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '0.00'}),
@@ -22,34 +26,18 @@ class ItemForm(forms.ModelForm):
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'A brief description of the item'}),
         }
 
-class StockInForm(forms.ModelForm):
-    class Meta:
-        model = StockLog
-        fields = [
-            'item', 'quantity', 'date', 'supplier', 'invoice_number', 
-            'purchase_price', 'remarks'
-        ]
-        widgets = {
-            'item': forms.Select(attrs={'class': 'form-select'}),
-            'quantity': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'e.g., 10'}),
-            'date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'supplier': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g., Global Fitness', 'list': 'supplier-list'}),
-            'invoice_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g., INV-12345'}),
-            'purchase_price': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '0.00'}),
-            'remarks': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Any additional notes...'}),
-        }
-
 class StockOutForm(forms.ModelForm):
     class Meta:
         model = StockLog
         fields = [
-            'item', 'quantity', 'reason', 'issued_to', 'date', 'remarks'
+            'item', 'quantity', 'reason', 'issued_to', 'phone_number', 'date', 'remarks'
         ]
         widgets = {
-            'item': forms.Select(attrs={'class': 'form-select'}),
+            'item': forms.Select(attrs={'class': 'form-control'}),
             'quantity': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'e.g., 1'}),
-            'reason': forms.Select(attrs={'class': 'form-select'}),
+            'reason': forms.Select(attrs={'class': 'form-control'}),
             'issued_to': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g., "John Doe"'}),
+            'phone_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g., 9876543210'}),
             'date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'remarks': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Any additional notes...'}),
         }
@@ -71,7 +59,7 @@ class EquipmentForm(forms.ModelForm):
         ]
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g., Treadmill, Dumbbell Set'}),
-            'category': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g., Cardio, Strength'}),
+            'category': forms.Select(attrs={'class': 'form-control'}),
             'brand': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g., Life Fitness, Precor'}),
             'model': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g., T5, 956i'}),
             'serial_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g., SN-12345'}),
@@ -84,9 +72,14 @@ class EquipmentForm(forms.ModelForm):
             'expected_life': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g., 10 years'}),
             'notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Any additional notes...'}),
             'image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
-            'condition': forms.Select(attrs={'class': 'form-select'}),
-            'status': forms.Select(attrs={'class': 'form-select'}),
+            'condition': forms.Select(attrs={'class': 'form-control'}),
+            'status': forms.Select(attrs={'class': 'form-control'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['category'].widget.choices = Item.CATEGORY_CHOICES
+
 
 class MaintenanceForm(forms.ModelForm):
     class Meta:

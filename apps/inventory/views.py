@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Item, StockLog, Equipment, Maintenance
-from .forms import ItemForm, StockInForm, StockOutForm, EquipmentForm, MaintenanceForm
+from .forms import ItemForm, StockOutForm, EquipmentForm, MaintenanceForm
 from django.contrib import messages
 from django.db.models import Q, F
 
@@ -63,9 +63,12 @@ def add_edit_item(request, id=None):
     equipment_suppliers = Equipment.objects.values_list('supplier', flat=True).distinct()
     suppliers = sorted([s for s in set(list(item_suppliers) + list(equipment_suppliers)) if s])
 
+    categories = Item.objects.values_list('category', flat=True).distinct()
+
     context = {
         'form': form,
-        'suppliers': suppliers
+        'suppliers': suppliers,
+        'categories': categories
     }
     return render(request, 'inventory/add_inventory_item.html', context)
 
@@ -75,33 +78,6 @@ def _get_suppliers():
     equipment_suppliers = Equipment.objects.values_list('supplier', flat=True).distinct()
     suppliers = sorted([s for s in set(list(item_suppliers) + list(equipment_suppliers)) if s])
     return suppliers
-
-def stock_in_view(request, item_id=None):
-    if request.method == 'POST':
-        form = StockInForm(request.POST)
-        if form.is_valid():
-            stock_log = form.save(commit=False)
-            stock_log.transaction_type = 'stock_in'
-            stock_log.added_by = request.user
-            stock_log.save()
-            
-            item = stock_log.item
-            item.current_stock += stock_log.quantity
-            item.save()
-            
-            messages.success(request, f'{item.name} has been stocked in successfully.')
-            return redirect('inventory:stock_log', item_id=item.id)
-    else:
-        initial_data = {}
-        if item_id:
-            initial_data['item'] = get_object_or_404(Item, id=item_id)
-        form = StockInForm(initial=initial_data)
-
-    context = {
-        'form': form,
-        'suppliers': _get_suppliers()
-    }
-    return render(request, 'inventory/stock_in.html', context)
 
 def stock_out_view(request, item_id=None):
     if request.method == 'POST':
@@ -137,7 +113,7 @@ def stock_out_view(request, item_id=None):
 
 def stock_log_view(request, item_id):
     item = get_object_or_404(Item, id=item_id)
-    logs = StockLog.objects.filter(item=item).order_by('-timestamp')
+    logs = StockLog.objects.filter(item=item).order_by('-date')
     context = {
         'item': item,
         'logs': logs
@@ -186,9 +162,12 @@ def add_edit_equipment(request, id=None):
         else:
             messages.error(request, 'Please correct the errors below.')
 
+    categories = Item.objects.values_list('category', flat=True).distinct()
+
     context = {
         'form': form,
-        'suppliers': _get_suppliers()
+        'suppliers': _get_suppliers(),
+        'categories': categories,
     }
     return render(request, 'inventory/add_equipment.html', context)
 
