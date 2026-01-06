@@ -1,8 +1,10 @@
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
+from apps.superadmin.models import Gym
 
 class Item(models.Model):
+    gym = models.ForeignKey(Gym, on_delete=models.CASCADE, null=True)
     UNIT_CHOICES = [
         ('kg', 'Kilogram'),
         ('g', 'Gram'),
@@ -26,9 +28,9 @@ class Item(models.Model):
 ]
 
 
-    name = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=100)
     category = models.CharField(max_length=100, choices=CATEGORY_CHOICES)
-    sku = models.CharField(max_length=50, unique=True, blank=True)
+    sku = models.CharField(max_length=50, blank=True)
     current_stock = models.PositiveIntegerField(default=0)
     unit = models.CharField(max_length=10, choices=UNIT_CHOICES)
     reorder_level = models.PositiveIntegerField(default=0)
@@ -41,6 +43,8 @@ class Item(models.Model):
     added_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name='added_items')
     is_deleted = models.BooleanField(default=False)
     
+    class Meta:
+        unique_together = [['gym', 'name'], ['gym', 'sku']]
 
 
     def __str__(self):
@@ -63,6 +67,7 @@ class Item(models.Model):
             return 'In Stock'
 
 class StockLog(models.Model):
+    gym = models.ForeignKey(Gym, on_delete=models.CASCADE, null=True)
     TRANSACTION_TYPES = [
         ('stock_in', 'Stock In'),
         ('stock_out', 'Stock Out'),
@@ -93,6 +98,7 @@ class StockLog(models.Model):
         return f"{self.transaction_type} of {self.quantity} {self.item.name} on {self.date.strftime('%Y-%m-%d')}"
 
 class Equipment(models.Model):
+    gym = models.ForeignKey(Gym, on_delete=models.CASCADE, null=True)
     CONDITION_CHOICES = [
         ('new', 'New'),
         ('good', 'Good'),
@@ -141,6 +147,7 @@ class Equipment(models.Model):
         return None
 
 class Maintenance(models.Model):
+    gym = models.ForeignKey(Gym, on_delete=models.CASCADE, null=True)
     MAINTENANCE_TYPES = [
         ('service', 'Service'),
         ('repair', 'Repair'),

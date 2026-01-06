@@ -9,8 +9,8 @@ class Member(models.Model):
     gym = models.ForeignKey(Gym, on_delete=models.CASCADE, null=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
-    mobile_number = models.CharField(max_length=15, unique=True)
-    email = models.EmailField(unique=True, null=True, blank=True)
+    mobile_number = models.CharField(max_length=15)
+    email = models.EmailField(null=True, blank=True)
     age = models.PositiveIntegerField(null=True, blank=True )
     gender = models.CharField(max_length=10, choices=[('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')],
                               null=True, blank=True)
@@ -25,6 +25,9 @@ class Member(models.Model):
     identity_type = models.CharField(max_length=50, null=True, blank=True)
     identity_no = models.CharField(max_length=50, null=True, blank=True)
     identity_document_image = models.ImageField(upload_to='identity_docs/', blank=True, null=True)
+
+    class Meta:
+        unique_together = [['gym', 'mobile_number'], ['gym', 'email']]
 
     # Keep unique=True (works correctly now)
     member_id = models.CharField(max_length=100, unique=True, editable=False)
