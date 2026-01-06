@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Maintenance Log</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Equipment</th>
+        <th>Maintenance Date</th>
+        <th>Description</th>
+        <th>Cost</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for maintenance in maintenances %}
+        <tr>
+          <td>{{ maintenance.equipment.name }}</td>
+          <td>{{ maintenance.maintenance_date }}</td>
+          <td>{{ maintenance.description }}</td>
+          <td>{{ maintenance.cost }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
