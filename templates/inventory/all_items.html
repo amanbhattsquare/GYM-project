@@ -83,6 +83,7 @@
                             <th class="font-weight-semibold py-2">Category</th>
                             <th class="font-weight-semibold py-2">SKU</th>
                             <th class="font-weight-semibold py-2">Current Stock</th>
+                            <th class="font-weight-semibold py-2">Selling Price</th>
                             <th class="font-weight-semibold py-2">Status</th>
                             <th class="font-weight-semibold text-center py-2">Actions</th>
                         </tr>
@@ -93,7 +94,7 @@
                             <td data-label="#" class="font-weight-semibold py-2">{{ forloop.counter }}</td>
                             <td data-label="Item Image" class="font-weight-semibold py-2">
                                 {% if item.image %}
-                                <img src="{{ item.image.url }}" alt="{{ item.name }}" class=" border" style="width: 40px; height: 40px; object-fit: cover;">
+                                <img src="{{ item.image.url }}" alt="{{ item.name }}" class=" border equipment-image" style="width: 40px; height: 40px; object-fit: cover; cursor: pointer;">
                                 {% else %}
                                 <img src="{% static 'images/default-product.jpg' %}" alt="Item Image" class="rounded-circle border" style="width: 40px; height: 40px; object-fit: cover;">
                                 {% endif %}
@@ -108,6 +109,7 @@
                             <td data-label="Category">{{ item.get_category_display }}</td>
                             <td data-label="SKU">{{ item.sku }}</td>
                             <td data-label="Current Stock">{{ item.current_stock }} {{ item.unit }}</td>
+                            <td data-label="Selling Price">{{ item.selling_price }}</td>
                             <td data-label="Status">
                                 {% if item.current_stock <= 0 %}
                                 <span class="badge bg-danger">Out of Stock</span>
@@ -162,7 +164,37 @@
         </div>
     </div>
 </div>
+
+<!-- Image Preview Modal -->
+<div class="modal fade" id="imagePreviewModal" tabindex="-1" aria-labelledby="imagePreviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="imagePreviewModalLabel">Image Preview</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img src="" id="modalImage" class="img-fluid" alt="Equipment Image">
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock content %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    $('.equipment-image').on('click', function() {
+        var imageUrl = $(this).attr('src');
+        var imageName = $(this).attr('alt');
+        $('#modalImage').attr('src', imageUrl);
+        $('#imagePreviewModalLabel').text(imageName);
+        var imagePreviewModal = new bootstrap.Modal(document.getElementById('imagePreviewModal'));
+        imagePreviewModal.show();
+    });
+});
+</script>
+{% endblock extra_js %}
 
 {% block scripts %}
 <script>

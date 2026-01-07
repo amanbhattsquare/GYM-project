@@ -83,6 +83,7 @@
                         <thead>
                             <tr>
                                 <th>#</th>
+                                <th>Image</th>
                                 <th>Equipment Name</th>
                                 <th>Category</th>
                                 <th>Serial Number</th>
@@ -98,6 +99,13 @@
                             {% for equipment in equipments %}
                                 <tr>
                                     <td data-label="#" >{{ forloop.counter }}</td>
+                                    <td data-label="Image">
+                                        {% if equipment.image %}
+                                            <img src="{{ equipment.image.url }}" alt="{{ equipment.name }}" class="img-thumbnail equipment-image" style="width: 50px; height: 50px; cursor: pointer;">
+                                        {% else %}
+                                            <img src="{% static 'images/placeholder.png' %}" alt="No image" class="img-thumbnail" style="width: 50px; height: 50px;">
+                                        {% endif %}
+                                    </td>
                                     <td data-label="Equipment Name" title="Click to view details">
                                         <a href="{% url 'inventory:edit_equipment' id=equipment.id %}">{{ equipment.name }}</a>
                                     </td>
@@ -142,4 +150,34 @@
         </div>
     </div>
 </div>
+
+<!-- Image Preview Modal -->
+<div class="modal fade" id="imagePreviewModal" tabindex="-1" aria-labelledby="imagePreviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="imagePreviewModalLabel">Image Preview</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img src="" id="modalImage" class="img-fluid" alt="Equipment Image">
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock content %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    $('.equipment-image').on('click', function() {
+        var imageUrl = $(this).attr('src');
+        var imageName = $(this).attr('alt');
+        $('#modalImage').attr('src', imageUrl);
+        $('#imagePreviewModalLabel').text(imageName);
+        var imagePreviewModal = new bootstrap.Modal(document.getElementById('imagePreviewModal'));
+        imagePreviewModal.show();
+    });
+});
+</script>
+{% endblock extra_js %}
