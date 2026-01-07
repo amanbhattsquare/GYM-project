@@ -95,7 +95,7 @@
                                 {% if item.image %}
                                 <img src="{{ item.image.url }}" alt="{{ item.name }}" class=" border" style="width: 40px; height: 40px; object-fit: cover;">
                                 {% else %}
-                                <img src="{% static 'images/default-product.png' %}" alt="Default Image" class="rounded-circle border" style="width: 40px; height: 40px; object-fit: cover;">
+                                <img src="{% static 'images/default-product.jpg' %}" alt="Item Image" class="rounded-circle border" style="width: 40px; height: 40px; object-fit: cover;">
                                 {% endif %}
                             </td>
                             <td data-label="Item Name">
@@ -105,7 +105,7 @@
                                     </div>
                                 </div>
                             </td>
-                            <td data-label="Category">{{ item.category.name }}</td>
+                            <td data-label="Category">{{ item.get_category_display }}</td>
                             <td data-label="SKU">{{ item.sku }}</td>
                             <td data-label="Current Stock">{{ item.current_stock }} {{ item.unit }}</td>
                             <td data-label="Status">
