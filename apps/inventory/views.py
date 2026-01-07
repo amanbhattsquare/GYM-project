@@ -144,7 +144,7 @@ def _get_suppliers(gym):
 def stock_out_view(request, item_id=None):
     gym = getattr(request, 'gym', None)
     if request.method == 'POST':
-        form = StockOutForm(request.POST)
+        form = StockOutForm(request.POST, gym=gym)
         if form.is_valid():
             stock_log = form.save(commit=False)
             stock_log.transaction_type = 'stock_out'
@@ -167,7 +167,7 @@ def stock_out_view(request, item_id=None):
         initial_data = {}
         if item_id:
             initial_data['item'] = get_object_or_404(Item, id=item_id, gym=gym)
-        form = StockOutForm(initial=initial_data)
+        form = StockOutForm(initial=initial_data, gym=gym)
     
     context = {
         'form': form,
@@ -249,7 +249,7 @@ def add_edit_equipment(request, id=None):
 @login_required
 def maintenance_log(request):
     gym = getattr(request, 'gym', None)
-    form = MaintenanceForm(request.POST or None)
+    form = MaintenanceForm(request.POST or None, gym=gym)
     if request.method == 'POST':
         if form.is_valid():
             maintenance = form.save(commit=False)

@@ -42,6 +42,12 @@ class StockOutForm(forms.ModelForm):
             'remarks': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Any additional notes...'}),
         }
 
+    def __init__(self, *args, **kwargs):
+        gym = kwargs.pop('gym', None)
+        super().__init__(*args, **kwargs)
+        if gym:
+            self.fields['item'].queryset = Item.objects.filter(gym=gym, is_deleted=False)
+
     def clean_quantity(self):
         quantity = self.cleaned_data.get('quantity')
         item = self.cleaned_data.get('item')
@@ -99,3 +105,9 @@ class MaintenanceForm(forms.ModelForm):
             'status': forms.Select(attrs={'class': 'form-control'}),
             'downtime_days': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'e.g., 2'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        gym = kwargs.pop('gym', None)
+        super().__init__(*args, **kwargs)
+        if gym:
+            self.fields['equipment'].queryset = Equipment.objects.filter(gym=gym, is_deleted=False)
