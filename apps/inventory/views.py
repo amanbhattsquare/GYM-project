@@ -17,8 +17,8 @@ def inventory_dashboard(request):
     end_date_str = request.GET.get('end_date')
 
     if start_date_str and end_date_str:
-        start_date = timezone.datetime.strptime(start_date_str, '%Y-%m-%d').date()
-        end_date = timezone.datetime.strptime(end_date_str, '%Y-%m-%d').date()
+        start_date = timezone.datetime.strptime(start_date_str, '%d-%m-%Y').date()
+        end_date = timezone.datetime.strptime(end_date_str, '%d-%m-%Y').date()
     else:
         end_date = timezone.now().date()
         start_date = end_date - timedelta(days=30)
