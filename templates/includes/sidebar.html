@@ -36,7 +36,10 @@
   </div> {% endcomment %}
   <div class="sidebar-company-info text-center py-3">
     {% if gym.logo %}
-      <img src="{{ gym.logo.url }}" alt="{{ gym.name }} Logo" class="img-fluid rounded-circle mb-2" style="width: 80px; height: 80px; object-fit: cover; border: 3px solid #fff; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+      <img src="{{ gym.logo.url }}" alt="Logo" class="img-fluid rounded-circle mb-2" style="width: 80px; height: 80px; object-fit: cover; border: 3px solid #fff; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+
+    {% else %}
+      <img src="{% static 'images/SFLogo.png' %}" alt="Logo" class="img-fluid rounded-circle mb-2" style="width: 80px; height: 80px; object-fit: cover; border: 3px solid #fff; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
     {% endif %}
   
     <h5 class="text-primary font-weight-bold mb-1">{{ gym.name|default:'GYM Name' }}</h5>
@@ -149,17 +152,26 @@
     </li>
 
     <!--  Inventory -->
-    <li class="nav-item">
-      <a class="nav-link" data-toggle="collapse" href="#inventory" aria-expanded="false" aria-controls="inventory">
+    <li class="nav-item {% if request.resolver_match.app_name == 'inventory' %}active{% endif %}">
+      <a class="nav-link" data-toggle="collapse" href="#inventory" aria-expanded="{% if request.resolver_match.app_name == 'inventory' %}true{% else %}false{% endif %}" aria-controls="inventory">
         <i class="mdi mdi-package-variant menu-icon"></i>
         <span class="menu-title">Inventory</span>
         <i class="menu-arrow"></i>
       </a>
-      <div class="collapse" id="inventory">
+      <div class="collapse {% if request.resolver_match.app_name == 'inventory' %}show{% endif %}" id="inventory">
         <ul class="nav flex-column sub-menu">
-          <li class="nav-item"><a class="nav-link" href="pages/inventory/items.html">All Items</a></li>
-          <li class="nav-item"><a class="nav-link" href="pages/inventory/add.html">Add Item</a></li>
-          <li class="nav-item"><a class="nav-link" href="pages/inventory/low-stock.html">Low Stock</a></li>
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'inventory:dashboard' %}">Dashboard</a></li>
+          {% comment %} <li class=""><span class="nav-link text-muted" style="font-weight: 400; pointer-events: none; ">Products & Consumables</span></li>   {% endcomment %}
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'all_items' %}active{% endif %}" href="{% url 'inventory:all_items' %}">All Items</a></li>
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'add_item' %}active{% endif %}" href="{% url 'inventory:add_item' %}">Add Inventory Item</a></li>
+         <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'stock_out' %}active{% endif %}" href="{% url 'inventory:stock_out' %}">Stock Out</a></li>
+          
+          <li class=""><span class="nav-link text-muted" style="font-weight: 400; pointer-events: none;">Equipment (Assets)</span></li>
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'all_equipment' %}active{% endif %}" href="{% url 'inventory:all_equipment' %}">All Equipment</a></li>
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'add_equipment' %}active{% endif %}" href="{% url 'inventory:add_equipment' %}">Add  Equipment</a></li>
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'maintenance_log' %}active{% endif %}" href="{% url 'inventory:maintenance_log' %}">Maintenance Log</a></li>
+          
+          {% comment %} <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'suppliers' %}active{% endif %}" href="{% url 'inventory:suppliers' %}">Suppliers</a></li> {% endcomment %}
         </ul>
       </div>
     </li>

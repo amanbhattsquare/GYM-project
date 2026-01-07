@@ -56,29 +56,80 @@
             </div>
         </div>
 
-        <!-- QUICK ACTION BUTTONS -->
-        <div class="row mb-4">
-            <div class="col-md-3">
-                <a href="{% url 'add_new_member' %}" class="btn btn-outline-primary btn-block shadow-sm ">
-                    <i class="fas fa-user-plus mr-2"></i> Add Member
-                </a>
-            </div>
-            <div class="col-md-3">
-                <a href="{% url 'add_new_enquiry' %}" class="btn btn-outline-info btn-block shadow-sm ">
-                    <i class="fas fa-comment-dollar mr-2"></i> New Enquiry
-                </a>
-            </div>
-            <div class="col-md-3">
-                <a href="{% url 'billing:submit_due' %}" class="btn btn-outline-success btn-block shadow-sm ">
-                    <i class="fas fa-money-bill-wave mr-2"></i> Make a Payment
-                </a>
-            </div>
-            <div class="col-md-3">
-                <a href="{% url 'expense_add' %}" class="btn btn-outline-danger btn-block shadow-sm ">
-                    <i class="fas fa-file-invoice-dollar mr-2"></i> Add Expense
-                </a>
+
+        <!-- QUICK ACTION CARDS -->
+        <div class="quick-actions-container">
+            <h4 class="section-title">Quick Actions</h4>
+            <div class="row row-cols-2 row-cols-sm-4 row-cols-lg-8 g-3">
+                <div class="col">
+                    <a href="{% url 'add_new_member' %}" class="quick-action-card">
+                        <div class="icon-wrapper bg-primary-soft">
+                            <i class="fas fa-user-plus text-primary"></i>
+                        </div>
+                        <span>Add Member</span>
+                    </a>
+                </div>
+                <div class="col">
+                    <a href="{% url 'add_new_enquiry' %}" class="quick-action-card">
+                        <div class="icon-wrapper bg-info-soft">
+                            <i class="fas fa-comment-alt text-info"></i>
+                        </div>
+                        <span>New Enquiry</span>
+                    </a>
+                </div>
+                <div class="col">
+                    <a href="{% url 'billing:submit_due' %}" class="quick-action-card">
+                        <div class="icon-wrapper bg-success-soft">
+                            <i class="fas fa-money-bill-wave text-success"></i>
+                        </div>
+                        <span>Make Payment</span>
+                    </a>
+                </div>
+                <div class="col">
+                    <a href="{% url 'expense_add' %}" class="quick-action-card">
+                        <div class="icon-wrapper bg-danger-soft">
+                            <i class="fas fa-file-invoice-dollar text-danger"></i>
+                        </div>
+                        <span>Add Expense</span>
+                    </a>
+                </div>
+                
+                <div class="col">
+                    <a href="{% url 'member_list' %}" class="quick-action-card">
+                        <div class="icon-wrapper bg-warning-soft">
+                            <i class="fas fa-users text-warning"></i>
+                        </div>
+                        <span>All Members</span>
+                    </a>
+                </div>
+                <div class="col">
+                    <a href="{% url 'member_attendance' %}" class="quick-action-card">
+                        <div class="icon-wrapper bg-purple-soft">
+                            <i class="fas fa-clipboard-check text-purple"></i>
+                        </div>
+                        <span>Attendance</span>
+                    </a>
+                </div>
+                <div class="col">
+                    <a href="{% url 'trainer_list' %}" class="quick-action-card">
+                        <div class="icon-wrapper bg-teal-soft">
+                            <i class="fas fa-user-tie text-teal"></i>
+                        </div>
+                        <span>Trainers</span>
+                    </a>
+                </div>
+                <div class="col">
+                    <a href="{% url 'workout_plans' %}" class="quick-action-card">
+                        <div class="icon-wrapper bg-orange-soft">
+                            <i class="fas fa-dumbbell text-orange"></i>
+                        </div>
+                        <span>Workout Plans</span>
+                    </a>
+                </div>
             </div>
         </div>
+
+
 
         <!-- MEMBER GROWTH CHART -->
         <div class="card shadow-sm mb-4">
@@ -192,9 +243,9 @@
                                                 <td>{{ forloop.counter }}</td>
                                                 <td>
                                                     <div>
-                                                        <strong>{{ member.name }}</strong>
+                                                         <strong> <a href="{% url 'member_profile' member.id %}" class="text-decoration-none">{{ member.name }}</a></strong><br>
                                                         <br>
-                                                        <small class="text-muted">{{ member.phone|default:"No phone" }}</small>
+                                                        <small class="text-muted">{{ member.member_id|default:"No ID" }}</small>
                                                     </div>
                                                 </td>
                                                 <td>
@@ -260,9 +311,8 @@
                                                 <td>{{ forloop.counter }}</td>
                                                 <td>
                                                     <div>
-                                                        <strong>{{ member.first_name }} {{ member.last_name }}</strong>
-                                                        <br>
-                                                        <small class="text-muted">{{ member.email|default:"No email" }}</small>
+                                                         <strong> <a href="{% url 'member_profile' member.id %}" class="text-decoration-none">{{ member.first_name }} {{ member.last_name }}</a></strong><br>
+                                                        <small class="text-muted">{{ member.member_id|default:"No ID" }}</small>
                                                     </div>
                                                 </td>
                                                 <td>
@@ -452,19 +502,13 @@ const gradient = ctx.createLinearGradient(0, 0, 0, 300);
 gradient.addColorStop(0, 'rgba(54, 162, 235, 0.25)');
 gradient.addColorStop(1, 'rgba(54, 162, 235, 0)');
 
-// Sample growth data (replace with dynamic data from backend)
-const monthlyGrowthData = {
-    new_members: [{{ new_members_monthly.0|default:"12" }}, {{ new_members_monthly.1|default:"18" }}, {{ new_members_monthly.2|default:"22" }}, {{ new_members_monthly.3|default:"30" }}, {{ new_members_monthly.4|default:"25" }}, {{ new_members_monthly.5|default:"18" }}],
-    active_members: [{{ active_members_monthly.0|default:"80" }}, {{ active_members_monthly.1|default:"85" }}, {{ active_members_monthly.2|default:"90" }}, {{ active_members_monthly.3|default:"105" }}, {{ active_members_monthly.4|default:"115" }}, {{ active_members_monthly.5|default:"120" }}]
-};
-
 const memberGrowthChart = new Chart(ctx, {
     type: 'line',
     data: {
-        labels: ['{{ month_labels.0|default:"Jun" }}', '{{ month_labels.1|default:"Jul" }}', '{{ month_labels.2|default:"Aug" }}', '{{ month_labels.3|default:"Sep" }}', '{{ month_labels.4|default:"Oct" }}', '{{ month_labels.5|default:"Nov" }}'],
+        labels: {{ month_labels|safe }},
         datasets: [{
             label: 'New Members',
-            data: monthlyGrowthData.new_members,
+            data: {{ new_member_counts|safe }},
             tension: 0.3,
             fill: true,
             backgroundColor: gradient,
@@ -477,7 +521,7 @@ const memberGrowthChart = new Chart(ctx, {
             borderWidth: 2,
         }, {
             label: 'Active Members',
-            data: monthlyGrowthData.active_members,
+            data: {{ active_member_counts|safe }},
             tension: 0.3,
             fill: false,
             borderColor: '#4BC0C0',

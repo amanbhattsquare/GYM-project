@@ -153,7 +153,7 @@ def edit_event(request, event_id):
         event.save()
         return redirect('events:event_list')
 
-    event_types = Event.EventType.choices   
+    event_types = Event.EventType.choices
     statuses = Event.EventStatus.choices
 
     context = {

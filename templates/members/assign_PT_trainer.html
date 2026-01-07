@@ -146,7 +146,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (selectedTrainerId && trainersData.length > 0) {
             const selectedTrainer = trainersData.find(t => t.pk == selectedTrainerId);
             if (selectedTrainer) {
-                trainerFee = parseFloat(selectedTrainer.fields.salary);
+                trainerFee = parseFloat(selectedTrainer.fields.personal_training_monthly_amount);
             }
         }
         

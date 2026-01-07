@@ -40,6 +40,7 @@ urlpatterns = [
     path('settings/', include(('apps.settings.urls', 'settings'), namespace='settings')),
     path('business_report/', include('apps.business_report.urls')),
     path('events/', include('apps.events.urls')),
+    path('inventory/', include('apps.inventory.urls')),
     path('help/', help_view, name='help'),
 ]
 

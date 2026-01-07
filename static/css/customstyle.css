@@ -790,3 +790,76 @@ legend {
 .nav-link.active {
     color: var(--danger-color) !important;
 }
+
+
+
+
+/* Custom styles for the dashboard */
+  /* Custom CSS for Enhanced Dashboard */
+
+.quick-actions-container {
+    background-color: #fff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+    margin-bottom: 30px;
+}
+
+.section-title {
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.quick-action-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: #555;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    padding: 15px;
+    transition: all 0.3s ease;
+    border: 1px solid #e9ecef;
+    height: 100%;
+}
+
+.quick-action-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    color: #007bff;
+}
+
+.quick-action-card .icon-wrapper {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    font-size: 20px;
+}
+
+.quick-action-card span {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-align: center;
+}
+
+/* Soft background colors */
+.bg-primary-soft { background-color: rgba(54, 162, 235, 0.1); }
+.bg-info-soft { background-color: rgba(75, 192, 192, 0.1); }
+.bg-success-soft { background-color: rgba(9, 155, 155, 0.1); }
+.bg-danger-soft { background-color: rgba(255, 99, 132, 0.1); }
+.bg-warning-soft { background-color: rgba(255, 206, 86, 0.1); }
+.bg-purple-soft { background-color: rgba(153, 102, 255, 0.1); }
+.bg-teal-soft { background-color: rgba(32, 201, 151, 0.1); }
+.bg-orange-soft { background-color: rgba(255, 159, 64, 0.1); }
+
+/* Text colors to match soft backgrounds */
+.text-purple { color: #9966ff; }
+.text-teal { color: #20c997; }
+.text-orange { color: #ff9f40; }

@@ -55,6 +55,42 @@ def dashboard(request):
     upcoming_expiries = sorted(upcoming_expiries, key=lambda m: m.latest_membership.get_end_date())[:10]
     expired_members = sorted(expired_members, key=lambda m: m.latest_membership.get_end_date(), reverse=True)[:10]
 
+    # Member growth data for chart
+    six_months_ago = timezone.now() - timedelta(days=180)
+    
+    # New members per month
+    new_members_data = Member.objects.filter(
+        gym=gym,
+        membership_history__membership_start_date__gte=six_months_ago
+    ).annotate(
+        month=TruncMonth('membership_history__membership_start_date')
+    ).values('month').annotate(
+        count=Count('id', distinct=True)
+    ).order_by('month')
+
+    # Active members per month
+    active_members_data = []
+    for i in range(6):
+        month_start = (timezone.now() - timedelta(days=i*30)).replace(day=1).date()
+        
+        active_count = 0
+        for member in members:
+            latest_membership = member.latest_membership
+            if latest_membership:
+                end_date = latest_membership.get_end_date()
+                if end_date and latest_membership.membership_start_date < month_start and end_date >= month_start:
+                    active_count += 1
+        
+        active_members_data.append({
+            'month': month_start,
+            'count': active_count
+        })
+    active_members_data.reverse()
+
+    month_labels = [item['month'].strftime("%b") for item in new_members_data]
+    new_member_counts = [item['count'] for item in new_members_data]
+    active_member_counts = [item['count'] for item in active_members_data]
+
     context = {
         'total_members': total_members,
         'active_members': active_members,
@@ -62,23 +98,52 @@ def dashboard(request):
         'new_members_last_30_days': new_members_last_30_days,
         'upcoming_expiries': upcoming_expiries,
         'expired_members': expired_members,
+        'month_labels': month_labels,
+        'new_member_counts': new_member_counts,
+        'active_member_counts': active_member_counts,
     }
     return render(request, "dashboard.html", context)
 
+
 def member_growth_chart_data(request):
     gym = getattr(request, 'gym', None)
-    twelve_months_ago = timezone.now() - timedelta(days=365)
+    six_months_ago = timezone.now() - timedelta(days=180)
     
-    member_growth = (
-        Member.objects
-        .filter(gym=gym, membership_history__membership_start_date__gte=twelve_months_ago)
-        .annotate(month=TruncMonth('membership_history__membership_start_date'))
-        .values('month')
-        .annotate(count=Count('id', distinct=True))
-        .order_by('month')
-    )
+    # New members per month
+    new_members_data = Member.objects.filter(
+        gym=gym,
+        membership_history__membership_start_date__gte=six_months_ago
+    ).annotate(
+        month=TruncMonth('membership_history__membership_start_date')
+    ).values('month').annotate(
+        count=Count('id', distinct=True)
+    ).order_by('month')
+
+    # Active members per month
+    active_members_data = []
+    for i in range(6):
+        month_start = (timezone.now() - timedelta(days=i*30)).replace(day=1).date()
+        
+        active_count = 0
+        for member in Member.objects.filter(gym=gym):
+            latest_membership = member.latest_membership
+            if latest_membership:
+                end_date = latest_membership.get_end_date()
+                if end_date and latest_membership.membership_start_date < month_start and end_date >= month_start:
+                    active_count += 1
+        
+        active_members_data.append({
+            'month': month_start,
+            'count': active_count
+        })
+    active_members_data.reverse()
+
+    labels = [item['month'].strftime("%b") for item in new_members_data]
+    new_members = [item['count'] for item in new_members_data]
+    active_members = [item['count'] for item in active_members_data]
     
-    labels = [item['month'].strftime("%b %Y") for item in member_growth]
-    data = [item['count'] for item in member_growth]
-    
-    return JsonResponse({'labels': labels, 'data': data})
+    return JsonResponse({
+        'labels': labels,
+        'new_members': new_members,
+        'active_members': active_members
+    })

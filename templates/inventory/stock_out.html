@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Stock Out{% endblock title %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/customstyle.css' %}">
+<!-- Compact Breadcrumb Navigation -->
+<nav aria-label="breadcrumb" class="custom-breadcrumb mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{% url 'dashboard' %}" class="text-decoration-none">
+                <i class="mdi mdi-home-outline mdi-18px"></i> Dashboard
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{% url 'inventory:dashboard' %}" class="text-decoration-none">
+                <i class="mdi mdi-store-outline mdi-18px"></i> Inventory Dashboard
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{% url 'inventory:all_items' %}" class="text-decoration-none">
+                <i class="mdi mdi-store-outline "></i> Inventory
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <i class="mdi mdi-package-variant-closed-minus "></i> Stock Out
+        </li>
+    </ol>
+</nav>
+
+<div class="col-lg-12 px-0">
+    <div class="card">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">
+                <i class="fas fa-people-carry"></i> Stock Out
+            </h4>
+            <a href="{% url 'inventory:all_items' %}" class="btn btn-light btn-sm">
+                <i class="mdi mdi-arrow-left"></i> Back to Inventory
+            </a>
+        </div>
+
+        <div class="card-body">
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger" role="alert">
+                    {% for error in form.non_field_errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+            <form method="post" novalidate>
+                {% csrf_token %}
+                <fieldset class="border p-4 rounded mb-4">
+                    <legend class="w-auto px-2 h5">Stock Details</legend>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="{{ form.item.id_for_label }}" class="form-label">
+                                <i class="mdi mdi-tag-outline"></i> {{ form.item.label }}
+                            </label>
+                            {{ form.item }}
+                            {% if form.item.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.item.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="{{ form.quantity.id_for_label }}" class="form-label">
+                                <i class="mdi mdi-counter"></i> {{ form.quantity.label }}
+                            </label>
+                            {{ form.quantity }}
+                            {% if form.quantity.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.quantity.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="{{ form.reason.id_for_label }}" class="form-label">
+                                <i class="mdi mdi-help-circle-outline"></i> {{ form.reason.label }}
+                            </label>
+                            {{ form.reason }}
+                            {% if form.reason.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.reason.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="{{ form.issued_to.id_for_label }}" class="form-label">
+                                <i class="mdi mdi-account-outline"></i> {{ form.issued_to.label }}
+                            </label>
+                            {{ form.issued_to }}
+                            {% if form.issued_to.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.issued_to.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="{{ form.phone_number.id_for_label }}" class="form-label">
+                                <i class="mdi mdi-phone"></i> {{ form.phone_number.label }}
+                            </label>
+                            {{ form.phone_number }}
+                            {% if form.phone_number.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.phone_number.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="{{ form.date.id_for_label }}" class="form-label">
+                                <i class="mdi mdi-calendar-check-outline"></i> {{ form.date.label }}
+                            </label>
+                            {{ form.date }}
+                            {% if form.date.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.date.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="{{ form.remarks.id_for_label }}" class="form-label">
+                                <i class="mdi mdi-comment-text-outline"></i> {{ form.remarks.label }}
+                            </label>
+                            {{ form.remarks }}
+                            {% if form.remarks.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.remarks.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </fieldset>
+
+                <div class="mt-4 pt-3 border-top d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary me-2">
+                        <i class="mdi mdi-package-variant-closed-minus"></i>  Stock Out
+                    </button>
+                    <a href="{% url 'inventory:all_items' %}" class="btn btn-secondary">
+                        <i class="mdi mdi-cancel"></i> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}

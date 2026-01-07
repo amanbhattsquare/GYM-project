@@ -33,85 +33,67 @@
             <h4 class="mb-0">Edit Member</h4>
         </div>
         <div class="card-body">
-            <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+            <form method="post"  enctype="multipart/form-data" class="needs-validation" novalidate>
                 {% csrf_token %}
                 
                 <fieldset class="border p-4 rounded mb-4">
                     <legend class="w-auto px-2 h5">Personal Info</legend>
                     <div class="row">
                         <div class="col-md-4 mb-3">
-                            <label for="id_first_name" class="form-label">First Name</label>
-                            {{ form.first_name|attr:"required:true" }}
+                            <label for="id_first_name" class="form-label">First Name <span class="text-danger">*</span></label>
+                            {{ form.first_name }}
                             {% for error in form.first_name.errors %}
                                 <div class="invalid-feedback d-block">
                                     {{ error }}
                                 </div>
                             {% endfor %}
-                            <div class="invalid-feedback">
-                                Please enter a first name.
-                            </div>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label for="id_last_name" class="form-label">Last Name</label>
-                            {{ form.last_name|attr:"required:true" }}
+                            <label for="id_last_name" class="form-label">Last Name <span class="text-danger">*</span></label>
+                            {{ form.last_name }}
                             {% for error in form.last_name.errors %}
                                 <div class="invalid-feedback d-block">
                                     {{ error }}
                                 </div>
                             {% endfor %}
-                            <div class="invalid-feedback">
-                                Please enter a last name.
-                            </div>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label for="id_gender" class="form-label">Gender</label>
-                            {{ form.gender|attr:"required:true" }}
+                            <label for="id_gender" class="form-label">Gender <span class="text-danger">*</span></label>
+                            {{ form.gender }}
                             {% for error in form.gender.errors %}
                                 <div class="invalid-feedback d-block">
                                     {{ error }}
                                 </div>
                             {% endfor %}
-                            <div class="invalid-feedback">
-                                Please select a gender.
-                            </div>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="id_date_of_birth" class="form-label">Date of Birth</label>
-                            {{ form.date_of_birth|attr:"required:true" }}
+                            {{ form.date_of_birth }}
                             {% for error in form.date_of_birth.errors %}
                                 <div class="invalid-feedback d-block">
                                     {{ error }}
                                 </div>
                             {% endfor %}
-                            <div class="invalid-feedback">
-                                Please enter a date of birth.
-                            </div>
                         </div>
                         <div class="col-md-4 mb-3">
-                            <label for="id_age" class="form-label">Age</label>
-                            {{ form.age|attr:"required:true" }}
+                            <label for="id_age" class="form-label">Age <span class="text-danger">*</span></label>
+                            {{ form.age }}
                             {% for error in form.age.errors %}
                                 <div class="invalid-feedback d-block">
                                     {{ error }}
                                 </div>
                             {% endfor %}
-                            <div class="invalid-feedback">
-                                Please enter an age.
-                            </div>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="id_profession" class="form-label">Profession</label>
-                            {{ form.profession|attr:"required:true" }}
+                            {{ form.profession }}
                             {% for error in form.profession.errors %}
                                 <div class="invalid-feedback d-block">
                                     {{ error }}
                                 </div>
                             {% endfor %}
-                            <div class="invalid-feedback">
-                                Please enter a profession.
-                            </div>
                         </div>
-                        
+                       
                     </div>
                 </fieldset>
 
@@ -119,90 +101,111 @@
                     <legend class="w-auto px-2 h5">Contact Details</legend>
                     <div class="row">
                         <div class="col-md-4 mb-3">
-                            <label for="id_mobile_number" class="form-label">Mobile Number</label>
-                            {{ form.mobile_number|attr:"required:true" }}
+                            <label for="id_mobile_number" class="form-label">Mobile Number <span class="text-danger">*</span></label>
+                            {{ form.mobile_number }}
                             {% for error in form.mobile_number.errors %}
                                 <div class="invalid-feedback d-block">
                                     {{ error }}
                                 </div>
                             {% endfor %}
-                            <div class="invalid-feedback">
-                                Please enter a mobile number.
-                            </div>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="id_email" class="form-label">Email</label>
-                            {{ form.email|attr:"required:true" }}
+                            {{ form.email }}
                             {% for error in form.email.errors %}
                                 <div class="invalid-feedback d-block">
                                     {{ error }}
                                 </div>
                             {% endfor %}
-                            <div class="invalid-feedback">
-                                Please enter a valid email address.
-                            </div>
                         </div>
-                          <div class="col-md-4 mb-3">
+                        <div class="col-md-4 mb-3">
                             <label for="id_pincode" class="form-label">Pincode</label>
-                            {{ form.pincode|attr:"required:true" }}
+                            {{ form.pincode }}
                             {% for error in form.pincode.errors %}
                                 <div class="invalid-feedback d-block">
                                     {{ error }}
                                 </div>
                             {% endfor %}
-                            <div class="invalid-feedback">
-                                Please enter a pincode.
-                            </div>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="id_address" class="form-label">Address</label>
-                            {{ form.address|attr:"required:true" }}
+                            {{ form.address }}
                             {% for error in form.address.errors %}
                                 <div class="invalid-feedback d-block">
                                     {{ error }}
                                 </div>
                             {% endfor %}
-                            <div class="invalid-feedback">
-                                Please enter an address.
-                            </div>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label for="id_area" class="form-label">Area</label>
-                            {{ form.area|attr:"required:true" }}
-                            {% for error in form.area.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ error }}
-                                </div>
-                            {% endfor %}
-                            <div class="invalid-feedback">
-                                Please enter an area.
-                            </div>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="id_city" class="form-label">City</label>
-                            {{ form.city|attr:"required:true" }}
+                            {{ form.city }}
                             {% for error in form.city.errors %}
                                 <div class="invalid-feedback d-block">
                                     {{ error }}
                                 </div>
                             {% endfor %}
-                            <div class="invalid-feedback">
-                                Please enter a city.
-                            </div>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="id_state" class="form-label">State</label>
-                            {{ form.state|attr:"required:true" }}
+                            {{ form.state }}
                             {% for error in form.state.errors %}
                                 <div class="invalid-feedback d-block">
                                     {{ error }}
                                 </div>
                             {% endfor %}
-                            <div class="invalid-feedback">
-                                Please enter a state.
-                            </div>
                         </div>
-                      
+                        
+                    </div>
+                </fieldset>
+
+                <fieldset class="border p-4 rounded mb-4">
+                    <legend class="w-auto px-2 h5">Documents</legend>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="id_profile_picture" class="form-label">Profile Picture</label>
+                            {{ form.profile_picture }}
+                            {% for error in form.profile_picture.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="id_sign" class="form-label">Signature</label>
+                            {{ form.sign }}
+                            {% for error in form.sign.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="id_identity_type" class="form-label">Identity Type</label>
+                            {{ form.identity_type }}
+                            {% for error in form.identity_type.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="id_identity_no" class="form-label">Identity Number</label>
+                            {{ form.identity_no }}
+                            {% for error in form.identity_no.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="id_identity_document_image" class="form-label">Identity Document</label>
+                            {{ form.identity_document_image }}
+                            {% for error in form.identity_document_image.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                        </div>
                     </div>
                 </fieldset>
 
@@ -212,31 +215,19 @@
                     <div id="medical-formset-container">
                         {% for form in medical_formset %}
                             <div class="row medical-formset-row">
-                                {{ form.id }}
                                 <div class="col-md-3 mb-3">
                                     <label for="{{ form.condition.id_for_label }}" class="form-label">Condition</label>
                                     {{ form.condition }}
-                                    <div class="invalid-feedback">
-                                        Please enter a condition.
-                                    </div>
                                 </div>
                                 <div class="col-md-3 mb-3">
                                     <label for="{{ form.type.id_for_label }}" class="form-label">Type</label>
                                     {{ form.type }}
-                                    <div class="invalid-feedback">
-                                        Please enter a type.
-                                    </div>
                                 </div>
                                 <div class="col-md-3 mb-3">
                                     <label for="{{ form.since.id_for_label }}" class="form-label">Since</label>
                                     {{ form.since }}
-                                    <div class="invalid-feedback">
-                                        Please enter a date.
-                                    </div>
                                 </div>
                                 <div class="col-md-3 mb-3 d-flex align-items-end">
-                                   
-                                       
                                     <button type="button" class="btn btn-danger remove-medical-formset-row">Remove</button>
                                 </div>
                             </div>
@@ -250,24 +241,15 @@
                     <div class="row">
                         <div class="col-md-4 mb-3">
                             <label for="{{ emergency_form.name.id_for_label }}" class="form-label">Name</label>
-                            {{ emergency_form.name|attr:"required:true" }}
-                            <div class="invalid-feedback">
-                                Please enter an emergency contact name.
-                            </div>
+                            {{ emergency_form.name }}
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="{{ emergency_form.mobile.id_for_label }}" class="form-label">Mobile</label>
-                            {{ emergency_form.mobile|attr:"required:true" }}
-                            <div class="invalid-feedback">
-                                Please enter an emergency contact mobile number.
-                            </div>
+                            {{ emergency_form.mobile }}
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="{{ emergency_form.relation.id_for_label }}" class="form-label">Relation</label>
-                            {{ emergency_form.relation|attr:"required:true" }}
-                            <div class="invalid-feedback">
-                                Please enter the emergency contact's relation.
-                            </div>
+                            {{ emergency_form.relation }}
                         </div>
                     </div>
                 </fieldset>

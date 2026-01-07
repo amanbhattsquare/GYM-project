@@ -6,6 +6,23 @@ import random
 from apps.superadmin.models import Gym
 
 class Trainer(models.Model):
+    SPECIALIZATION_CHOICES = [
+    ('CROSSFIT', 'CrossFit'),
+    ('PT', 'Personal Trainer'),
+    ('ST', 'Strength Training'),
+    ('WL', 'Weight Loss'),
+    ('MB', 'Muscle Building'),
+    ('FT', 'Functional Training'),
+    ('HIIT', 'HIIT'),
+    ('YOGA', 'Yoga'),
+    ('ZUMBA', 'Zumba'),
+    ('CARDIO', 'Cardio Training'),
+    ('REHAB', 'Rehabilitation'),
+    ('NUTRITION', 'Nutrition Coach'),
+    ('SENIOR', 'Senior Fitness Trainer'),
+    ('OTHER', 'Other'),
+]
+
     gym = models.ForeignKey(Gym, on_delete=models.CASCADE, null=True)
     trainer_id = models.CharField(max_length=20, unique=True, blank=True)
     name = models.CharField(max_length=100)
@@ -14,8 +31,8 @@ class Trainer(models.Model):
     address = models.TextField(blank=True)
     joining_date = models.DateField(default=timezone.now)
     salary = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    personal_training_monthly_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    specialization = models.CharField(max_length=100)
+    personal_training_monthly_amount = models.DecimalField(max_digits=10, decimal_places=2, )
+    specialization = models.CharField(max_length=100, choices=SPECIALIZATION_CHOICES, default='CROSSFIT')
     photo = models.ImageField(upload_to='trainers/photos/', blank=True, null=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)

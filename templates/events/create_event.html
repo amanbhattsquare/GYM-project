@@ -33,7 +33,7 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="id_event_name">Event Name</label>
+                            <label for="id_event_name">Event Name <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="id_event_name" name="event_name" required placeholder="Enter Event Name">
                         </div>
                     </div>
@@ -56,13 +56,13 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="id_start_date">Start Date & Time</label>
+                            <label for="id_start_date">Start Date & Time <span class="text-danger">*</span></label>
                             <input type="datetime-local" class="form-control" id="id_start_date" name="start_date" required>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="id_end_date">End Date & Time</label>
+                            <label for="id_end_date">End Date & Time <span class="text-danger">*</span></label>
                             <input type="datetime-local" class="form-control" id="id_end_date" name="end_date" required>
                         </div>
                     </div>
@@ -71,12 +71,12 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="id_trainer_name">Trainer / Guest Name</label>
-                            <input type="text" class="form-control" id="id_trainer_name" name="trainer_name" required placeholder="Enter Trainer or Guest Name">
+                            <input type="text" class="form-control" id="id_trainer_name" name="trainer_name" placeholder="Enter Trainer or Guest Name">
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="id_location">Address</label>
+                            <label for="id_location">Address <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="id_location" name="location" required placeholder="Enter Event Address">
                         </div>
                     </div>
@@ -84,13 +84,13 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="id_max_participants">Max Participants</label>
+                            <label for="id_max_participants">Max Participants <span class="text-danger">*</span></label>
                             <input type="number" class="form-control" id="id_max_participants" name="max_participants" required placeholder="Enter Maximum Number of Participants">
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="id_registration_deadline">Registration Deadline</label>
+                            <label for="id_registration_deadline">Registration Deadline <span class="text-danger">*</span></label>
                             <input type="datetime-local" class="form-control" id="id_registration_deadline" name="registration_deadline" required>
                         </div>
                     </div>
@@ -132,8 +132,10 @@
                         </div>      
                     </div>
                 </div>
-                <button type="submit" class="btn btn-primary">Create Event</button>
-                <a href="{% url 'events:event_list' %}" class="btn btn-secondary">Cancel</a>
+                <div class="d-flex justify-content-end">
+                    <a href="{% url 'events:event_list' %}" class="btn btn-secondary mr-2">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Create Event</button>
+                </div>
             </form>
         </div>
     </div>
