@@ -9,7 +9,7 @@ class Member(models.Model):
     gym = models.ForeignKey(Gym, on_delete=models.CASCADE, null=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
-    mobile_number = models.CharField(max_length=15)
+    mobile_number = models.CharField(max_length=10)
     email = models.EmailField(null=True, blank=True)
     age = models.PositiveIntegerField(null=True, blank=True )
     gender = models.CharField(max_length=10, choices=[('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')],
