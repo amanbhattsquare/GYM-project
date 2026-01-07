@@ -89,13 +89,13 @@ class MaintenanceForm(forms.ModelForm):
             'technician_name', 'cost', 'next_service_date', 'status', 'downtime_days'
         ]
         widgets = {
-            'equipment': forms.Select(attrs={'class': 'form-select'}),
-            'maintenance_type': forms.Select(attrs={'class': 'form-select'}),
+            'equipment': forms.Select(attrs={'class': 'form-control'}),
+            'maintenance_type':  forms.Select(attrs={'class': 'form-control'}),
             'issue_description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Describe the issue...'}),
             'service_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'technician_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g., John Doe'}),
             'cost': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '0.00'}),
             'next_service_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'status': forms.Select(attrs={'class': 'form-select'}),
+            'status': forms.Select(attrs={'class': 'form-control'}),
             'downtime_days': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'e.g., 2'}),
         }

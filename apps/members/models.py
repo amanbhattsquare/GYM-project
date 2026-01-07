@@ -29,7 +29,7 @@ class Member(models.Model):
     class Meta:
         unique_together = [['gym', 'mobile_number'], ['gym', 'email']]
 
-    # Keep unique=True (works correctly now)
+    # Keep unique=True 
     member_id = models.CharField(max_length=100, unique=True, editable=False)
 
     def save(self, *args, **kwargs):

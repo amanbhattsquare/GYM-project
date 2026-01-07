@@ -14,6 +14,11 @@
             </a>
         </li>
         <li class="breadcrumb-item">
+            <a href="{% url 'inventory:dashboard' %}" class="text-decoration-none">
+                <i class="mdi mdi-store-outline mdi-18px"></i> Inventory Dashboard
+            </a>
+        </li>
+        <li class="breadcrumb-item">
             <a href="{% url 'inventory:all_items' %}" class="text-decoration-none">
                 <i class="mdi mdi-store-outline "></i> Inventory
             </a>
@@ -28,7 +33,7 @@
     <div class="card">
         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
             <h4 class="mb-0">
-                <i class="mdi mdi-package-variant-closed-minus"></i> Stock Out
+                <i class="fas fa-people-carry"></i> Stock Out
             </h4>
             <a href="{% url 'inventory:all_items' %}" class="btn btn-light btn-sm">
                 <i class="mdi mdi-arrow-left"></i> Back to Inventory

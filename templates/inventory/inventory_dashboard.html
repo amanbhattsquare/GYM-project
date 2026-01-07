@@ -10,6 +10,15 @@
         box-shadow: 0 4px 20px 0 rgba(0,0,0,0.12);
         transition: all 0.3s ease-in-out;
     }
+    .icon-circle {
+        height: 50px;
+        width: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+    }
 </style>
 {% endblock head %}
 
@@ -29,93 +38,129 @@
     </ol>
 </nav>
 
+
+
+<!-- Head -->
 <div class="row mb-4">
-    <div class="col-md-12 d-flex justify-content-between align-items-center">
-        <h2 class="h4 font-weight-bold mb-0">
-            <i class="mdi mdi-store-24-hour"></i> Inventory Overview
-        </h2>
-        <div class="d-flex align-items-center">
-            <a href="{% url 'inventory:all_items' %}" class="btn btn-outline-secondary btn-sm me-2">
-                <i class="mdi mdi-format-list-bulleted"></i> View All Items
-            </a>
-            <a href="{% url 'inventory:add_item' %}" class="btn btn-primary btn-sm me-2">
-                <i class="mdi mdi-plus-circle-outline"></i> Add Item
-            </a>
-            <a href="{% url 'inventory:add_equipment' %}" class="btn btn-info btn-sm me-2">
-                <i class="mdi mdi-plus-circle-outline"></i> Add Equipment
-            </a>
-            <a href="{% url 'inventory:stock_out' %}" class="btn btn-success btn-sm">
-                <i class="mdi mdi-package-variant-closed-minus"></i> Stock Out
-            </a>
-        </div>
-    </div>
-</div>
-
-<!-- Stats Cards -->
-<div class="row">
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card border-left-primary shadow h-100 py-2 card-hover">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Products</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_products }}</div>
-                    </div>
-                    <div class="col-auto">
-                        <i class="mdi mdi-package-variant-closed mdi-36px text-gray-300"></i>
-                    </div>
+    <div class="col-md-12">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">Inventory Overview</h4>
+                <div>
+                    <a href="{% url 'inventory:add_item' %}" class="btn btn-light btn-sm me-2">
+                        <i class="mdi mdi-plus"></i> Add Item
+                    </a>
+                    <a href="{% url 'inventory:add_equipment' %}" class="btn btn-light btn-sm me-2">
+                        <i class="mdi mdi-dumbbell"></i> Add Equipment
+                    </a>
+                    <a href="{% url 'inventory:stock_out' %}" class="btn btn-warning btn-sm">
+                        <i class="fas fa-people-carry"></i> Stock Out
+                    </a>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card border-left-success shadow h-100 py-2 card-hover">
             <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Total Equipment</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_equipment }}</div>
+                <!-- Date Filter Form -->
+                <form method="get" class="row g-3 align-items-center mb-4 p-3 border rounded bg-light">
+                    <div class="col-md-3">
+                        <label for="start_date" class="form-label">Start Date</label>
+                        <input type="date" name="start_date" id="start_date" class="form-control" value="{{ start_date|date:'Y-m-d' }}">
                     </div>
-                    <div class="col-auto">
-                        <i class="mdi mdi-dumbbell mdi-36px text-gray-300"></i>
+                    <div class="col-md-3">
+                        <label for="end_date" class="form-label">End Date</label>
+                        <input type="date" name="end_date" id="end_date" class="form-control" value="{{ end_date|date:'Y-m-d' }}">
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="mdi mdi-filter-variant"></i> Filter
+                        </button>
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="button" class="btn btn-secondary w-100" id="clearFilter">
+                            <i class="mdi mdi-restore"></i> Clear
+                        </button>
+                    </div>
+                </form>
 
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card border-left-warning shadow h-100 py-2 card-hover">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Low Stock Items</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ low_stock_items }}</div>
+                <!-- KPI Cards -->
+                <div class="row">
+                    <!-- Total Products -->
+                    <div class="col-md-3 mb-4">
+                        <a href="{% url 'inventory:all_items' %}" class="text-decoration-none">
+                            <div class="card border-left-primary shadow h-100 py-2 card-hover">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Products</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_products }}</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <div class="icon-circle bg-primary">
+                                                <i class="mdi mdi-package-variant-closed mdi-24px"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
                     </div>
-                    <div class="col-auto">
-                        <i class="mdi mdi-alert-outline mdi-36px text-gray-300"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <div class="col-xl-3 col-md-6 mb-4">
-        <div class="card border-left-danger shadow h-100 py-2 card-hover">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Out of Stock Items</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ out_of_stock_items }}</div>
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <a href="{% url 'inventory:all_equipment' %}" class="text-decoration-none">
+                            <div class="card border-left-success shadow h-100 py-2 card-hover">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Total Equipment</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_equipment }}</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <div class="icon-circle bg-success">
+                                                <i class="mdi mdi-dumbbell mdi-24px"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
                     </div>
-                    <div class="col-auto">
-                        <i class="mdi mdi-package-variant-closed-remove mdi-36px text-gray-300"></i>
+
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <a href="{% url 'inventory:all_items' %}?status=low_stock" class="text-decoration-none">
+                            <div class="card border-left-warning shadow h-100 py-2 card-hover">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Low Stock Items</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ low_stock_items }}</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <div class="icon-circle bg-warning">
+                                                <i class="mdi mdi-alert-outline mdi-24px"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
+
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-danger shadow h-100 py-2 card-hover">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Stock Out Today</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stock_out_today }}</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <div class="icon-circle bg-danger">
+                                            <i class="mdi mdi-package-variant-closed-remove mdi-24px"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 </div>
 
 <!-- Charts -->
@@ -124,7 +169,7 @@
         <div class="card shadow">
             <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                 <h6 class="m-0 font-weight-bold"><i class="mdi mdi-chart-bar"></i> Monthly Stock Usage</h6>
-                <span class="badge bg-light text-dark">Last 30 Days</span>
+                <span class="badge bg-light text-dark">{{ start_date }} to {{ end_date }}</span>
             </div>
             <div class="card-body">
                 <canvas id="monthlyStockUsage"></canvas>
@@ -143,6 +188,53 @@
     </div>
 </div>
 
+<!-- Recent Transactions -->
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-header bg-info text-white">
+                <h6 class="m-0 font-weight-bold"><i class="mdi mdi-history"></i> Recent Stock Transactions</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Type</th>
+                                <th>Quantity</th>
+                                <th>Date</th>
+                                <th>Reason</th>
+                                <th>Added By</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for log in recent_transactions %}
+                            <tr>
+                                <td>{{ log.item.name }}</td>
+                                <td>
+                                    <span class="badge {% if log.transaction_type == 'stock_in' %}bg-success{% else %}bg-danger{% endif %}">
+                                        {{ log.get_transaction_type_display }}
+                                    </span>
+                                </td>
+                                <td>{{ log.quantity }}</td>
+                                <td>{{ log.date|date:"Y-m-d H:i" }}</td>
+                                <td>{{ log.get_reason_display|default:"N/A" }}</td>
+                                <td>{{ log.added_by.username|default:"N/A" }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center">No recent transactions found.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock content %}
 
 {% block javascript %}
@@ -154,7 +246,7 @@
         var monthlyStockUsage = new Chart(monthlyStockCtx, {
             type: 'bar',
             data: {
-                labels: [{% for item in monthly_stock_usage %} '{{ item.product__name }}', {% endfor %}],
+                labels: [{% for item in monthly_stock_usage %} '{{ item.item__name }}', {% endfor %}],
                 datasets: [{
                     label: 'Stock Usage',
                     data: [{% for item in monthly_stock_usage %} '{{ item.total_quantity }}', {% endfor %}],

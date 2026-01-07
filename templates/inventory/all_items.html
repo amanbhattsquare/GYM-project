@@ -15,6 +15,11 @@
                 <i class="mdi mdi-home-outline mdi-18px"></i> Dashboard
             </a>
         </li>
+        <li class="breadcrumb-item">
+            <a href="{% url 'inventory:dashboard' %}" class="text-decoration-none">
+                <i class="mdi mdi-store-outline mdi-18px"></i> Inventory Dashboard
+            </a>
+        </li>
         <li class="breadcrumb-item active" aria-current="page">
             <i class="mdi mdi-store-outline mdi-18px"></i> All Products & Consumables
         </li>
@@ -32,41 +37,46 @@
         </div>
         <div class="card-body">
             <!-- Filters -->
-            <div class="mb-4">
-                <form method="get" class="row g-3 align-items-center">
-                    <div class="col-md-4">
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="mdi mdi-magnify"></i></span>
-                            <input type="text" name="query" class="form-control" placeholder="Search by Name or SKU..." value="{{ request.GET.query }}">
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <form method="get" class="row g-3 align-items-center">
+                                <div class="col-md-4">
+                                    <input type="text" name="q" class="form-control" placeholder="Search by name or SKU..." value="{{ request.GET.q }}">
+                                </div>
+                                <div class="col-md-3">
+                                    <select name="category" class="form-select">
+                                        <option value="">All Categories</option>
+                                        {% for cat in categories %}
+                                            <option value="{{ cat }}" {% if request.GET.category == cat %}selected{% endif %}>{{ cat }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <select name="status" class="form-select">
+                                        <option value="">All Statuses</option>
+                                        <option value="in_stock" {% if stock_status == 'in_stock' %}selected{% endif %}>In Stock</option>
+                                        <option value="low_stock" {% if stock_status == 'low_stock' %}selected{% endif %}>Low Stock</option>
+                                        <option value="out_of_stock" {% if stock_status == 'out_of_stock' %}selected{% endif %}>Out of Stock</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="mdi mdi-filter-variant"></i> Filter
+                                    </button>
+                                </div>
+                            </form>
                         </div>
                     </div>
-                    <div class="col-md-3">
-                        <select name="category" class="form-select">
-                            <option value="">All Categories</option>
-                            {% for category in categories %}
-                            <option value="{{ category.id }}" {% if request.GET.category == category.id|stringformat:"s" %}selected{% endif %}>{{ category.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <select name="status" class="form-select">
-                            <option value="">All Statuses</option>
-                            <option value="in_stock" {% if request.GET.status == 'in_stock' %}selected{% endif %}>In Stock</option>
-                            <option value="low_stock" {% if request.GET.status == 'low_stock' %}selected{% endif %}>Low Stock</option>
-                            <option value="out_of_stock" {% if request.GET.status == 'out_of_stock' %}selected{% endif %}>Out of Stock</option>
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <button type="submit" class="btn btn-primary w-100">Filter</button>
-                    </div>
-                </form>
+                </div>
             </div>
 
-            <!-- Inventory Table -->
-            <div class="table-responsive">
-                <table class="table table-hover table-sm table-stack-on-mobile">
-                    <thead>
-                        <tr>
+            <div class="card shadow">
+                <!-- Inventory Table -->
+                <div class="table-responsive">
+                    <table class="table table-hover table-sm table-stack-on-mobile">
+                        <thead>
                             <th class="font-weight-semibold py-2">#</th>
                             <th class="font-weight-semibold py-2">Item Image</th>
                             <th class="font-weight-semibold py-2">Item Name</th>

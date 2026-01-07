@@ -30,7 +30,7 @@ class Item(models.Model):
 
     name = models.CharField(max_length=100)
     category = models.CharField(max_length=100, choices=CATEGORY_CHOICES)
-    sku = models.CharField(max_length=50, blank=True)
+    sku = models.CharField(max_length=50, blank=True, null=True)
     current_stock = models.PositiveIntegerField(default=0)
     unit = models.CharField(max_length=10, choices=UNIT_CHOICES)
     reorder_level = models.PositiveIntegerField(default=0)
@@ -44,7 +44,7 @@ class Item(models.Model):
     is_deleted = models.BooleanField(default=False)
     
     class Meta:
-        unique_together = [['gym', 'name'], ['gym', 'sku']]
+        unique_together = [['gym', 'name']]
 
 
     def __str__(self):

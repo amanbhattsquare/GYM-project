@@ -13,6 +13,11 @@
                 <i class="mdi mdi-home-outline mdi-18px"></i> Dashboard
             </a>
         </li>
+        <li class="breadcrumb-item">
+            <a href="{% url 'inventory:dashboard' %}" class="text-decoration-none">
+                <i class="mdi mdi-store-outline mdi-18px"></i> Inventory Dashboard
+            </a>
+        </li>
         <li class="breadcrumb-item active" aria-current="page">
             <i class="mdi mdi-dumbbell mdi-18px"></i> All Equipment
         </li>
@@ -36,94 +41,103 @@
 
         <div class="card-body">
             <!-- Filter Form -->
-            <form method="get" class="row g-3 mb-4 align-items-center">
-                <div class="col-md-4">
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="mdi mdi-magnify"></i></span>
-                        <input type="text" name="q" class="form-control" placeholder="Search by name or serial number..." value="{{ request.GET.q }}">
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <form method="get" class="row g-3 align-items-center">
+                                <div class="col-md-4">
+                                    <input type="text" name="q" class="form-control" placeholder="Search by name or serial..." value="{{ request.GET.q }}">
+                                </div>
+                                <div class="col-md-3">
+                                    <select name="category" class="form-select">
+                                        <option value="">All Categories</option>
+                                        {% for cat in categories %}
+                                            <option value="{{ cat }}" {% if request.GET.category == cat %}selected{% endif %}>{{ cat }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <select name="status" class="form-select">
+                                        <option value="">All Statuses</option>
+                                        <option value="active" {% if request.GET.status == 'active' %}selected{% endif %}>Active</option>
+                                        <option value="under_maintenance" {% if request.GET.status == 'under_maintenance' %}selected{% endif %}>Under Maintenance</option>
+                                        <option value="retired" {% if request.GET.status == 'retired' %}selected{% endif %}>Retired</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="mdi mdi-filter-variant"></i> Filter
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <select name="category" class="form-select">
-                        <option value="">All Categories</option>
-                        {% for category in categories %}
-                            <option value="{{ category }}" {% if request.GET.category == category %}selected{% endif %}>{{ category }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <select name="status" class="form-select">
-                        <option value="">All Statuses</option>
-                        <option value="active" {% if request.GET.status == 'active' %}selected{% endif %}>Active</option>
-                        <option value="under_maintenance" {% if request.GET.status == 'under_maintenance' %}selected{% endif %}>Under Maintenance</option>
-                        <option value="retired" {% if request.GET.status == 'retired' %}selected{% endif %}>Retired</option>
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <button type="submit" class="btn btn-primary w-100">Filter</button>
-                </div>
-            </form>
+            </div>
 
-            <!-- Equipment Table -->
-            <div class="table-responsive">
-                <table class="table table-hover table-sm table-stack-on-mobile">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Equipment Name</th>
-                            <th>Category</th>
-                            <th>Serial Number</th>
-                            <th>Purchase Date</th>
-                            <th>Warranty End</th>
-                            <th>Location</th>
-                            <th>Condition</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for equipment in equipments %}
+            <div class="card shadow">
+                <!-- Equipment Table -->
+                <div class="table-responsive">
+                    <table class="table table-hover table-sm table-stack-on-mobile">
+                        <thead>
                             <tr>
-                                <td data-label="#" >{{ forloop.counter }}</td>
-                                <td data-label="Equipment Name" title="Click to view details">
-                                    <a href="{% url 'inventory:edit_equipment' id=equipment.id %}">{{ equipment.name }}</a>
-                                </td>
-                                <td data-label="Category">{{ equipment.category }}</td>
-                                <td data-label="Serial Number">{{ equipment.serial_number }}</td>
-                                <td data-label="Purchase Date">{{ equipment.purchase_date|date:"d M, Y" }}</td>
-                                <td data-label="Warranty End">{{ equipment.warranty_end_date|date:"d M, Y"|default:"N/A" }}</td>
-                                <td data-label="Location">{{ equipment.location|default:"N/A" }}</td>
-                                <td data-label="Condition">
-                                    <span class="badge 
-                                        {% if equipment.condition == 'new' %}bg-success
-                                        {% elif equipment.condition == 'good' %}bg-primary
-                                        {% elif equipment.condition == 'fair' %}bg-warning
-                                        {% else %}bg-danger{% endif %}">
-                                        {{ equipment.get_condition_display }}
-                                    </span>
-                                </td>
-                                <td data-label="Status">
-                                    <span class="badge 
-                                        {% if equipment.status == 'active' %}bg-success
-                                        {% elif equipment.status == 'under_maintenance' %}bg-warning
-                                        {% else %}bg-danger{% endif %}">
-                                        {{ equipment.get_status_display }}
-                                    </span>
-                                </td>
-                                
-                                <td data-label="Actions">
-                                    <a href="{% url 'inventory:edit_equipment' id=equipment.id %}" class="btn btn-sm btn-outline-primary">
-                                        <i class="mdi mdi-pencil"></i> Edit
-                                    </a>
-                                </td>
+                                <th>#</th>
+                                <th>Equipment Name</th>
+                                <th>Category</th>
+                                <th>Serial Number</th>
+                                <th>Purchase Date</th>
+                                <th>Warranty End</th>
+                                <th>Location</th>
+                                <th>Condition</th>
+                                <th>Status</th>
+                                <th>Actions</th>
                             </tr>
-                        {% empty %}
-                            <tr>
-                                <td colspan="9" class="text-center">No equipment found.</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {% for equipment in equipments %}
+                                <tr>
+                                    <td data-label="#" >{{ forloop.counter }}</td>
+                                    <td data-label="Equipment Name" title="Click to view details">
+                                        <a href="{% url 'inventory:edit_equipment' id=equipment.id %}">{{ equipment.name }}</a>
+                                    </td>
+                                    <td data-label="Category">{{ equipment.category }}</td>
+                                    <td data-label="Serial Number">{{ equipment.serial_number }}</td>
+                                    <td data-label="Purchase Date">{{ equipment.purchase_date|date:"d M, Y" }}</td>
+                                    <td data-label="Warranty End">{{ equipment.warranty_end_date|date:"d M, Y"|default:"N/A" }}</td>
+                                    <td data-label="Location">{{ equipment.location|default:"N/A" }}</td>
+                                    <td data-label="Condition">
+                                        <span class="badge 
+                                            {% if equipment.condition == 'new' %}bg-success
+                                            {% elif equipment.condition == 'good' %}bg-primary
+                                            {% elif equipment.condition == 'fair' %}bg-warning
+                                            {% else %}bg-danger{% endif %}">
+                                            {{ equipment.get_condition_display }}
+                                        </span>
+                                    </td>
+                                    <td data-label="Status">
+                                        <span class="badge 
+                                            {% if equipment.status == 'active' %}bg-success
+                                            {% elif equipment.status == 'under_maintenance' %}bg-warning
+                                            {% else %}bg-danger{% endif %}">
+                                            {{ equipment.get_status_display }}
+                                        </span>
+                                    </td>
+                                    
+                                    <td data-label="Actions">
+                                        <a href="{% url 'inventory:edit_equipment' id=equipment.id %}" class="btn btn-sm btn-outline-primary">
+                                            <i class="mdi mdi-pencil"></i> Edit
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="9" class="text-center">No equipment found.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>

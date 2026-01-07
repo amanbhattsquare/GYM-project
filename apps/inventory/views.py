@@ -4,11 +4,62 @@ from .forms import ItemForm, StockOutForm, EquipmentForm, MaintenanceForm
 from django.contrib import messages
 from django.db.models import Q, F
 from django.contrib.auth.decorators import login_required
+from django.db.models import Sum, Count
+from django.utils import timezone
+from datetime import timedelta, date
 
 @login_required
 def inventory_dashboard(request):
     gym = getattr(request, 'gym', None)
-    return render(request, 'inventory/inventory_dashboard.html', {'gym': gym})
+
+    # Date filtering
+    start_date_str = request.GET.get('start_date')
+    end_date_str = request.GET.get('end_date')
+
+    if start_date_str and end_date_str:
+        start_date = timezone.datetime.strptime(start_date_str, '%Y-%m-%d').date()
+        end_date = timezone.datetime.strptime(end_date_str, '%Y-%m-%d').date()
+    else:
+        end_date = timezone.now().date()
+        start_date = end_date - timedelta(days=30)
+
+    # KPI Calculations
+    total_products = Item.objects.filter(gym=gym, is_deleted=False).exclude(category='equipment').count()
+    total_equipment = Equipment.objects.filter(gym=gym, is_deleted=False).count()
+    low_stock_items = Item.objects.filter(gym=gym, is_deleted=False, current_stock__gt=0, current_stock__lte=F('reorder_level')).count()
+    
+    today = timezone.now().date()
+    stock_out_today = StockLog.objects.filter(
+        gym=gym,
+        transaction_type='stock_out',
+        date__date=today
+    ).count()
+
+    # Chart Data
+    monthly_stock_usage = StockLog.objects.filter(
+        gym=gym,
+        transaction_type='stock_out',
+        date__range=[start_date, end_date]
+    ).values('item__name').annotate(total_quantity=Sum('quantity')).order_by('-total_quantity')[:10]
+
+    equipment_status = Equipment.objects.filter(gym=gym, is_deleted=False).values('status').annotate(count=Count('id'))
+
+    # Recent Transactions
+    recent_transactions = StockLog.objects.filter(gym=gym).order_by('-date')[:10]
+
+    context = {
+        'gym': gym,
+        'total_products': total_products,
+        'total_equipment': total_equipment,
+        'low_stock_items': low_stock_items,
+        'stock_out_today': stock_out_today,
+        'monthly_stock_usage': monthly_stock_usage,
+        'equipment_status': equipment_status,
+        'start_date': start_date.strftime('%Y-%m-%d'),
+        'end_date': end_date.strftime('%Y-%m-%d'),
+        'recent_transactions': recent_transactions,
+    }
+    return render(request, 'inventory/inventory_dashboard.html', context)
 
 @login_required
 def all_items(request):
@@ -45,6 +96,7 @@ def all_items(request):
         'categories': Item.objects.filter(gym=gym).values_list('category', flat=True).distinct(),
         'suppliers': Item.objects.filter(gym=gym).values_list('supplier', flat=True).distinct(),
         'gym': gym,
+        'stock_status': stock_status,
     }
     return render(request, 'inventory/all_items.html', context)
 
