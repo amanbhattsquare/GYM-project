@@ -53,15 +53,15 @@
                             <th scope="col"><i class="mdi mdi-phone"></i> Phone Number</th>
                             <th scope="col"><i class="mdi mdi-help-circle-outline"></i> Reason</th>
                             <th scope="col"><i class="mdi mdi-comment-text-outline"></i> Remarks</th>
-                            <th scope="col"><i class="mdi mdi-account-edit-outline"></i> User</th>
+                            <th scope="col"><i class="mdi mdi-account-edit-outline"></i> By</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for log in logs %}
                         <tr>
-                            <td>{{ forloop.counter }}</td>
-                            <td>{{ log.date|date:"d M Y, H:i" }}</td>
-                            <td>
+                            <td data-label="#">{{ forloop.counter }}</td>
+                            <td data-label="Date & Time">{{ log.date|date:"d M Y, H:i" }}</td>
+                            <td data-label="Type">
                                 {% if log.transaction_type == 'stock_in' %}
                                     <span class="badge bg-success-soft text-success">
                                         <i class="mdi mdi-package-variant-closed-plus"></i> Stock In
@@ -72,12 +72,12 @@
                                     </span>
                                 {% endif %}
                             </td>
-                            <td>{{ log.quantity }} {{ item.unit }}</td>
-                            <td>{{ log.issued_to|default:"N/A" }}</td>
-                            <td>{{ log.phone_number|default:"N/A" }}</td>
-                            <td>{{ log.get_reason_display|default:"N/A" }}</td>
-                            <td>{{ log.remarks|default:"No remarks" }}</td>
-                            <td>{{ log.added_by.username|default:"System" }}</td>
+                            <td data-label="Quantity">{{ log.quantity }} {{ item.unit }}</td>
+                            <td data-label="Issued To">{{ log.issued_to|default:"N/A" }}</td>
+                            <td data-label="Phone Number">{{ log.phone_number|default:"N/A" }}</td>
+                            <td data-label="Reason">{{ log.get_reason_display|default:"N/A" }}</td>
+                            <td data-label="Remarks">{{ log.remarks|default:"No remarks" }}</td>
+                            <td data-label="By">{{ log.added_by.username|default:"System" }}</td>
                         </tr>
                         {% empty %}
                         <tr>
