@@ -48,6 +48,10 @@ class StockOutForm(forms.ModelForm):
         if gym:
             self.fields['item'].queryset = Item.objects.filter(gym=gym, is_deleted=False)
 
+        for field_name, field in self.fields.items():
+            if field_name != 'remarks':
+                field.required = True
+
     def clean_quantity(self):
         quantity = self.cleaned_data.get('quantity')
         item = self.cleaned_data.get('item')

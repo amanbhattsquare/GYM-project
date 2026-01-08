@@ -164,7 +164,7 @@
           {% comment %} <li class=""><span class="nav-link text-muted" style="font-weight: 400; pointer-events: none; ">Products & Consumables</span></li>   {% endcomment %}
           <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'all_items' %}active{% endif %}" href="{% url 'inventory:all_items' %}">All Products Items</a></li>
           <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'add_item' %}active{% endif %}" href="{% url 'inventory:add_item' %}">Add Product Item</a></li>
-         <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'stock_out' %}active{% endif %}" href="{% url 'inventory:stock_out' %}">Stock Out</a></li>
+         <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'stock_out' %}active{% endif %}" href="{% url 'inventory:stock_out' %}"> Stock Out</a></li>
           
           <li class=""><span class="nav-link text-muted" style="font-weight: 400; pointer-events: none;">Equipment (Assets)</span></li>
           <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'all_equipment' %}active{% endif %}" href="{% url 'inventory:all_equipment' %}">All Equipment</a></li>

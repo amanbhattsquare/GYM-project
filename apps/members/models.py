@@ -60,7 +60,10 @@ class Member(models.Model):
 
     @property
     def name(self):
-        return f'{self.first_name} {self.last_name}'
+      first = (self.first_name or '').strip().title()
+      last = (self.last_name or '').strip().title()
+      return f"{first} {last}".strip()
+
 
     @property
     def latest_membership(self):
