@@ -143,6 +143,8 @@ def _get_suppliers(gym):
 @login_required
 def stock_out_view(request, item_id=None):
     gym = getattr(request, 'gym', None)
+    items = Item.objects.filter(gym=gym, is_deleted=False)
+
     if request.method == 'POST':
         form = StockOutForm(request.POST, gym=gym)
         if form.is_valid():
@@ -159,6 +161,8 @@ def stock_out_view(request, item_id=None):
             item.current_stock -= stock_log.quantity
             item.save()
             
+            stock_log.selling_price = item.selling_price
+            stock_log.total_amount = (item.selling_price * stock_log.quantity) - stock_log.discount
             stock_log.save()
             
             messages.success(request, f'{item.name} has been stocked out successfully.')
@@ -166,11 +170,14 @@ def stock_out_view(request, item_id=None):
     else:
         initial_data = {}
         if item_id:
-            initial_data['item'] = get_object_or_404(Item, id=item_id, gym=gym)
+            item = get_object_or_404(Item, id=item_id, gym=gym)
+            initial_data['item'] = item
+            initial_data['unit_price'] = item.selling_price
         form = StockOutForm(initial=initial_data, gym=gym)
     
     context = {
         'form': form,
+        'items': items,
         'suppliers': _get_suppliers(gym),
         'gym': gym,
     }
