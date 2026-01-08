@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Payment Settings</h4>
+                </div>
+                <div class="card-body">
+                    <div class="basic-form">
+                        <form action="{% url 'settings:payment_setting' %}" method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="id_bank_name">Bank Name</label>
+                                        {{ form.bank_name }}
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="id_account_holder_name">Account Holder Name</label>
+                                        {{ form.account_holder_name }}
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="id_account_number">Account Number</label>
+                                        {{ form.account_number }}
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="id_ifsc_code">IFSC Code</label>
+                                        {{ form.ifsc_code }}
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="id_qr_code">QR Code</label>
+                                        {{ form.qr_code }}
+                                        {% if payment_settings.qr_code %}
+                                            <img src="{{ payment_settings.qr_code.url }}" alt="QR Code" class="img-fluid mt-2" style="max-width: 200px;">
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Add custom styling to form fields
+    document.addEventListener("DOMContentLoaded", function() {
+        const fields = ['bank_name', 'account_holder_name', 'account_number', 'ifsc_code', 'qr_code'];
+        fields.forEach(function(field) {
+            const element = document.getElementById('id_' + field);
+            if (element) {
+                element.classList.add('form-control');
+            }
+        });
+    });
+</script>
+{% endblock extra_js %}
