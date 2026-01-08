@@ -13,12 +13,12 @@ def inventory_dashboard(request):
     gym = getattr(request, 'gym', None)
 
     # Date filtering
-    start_date_str = request.GET.get('start_date')
-    end_date_str = request.GET.get('end_date')
+    start_date_str = request.GET.get('from_date')
+    end_date_str = request.GET.get('to_date')
 
     if start_date_str and end_date_str:
-        start_date = timezone.datetime.strptime(start_date_str, '%d-%m-%Y').date()
-        end_date = timezone.datetime.strptime(end_date_str, '%d-%m-%Y').date()
+        start_date = timezone.datetime.strptime(start_date_str, '%Y-%m-%d').date()
+        end_date = timezone.datetime.strptime(end_date_str, '%Y-%m-%d').date()
     else:
         end_date = timezone.now().date()
         start_date = end_date - timedelta(days=30)
@@ -29,10 +29,10 @@ def inventory_dashboard(request):
     low_stock_items = Item.objects.filter(gym=gym, is_deleted=False, current_stock__gt=0, current_stock__lte=F('reorder_level')).count()
     
     today = timezone.now().date()
-    stock_out_today = StockLog.objects.filter(
+    stock_out_in_period = StockLog.objects.filter(
         gym=gym,
         transaction_type='stock_out',
-        date__date=today
+        date__date__range=[start_date, end_date]
     ).count()
 
     # Chart Data
@@ -45,14 +45,14 @@ def inventory_dashboard(request):
     equipment_status = Equipment.objects.filter(gym=gym, is_deleted=False).values('status').annotate(count=Count('id'))
 
     # Recent Transactions
-    recent_transactions = StockLog.objects.filter(gym=gym).order_by('-date')[:10]
+    recent_transactions = StockLog.objects.filter(gym=gym, date__date__range=[start_date, end_date]).order_by('-date')[:10]
 
     context = {
         'gym': gym,
         'total_products': total_products,
         'total_equipment': total_equipment,
         'low_stock_items': low_stock_items,
-        'stock_out_today': stock_out_today,
+        'stock_out_in_period': stock_out_in_period,
         'monthly_stock_usage': monthly_stock_usage,
         'equipment_status': equipment_status,
         'start_date': start_date.strftime('%Y-%m-%d'),
