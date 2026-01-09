@@ -12,7 +12,7 @@ class EnquiryForm(forms.ModelForm):
 
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your name'}),
-            'contact_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your contact number'}),
+            'mobile_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your contact number'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Enter your email'}),
             'gender': forms.Select(attrs={'class': 'form-control', 'placeholder': 'Select your gender'}),
             'age': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter your age'}),
@@ -30,7 +30,7 @@ class EnquiryForm(forms.ModelForm):
 
         required_fields = [
             'name',
-            'contact_number',
+            'mobile_number',
             'gender',
             'age',
             'next_follow_up_date'
@@ -48,8 +48,8 @@ class EnquiryForm(forms.ModelForm):
         return name
 
     # 📞 Contact number validation (India)
-    def clean_contact_number(self):
-        contact = self.cleaned_data.get('contact_number')
+    def clean_mobile_number(self):
+        contact = self.cleaned_data.get('mobile_number')
         if not re.match(r'^[0-9]\d{9}$', contact):
             raise ValidationError("Enter a valid 10-digit mobile number")
         return contact

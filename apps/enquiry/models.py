@@ -33,7 +33,7 @@ class Enquiry(models.Model):
     ]
 
     name = models.CharField(max_length=100)
-    contact_number = models.CharField(max_length=10)
+    mobile_number = models.CharField(max_length=10)
     email = models.EmailField(blank=True, null=True)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=True, null=True)
     age = models.IntegerField(blank=True, null=True)

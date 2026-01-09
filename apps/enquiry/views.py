@@ -42,7 +42,7 @@ def enquiry_list(request):
     if query:
         enquiry_list = enquiry_list.filter(
             Q(name__icontains=query) |
-            Q(contact_number__icontains=query) |
+            Q(mobile_number__icontains=query) |
             Q(email__icontains=query)
         ).distinct()
 

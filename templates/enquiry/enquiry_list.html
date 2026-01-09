@@ -50,7 +50,7 @@
                         <tr>
                             <td data-label="SR. No.">{{ forloop.counter0|add:enquiries.start_index }}</td>
                             <td data-label="Name">{{ enquiry.name }}</td>
-                            <td data-label="Contact Number">{{ enquiry.contact_number }}</td>
+                            <td data-label="Contact Number">{{ enquiry.mobile_number }}</td>
                             <td data-label="Interested In">{{ enquiry.get_interested_in_display }}</td>
                             <td data-label="Enquiry Date">{{ enquiry.enquiry_date|date:"d-m-Y" }}</td>
                             <td data-label="Follow-up Date">{{ enquiry.next_follow_up_date|date:"d-m-Y" }}</td>
@@ -99,7 +99,7 @@
             </div>
             <div class="modal-body">
                 <p><strong>Name:</strong> {{ enquiry.name }}</p>
-                <p><strong>Contact Number:</strong> {{ enquiry.contact_number }}</p>
+                <p><strong>Contact Number:</strong> {{ enquiry.mobile_number }}</p>
                 <p><strong>Email:</strong> {{ enquiry.email }}</p>
                 <p><strong>Gender:</strong> {{ enquiry.get_gender_display }}</p>
                 <p><strong>Date of Birth:</strong> {{ enquiry.date_of_birth }}</p>
