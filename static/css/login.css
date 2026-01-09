@@ -1,0 +1,49 @@
+
+body {
+    background-color: #f2f2f2;
+    font-family: 'Rubik', sans-serif;
+}
+
+.auth .brand-logo {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.auth .brand-logo img {
+    max-width: 150px;
+    height: auto;
+}
+
+.auth-form-light {
+    background: #ffffff;
+    border-radius: 10px;
+}
+
+.auth-form-light .form-control {
+    border: 1px solid #d7d7d7;
+    border-radius: 5px;
+    height: 50px;
+    font-size: 16px;
+}
+
+.auth-form-btn {
+    height: 50px;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.auth-link {
+    font-size: 14px;
+}
+
+#toggle-password {
+    cursor: pointer;
+    background: transparent;
+    border: 1px solid #d7d7d7;
+    border-radius: 10%;
+    border-left: 0;
+}
+
+#toggle-password:hover {
+    background-color: #f2f2f2;
+}

@@ -1,82 +1,267 @@
-<nav class="sidebar sidebar-offcanvas" id="sidebar">
-  <div class="text-center sidebar-brand-wrapper d-flex align-items-center">
-    <a class="sidebar-brand brand-logo" href="index.html"><img src="https://www.bhattsquare.com/BhattSq.jpeg" alt="logo" /></a>
-    <a class="sidebar-brand brand-logo-mini pl-4 pt-3" href="index.html"><img src="assets/images/logo-mini.svg" alt="logo" /></a>
+{% load static %}
+<style>
+  @media (min-width: 768px) {
+    .sidebar {
+        position: fixed !important;
+        height: 100vh !important;
+        overflow-y: auto !important;
+        left: 0 !important; /* Important */
+        top: 0 !important; /* Important */
+    }
+    
+    .page-body-wrapper {
+        margin-left: 250px !important;
+        width: calc(100% - 250px) !important;
+    }
+}
+
+</style>
+
+<nav class="sidebar sidebar-offcanvas " id="sidebar">
+  {% comment %} <div class="text-center sidebar-brand-wrapper d-flex align-items-center">
+    <a class="sidebar-brand brand-logo" href="{% url 'dashboard' %}">
+      {% if gym.logo %}
+        <img src="{{ gym.logo.url }}" alt="{{ gym.name }} Logo" />
+      {% else %}
+        <img src="{% static 'images/SquareFitLogo.png' %}" alt="BhattSquare Logo" />
+      {% endif %}
+    </a>
+    <a class="sidebar-brand brand-logo-mini pl-4 pt-3" href="{% url 'dashboard' %}">
+      {% if gym.logo %}
+        <img src="{{ gym.logo.url }}" alt="{{ gym.name }} Logo" />
+      {% else %}
+        <img src="{% static 'images/SquareFitLogo.png' %}" alt="Mini Logo" />
+      {% endif %}
+    </a>
+  </div> {% endcomment %}
+  <div class="sidebar-company-info text-center py-3">
+    {% if gym.logo %}
+      <img src="{{ gym.logo.url }}" alt="Logo" class="img-fluid rounded-circle mb-2" style="width: 80px; height: 80px; object-fit: cover; border: 3px solid #fff; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+
+    {% else %}
+      <img src="{% static 'images/SFLogo.png' %}" alt="Logo" class="img-fluid rounded-circle mb-2" style="width: 80px; height: 80px; object-fit: cover; border: 3px solid #fff; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+    {% endif %}
+  
+    <h5 class="text-primary font-weight-bold mb-1">{{ gym.name|default:'GYM Name' }}</h5>
+    <p class="company-slogan small text-muted">{{ gym.slogan|default:'Manage Smarter. Train Better.' }}</p>
   </div>
   <ul class="nav">
+ 
+
+    <!-- 1. Dashboard -->
+    <li class="nav-item {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+      <a class="nav-link" href="{% url 'dashboard' %}">
+        <i class="mdi mdi-home menu-icon"></i>
+        <span class="menu-title">Dashboard</span>
+      </a>
+    </li>
+
+    <!--  Enquiry -->
+    <li class="nav-item {% if request.resolver_match.url_name == 'enquiry_list' or request.resolver_match.url_name == 'add_new_enquiry' or request.resolver_match.url_name == 'edit_enquiry' %}active{% endif %}">
+      <a class="nav-link" data-toggle="collapse" href="#enquiry" aria-expanded="{% if request.resolver_match.url_name == 'enquiry_list' or request.resolver_match.url_name == 'add_new_enquiry' or request.resolver_match.url_name == 'edit_enquiry' %}true{% else %}false{% endif %}" aria-controls="enquiry">
+        <i class="mdi mdi-comment-question-outline menu-icon"></i>
+        <span class="menu-title">Enquiry</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse {% if request.resolver_match.url_name == 'enquiry_list' or request.resolver_match.url_name == 'add_new_enquiry' or request.resolver_match.url_name == 'edit_enquiry' %}show{% endif %}" id="enquiry">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'enquiry_list' %}active{% endif %}" href="{% url 'enquiry_list' %}">All Enquiries</a></li>
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'add_new_enquiry' %}active{% endif %}" href="{% url 'add_new_enquiry' %}">Add Enquiry</a></li>
+        </ul>
+      </div>
+    </li>
+
+    <!--  Members -->
+    <li class="nav-item {% if request.resolver_match.url_name == 'member_list' or request.resolver_match.url_name == 'add_new_member' or request.resolver_match.url_name == 'member_profile' or request.resolver_match.url_name == 'edit_member' %}active{% endif %}">
+      <a class="nav-link" data-toggle="collapse" href="#members" aria-expanded="{% if request.resolver_match.url_name == 'member_list' or request.resolver_match.url_name == 'add_new_member' or request.resolver_match.url_name == 'member_profile' or request.resolver_match.url_name == 'edit_member' %}true{% else %}false{% endif %}" aria-controls="members">
+        <i class="mdi mdi-account-multiple menu-icon"></i>
+        <span class="menu-title">Members</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse {% if request.resolver_match.url_name == 'member_list' or request.resolver_match.url_name == 'add_new_member' or request.resolver_match.url_name == 'member_profile' or request.resolver_match.url_name == 'edit_member' %}show{% endif %}" id="members">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'member_list' %}active{% endif %}" href="{% url 'member_list' %}">All Members</a></li>
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'add_new_member' %}active{% endif %}" href="{% url 'add_new_member' %}">Add Member</a></li>
+        
+        </ul>
+      </div>
+    </li>
+
     
-    <li class="nav-item active">
-        <a class="nav-link" href="index.html">
-            <i class="mdi mdi-home menu-icon"></i>
-            <span class="menu-title">Dashboard</span>
-        </a>
+
+    <!--  Trainers -->
+    <li class="nav-item {% if request.resolver_match.url_name == 'trainer_list' or request.resolver_match.url_name == 'add_trainer' %}active{% endif %}">
+      <a class="nav-link" data-toggle="collapse" href="#trainers" aria-expanded="{% if request.resolver_match.url_name == 'trainer_list' or request.resolver_match.url_name == 'add_trainer' %}true{% else %}false{% endif %}" aria-controls="trainers">
+        <i class="mdi mdi-human-male-female menu-icon"></i>
+        <span class="menu-title">Trainers</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse {% if request.resolver_match.url_name == 'trainer_list' or request.resolver_match.url_name == 'add_trainer' %}show{% endif %}" id="trainers">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'trainer_list' %}active{% endif %}" href="{% url 'trainer_list' %}">All Trainers</a></li>
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'add_trainer' %}active{% endif %}" href="{% url 'add_trainer' %}">Add Trainer</a></li>
+        </ul>
+      </div>
     </li>
-    <li class="nav-item">
-        <a class="nav-link" data-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
-            <i class="mdi mdi-account-multiple menu-icon"></i>
-            <span class="menu-title">Members</span>
-            <i class="menu-arrow"></i>
-        </a>
-        <div class="collapse" id="ui-basic">
-            <ul class="nav flex-column sub-menu">
-                <li class="nav-item">
-                    <a class="nav-link" href="#">All Members</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Add Member</a>
-                </li>
-            </ul>
-        </div>
+
+    <!--  Attendance -->
+    <li class="nav-item {% if request.resolver_match.url_name == 'member_attendance' or request.resolver_match.url_name == 'trainer_attendance' or request.resolver_match.url_name == 'attendance_report' %}active{% endif %}">
+      <a class="nav-link" data-toggle="collapse" href="#attendance" aria-expanded="{% if request.resolver_match.url_name == 'member_attendance' or request.resolver_match.url_name == 'trainer_attendance' or request.resolver_match.url_name == 'attendance_report' %}true{% else %}false{% endif %}" aria-controls="attendance">
+        <i class="mdi mdi-calendar-check menu-icon"></i>
+        <span class="menu-title">Attendance</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse {% if request.resolver_match.url_name == 'member_attendance' or request.resolver_match.url_name == 'trainer_attendance' or request.resolver_match.url_name == 'attendance_report' %}show{% endif %}" id="attendance">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'member_attendance' %}active{% endif %}" href="{% url 'member_attendance' %}">Member Attendance</a></li>
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'trainer_attendance' %}active{% endif %}" href="{% url 'trainer_attendance' %}">Trainer Attendance</a></li>
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'attendance_report' %}active{% endif %}" href="{% url 'attendance_report' %}">Attendance Report</a></li>
+        </ul>
+      </div>
     </li>
-    <li class="nav-item">
-        <a class="nav-link" data-toggle="collapse" href="#trainers" aria-expanded="false" aria-controls="trainers">
-            <i class="mdi mdi-human-male-female menu-icon"></i>
-            <span class="menu-title">Trainers</span>
-            <i class="menu-arrow"></i>
-        </a>
-        <div class="collapse" id="trainers">
-            <ul class="nav flex-column sub-menu">
-                <li class="nav-item">
-                    <a class="nav-link" href="#">All Trainers</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Add Trainer</a>
-                </li>
-            </ul>
-        </div>
+
+  
+    <!--  Billing -->
+    <li class="nav-item {% if request.resolver_match.url_name == 'invoices_list' or request.resolver_match.url_name == 'submit_due' %}active{% endif %}">
+      <a class="nav-link" data-toggle="collapse" href="#billing" aria-expanded="{% if request.resolver_match.url_name == 'invoices_list' or request.resolver_match.url_name == 'submit_due' %}true{% else %}false{% endif %}" aria-controls="billing">
+        <i class="mdi mdi-file-document-box-outline menu-icon"></i>
+        <span class="menu-title">Billing</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse {% if request.resolver_match.url_name == 'invoices_list' or request.resolver_match.url_name == 'submit_due' %}show{% endif %}" id="billing">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'invoices_list' %}active{% endif %}" href="{% url 'billing:invoices_list' %}">Invoices</a></li>
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'submit_due' %}active{% endif %}" href="{% url 'billing:submit_due' %}">Submit Due</a></li>
+        </ul>
+      </div>
     </li>
-    <li class="nav-item">
-        <a class="nav-link" href="#">
-            <i class="mdi mdi-run-fast menu-icon"></i>
-            <span class="menu-title">Classes</span>
-        </a>
+
+    <!--  Expenses -->
+    <li class="nav-item {% if request.resolver_match.url_name == 'expenses' or request.resolver_match.url_name == 'expense_add' or request.resolver_match.url_name == 'expense_trash' %}active{% endif %}">
+      <a class="nav-link" data-toggle="collapse" href="#expenses" aria-expanded="{% if request.resolver_match.url_name == 'expenses' or request.resolver_match.url_name == 'expense_add' or request.resolver_match.url_name == 'expense_trash' %}true{% else %}false{% endif %}" aria-controls="expenses">
+        <i class="mdi mdi-cash-multiple menu-icon"></i>
+        <span class="menu-title">Expenses</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse {% if request.resolver_match.url_name == 'expenses' or request.resolver_match.url_name == 'expense_add' or request.resolver_match.url_name == 'expense_trash' %}show{% endif %}" id="expenses">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'expenses' %}active{% endif %}" href="{% url 'expenses' %}">All Expenses</a></li>
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'expense_add' %}active{% endif %}" href="{% url 'expense_add' %}">Add Expense</a></li>
+        </ul>
+      </div>
     </li>
-    <li class="nav-item">
-        <a class="nav-link" href="#">
-            <i class="mdi mdi-calendar-clock menu-icon"></i>
-            <span class="menu-title">Schedule</span>
-        </a>
+
+    <!--  Inventory -->
+    <li class="nav-item {% if request.resolver_match.app_name == 'inventory' %}active{% endif %}">
+      <a class="nav-link" data-toggle="collapse" href="#inventory" aria-expanded="{% if request.resolver_match.app_name == 'inventory' %}true{% else %}false{% endif %}" aria-controls="inventory">
+        <i class="mdi mdi-package-variant menu-icon"></i>
+        <span class="menu-title">Inventory</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse {% if request.resolver_match.app_name == 'inventory' %}show{% endif %}" id="inventory">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'inventory:dashboard' %}">Dashboard</a></li>
+          {% comment %} <li class=""><span class="nav-link text-muted" style="font-weight: 400; pointer-events: none; ">Products & Consumables</span></li>   {% endcomment %}
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'all_items' %}active{% endif %}" href="{% url 'inventory:all_items' %}">All Products Items</a></li>
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'add_item' %}active{% endif %}" href="{% url 'inventory:add_item' %}">Add Product Item</a></li>
+         <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'stock_out' %}active{% endif %}" href="{% url 'inventory:stock_out' %}">Stock Out</a></li>
+          
+          <li class=""><span class="nav-link text-muted" style="font-weight: 400; pointer-events: none;">Equipment (Assets)</span></li>
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'all_equipment' %}active{% endif %}" href="{% url 'inventory:all_equipment' %}">All Equipment</a></li>
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'add_equipment' %}active{% endif %}" href="{% url 'inventory:add_equipment' %}">Add  Equipment</a></li>
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'maintenance_log' %}active{% endif %}" href="{% url 'inventory:maintenance_log' %}">Maintenance Log</a></li>
+          
+          {% comment %} <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'suppliers' %}active{% endif %}" href="{% url 'inventory:suppliers' %}">Suppliers</a></li> {% endcomment %}
+        </ul>
+      </div>
     </li>
-    <li class="nav-item">
-        <a class="nav-link" href="#">
-            <i class="mdi mdi-currency-usd menu-icon"></i>
-            <span class="menu-title">Billing</span>
-        </a>
+    <!--  Events -->
+    <li class="nav-item {% if request.resolver_match.app_name == 'events' %}active{% endif %}">
+      <a class="nav-link" data-toggle="collapse" href="#events" aria-expanded="{% if request.resolver_match.app_name == 'events' %}true{% else %}false{% endif %}" aria-controls="events">
+        <i class="mdi mdi-calendar-star menu-icon"></i>
+        <span class="menu-title">Events</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse {% if request.resolver_match.app_name == 'events' %}show{% endif %}" id="events">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'event_list' %}active{% endif %}" href="{% url 'events:event_list' %}">All Events</a></li>
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'create_event' %}active{% endif %}" href="{% url 'events:create_event' %}">Create Event</a></li>
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'all_event_registrations' %}active{% endif %}" href="{% url 'events:all_event_registrations' %}">All Registrations</a></li>
+        </ul>
+      </div>
     </li>
-    <li class="nav-item">
-        <a class="nav-link" href="#">
-            <i class="mdi mdi-chart-bar menu-icon"></i>
-            <span class="menu-title">Reports</span>
-        </a>
+
+      <!--  Schedule -->
+    {% comment %} <li class="nav-item">
+      <a class="nav-link" href="pages/schedule.html">
+        <i class="mdi mdi-calendar-clock menu-icon"></i>
+        <span class="menu-title">Schedule</span>
+      </a>
+    </li> {% endcomment %}
+
+    <li class="nav-item {% if request.resolver_match.url_name == 'business_report' %}active{% endif %}">
+      <a class="nav-link" href="{% url 'business_report' %}">
+        <i class="mdi mdi-chart-bar menu-icon"></i>
+        <span class="menu-title">Business Report</span>
+      </a>
     </li>
+
+    <!-- 15. Notifications -->
+    {% comment %} <li class="nav-item">
+      <a class="nav-link" href="pages/notifications.html">
+        <i class="mdi mdi-bell menu-icon"></i>
+        <span class="menu-title">Notifications</span>
+        <span class="badge badge-pill badge-danger ml-auto">2</span>
+      </a>
+    </li> {% endcomment %}
+<!-- 16. management -->
+    <li class="nav-item {% if request.resolver_match.url_name == 'membership_plans' or request.resolver_match.url_name == 'diet_plans' or request.resolver_match.url_name == 'workout_plans' %}active{% endif %}">
+      <a class="nav-link" data-toggle="collapse" href="#management" aria-expanded="{% if request.resolver_match.url_name == 'membership_plans' or request.resolver_match.url_name == 'diet_plans' or request.resolver_match.url_name == 'workout_plans' %}true{% else %}false{% endif %}" aria-controls="management">
+        <i class="mdi mdi-package-variant menu-icon"></i>
+        <span class="menu-title">Management</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse {% if request.resolver_match.url_name == 'membership_plans' or request.resolver_match.url_name == 'diet_plans' or request.resolver_match.url_name == 'workout_plans' %}show{% endif %}" id="management">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'membership_plans' %}active{% endif %}" href="{% url 'membership_plans' %}">Membership Plans</a></li>
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'diet_plans' %}active{% endif %}" href="{% url 'diet_plans' %}">Diet Plans</a></li>
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'workout_plans' %}active{% endif %}" href="{% url 'workout_plans' %}">Workout Plans</a></li>
+        </ul>
+      </div>
+    </li>
+    <!-- 17. Settings -->
+    <li class="nav-item {% if request.resolver_match.namespace == 'settings' %}active{% endif %}">
+      <a class="nav-link" data-toggle="collapse" href="#settings" aria-expanded="{% if request.resolver_match.namespace == 'settings' %}true{% else %}false{% endif %}" aria-controls="settings">
+        <i class="mdi mdi-settings menu-icon"></i>
+        <span class="menu-title">Settings</span>
+        <i class="menu-arrow"></i>
+      </a>
+      <div class="collapse {% if request.resolver_match.namespace == 'settings' %}show{% endif %}" id="settings">
+        <ul class="nav flex-column sub-menu">
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'general_settings' %}active{% endif %}" href="{% url 'settings:general_settings' %}">General Settings</a></li>
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'payment_setting' %}active{% endif %}" href="{% url 'settings:payment_setting' %}">Payment Settings</a></li>
+        </ul>
+      </div>
+    </li>
+
+ <!--  help -->
+    <li class="nav-item {% if request.resolver_match.url_name == 'help' %}active{% endif %}">
+      <a class="nav-link" href="{% url 'help' %}">
+        <i class="mdi mdi-help-circle-outline menu-icon"></i>
+        <span class="menu-title">Help</span>
+      </a>
+    </li>
+
+    <!--  Sign Out -->
     <li class="nav-item sidebar-actions">
-        <div class="nav-link">
-            <div class="mt-4">
-                <ul class="mt-4 pl-0">
-                    <li>Sign Out</li>
-                </ul>
-            </div>
+      <div class="nav-link">
+        <div class="mt-2 ">
+          <a href="{% url 'logout' %}" class="btn btn-block btn-signout btn-lg font-weight-medium">
+            <i class="mdi mdi-logout"></i> Sign Out
+          </a>
         </div>
+      </div>
     </li>
-</ul>
+
+  </ul>
 </nav>

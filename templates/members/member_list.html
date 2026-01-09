@@ -1,0 +1,228 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/customstyle.css' %}">
+<!-- Compact Breadcrumb Navigation -->
+<nav aria-label="breadcrumb" class="custom-breadcrumb mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{% url 'dashboard' %}" class="text-decoration-none">
+                <i class="mdi mdi-home-outline mdi-18px"></i> Dashboard
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <i class="mdi mdi-account-multiple-outline mdi-18px"></i> Members List
+        </li>
+    </ol>
+</nav>
+
+
+
+<div class="col-lg-12 px-0">
+    <div class="card">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">Member List</h4>
+            <a href="{% url 'add_new_member' %}" class="btn btn-light btn-sm">
+                <i class="mdi mdi-plus"></i> Add Member
+            </a>
+        </div>
+        <div class="card-body">
+            {% csrf_token %}
+            <!-- Search form -->
+            {% include 'includes/search_form.html' %}
+            <div class="table-responsive">
+                <table class="table table-hover table-sm table-stack-on-mobile">
+                    <thead>
+                        <tr>
+                            <th class="font-weight-semibold py-2"> #</th>
+                            <th class="font-weight-semibold py-2">Profile</th>
+                            <th class="font-weight-semibold py-2">Member</th>
+                            <th class="font-weight-semibold py-2">Email</th>
+                            <th class="font-weight-semibold py-2">Mobile</th>
+                            <th class="font-weight-semibold py-2">Due Amount</th>
+                            <th class="font-weight-semibold py-2">Plan Expiry</th>
+                            <th class="font-weight-semibold py-2">Status</th>
+                            <th class="font-weight-semibold text-center py-2">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+
+                        {% for member in members %}
+                        <tr>
+
+                            <td data-label="SR. No.">{{ forloop.counter0|add:members.start_index }}</td>
+
+                            <td data-label="Profile">
+                                <img src="{% if member.profile_picture %}{{ member.profile_picture.url }}{% else %}{% static 'images/gym-guy.jpg' %}{% endif %}"
+                                    class="rounded-circle border equipment-image" style="width: 40px; height: 40px; object-fit: cover; cursor: pointer;"
+                                    alt="{{ member.first_name }} {{ member.last_name }}">
+                            </td>
+                            <td data-label="Name">
+                                <strong> <a href="{% url 'member_profile' member.id %}" class="text-decoration-none">{{ member.name }}</a></strong><br>
+                                <small class="text-muted">#{{ member.member_id }}</small>
+                            </td>
+                            <td data-label="Email">{{ member.email }}</td>
+                            <td data-label="Mobile">{{ member.mobile_number }}</td>
+                            <td data-label="Due Amount">
+                                {% if member.total_due > 0 %}
+                                <span class="badge badge-danger">₹{{ member.total_due|floatformat:2 }}</span>
+                                {% else %}
+                                <span class="badge badge-success">₹0.00</span>
+                                {% endif %}
+                            </td>
+                            <td data-label="Plan Expiry">
+                                {% if member.latest_membership_history %}
+                                {{ member.latest_membership_history.get_end_date|date:"d-m-Y" }}
+                                {% else %}
+                                N/A
+                                {% endif %}
+                            </td>
+                            <td data-label="Status">
+                                <span class="badge {% if member.current_status == 'Active' %}badge-success{% elif member.current_status == 'Expired' %}badge-danger{% elif member.current_status == 'Freezed' %}badge-warning{% else %}badge-secondary{% endif %}">
+                                    {{ member.current_status }}
+                                </span>
+                            </td>
+                            <td data-label="Actions" class="text-center">
+                                <a href="{% url 'member_profile' member.id %}" class="btn btn-info btn-sm"
+                                    data-toggle="tooltip" title="View"><i class="mdi mdi-eye-outline"></i></a>
+                                <a href="{% url 'edit_member' member.id %}" class="btn btn-primary btn-sm"
+                                    data-toggle="tooltip" title="Edit"><i class="mdi mdi-pencil-outline"></i></a>
+                                {% comment %} <button type="button" class="btn btn-danger btn-sm"
+                                    onclick="confirmDelete('{{ member.id }}', '{{ member.first_name }} {{ member.last_name }}', '{% url 'delete_member' member.id %}')"
+                                    data-toggle="tooltip" title="Delete"><i class="mdi mdi-delete-outline"></i></button> {% endcomment %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center py-4">
+                                <div class="text-muted">
+                                    <i class="mdi mdi-account-question-outline mdi-36px mb-2"></i>
+                                    <h6 class="mb-2">No members found</h6>
+                                    <p class="mb-2 small">{% if request.GET.search %}No members match your search.{%
+                                        else %}No members added yet.{% endif %}</p>
+                                    {% if not request.GET.search %}
+                                    <a href="{% url 'add_new_member' %}" class="btn btn-primary btn-sm">
+                                        <i class="mdi mdi-plus"></i> Add Member
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <!-- Pagination -->
+            {% if members.has_other_pages %}
+            {% include 'includes/pagination.html' with page_obj=members %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Image Preview Modal -->
+<div class="modal fade" id="imagePreviewModal" tabindex="-1" aria-labelledby="imagePreviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="imagePreviewModalLabel">Image Preview</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img src="" id="modalImage" class="img-fluid" alt="Equipment Image">
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    $('.equipment-image').on('click', function() {
+        var imageUrl = $(this).attr('src');
+        var imageName = $(this).attr('alt');
+        $('#modalImage').attr('src', imageUrl);
+        $('#imagePreviewModalLabel').text(imageName);
+        var imagePreviewModal = new bootstrap.Modal(document.getElementById('imagePreviewModal'));
+        imagePreviewModal.show();
+    });
+});
+</script>
+{% endblock extra_js %}
+
+{% block scripts %}
+<script>
+    // Initialize tooltips
+    document.addEventListener('DOMContentLoaded', function () {
+        // Initialize Bootstrap tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl, {
+                placement: 'top',
+                trigger: 'hover',
+                delay: { show: 100, hide: 100 }
+            });
+        });
+
+        // Add fade-in animation to cards
+        const cards = document.querySelectorAll('.stats-card');
+        cards.forEach((card, index) => {
+            card.style.animationDelay = `${index * 0.1}s`;
+        });
+
+        // Enhanced search functionality
+        const searchInput = document.querySelector('input[name="search"]');
+        if (searchInput) {
+            searchInput.addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    this.closest('form').submit();
+                }
+            });
+        }
+    });
+
+    // Add loading animation to table
+    function showTableLoading() {
+        const tableBody = document.querySelector('table tbody');
+        if (tableBody) {
+            tableBody.innerHTML = `
+            <tr>
+                <td colspan="6" class="text-center py-5">
+                    <div class="d-flex justify-content-center align-items-center">
+                        <div class="spinner-border text-primary mr-3" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                        <span class="text-muted">Loading members...</span>
+                    </div>
+                </td>
+            </tr>
+        `;
+        }
+    }
+
+    // Add smooth scrolling to pagination
+    function smoothScrollToTop() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    }
+
+    // Attach smooth scroll to pagination links
+    document.addEventListener('DOMContentLoaded', function () {
+        const paginationLinks = document.querySelectorAll('.pagination-link');
+        paginationLinks.forEach(link => {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                smoothScrollToTop();
+                setTimeout(() => {
+                    window.location.href = this.href;
+                }, 300);
+            });
+        });
+    });
+</script>
+{% endblock %}

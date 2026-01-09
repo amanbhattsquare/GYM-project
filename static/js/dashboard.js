@@ -31,9 +31,9 @@
               show: true,
               barWidth: 0.5,
               align: "center",
-              fillColor: "#3f50f6",
+              fillColor: "#4599cd",
             },
-            color: "#3f50f6",
+            color: "#4599cd",
             lines: {
               fill: true,
             },
@@ -73,9 +73,9 @@
               show: true,
               barWidth: 0.5,
               align: "center",
-              fillColor: "#3f50f6",
+              fillColor: "#4599cd",
             },
-            color: "#3f50f6",
+            color: "#4599cd",
             lines: {
               fill: true,
             },
@@ -115,9 +115,9 @@
               show: true,
               barWidth: 0.5,
               align: "center",
-              fillColor: "#3f50f6",
+              fillColor: "#4599cd",
             },
-            color: "#3f50f6",
+            color: "#4599cd",
             lines: {
               fill: true,
             },
@@ -772,8 +772,8 @@
         datasets: [
           {
             data: [14, 12, 9, 15, 10, 12, 10],
-            backgroundColor: "#3f50f6",
-            borderColor: "#3f50f6",
+            backgroundColor: "#4599cd",
+            borderColor: "#4599cd",
             pointRadius: 0,
             lineTension: 0,
             borderWidth: 1,
@@ -970,8 +970,8 @@
         datasets: [
           {
             data: [14, 12, 9, 15, 10, 12, 10],
-            backgroundColor: "#3f50f6",
-            borderColor: "#3f50f6",
+            backgroundColor: "#4599cd",
+            borderColor: "#4599cd",
             pointRadius: 0,
             lineTension: 0,
             borderWidth: 1,
@@ -1308,9 +1308,9 @@
           },
           {
             data: dashData3,
-            color: "#3f50f6",
+            color: "#4599cd",
             lines: {
-              fillColor: "#3f50f6",
+              fillColor: "#4599cd",
             },
           },
           {

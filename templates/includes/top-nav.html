@@ -1,130 +1,158 @@
-<nav class="navbar col-lg-12 col-12 p-lg-0 fixed-top d-flex flex-row">
-  <div class="navbar-menu-wrapper d-flex align-items-stretch justify-content-between">
-    <a class="navbar-brand brand-logo-mini align-self-center d-lg-none" href="index.html"><img src="assets/images/logo-mini.svg" alt="logo" /></a>
-    <button class="navbar-toggler navbar-toggler align-self-center mr-2" type="button" data-toggle="minimize">
+{% load static %}
+<nav class="navbar col-lg-12 col-12 p-lg-0 fixed-top d-flex flex-row" >
+  <div class="navbar-menu-wrapper d-flex align-items-stretch justify-content-between  " style="height: 60px; background: linear-gradient(to right, #e6e5f2, #4599cd);"> 
+    <a class="navbar-brand brand-logo-mini align-self-center d-lg-none" href="{% url 'dashboard' %}">
+      {% comment %} <img src="{% static 'images/SquareFitLogo.png' %}" alt="logo" style="height: 40px; filter: invert(1);"/>
+        {% endcomment %}
+           {% if gym.logo %}
+      <img src="{{ gym.logo.url }}" alt="{{ gym.name }} Logo" class="img-fluid rounded-circle mb-2" style="width: 40px; height: 40px; object-fit: cover; border: 2px solid #fff; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+    {% endif %}
+    </a>
+    {% comment %} <button class="navbar-toggler navbar-toggler align-self-center mr-2" type="button" data-toggle="minimize">
       <i class="mdi mdi-menu"></i>
-    </button>
+    </button> {% endcomment %}
     <ul class="navbar-nav">
+      
+    </ul>
+    <ul class="navbar-nav navbar-nav-right ml-lg-auto ">
+      <li class="nav-item dropdown d-none d-xl-flex border-0 ">
+        <a class="nav-link dropdown-toggle text-dark" id="languageDropdown" href="#" data-toggle="dropdown">
+          <i class="mdi mdi-earth" ></i> Quick Actions </a>
+        <div class="dropdown-menu navbar-dropdown" aria-labelledby="languageDropdown">
+          <a class="dropdown-item" href="{% url 'add_new_enquiry' %}"> 
+            <i class="mdi mdi-comment-question-outline mr-2 text-danger"></i> Add New Enquiry
+          </a>
+          <a class="dropdown-item" href="{% url 'add_new_member' %}"> 
+            <i class="mdi mdi-account-plus-outline mr-2 text-success"></i> Add New Member 
+          </a>
+          <a class="dropdown-item" href="{% url 'add_trainer' %}"> 
+            <i class="mdi mdi-account-star-outline mr-2 text-primary"></i> Add New Trainer 
+          </a>
+          <a class="dropdown-item" href="{% url 'billing:submit_due' %}"> 
+            <i class="mdi mdi-receipt mr-2 text-danger"></i> Make a Bill 
+          </a>
+        </div>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link " href="#" data-bs-toggle="modal" data-bs-target="#imagePreviewModal" onclick="showImage('{{ payment_settings.qr_code.url }}')">
+            <i class="mdi mdi-qrcode-scan text-dark"></i> 
+        </a>
+      </li>
       <li class="nav-item dropdown">
         <a class="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#" data-toggle="dropdown">
-          <i class="mdi mdi-bell-outline"></i>
-          <span class="count count-varient1">7</span>
+          <i class="mdi mdi-bell"></i>
+          <span class="count-symbol bg-danger"></span>
         </a>
-        <div class="dropdown-menu navbar-dropdown navbar-dropdown-large preview-list" aria-labelledby="notificationDropdown">
-          <h6 class="p-3 mb-0">Notifications</h6>
+        <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list  text-dark" aria-labelledby="notificationDropdown">
+          <h6 class="p-3 mb-0 bg-primary text-white py-4">Notifications</h6>
+          <div class="dropdown-divider"></div>
           <a class="dropdown-item preview-item">
             <div class="preview-thumbnail">
-              <img src="assets/images/faces/face4.jpg" alt="" class="profile-pic" />
+              <div class="preview-icon bg-success">
+                <i class="mdi mdi-calendar"></i>
+              </div>
             </div>
-            <div class="preview-item-content">
-              <p class="mb-0">
-                Dany Miles <span class="text-small text-muted">commented on your photo</span>
-              </p>
-            </div>
-          </a>
-          <a class="dropdown-item preview-item">
-            <div class="preview-thumbnail">
-              <img src="assets/images/faces/face3.jpg" alt="" class="profile-pic" />
-            </div>
-            <div class="preview-item-content">
-              <p class="mb-0">
-                James <span class="text-small text-muted">posted a photo on your wall</span>
-              </p>
-            </div>
-          </a>
-          <a class="dropdown-item preview-item">
-            <div class="preview-thumbnail">
-              <img src="assets/images/faces/face2.jpg" alt="" class="profile-pic" />
-            </div>
-            <div class="preview-item-content">
-              <p class="mb-0">
-                Alex <span class="text-small text-muted">just mentioned you in his post</span>
-              </p>
+            <div class="preview-item-content d-flex align-items-start flex-column justify-content-center">
+              <h6 class="preview-subject font-weight-normal mb-1">Event today</h6>
+              <p class="text-gray ellipsis mb-0"> Just a reminder that you have an event today </p>
             </div>
           </a>
           <div class="dropdown-divider"></div>
-          <p class="p-3 mb-0">View all activities</p>
+          <a class="dropdown-item preview-item">
+            <div class="preview-thumbnail">
+              <div class="preview-icon bg-warning">
+                <i class="mdi mdi-settings"></i>
+              </div>
+            </div>
+            <div class="preview-item-content d-flex align-items-start flex-column justify-content-center">
+              <h6 class="preview-subject font-weight-normal mb-1">Settings</h6>
+              <p class="text-gray ellipsis mb-0"> Update dashboard </p>
+            </div>
+          </a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item preview-item">
+            <div class="preview-thumbnail">
+              <div class="preview-icon bg-info">
+                <i class="mdi mdi-link-variant"></i>
+              </div>
+            </div>
+            <div class="preview-item-content d-flex align-items-start flex-column justify-content-center">
+              <h6 class="preview-subject font-weight-normal mb-1">Launch Admin</h6>
+              <p class="text-gray ellipsis mb-0"> New admin wow! </p>
+            </div>
+          </a>
+          <div class="dropdown-divider"></div>
+          <h6 class="p-3 mb-0 text-center">See all notifications</h6>
         </div>
       </li>
-      <li class="nav-item dropdown d-none d-sm-flex">
-        <a class="nav-link count-indicator dropdown-toggle" id="messageDropdown" href="#" data-toggle="dropdown">
-          <i class="mdi mdi-email-outline"></i>
-          <span class="count count-varient2">5</span>
+      {% comment %} <li class="nav-item dropdown">
+        <a class="nav-link count-indicator dropdown-toggle" id="messageDropdown" href="#" data-toggle="dropdown" aria-expanded="false">
+          <i class="mdi mdi-email"></i>
+          <span class="count-symbol bg-success"></span>
         </a>
-        <div class="dropdown-menu navbar-dropdown navbar-dropdown-large preview-list" aria-labelledby="messageDropdown">
-          <h6 class="p-3 mb-0">Messages</h6>
+        <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="messageDropdown">
+          <h6 class="p-3 mb-0 bg-primary text-white py-4">Messages</h6>
+          <div class="dropdown-divider"></div>
           <a class="dropdown-item preview-item">
-            <div class="preview-item-content flex-grow">
-              <span class="badge badge-pill badge-success">Request</span>
-              <p class="text-small text-muted ellipsis mb-0">
-                Suport needed for user123
-              </p>
+            <div class="preview-thumbnail">
+              <img src="{% static 'images/face4.jpg' %}" alt="image" class="profile-pic">
             </div>
-            <p class="text-small text-muted align-self-start">4:10 PM</p>
+            <div class="preview-item-content d-flex align-items-start flex-column justify-content-center">
+              <h6 class="preview-subject ellipsis mb-1 font-weight-normal">Mark send you a message</h6>
+              <p class="text-gray mb-0"> 1 Minutes ago </p>
+            </div>
           </a>
+          <div class="dropdown-divider"></div>
           <a class="dropdown-item preview-item">
-            <div class="preview-item-content flex-grow">
-              <span class="badge badge-pill badge-warning">Invoices</span>
-              <p class="text-small text-muted ellipsis mb-0">
-                Invoice for order is mailed
-              </p>
+            <div class="preview-thumbnail">
+              <img src="{% static 'images/face2.jpg' %}" alt="image" class="profile-pic">
             </div>
-            <p class="text-small text-muted align-self-start">4:10 PM</p>
+            <div class="preview-item-content d-flex align-items-start flex-column justify-content-center">
+              <h6 class="preview-subject ellipsis mb-1 font-weight-normal">Cregh send you a message</h6>
+              <p class="text-gray mb-0"> 15 Minutes ago </p>
+            </div>
           </a>
+          <div class="dropdown-divider"></div>
           <a class="dropdown-item preview-item">
-            <div class="preview-item-content flex-grow">
-              <span class="badge badge-pill badge-danger">Projects</span>
-              <p class="text-small text-muted ellipsis mb-0">
-                New project will start tomorrow
-              </p>
+            <div class="preview-thumbnail">
+              <img src="{% static 'images/face3.jpg' %}" alt="image" class="profile-pic">
             </div>
-            <p class="text-small text-muted align-self-start">4:10 PM</p>
+            <div class="preview-item-content d-flex align-items-start flex-column justify-content-center">
+              <h6 class="preview-subject ellipsis mb-1 font-weight-normal">Profile picture updated</h6>
+              <p class="text-gray mb-0"> 18 Minutes ago </p>
+            </div>
           </a>
-          <h6 class="p-3 mb-0">See all activity</h6>
+          <div class="dropdown-divider"></div>
+          <h6 class="p-3 mb-0 text-center">4 new messages</h6>
         </div>
-      </li>
-      <li class="nav-item nav-search border-0 ml-1 ml-md-3 ml-lg-5 d-none d-md-flex">
-        <form class="nav-link form-inline mt-2 mt-md-0">
-          <div class="input-group">
-            <input type="text" class="form-control" placeholder="Search" />
-            <div class="input-group-append">
-              <span class="input-group-text">
-                <i class="mdi mdi-magnify"></i>
-              </span>
-            </div>
-          </div>
-        </form>
-      </li>
-    </ul>
-    <ul class="navbar-nav navbar-nav-right ml-lg-auto">
-      <li class="nav-item dropdown d-none d-xl-flex border-0">
-        <a class="nav-link dropdown-toggle" id="languageDropdown" href="#" data-toggle="dropdown">
-          <i class="mdi mdi-earth"></i> English
+      </li> {% endcomment %}
+      <li class="nav-item nav-profile dropdown border-0 mr-4">
+        <a class="nav-link dropdown-toggle text-dark" id="profileDropdown" href="#" data-toggle="dropdown">
+          <img class="nav-profile-img mr-2" alt="" src="{% static 'images/face15.jpg' %}" />
+          <span class="profile-name">{{ user.username }}  </span>
         </a>
-        <div class="dropdown-menu navbar-dropdown" aria-labelledby="languageDropdown">
-          <a class="dropdown-item" href="#"> French </a>
-          <a class="dropdown-item" href="#"> Spain </a>
-          <a class="dropdown-item" href="#"> Latin </a>
-          <a class="dropdown-item" href="#"> Japanese </a>
-        </div>
-      </li>
-      <li class="nav-item nav-profile dropdown border-0">
-        <a class="nav-link dropdown-toggle" id="profileDropdown" href="#" data-toggle="dropdown">
-          <img class="nav-profile-img mr-2" alt="" src="assets/images/faces/face1.jpg" />
-          <span class="profile-name">Henry Klein</span>
-        </a>
-        <div class="dropdown-menu navbar-dropdown w-100" aria-labelledby="profileDropdown">
-          <a class="dropdown-item" href="#">
-            <i class="mdi mdi-cached mr-2 text-success"></i> Activity Log
+        <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
+          <a class="dropdown-item ">
+            <i class="mdi mdi-settings text-primary"></i>
+            Settings
           </a>
-          <a class="dropdown-item" href="#">
-            <i class="mdi mdi-logout mr-2 text-primary"></i> Signout
+          <a class="dropdown-item" href="{% url 'add_subadmin' %}">
+            <i class="mdi mdi-account-plus text-primary"></i>
+            Add Subadmin
+          </a>
+          <a class="dropdown-item" href="{% url 'view_subadmins' %}">
+            <i class="mdi mdi-account-multiple text-primary"></i>
+            View Subadmins
+          </a>
+          <a class="dropdown-item" href="{% url 'logout' %}">
+            <i class="mdi mdi-logout text-primary"></i>
+            Logout
           </a>
         </div>
       </li>
     </ul>
     <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
-      <span class="mdi mdi-menu"></span>
+      <span class="mdi mdi-menu text-dark"></span>
     </button>
   </div>
 </nav>

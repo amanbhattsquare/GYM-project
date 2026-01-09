@@ -1,0 +1,543 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<!-- Compact Breadcrumb Navigation -->
+<nav aria-label="breadcrumb" class="custom-breadcrumb mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{% url 'dashboard' %}" class="text-decoration-none">
+                <i class="mdi mdi-home-outline mdi-18px"></i> Dashboard
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{% url 'member_list' %}" class="text-decoration-none">
+                <i class="mdi mdi-account-multiple-outline mdi-18px"></i> Members List
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <i class="mdi mdi-account-multiple-outline mdi-18px"></i> Member Profile
+        </li>
+
+    </ol>
+</nav>  
+<!-- Freeze Membership Modal -->
+{% if membership_history %}
+<div class="modal fade" id="freezeMembershipModal" tabindex="-1" role="dialog" aria-labelledby="freezeMembershipModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="freezeMembershipModalLabel">Freeze Membership</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="freezeForm" action="{% url 'freeze_membership' membership_history.id %}" method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="reason">Reason for Freezing</label>
+                        <textarea class="form-control" id="reason" name="reason" rows="3" placeholder="Enter reason for freezing membership" required></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="submit" form="freezeForm" class="btn btn-warning">Freeze</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h2 class="mb-0">Member Profile</h2>
+                <div class="d-flex">
+                    <a href="{% url 'edit_member' member.id %}" class="btn btn-sm btn-secondary mr-2" data-toggle="tooltip" title="Edit Member">
+                        <i class="mdi mdi-pencil"></i>
+                    </a>
+                    <a href="{% url 'assign_membership_plan' member.id %}" class="btn btn-sm btn-success mr-2" data-toggle="tooltip" title="Assign Membership Plan">
+                        <i class="mdi mdi-file-document-box-plus-outline"></i>
+                    </a>
+                    <a href="{% url 'assign_pt_trainer' member.id %}" class="btn btn-sm btn-danger mr-2" data-toggle="tooltip" title="Assign Personal Trainer">
+                        <i class="mdi mdi-account-plus"></i>
+                    </a>
+                    <a href="{% url 'billing:pay_due_payment' member.id %}" class="btn btn-sm btn-info mr-2" data-toggle="tooltip" title="Submit Due Payment">
+                        <i class="mdi mdi-currency-usd"></i> 
+                    </a>
+                    <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete('{{ member.id }}', '{{ member.first_name }} {{ member.last_name }}', '{% url 'delete_member' member.id %}')" data-toggle="tooltip" title="Delete">
+                        <i class="mdi mdi-delete-outline"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="border-bottom text-center pb-4">
+                            {% if member.profile_picture %}
+                                <img src="{{ member.profile_picture.url }}" alt="profile" class="img-lg rounded-circle mb-3"/>
+                            {% else %}
+                                <img src="{% static 'images/gym-guy.jpg' %}" alt="profile" class="img-lg rounded-circle mb-3"/>
+                            {% endif %}
+                            <h4>{{ member.first_name }} {{ member.last_name }}</h4>
+                            <p class="text-muted">{{ member.member_id }}</p>
+                            {% if due_amount > 0 %}
+                            <h5 class="text-danger">Due: ₹{{ due_amount }}</h5>
+                            {% endif %}
+                           
+                        </div>
+                        <div class="py-4">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span><i class="mdi mdi-checkbox-marked-circle-outline mr-2 text-primary"></i>Status</span>
+                                <span class="text-muted">
+                                    <span class="badge {% if member.current_status == 'Active' %}badge-success{% elif member.current_status == 'Expired' %}badge-danger{% elif member.current_status == 'Freezed' %}badge-warning{% else %}badge-secondary{% endif %}">
+                                        {{ member.current_status }}
+                                    </span>
+                                </span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span><i class="mdi mdi-phone mr-2 text-primary"></i>Phone</span>
+                                <span class="text-muted">{{ member.mobile_number }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span><i class="mdi mdi-email-outline mr-2 text-primary"></i>Mail</span>
+                                <span class="text-muted">{{ member.email }}</span>
+                            </div>
+                        </div>
+                        <div class="py-4">
+                            <h5 class="mb-3">Current Membership Plan</h5>
+                            <div class="d-flex justify-content-end mb-2">
+                                {% if membership_history %}
+                                    {% if membership_history.is_frozen %}
+                                        <form action="{% url 'unfreeze_membership' membership_history.id %}" method="post" class="d-inline">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-sm btn-success" data-toggle="tooltip" title="Unfreeze Membership">
+                                                <i class="mdi mdi-play"></i> Unfreeze
+                                            </button>
+                                        </form>
+                                    {% else %}
+                                        <button type="button" class="btn btn-sm btn-warning" data-toggle="modal" data-target="#freezeMembershipModal" title="Freeze Membership">
+                                            <i class="mdi mdi-pause"></i> Freeze
+                                        </button>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                            {% if membership_history %}
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span><i class="mdi mdi-trophy-award mr-2 text-primary"></i>Plan</span>
+                                    <span class="text-muted">{{ membership_plan.title }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span><i class="mdi mdi-calendar-clock mr-2 text-primary"></i>End Date</span>
+                                    <span class="text-muted">{{ membership_history.get_end_date|date:"d-m-Y" }}</span>
+                                </div>
+                                {% if membership_history.is_frozen %}
+                                <div class="d-flex justify-content-between">
+                                    <span><i class="mdi mdi-information-outline mr-2 text-primary"></i>Reason for Freezing</span>
+                                    <span class="text-muted">{{ membership_history.freezes.last.reason }}</span>
+                                </div>
+                                {% endif %}
+                            {% else %}
+                                <p class="text-muted">No active membership plan.</p>
+                            {% endif %}
+                        </div>
+                        <div class="py-4">
+                            <h5 class="mb-3">Personal Trainer Info</h5>
+                            {% if pt_member.first %}
+                                {% with pt=pt_member.first %}
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span><i class="mdi mdi-account-star mr-2 text-primary"></i>Trainer</span>
+                                    <span class="text-muted">{{ pt.trainer.name }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span><i class="mdi mdi-calendar-clock mr-2 text-primary"></i>End Date</span>
+                                    <span class="text-muted">{{ pt.get_end_date|date:"d-m-Y" }}</span>
+                                </div>
+                                {% endwith %}
+                            {% else %}
+                                <p class="text-muted">No personal trainer assigned.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-lg-8">
+                        <div class="mt-4 py-2">
+                            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" id="personal-tab" data-toggle="tab" href="#personal" role="tab" aria-controls="personal" aria-selected="true">Personal Details</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="documents-tab" data-toggle="tab" href="#documents" role="tab" aria-controls="documents" aria-selected="false">Documents</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="medical-tab" data-toggle="tab" href="#medical" role="tab" aria-controls="medical" aria-selected="false">Medical History</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="emergency-tab" data-toggle="tab" href="#emergency" role="tab" aria-controls="emergency" aria-selected="false">Emergency Contact</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="plan-tab" data-toggle="tab" href="#plan" role="tab" aria-controls="plan" aria-selected="false">Membership Plan</a>
+                                </li>
+                            
+                                <li class="nav-item">
+                                    <a class="nav-link" id="personal-trainer-tab" data-toggle="tab" href="#personal-trainer" role="tab" aria-controls="personal-trainer" aria-selected="false">Personal Trainer Info</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="invoices-tab" data-toggle="tab" href="#invoices" role="tab" aria-controls="invoices" aria-selected="false">Invoice/ Payment History</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content" id="myTabContent">
+                                  <div class="tab-pane fade" id="personal-trainer" role="tabpanel" aria-labelledby="personal-trainer-tab">
+                                    <div class="py-3">
+                                        <h4>Personal Trainer Info</h4>
+                                        {% for pt in pt_member %}
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered">
+                                                    <tbody>
+                                                        <tr>
+                                                            <th>Trainer Name</th>
+                                                            <td>{{ pt.trainer.name }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Months</th>
+                                                            <td>{{ pt.months }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Trainer Fee</th>
+                                                            <td>{{ pt.trainer_fee }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>GYM Charges</th>
+                                                            <td>{{ pt.gym_charges }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Start Date</th>
+                                                            <td>{{ pt.pt_start_date|date:"d-m-Y" }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>End Date</th>
+                                                            <td>{{ pt.get_end_date|date:"d-m-Y" }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Discount</th>
+                                                            <td>{{ pt.discount }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Total Amount</th>
+                                                            <td>{{ pt.total_amount }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Paid Amount</th>
+                                                            <td>{{ pt.paid_amount }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Payment Mode</th>
+                                                            <td>{{ pt.get_payment_mode_display }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Transaction ID</th>
+                                                            <td>{{ pt.transaction_id|default_if_none:"N/A" }}</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            {% if not forloop.last %}<hr>{% endif %}
+                                        {% empty %}
+                                            <p class="text-muted">This member has not been assigned a personal trainer.</p>
+                                        {% endfor %}
+                                    </div>
+                                  </div>
+                                <div class="tab-pane fade show active" id="personal" role="tabpanel" aria-labelledby="personal-tab">
+                                    <div class="py-3">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <p><strong>Age:</strong> {{ member.age }}</p>
+                                                <p><strong>Gender:</strong> {{ member.gender }}</p>
+                                                <p><strong>Date of Birth:</strong> {{ member.date_of_birth }}</p>
+                                                <p><strong>Profession:</strong> {{ member.profession }}</p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p><strong>Address:</strong></p>
+                                                <p>{{ member.address }}</p>
+                                                <p>{{ member.area }}</p>
+                                                <p>{{ member.city }}, {{ member.state }} - {{ member.pincode }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="documents" role="tabpanel" aria-labelledby="documents-tab">
+                                    <div class="py-3">
+                                        <div class="row">
+                                            <div class="col-md-4 text-center">
+                                                <h5>Signature</h5>
+                                                {% if member.sign %}
+                                                    <img src="{{ member.sign.url }}" alt="Signature" class="img-fluid">
+                                                {% else %}
+                                                    <p class="text-muted">Not Provided</p>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-md-4 text-center">
+                                                <h5>Identity Document</h5>
+                                                {% if member.identity_document_image %}
+                                                    <img src="{{ member.identity_document_image.url }}" alt="Identity Document" class="img-fluid">
+                                                {% else %}
+                                                    <p class="text-muted">Not Provided</p>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="medical" role="tabpanel" aria-labelledby="medical-tab">
+                                    <div class="py-3">
+                                        {% if member.medical_history.all %}
+                                            <ul class="list-group">
+                                                {% for history in member.medical_history.all %}
+                                                    <li class="list-group-item">
+                                                        <strong>{{ history.condition }}</strong> ({{ history.type }}) - Since: {{ history.since }}
+                                                    </li>
+                                                {% endfor %}
+                                            </ul>
+                                        {% else %}
+                                            <p class="text-muted">No medical history provided.</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="emergency" role="tabpanel" aria-labelledby="emergency-tab">
+                                    <div class="py-3">
+                                        {% if member.emergency_contact %}
+                                            <p><strong>Name:</strong> {{ member.emergency_contact.name }}</p>
+                                            <p><strong>Mobile:</strong> {{ member.emergency_contact.mobile }}</p>
+                                            <p><strong>Relation:</strong> {{ member.emergency_contact.relation }}</p>
+                                        {% else %}
+                                            <p class="text-muted">No emergency contact provided.</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="plan" role="tabpanel" aria-labelledby="plan-tab">
+                                    <div class="py-3">
+                                        {% if membership_history %}
+                                            <h4>Current Membership Plan</h4>
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered">
+                                                    <tbody>
+                                                        <tr>
+                                                            <th>Plan</th>
+                                                            <td>{{ membership_plan.title }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Description</th>
+                                                            <td>{{ membership_plan.description }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Duration</th>
+                                                            <td>{{ membership_plan.get_duration_display }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Amount</th>
+                                                            <td>₹{{ membership_plan.amount }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Discount</th>
+                                                            <td>₹{{ membership_plan.discount }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Offer Price</th>
+                                                            <td>₹{{ membership_plan.offer_price }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Start Date</th>
+                                                            <td>{{ membership_history.membership_start_date|date:"d-m-Y" }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>End Date</th>
+                                                            <td>{{ membership_history.get_end_date|date:"d-m-Y" }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Add on Days</th>
+                                                            <td>{{ membership_history.total_add_on_days }}</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <hr>
+                                        {% else %}
+                                            <p class="text-muted">No active membership plan.</p>
+                                        {% endif %}
+
+                                        <h4>Plan History</h4>
+                                        {% if membership_histories %}
+                                            <div class="table-responsive">
+                                                <table class="table table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Plan</th>
+                                                            <th>Start Date</th>
+                                                            <th>End Date</th>
+                                                            <th>Add on Days</th>
+                                                            <th>Offer Price</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {% for history in membership_histories %}
+                                                            <tr>
+                                                                <td>{{ history.plan.title }}</td>
+                                                                <td>{{ history.membership_start_date|date:"d-m-Y" }}</td>
+                                                                <td>{{ history.get_end_date|date:"d-m-Y" }}</td>
+                                                                <td>{{ history.total_add_on_days }}</td>
+                                                                <td>{{ history.plan.offer_price }}</td>
+                                                            </tr>
+                                                        {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        {% else %}
+                                            <p class="text-muted">No plan history found.</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="invoices" role="tabpanel" aria-labelledby="invoices-tab">
+                                    <div class="py-3">
+                                        <h4 class="mt-3">Membership Invoices</h4>
+                                        {% if membership_histories %}
+                                            <div class="table-responsive">
+                                                <table class="table table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Plan</th>
+                                                            <th>Start Date</th>
+                                                            <th>End Date</th>
+                                                            <th>Total</th>
+                                                            <th>Paid</th>
+                                                            <th>Due</th>
+                                                            <th>Actions</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {% for history in membership_histories %}
+                                                            <tr>
+                                                                <td>{{ history.plan.title }}</td>
+                                                                <td>{{ history.membership_start_date|date:"d-m-Y" }}</td>
+                                                                <td>{{ history.get_end_date|date:"d-m-Y" }}</td>
+                                                                <td>₹{{ history.total_amount }}</td>
+                                                                <td>₹{{ history.paid_amount }}</td>
+                                                                <td>₹{{ history.due_amount }}</td>
+                                                                <td>
+                                                                    <a href="{% url 'billing:invoice' member.id history.id %}" class="btn btn-primary btn-sm">View Invoice</a>
+                                                                </td>
+                                                            </tr>
+                                                        {% empty %}
+                                                            <tr>
+                                                                <td colspan="7" class="text-center">No membership invoices found.</td>
+                                                            </tr>
+                                                        {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        {% else %}
+                                            <p class="text-muted">No membership invoice history found.</p>
+                                        {% endif %}
+
+                                        
+                                        <h4 class="mt-3">Personal Training Invoices</h4>
+                                        {% if pt_invoices %}
+                                            <div class="table-responsive">
+                                                <table class="table table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Invoice ID</th>
+                                                            <th>Trainer</th>
+                                                            <th>Start Date</th>
+                                                            <th>End Date</th>
+                                                            <th>Total</th>
+                                                            <th>Due</th>
+                                                            <th>Actions</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {% for pt_invoice in pt_invoices %}
+                                                            <tr>
+                                                                <td><a href="{% url 'billing:pt_invoice' member.id pt_invoice.id %}">#{{ pt_invoice.id }}</a></td>
+                                                                <td>{{ pt_invoice.trainer.name }}</td>
+                                                                <td>{{ pt_invoice.pt_start_date|date:"d M, Y" }}</td>
+                                                                <td>{{ pt_invoice.get_end_date|date:"d-m-Y" }}</td>
+                                                                <td>₹{{ pt_invoice.total_amount }}</td>
+                                                                <td>₹{{ pt_invoice.due_amount }}</td>
+                                                                <td>
+                                                                    <a href="{% url 'billing:pt_invoice' member.id pt_invoice.id %}" class="btn btn-sm btn-primary">View Invoice</a>
+                                                                </td>
+                                                            </tr>
+                                                        {% empty %}
+                                                            <tr>
+                                                                <td colspan="7" class="text-center">No personal training invoices found.</td>
+                                                            </tr>
+                                                        {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        {% else %}
+                                            <p class="text-muted">No personal training invoices found.</p>
+                                        {% endif %}
+
+                                        <hr>
+                                        <h4 class="mt-3">Payment History</h4>
+                                        {% if payments %}
+                                            <div class="table-responsive">
+                                                <table class="table table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Payment ID</th>
+                                                            <th>Date</th>
+                                                            <th>Amount</th>
+                                                            <th>Mode</th>
+                                                            <th>Transaction ID</th>
+                                                            {% comment %} <th>Actions</th> {% endcomment %}
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {% for payment in payments %}
+                                                            <tr>
+                                                                <td>#{{ payment.id }}</td>
+                                                                <td>{{ payment.payment_date|date:"d M, Y H:i" }}</td>
+                                                                <td>₹{{ payment.amount }}</td>
+                                                                <td>{{ payment.get_payment_mode_display }}</td>
+                                                                <td>{{ payment.transaction_id|default_if_none:"N/A" }}</td>
+                                                                {% comment %} <td>
+                                                                    <a href="#" class="btn btn-sm btn-primary"><i class="mdi mdi-eye"></i></a>
+                                                                </td> {% endcomment %}
+                                                            </tr>
+                                                        {% empty %}
+                                                            <tr>
+                                                                <td colspan="6" class="text-center">No receipts found.</td>
+                                                            </tr>
+                                                        {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        {% else %}
+                                            <p class="text-muted">No receipt history found.</p>
+                                        {% endif %} 
+
+                                        <hr>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+                          
+                        </div>
+                      </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

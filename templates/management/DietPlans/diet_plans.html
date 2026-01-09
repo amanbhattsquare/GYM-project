@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static %}
+<!-- Compact Breadcrumb Navigation -->
+<nav aria-label="breadcrumb" class="custom-breadcrumb mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{% url 'dashboard' %}" class="text-decoration-none">
+                <i class="mdi mdi-home-outline mdi-18px"></i> Dashboard
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <i class="mdi mdi-food-apple-outline mdi-18px"></i> Diet Plans
+        </li>
+    </ol>
+</nav>
+
+<div class="col-lg-12 px-0">
+    <div class="card">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">Diet Plan List</h4>
+            <button type="button" class="btn btn-light btn-sm" data-toggle="modal" data-target="#createPlanModal">
+                <i class="mdi mdi-plus"></i> Create Diet Plan
+            </button>
+        </div>
+        <div class="card-body">
+            <!-- Search form -->
+            {% include 'includes/search_form.html' %}
+
+            <div class="table-responsive">
+                <table class="table table-hover table-sm table-stack-on-mobile">
+                    <thead>
+                        <tr>
+                            <th class="font-weight-semibold py-2">#</th>
+                            <th class="font-weight-semibold py-2">Name</th>
+                            <th class="font-weight-semibold py-2">Target</th>
+                            <th class="font-weight-semibold py-2">Daily Calories</th>
+                            <th class="font-weight-semibold py-2">Duration (Weeks)</th>
+                            <th class="font-weight-semibold py-2">Description</th>
+                            <th class="font-weight-semibold py-2">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for plan in plans %}
+                        <tr>
+                            <td data-label="Sr. No">{{ forloop.counter0|add:plans.start_index }}</td>
+                            <td data-label="Name">{{ plan.name }}</td>
+                            <td data-label="Target">{{ plan.get_target_display }}</td>
+                            <td data-label="Daily Calories">{{ plan.daily_calories }}</td>
+                            <td data-label="Duration (Weeks)">{{ plan.duration_weeks }}</td>
+                            <td data-label="Description">{{ plan.description }}</td>
+                            <td data-label="Actions">
+                                <a href="{% url 'edit_diet_plan' plan.pk %}" class="btn btn-primary btn-sm"> <i class="mdi mdi-pencil-outline"></i></a>
+                                <a href="#" class="btn btn-danger btn-sm" onclick="confirmDelete('{{ plan.pk }}', '{{ plan.name }}', '{% url 'delete_diet_plan' plan.pk %}')"> <i class="mdi mdi-delete-outline"></i></a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            {% if plans.has_other_pages %}
+                {% include 'includes/pagination.html' with page_obj=plans %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="createPlanModal" tabindex="-1" role="dialog" aria-labelledby="createPlanModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createPlanModalLabel">Create Diet Plan</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post" class="mb-4">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="id_name">Name</label>
+                        {{ form.name }}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_target">Target</label>
+                        {{ form.target }}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_daily_calories">Daily Calories</label>
+                        {{ form.daily_calories }}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_duration_weeks">Duration (Weeks)</label>
+                        {{ form.duration_weeks }}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_description">Description</label>
+                        {{ form.description }}
+                    </div>
+                    <button type="submit" class="btn btn-primary">Create Plan</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

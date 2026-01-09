@@ -1,0 +1,178 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load form_tags %}
+
+{% block content %}
+<nav aria-label="breadcrumb" class="custom-breadcrumb mb-3">
+  <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{% url 'dashboard' %}" class="text-decoration-none">
+                <i class="mdi mdi-home-outline mdi-18px"></i> Dashboard
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{% url 'member_list' %}" class="text-decoration-none">
+                <i class="mdi mdi-account-multiple-outline mdi-18px"></i> Members List
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{% url 'member_profile' member.id %}" class="text-decoration-none">
+                <i class="mdi mdi-account-outline mdi-18px"></i> Member Profile
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <i class="mdi mdi-file-document-box-plus-outline mdi-18px"></i> Assign Membership Plan
+        </li>
+    </ol>
+    </nav>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="card-title text-white mb-0">Assign Membership Plan to {{ member.first_name }} {{ member.last_name }}</h4>
+                </div>
+                <div class="card-body">
+                    <form class="forms-sample" action="{% url 'assign_membership_plan' member.id %}" method="post">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="id_plan">Plan</label>
+                                    {{ form.plan|attr:'class:form-control' }}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="id_add_on_days">Add on days </label>
+                                    {{ form.add_on_days|attr:'class:form-control' }}
+                                </div>
+                            </div>
+                             <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="id_membership_start_date">Membership Start Date</label>
+                                    {{ form.membership_start_date|attr:'class:form-control' }}
+                                </div>
+                            </div>
+                            
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="id_registration_fee">Registration Fee</label>
+                                    {{ form.registration_fee|attr:'class:form-control' }}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="id_discount">Discount</label>
+                                    {{ form.discount|attr:'class:form-control' }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="id_total_amount">Total Amount</label>
+                                    {{ form.total_amount|attr:'class:form-control,readonly:true' }}
+                                    <h4 class="mt-2">Total: <span id="total_display">0.00</span> <span id="gst_display"></span></h4>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="id_paid_amount">Paid Amount</label>
+                                    {{ form.paid_amount|attr:'class:form-control' }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="id_payment_mode">Payment Mode</label>
+                                    {{ form.payment_mode|attr:'class:form-control' }}
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="id_transaction_id">Transaction ID</label>
+                                    <input type="text" name="transaction_id" class="form-control" id="id_transaction_id">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="id_comment">Comment</label>
+                                    {{ form.comment|attr:'class:form-control' }}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        
+                        <div class="row justify-content-end">
+                            <a href="{% url 'member_profile' member.id %}" class="btn btn-light">Cancel</a>
+                        <button type="submit" class="btn btn-primary mr-2 ">Assign Plan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const plansData = JSON.parse('{{ plans_json|escapejs|default:"[]" }}');
+    const gymData = JSON.parse('{{ gym_json|escapejs|default:"[]" }}')[0];
+    
+    const planSelect = document.getElementById('id_plan');
+    const registrationFeeInput = document.getElementById('id_registration_fee');
+    const discountInput = document.getElementById('id_discount');
+    const totalAmountInput = document.getElementById('id_total_amount');
+    const totalDisplay = document.getElementById('total_display');
+    const gstDisplay = document.getElementById('gst_display');
+    
+    function updateTotalAmount() {
+        const selectedPlanId = planSelect.value;
+        const registrationFee = parseFloat(registrationFeeInput.value) || 0;
+        const discount = parseFloat(discountInput.value) || 0;
+        
+        let planOfferPrice = 0;
+        if (selectedPlanId && plansData.length > 0) {
+            const selectedPlan = plansData.find(p => p.pk == selectedPlanId);
+            if (selectedPlan) {
+                planOfferPrice = parseFloat(selectedPlan.fields.offer_price);
+            }
+        }
+        
+        const baseAmount = planOfferPrice + registrationFee - discount;
+        
+        let gstRate = 0;
+        if (gymData && gymData.fields.gst_enabled) {
+            gstRate = parseFloat(gymData.fields.gst_rate) || 0;
+        }
+        
+        const gstAmount = (baseAmount * gstRate) / 100;
+        const totalAmount = baseAmount + gstAmount;
+
+        totalAmountInput.value = totalAmount.toFixed(2);
+        totalDisplay.textContent = totalAmount.toFixed(2);
+
+        if (gstRate > 0) {
+            gstDisplay.textContent = `(Includes ${gstAmount.toFixed(2)} GST)`;
+        } else {
+            gstDisplay.textContent = '';
+        }
+    }
+
+    planSelect.addEventListener('change', updateTotalAmount);
+    registrationFeeInput.addEventListener('input', updateTotalAmount);
+    discountInput.addEventListener('input', updateTotalAmount);
+
+    updateTotalAmount();
+});
+</script>
+{% endblock %}

@@ -15,15 +15,35 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
-from . import views
+from django.urls import path, include
+from apps.dashboard import views
 from django.conf import settings
 from django.conf.urls.static import static
+handler404 = 'GYM.views.handler404'
+from .views import help_view
+
 
 urlpatterns = [
+    path('', include('apps.website.urls')),
+    path('', include('apps.login.urls')),
     path('admin/', admin.site.urls),
-    path('dashboard', views.dashboard, name="dashboard")
+    path('superadmin/', include(('apps.superadmin.urls', 'superadmin'))),
+    path('dashboard/', include('apps.dashboard.urls')),
+    path('dashboard', views.dashboard, name="dashboard"),
+    path('attendance/', include('apps.attendance.urls')),
+    path('members/', include('apps.members.urls')),
+    path('trainers/', include('apps.trainers.urls')),
+    path('enquiry/', include('apps.enquiry.urls')),
+    path('billing/', include('apps.billing.urls')),
+    path('management/', include('apps.management.urls')),
+    path('expenses/', include('apps.expenses.urls')),
+    path('settings/', include(('apps.settings.urls', 'settings'), namespace='settings')),
+    path('business_report/', include('apps.business_report.urls')),
+    path('events/', include('apps.events.urls')),
+    path('inventory/', include('apps.inventory.urls')),
+    path('help/', help_view, name='help'),
 ]
 
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

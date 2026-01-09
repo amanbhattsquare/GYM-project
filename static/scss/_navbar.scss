@@ -22,7 +22,7 @@
     padding-right: 15px;
     width: calc(100% - #{$sidebar-width-lg});
     height: $navbar-height;
-    background: $navbar-bg;
+    background: linear-gradient(to bottom, #e6e5f2, #4599cd);
     @media (max-width: 991px) {
       width: 100%;
       padding-left: 11px;
