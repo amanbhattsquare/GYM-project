@@ -55,6 +55,20 @@
       </div>
     </div>
   </div>
+{% comment %} QR Code Preview Modal {% endcomment %}
+<div class="modal fade" id="imagePreviewModal" tabindex="-1" aria-labelledby="imagePreviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="imagePreviewModalLabel">QR Code</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center ">
+                <img src="" id="modalImage" class="img-fluid " alt="QR Code">
+            </div>
+        </div>
+    </div>
+</div>
 
   <!-- plugins:js --> 
   <script src="{% static 'vendors/js/vendor.bundle.base.js' %}"></script> 
@@ -88,6 +102,8 @@
   <script src="{% static 'js/delete_confirmation.js' %}"></script>
   <!-- End custom js for this page-->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+ 
+
   {% block javascript %}
   {% include 'includes/swal_messages.html' %}
   {% endblock javascript %}
@@ -98,6 +114,9 @@
       const loader = document.querySelector('.codex-loader');
       loader.style.display = 'none';
     });
+    function showImage(src) {
+        document.getElementById('modalImage').src = src;
+    }
   </script>
   </body>
 

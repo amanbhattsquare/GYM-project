@@ -81,6 +81,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'apps.superadmin.context_processors.gym_details',
+                'apps.settings.context_processors.payment_settings_context',
             ],
         },
     },
