@@ -1,6 +1,8 @@
 from django import forms
 from .models import Expense
 from django.utils import timezone
+import re
+from django.core.exceptions import ValidationError
 
 class ExpenseForm(forms.ModelForm):
     class Meta:
@@ -17,6 +19,32 @@ class ExpenseForm(forms.ModelForm):
             'payment_mode': forms.Select(attrs={'class': 'form-control', 'placeholder': 'Select payment mode'}),
             'transaction_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter transaction ID'}),
             'receipt_image': forms.FileInput(attrs={'class': 'form-control', 'placeholder': 'Upload receipt image'}),
-            'is_recurring': forms.CheckboxInput(attrs={'class': 'form-check-input', 'placeholder': 'Is recurring?'}),
-            'recurring_cycle': forms.Select(attrs={'class': 'form-control', 'placeholder': 'Select recurring cycle'}),
         }
+
+    def clean_date(self):
+        date = self.cleaned_data.get('date')
+        if date and date > timezone.now().date():
+            raise ValidationError("Date cannot be in the future.")
+        return date
+
+    def clean_amount(self):
+        amount = self.cleaned_data.get('amount')
+        if amount and amount <= 0:
+            raise ValidationError("Amount must be a positive number.")
+        return amount
+
+    def clean_vendor_phone(self):
+        vendor_phone = self.cleaned_data.get('vendor_phone')
+        if vendor_phone and not re.match(r'^[0-9]\d{9}$', vendor_phone):
+            raise ValidationError("Enter a valid 10-digit mobile number.")
+        return vendor_phone
+
+    def clean(self):
+        cleaned_data = super().clean()
+        payment_mode = cleaned_data.get('payment_mode')
+        transaction_id = cleaned_data.get('transaction_id')
+
+        if payment_mode != 'cash' and not transaction_id:
+            self.add_error('transaction_id', "Transaction ID is required for non-cash payments.")
+        
+        return cleaned_data

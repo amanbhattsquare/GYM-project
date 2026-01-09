@@ -96,6 +96,11 @@ In the member's profile, you will find an option to change their membership stat
 
 
 
+
+In members phone numbers add this validation if number are under 10 then show errer 
+
+
+
 05/01/2026  setting.py file
 
 """

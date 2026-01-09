@@ -13,8 +13,8 @@ def inventory_dashboard(request):
     gym = getattr(request, 'gym', None)
 
     # Date filtering
-    start_date_str = request.GET.get('start_date')
-    end_date_str = request.GET.get('end_date')
+    start_date_str = request.GET.get('from_date')
+    end_date_str = request.GET.get('to_date')
 
     if start_date_str and end_date_str:
         start_date = timezone.datetime.strptime(start_date_str, '%Y-%m-%d').date()
@@ -29,10 +29,10 @@ def inventory_dashboard(request):
     low_stock_items = Item.objects.filter(gym=gym, is_deleted=False, current_stock__gt=0, current_stock__lte=F('reorder_level')).count()
     
     today = timezone.now().date()
-    stock_out_today = StockLog.objects.filter(
+    stock_out_in_period = StockLog.objects.filter(
         gym=gym,
         transaction_type='stock_out',
-        date__date=today
+        date__date__range=[start_date, end_date]
     ).count()
 
     # Chart Data
@@ -45,14 +45,14 @@ def inventory_dashboard(request):
     equipment_status = Equipment.objects.filter(gym=gym, is_deleted=False).values('status').annotate(count=Count('id'))
 
     # Recent Transactions
-    recent_transactions = StockLog.objects.filter(gym=gym).order_by('-date')[:10]
+    recent_transactions = StockLog.objects.filter(gym=gym, date__date__range=[start_date, end_date]).order_by('-date')[:10]
 
     context = {
         'gym': gym,
         'total_products': total_products,
         'total_equipment': total_equipment,
         'low_stock_items': low_stock_items,
-        'stock_out_today': stock_out_today,
+        'stock_out_in_period': stock_out_in_period,
         'monthly_stock_usage': monthly_stock_usage,
         'equipment_status': equipment_status,
         'start_date': start_date.strftime('%Y-%m-%d'),
@@ -143,8 +143,10 @@ def _get_suppliers(gym):
 @login_required
 def stock_out_view(request, item_id=None):
     gym = getattr(request, 'gym', None)
+    items = Item.objects.filter(gym=gym, is_deleted=False)
+
     if request.method == 'POST':
-        form = StockOutForm(request.POST)
+        form = StockOutForm(request.POST, gym=gym)
         if form.is_valid():
             stock_log = form.save(commit=False)
             stock_log.transaction_type = 'stock_out'
@@ -159,6 +161,8 @@ def stock_out_view(request, item_id=None):
             item.current_stock -= stock_log.quantity
             item.save()
             
+            stock_log.selling_price = item.selling_price
+            stock_log.total_amount = (item.selling_price * stock_log.quantity) - stock_log.discount
             stock_log.save()
             
             messages.success(request, f'{item.name} has been stocked out successfully.')
@@ -166,11 +170,14 @@ def stock_out_view(request, item_id=None):
     else:
         initial_data = {}
         if item_id:
-            initial_data['item'] = get_object_or_404(Item, id=item_id, gym=gym)
-        form = StockOutForm(initial=initial_data)
+            item = get_object_or_404(Item, id=item_id, gym=gym)
+            initial_data['item'] = item
+            initial_data['unit_price'] = item.selling_price
+        form = StockOutForm(initial=initial_data, gym=gym)
     
     context = {
         'form': form,
+        'items': items,
         'suppliers': _get_suppliers(gym),
         'gym': gym,
     }
@@ -249,7 +256,7 @@ def add_edit_equipment(request, id=None):
 @login_required
 def maintenance_log(request):
     gym = getattr(request, 'gym', None)
-    form = MaintenanceForm(request.POST or None)
+    form = MaintenanceForm(request.POST or None, gym=gym)
     if request.method == 'POST':
         if form.is_valid():
             maintenance = form.save(commit=False)

@@ -37,7 +37,7 @@
                     {% csrf_token %}
                     <div class="form-group">
                         <label for="reason">Reason for Freezing</label>
-                        <textarea class="form-control" id="reason" name="reason" rows="3" placeholder="Enter reason for freezing membership"></textarea>
+                        <textarea class="form-control" id="reason" name="reason" rows="3" placeholder="Enter reason for freezing membership" required></textarea>
                     </div>
                 </form>
             </div>
@@ -133,6 +133,12 @@
                                     <span><i class="mdi mdi-calendar-clock mr-2 text-primary"></i>End Date</span>
                                     <span class="text-muted">{{ membership_history.get_end_date|date:"d-m-Y" }}</span>
                                 </div>
+                                {% if membership_history.is_frozen %}
+                                <div class="d-flex justify-content-between">
+                                    <span><i class="mdi mdi-information-outline mr-2 text-primary"></i>Reason for Freezing</span>
+                                    <span class="text-muted">{{ membership_history.freezes.last.reason }}</span>
+                                </div>
+                                {% endif %}
                             {% else %}
                                 <p class="text-muted">No active membership plan.</p>
                             {% endif %}
@@ -480,7 +486,7 @@
                                                 <table class="table table-striped">
                                                     <thead>
                                                         <tr>
-                                                            <th>Receipt ID</th>
+                                                            <th>Payment ID</th>
                                                             <th>Date</th>
                                                             <th>Amount</th>
                                                             <th>Mode</th>

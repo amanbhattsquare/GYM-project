@@ -12,7 +12,7 @@ class EnquiryForm(forms.ModelForm):
 
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your name'}),
-            'contact_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your contact number'}),
+            'mobile_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your contact number'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Enter your email'}),
             'gender': forms.Select(attrs={'class': 'form-control', 'placeholder': 'Select your gender'}),
             'age': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter your age'}),
@@ -30,7 +30,7 @@ class EnquiryForm(forms.ModelForm):
 
         required_fields = [
             'name',
-            'contact_number',
+            'mobile_number',
             'gender',
             'age',
             'next_follow_up_date'
@@ -40,28 +40,28 @@ class EnquiryForm(forms.ModelForm):
             self.fields[field].required = True
             self.fields[field].label = f"{self.fields[field].label} *"
 
-    # 🔐 Name validation
+    # Name validation
     def clean_name(self):
         name = self.cleaned_data.get('name')
         if len(name) < 3:
             raise ValidationError("Name must be at least 3 characters long")
         return name
 
-    # 📞 Contact number validation (India)
-    def clean_contact_number(self):
-        contact = self.cleaned_data.get('contact_number')
+    #  Contact number validation (India)
+    def clean_mobile_number(self):
+        contact = self.cleaned_data.get('mobile_number')
         if not re.match(r'^[0-9]\d{9}$', contact):
             raise ValidationError("Enter a valid 10-digit mobile number")
         return contact
 
-    # 🎂 Age validation
+    # Age validation
     def clean_age(self):
         age = self.cleaned_data.get('age')
         if age < 16:
             raise ValidationError("Minimum age should be 16 years")
         return age
 
-    # 📅 Next follow-up date validation
+    # Next follow-up date validation
     def clean_next_follow_up_date(self):
         date = self.cleaned_data.get('next_follow_up_date')
         if date < timezone.now().date():

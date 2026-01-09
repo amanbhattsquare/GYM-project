@@ -29,29 +29,34 @@ def add_new_member(request):
         member_form = MemberForm(request.POST, request.FILES)
         medical_formset = MedicalHistoryFormSet(request.POST, request.FILES, prefix='medical')
         emergency_form = EmergencyContactForm(request.POST, prefix='emergency')
-        if member_form.is_valid() and medical_formset.is_valid() and emergency_form.is_valid():
-            member = member_form.save(commit=False)
-            member.gym = gym
-            member.save()
-            
-            instances = medical_formset.save(commit=False)
-            for instance in instances:
-                instance.member = member
-                instance.gym = gym
-                instance.save()
-            
-            medical_formset.save_m2m() 
-            
-            for form in medical_formset.deleted_forms:
-                if form.instance.pk:
-                    form.instance.delete()
 
-            emergency_contact = emergency_form.save(commit=False)
-            emergency_contact.member = member
-            emergency_contact.gym = gym
-            emergency_contact.save()
-            messages.success(request, 'Member added successfully!')
-            return redirect('assign_membership_plan', member_id=member.id)
+        if member_form.is_valid() and medical_formset.is_valid() and emergency_form.is_valid():
+            email = member_form.cleaned_data.get('email')
+            if email and Member.objects.filter(gym=gym, email=email).exists():
+                messages.error(request, 'A member with this email already exists.')
+            else:
+                member = member_form.save(commit=False)
+                member.gym = gym
+                member.save()
+                
+                instances = medical_formset.save(commit=False)
+                for instance in instances:
+                    instance.member = member
+                    instance.gym = gym
+                    instance.save()
+                
+                medical_formset.save_m2m() 
+                
+                for form in medical_formset.deleted_forms:
+                    if form.instance.pk:
+                        form.instance.delete()
+
+                emergency_contact = emergency_form.save(commit=False)
+                emergency_contact.member = member
+                emergency_contact.gym = gym
+                emergency_contact.save()
+                messages.success(request, 'Member added successfully!')
+                return redirect('assign_membership_plan', member_id=member.id)
         else:
             print("Member form errors:", member_form.errors)
             print("Medical formset errors:", medical_formset.errors)

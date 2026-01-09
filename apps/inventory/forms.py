@@ -30,7 +30,8 @@ class StockOutForm(forms.ModelForm):
     class Meta:
         model = StockLog
         fields = [
-            'item', 'quantity', 'reason', 'issued_to', 'phone_number', 'date', 'remarks'
+            'item', 'quantity', 'discount', 'reason', 'issued_to', 
+            'phone_number', 'remarks'
         ]
         widgets = {
             'item': forms.Select(attrs={'class': 'form-control'}),
@@ -38,9 +39,19 @@ class StockOutForm(forms.ModelForm):
             'reason': forms.Select(attrs={'class': 'form-control'}),
             'issued_to': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g., "John Doe"'}),
             'phone_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'e.g., 9876543210'}),
-            'date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'remarks': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Any additional notes...'}),
+            'discount': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '0.00'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        gym = kwargs.pop('gym', None)
+        super().__init__(*args, **kwargs)
+        if gym:
+            self.fields['item'].queryset = Item.objects.filter(gym=gym, is_deleted=False)
+
+        for field_name, field in self.fields.items():
+            if field_name != 'remarks':
+                field.required = True
 
     def clean_quantity(self):
         quantity = self.cleaned_data.get('quantity')
@@ -99,3 +110,9 @@ class MaintenanceForm(forms.ModelForm):
             'status': forms.Select(attrs={'class': 'form-control'}),
             'downtime_days': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'e.g., 2'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        gym = kwargs.pop('gym', None)
+        super().__init__(*args, **kwargs)
+        if gym:
+            self.fields['equipment'].queryset = Equipment.objects.filter(gym=gym, is_deleted=False)

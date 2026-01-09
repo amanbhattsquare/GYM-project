@@ -55,7 +55,7 @@
 
                             <td data-label="Photo">
                                 {% if trainer.photo %}
-                                    <img src="{{ trainer.photo.url }}" alt="{{ trainer.name }}" class="img-fluid rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+                                    <img src="{{ trainer.photo.url }}" alt="{{ trainer.name }}" class="img-fluid rounded-circle equipment-image" style="width: 40px; height: 40px; object-fit: cover; cursor: pointer;">
                                 {% else %}
                                     <img src="{% static 'images/gym-guy.jpg' %}" alt="Default" class="img-fluid rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
                                 {% endif %}
@@ -99,4 +99,33 @@
     </div>
 </div>
 
+<!-- Image Preview Modal -->
+<div class="modal fade" id="imagePreviewModal" tabindex="-1" aria-labelledby="imagePreviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="imagePreviewModalLabel">Image Preview</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img src="" id="modalImage" class="img-fluid" alt="Equipment Image">
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    $('.equipment-image').on('click', function() {
+        var imageUrl = $(this).attr('src');
+        var imageName = $(this).attr('alt');
+        $('#modalImage').attr('src', imageUrl);
+        $('#imagePreviewModalLabel').text(imageName);
+        var imagePreviewModal = new bootstrap.Modal(document.getElementById('imagePreviewModal'));
+        imagePreviewModal.show();
+    });
+});
+</script>
+{% endblock extra_js %}

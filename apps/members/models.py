@@ -9,7 +9,7 @@ class Member(models.Model):
     gym = models.ForeignKey(Gym, on_delete=models.CASCADE, null=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
-    mobile_number = models.CharField(max_length=15)
+    mobile_number = models.CharField(max_length=10)
     email = models.EmailField(null=True, blank=True)
     age = models.PositiveIntegerField(null=True, blank=True )
     gender = models.CharField(max_length=10, choices=[('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')],
@@ -60,7 +60,10 @@ class Member(models.Model):
 
     @property
     def name(self):
-        return f'{self.first_name} {self.last_name}'
+      first = (self.first_name or '').strip().title()
+      last = (self.last_name or '').strip().title()
+      return f"{first} {last}".strip()
+
 
     @property
     def latest_membership(self):

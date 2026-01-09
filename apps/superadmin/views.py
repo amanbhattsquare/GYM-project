@@ -108,7 +108,7 @@ def gym_list(request):
         admin = GymAdmin.objects.filter(gym=gym).first()
         if admin:
             gym.has_admin = True
-            gym.admin_name = admin.user.get_full_name() or admin.user.username
+            gym.admin_name = f"{admin.user.first_name} {admin.user.last_name}".strip() or admin.user.username
             gym.admin_username = admin.user.username
         else:
             gym.has_admin = False

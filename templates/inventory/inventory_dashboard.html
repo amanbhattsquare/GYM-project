@@ -10,15 +10,11 @@
         box-shadow: 0 4px 20px 0 rgba(0,0,0,0.12);
         transition: all 0.3s ease-in-out;
     }
+
     .icon-circle {
-        height: 50px;
-        width: 50px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
+      
     }
+ 
 </style>
 {% endblock head %}
 
@@ -60,24 +56,32 @@
             </div>
             <div class="card-body">
                 <!-- Date Filter Form -->
-                <form method="get" class="row g-3 align-items-center mb-4 p-3 border rounded bg-light">
-                    <div class="col-md-3">
-                        <label for="start_date" class="form-label">Start Date</label>
-                        <input type="date" name="start_date" id="start_date" class="form-control" value="{{ start_date|date:'Y-m-d' }}">
-                    </div>
-                    <div class="col-md-3">
-                        <label for="end_date" class="form-label">End Date</label>
-                        <input type="date" name="end_date" id="end_date" class="form-control" value="{{ end_date|date:'Y-m-d' }}">
-                    </div>
-                    <div class="col-md-2 d-flex align-items-end">
-                        <button type="submit" class="btn btn-primary w-100">
-                            <i class="mdi mdi-filter-variant"></i> Filter
-                        </button>
-                    </div>
-                    <div class="col-md-2 d-flex align-items-end">
-                        <button type="button" class="btn btn-secondary w-100" id="clearFilter">
-                            <i class="mdi mdi-restore"></i> Clear
-                        </button>
+                <form method="get" action="">
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="from_date">From Date</label>
+                                <input type="date" class="form-control" id="from_date" name="from_date" value="{{ request.GET.from_date }}">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="to_date">To Date</label>
+                                <input type="date" class="form-control" id="to_date" name="to_date" value="{{ request.GET.to_date }}">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label>&nbsp;</label>
+                                <button type="submit" class="btn btn-primary form-control">Filter</button>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label>&nbsp;</label>
+                                <a href="{% url 'inventory:dashboard' %}" class="btn btn-secondary form-control">Reset</a>  
+                            </div>
+                        </div>
                     </div>
                 </form>
 
@@ -94,7 +98,7 @@
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_products }}</div>
                                         </div>
                                         <div class="col-auto">
-                                            <div class="icon-circle bg-primary">
+                                            <div class="icon-circle ">
                                                 <i class="mdi mdi-package-variant-closed mdi-24px"></i>
                                             </div>
                                         </div>
@@ -114,7 +118,7 @@
                                             <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_equipment }}</div>
                                         </div>
                                         <div class="col-auto">
-                                            <div class="icon-circle bg-success">
+                                            <div class="icon-circle ">
                                                 <i class="mdi mdi-dumbbell mdi-24px"></i>
                                             </div>
                                         </div>
@@ -131,10 +135,10 @@
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Low Stock Items</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ low_stock_items }}</div>
+                                            <div class="h5 mb-0 font-weight-bold ">{{ low_stock_items }}</div>
                                         </div>
                                         <div class="col-auto">
-                                            <div class="icon-circle bg-warning">
+                                            <div class="icon-circle ">
                                                 <i class="mdi mdi-alert-outline mdi-24px"></i>
                                             </div>
                                         </div>
@@ -149,12 +153,12 @@
                             <div class="card-body">
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-2">
-                                        <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Stock Out Today</div>
-                                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stock_out_today }}</div>
+                                        <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Stock Out in Period</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stock_out_in_period }}</div>
                                     </div>
                                     <div class="col-auto">
-                                        <div class="icon-circle bg-danger">
-                                            <i class="mdi mdi-package-variant-closed-remove mdi-24px"></i>
+                                        <div class="icon-circle ">
+                                            <i class="fas fa-people-carry"></i>
                                         </div>
                                     </div>
                                 </div>
@@ -200,6 +204,7 @@
                     <table class="table table-hover">
                         <thead>
                             <tr>
+                                <th>#</th>
                                 <th>Item</th>
                                 <th>Type</th>
                                 <th>Quantity</th>
@@ -211,6 +216,7 @@
                         <tbody>
                             {% for log in recent_transactions %}
                             <tr>
+                                <td>{{ forloop.counter }}</td>
                                 <td>{{ log.item.name }}</td>
                                 <td>
                                     <span class="badge {% if log.transaction_type == 'stock_in' %}bg-success{% else %}bg-danger{% endif %}">
@@ -249,7 +255,7 @@
                 labels: [{% for item in monthly_stock_usage %} '{{ item.item__name }}', {% endfor %}],
                 datasets: [{
                     label: 'Stock Usage',
-                    data: [{% for item in monthly_stock_usage %} '{{ item.total_quantity }}', {% endfor %}],
+                    data: [{% for item in monthly_stock_usage %} {{ item.total_quantity }}, {% endfor %}],
                     backgroundColor: 'rgba(54, 162, 235, 0.6)',
                     borderColor: 'rgba(54, 162, 235, 1)',
                     borderWidth: 1,
@@ -257,7 +263,6 @@
                 }]
             },
             options: {
-                responsive: true,
                 maintainAspectRatio: false,
                 scales: {
                     y: {
@@ -295,6 +300,8 @@
                 maintainAspectRatio: false,
             }
         });
+
+        
     });
 </script>
 {% endblock javascript %}

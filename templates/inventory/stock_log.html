@@ -49,19 +49,20 @@
                             <th scope="col"><i class="mdi mdi-calendar-clock"></i> Date & Time</th>
                             <th scope="col"><i class="mdi mdi-swap-horizontal"></i> Type</th>
                             <th scope="col"><i class="mdi mdi-counter"></i> Quantity</th>
+                            <th scope="col"><i class="mdi mdi-currency-inr"></i> Price</th>
                             <th scope="col"><i class="mdi mdi-account-outline"></i> Issued To</th>
                             <th scope="col"><i class="mdi mdi-phone"></i> Phone Number</th>
                             <th scope="col"><i class="mdi mdi-help-circle-outline"></i> Reason</th>
                             <th scope="col"><i class="mdi mdi-comment-text-outline"></i> Remarks</th>
-                            <th scope="col"><i class="mdi mdi-account-edit-outline"></i> User</th>
+                            <th scope="col"><i class="mdi mdi-account-edit-outline"></i> By</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for log in logs %}
                         <tr>
-                            <td>{{ forloop.counter }}</td>
-                            <td>{{ log.date|date:"d M Y, H:i" }}</td>
-                            <td>
+                            <td data-label="#">{{ forloop.counter }}</td>
+                            <td data-label="Date & Time">{{ log.date|date:"d M Y, H:i" }}</td>
+                            <td data-label="Type">
                                 {% if log.transaction_type == 'stock_in' %}
                                     <span class="badge bg-success-soft text-success">
                                         <i class="mdi mdi-package-variant-closed-plus"></i> Stock In
@@ -72,16 +73,25 @@
                                     </span>
                                 {% endif %}
                             </td>
-                            <td>{{ log.quantity }} {{ item.unit }}</td>
-                            <td>{{ log.issued_to|default:"N/A" }}</td>
-                            <td>{{ log.phone_number|default:"N/A" }}</td>
-                            <td>{{ log.get_reason_display|default:"N/A" }}</td>
-                            <td>{{ log.remarks|default:"No remarks" }}</td>
-                            <td>{{ log.added_by.username|default:"System" }}</td>
+                            <td data-label="Quantity">{{ log.quantity }} {{ item.unit }}</td>
+                            <td data-label="Price">
+                                {% if log.transaction_type == 'stock_out' %}
+                                    <div><small>Price:</small> {{ log.selling_price|default:"N/A" }}</div>
+                                    <div><small>Discount:</small> {{ log.discount|default:"0.00" }}</div>
+                                    <div><strong>Total:</strong> {{ log.total_amount|default:"N/A" }}</div>
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                            <td data-label="Issued To">{{ log.issued_to|default:"N/A" }}</td>
+                            <td data-label="Phone Number">{{ log.phone_number|default:"N/A" }}</td>
+                            <td data-label="Reason">{{ log.get_reason_display|default:"N/A" }}</td>
+                            <td data-label="Remarks">{{ log.remarks|default:"No remarks" }}</td>
+                            <td data-label="By">{{ log.added_by.username|default:"System" }}</td>
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="8" class="text-center py-4">
+                            <td colspan="10" class="text-center py-4">
                                 <i class="mdi mdi-information-outline mdi-24px text-muted"></i>
                                 <p class="mb-0 text-muted">No stock history found for this item.</p>
                             </td>
