@@ -37,7 +37,7 @@
                     {% csrf_token %}
                     <div class="form-group">
                         <label for="reason">Reason for Freezing</label>
-                        <textarea class="form-control" id="reason" name="reason" rows="3" placeholder="Enter reason for freezing membership"></textarea>
+                        <textarea class="form-control" id="reason" name="reason" rows="3" placeholder="Enter reason for freezing membership" required></textarea>
                     </div>
                 </form>
             </div>
@@ -486,7 +486,7 @@
                                                 <table class="table table-striped">
                                                     <thead>
                                                         <tr>
-                                                            <th>Receipt ID</th>
+                                                            <th>Payment ID</th>
                                                             <th>Date</th>
                                                             <th>Amount</th>
                                                             <th>Mode</th>

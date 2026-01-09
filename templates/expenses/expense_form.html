@@ -25,7 +25,7 @@
                 <i class="mdi mdi-cash-multiple mdi-18px"></i> Expenses
             </a>
         </li>
-        <li class="breadcrumb-item">
+        <li class="breadcrumb-item active" aria-current="page">
             <i class="mdi mdi-file-document-edit-outline mdi-18px"></i> 
             {% if form.instance.pk %}Edit{% else %}Add{% endif %}
         </li>
@@ -48,129 +48,101 @@
             <form method="post" enctype="multipart/form-data" novalidate>
                 {% csrf_token %}
 
-                <fieldset class="border p-4 rounded mb-4">
-                    <legend class="w-auto px-2 h5">Expense Details</legend>
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label for="{{ form.date.id_for_label }}" class="form-label">
-                                <i class="mdi mdi-calendar"></i> {{ form.date.label }}
-                            </label>
-                            {{ form.date }}
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label for="{{ form.category.id_for_label }}" class="form-label">
-                                <i class="mdi mdi-shape"></i> {{ form.category.label }}
-                            </label>
-                            {{ form.category }}
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label for="{{ form.amount.id_for_label }}" class="form-label">
-                                <i class="mdi mdi-currency-inr"></i> {{ form.amount.label }}
-                            </label>
-                            {{ form.amount }}
-                        </div>
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {{ form.non_field_errors }}
                     </div>
-                    <div class="row">
-                        <div class="col-md-12 mb-3">
-                            <label for="{{ form.description.id_for_label }}" class="form-label">
-                                <i class="mdi mdi-text"></i> {{ form.description.label }}
-                            </label>
-                            {{ form.description }}
-                        </div>
+                {% endif %}
+
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">
+                            {{ form.date.label }} <span class="text-danger">*</span>
+                        </label>
+                        {{ form.date }}
+                        {% if form.date.errors %}
+                            <div class="text-danger small">{{ form.date.errors.0 }}</div>
+                        {% endif %}
                     </div>
-                </fieldset>
-
-                <fieldset class="border p-4 rounded mb-4">
-                    <legend class="w-auto px-2 h5">Vendor Details (Optional)</legend>
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label for="{{ form.vendor_name.id_for_label }}" class="form-label">
-                                <i class="mdi mdi-account"></i> {{ form.vendor_name.label }}
-                            </label>
-                            {{ form.vendor_name }}
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label for="{{ form.vendor_phone.id_for_label }}" class="form-label">
-                                <i class="mdi mdi-phone"></i> {{ form.vendor_phone.label }}
-                            </label>
-                            {{ form.vendor_phone }}
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label for="{{ form.vendor_bill_number.id_for_label }}" class="form-label">
-                                <i class="mdi mdi-receipt"></i> {{ form.vendor_bill_number.label }}
-                            </label>
-                            {{ form.vendor_bill_number }}
-                        </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">
+                            {{ form.category.label }} <span class="text-danger">*</span>
+                        </label>
+                        {{ form.category }}
+                        {% if form.category.errors %}
+                            <div class="text-danger small">{{ form.category.errors.0 }}</div>
+                        {% endif %}
                     </div>
-                </fieldset>
-
-                <fieldset class="border p-4 rounded mb-4">
-                    <legend class="w-auto px-2 h5">Payment & Other Details</legend>
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label for="{{ form.payment_mode.id_for_label }}" class="form-label">
-                                <i class="mdi mdi-credit-card"></i> {{ form.payment_mode.label }}
-                            </label>
-                            {{ form.payment_mode }}
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label for="{{ form.transaction_id.id_for_label }}" class="form-label">
-                                <i class="mdi mdi-identifier"></i> {{ form.transaction_id.label }}
-                            </label>
-                            {{ form.transaction_id }}
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label for="{{ form.receipt_image.id_for_label }}" class="form-label">
-                                <i class="mdi mdi-file-image"></i> {{ form.receipt_image.label }}
-                            </label>
-                            {{ form.receipt_image }}
-                            {% if form.instance.receipt_image %}
-                                <div class="mt-2">
-                                    <a href="{{ form.instance.receipt_image.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
-                                        <i class="mdi mdi-eye"></i> View Current Receipt
-                                    </a>
-                                </div>
-                            {% endif %}
-                        </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">
+                            {{ form.amount.label }} <span class="text-danger">*</span>
+                        </label>
+                        {{ form.amount }}
+                        {% if form.amount.errors %}
+                            <div class="text-danger small">{{ form.amount.errors.0 }}</div>
+                        {% endif %}
                     </div>
-                </fieldset>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">{{ form.description.label }}</label>
+                    {{ form.description }}
+                </div>
 
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">{{ form.vendor_name.label }}</label>
+                        {{ form.vendor_name }}
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">{{ form.vendor_phone.label }}</label>
+                        {{ form.vendor_phone }}
+                        {% if form.vendor_phone.errors %}
+                            <div class="text-danger small">{{ form.vendor_phone.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">{{ form.vendor_bill_number.label }}</label>
+                        {{ form.vendor_bill_number }}
+                    </div>
+                </div>
 
-                <div class="mt-4 pt-3 border-top d-flex justify-content-end">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="mdi mdi-content-save"></i> Add Expense
-                    </button>
-                    <a href="{% url 'expenses' %}" class="btn btn-secondary">
-                        <i class="mdi mdi-cancel"></i> Cancel
-                    </a>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">
+                            {{ form.payment_mode.label }} <span class="text-danger">*</span>
+                        </label>
+                        {{ form.payment_mode }}
+                        {% if form.payment_mode.errors %}
+                            <div class="text-danger small">{{ form.payment_mode.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">{{ form.transaction_id.label }}</label>
+                        {{ form.transaction_id }}
+                        {% if form.transaction_id.errors %}
+                            <div class="text-danger small">{{ form.transaction_id.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">{{ form.receipt_image.label }}</label>
+                        {{ form.receipt_image }}
+                        {% if form.instance.receipt_image %}
+                            <div class="mt-2">
+                                <a href="{{ form.instance.receipt_image.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                    <i class="mdi mdi-eye"></i> View Current Receipt
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary me-2">Submit</button>
+                    <a href="{% url 'expenses' %}" class="btn btn-light">Cancel</a>
                 </div>
 
             </form>
         </div>
     </div>
 </div>
-
-{% endblock content %}
-
-{% block extra_js %}
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Show/hide recurring cycle based on checkbox
-        const recurringCheckbox = document.querySelector('#{{ form.is_recurring.id_for_label }}');
-        const recurringCycleField = document.querySelector('#recurring-cycle-field');
-
-        function toggleRecurringCycle() {
-            if (recurringCheckbox.checked) {
-                recurringCycleField.style.display = 'block';
-            } else {
-                recurringCycleField.style.display = 'none';
-            }
-        }
-
-        recurringCheckbox.addEventListener('change', toggleRecurringCycle);
-        
-        // Initial check
-        toggleRecurringCycle();
-    });
-</script>
-{% endblock extra_js %}
+{% endblock %}
