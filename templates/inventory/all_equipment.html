@@ -46,7 +46,7 @@
                     <div class="card shadow-sm">
                         <div class="card-body">
                             <form method="get" class="row g-3 align-items-center">
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <input type="text" name="q" class="form-control" placeholder="Search by name or serial..." value="{{ request.GET.q }}">
                                 </div>
                                 <div class="col-md-3">
@@ -68,6 +68,11 @@
                                 <div class="col-md-2">
                                     <button type="submit" class="btn btn-primary w-100">
                                         <i class="mdi mdi-filter-variant"></i> Filter
+                                    </button>
+                                </div>
+                                <div class="col-md-1">
+                                    <button type="reset" class="btn btn-outline-secondary w-100" onclick="window.location.href='?'" title="Clear Filters">
+                                        <i class="mdi mdi-refresh"></i> 
                                     </button>
                                 </div>
                             </form>

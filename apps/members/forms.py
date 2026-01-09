@@ -17,7 +17,7 @@ class MemberForm(forms.ModelForm):
         widgets = {
             'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your first name'}),
             'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your last name'}),
-            'mobile_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your mobile number'}),
+            'mobile_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your mobile number', 'maxlength': '10'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Enter your email'}),
             'age': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter your age'}),
             'gender': forms.Select(attrs={'class': 'form-control', 'placeholder': 'Select your gender'}),
@@ -55,6 +55,12 @@ class MemberForm(forms.ModelForm):
         for field in required_fields:
             self.fields[field].required = True
             self.fields[field].label = f"{self.fields[field].label} *"
+
+    def clean_mobile_number(self):
+        mobile_number = self.cleaned_data.get('mobile_number')
+        if not re.match(r'^[0-9]\d{9}$', mobile_number):
+            raise forms.ValidationError("Enter a valid 10-digit mobile number.")
+        return mobile_number
 
     def clean(self):
         cleaned_data = super().clean()

@@ -53,7 +53,7 @@
                                         {% endfor %}
                                     </select>
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-3">
                                     <select name="status" class="form-select">
                                         <option value="">All Statuses</option>
                                         <option value="in_stock" {% if stock_status == 'in_stock' %}selected{% endif %}>In Stock</option>
@@ -66,9 +66,9 @@
                                         <i class="mdi mdi-filter-variant"></i> Filter
                                     </button>
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-1">
                                     <a href="{% url 'inventory:all_items' %}" class="btn btn-outline-secondary w-100">
-                                        <i class="mdi mdi-refresh"></i> Clear
+                                        <i class="mdi mdi-refresh"></i> 
                                     </a>
                                 </div>
                             </form>
