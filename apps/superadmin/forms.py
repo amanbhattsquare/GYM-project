@@ -7,6 +7,9 @@ class GymForm(forms.ModelForm):
     class Meta:
         model = Gym
         fields = ['name', 'gym_id_prefix', 'slogan', 'logo', 'pincode', 'address', 'area', 'city', 'state', 'phone', 'landline', 'email', 'website', 'note', 'gst_enabled', 'gst_rate', 'gst_number']
+        widgets = {
+            'logo': forms.FileInput,
+        }
 
     def clean_username(self):
         username = self.cleaned_data.get('username')
@@ -27,10 +30,11 @@ class GymForm(forms.ModelForm):
         self.fields['note'].widget.attrs['placeholder'] = 'Enter any additional notes'
         self.fields['gst_rate'].widget.attrs['placeholder'] = 'Enter GST Rate'
         self.fields['gst_number'].widget.attrs['placeholder'] = 'Enter GST Number'
+        self.fields['logo'].widget.attrs.update({'class': 'custom-file-input'})
         for field_name, field in self.fields.items():
             if field_name == 'gst_enabled':
                 field.widget.attrs.update({'class': 'form-check-input', 'role': 'switch'})
-            else:
+            elif field_name != 'logo':
                 field.widget.attrs.update({'class': 'form-control'})
 
 class GymAdminForm(forms.ModelForm):

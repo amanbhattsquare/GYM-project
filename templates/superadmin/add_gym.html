@@ -38,7 +38,7 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label>Name</label>
+                                        <label>Gym Name</label>
                                         {{ form.name }}
                                         {% if form.name.errors %}
                                         <div class="text-danger">
@@ -247,8 +247,16 @@
                                         <label>Logo</label>
                                         <div class="custom-file">
                                             {{ form.logo }}
-                                            <label class="custom-file-label" for="{{ form.logo.id_for_label }}">Choose
-                                                file</label>
+                                            <label class="custom-file-label" for="{{ form.logo.id_for_label }}">Choose file</label>
+                                        </div>
+                                        {% if form.instance.logo %}
+                                        <div id="existing-logo-container" class="mt-2">
+                                            <p>Current Logo:</p>
+                                            <img id="existing-logo" src="{{ form.instance.logo.url }}" alt="Current Logo" class="img-thumbnail" style="max-width: 150px; max-height: 150px;">
+                                        </div>
+                                        {% endif %}
+                                        <div id="logo-preview-container" class="mt-2" style="display: none;">
+                                            <img id="logo-preview" src="#" alt="Logo Preview" class="img-thumbnail" style="max-width: 150px; max-height: 150px;">
                                         </div>
                                         {% if form.logo.errors %}
                                         <div class="text-danger">
@@ -329,6 +337,45 @@
 
         // Toggle when checkbox state changes
         gstEnabledCheckbox.addEventListener('change', toggleGstFields);
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const logoInput = document.getElementById('{{ form.logo.id_for_label }}');
+        const logoPreview = document.getElementById('logo-preview');
+        const logoPreviewContainer = document.getElementById('logo-preview-container');
+        const existingLogoContainer = document.getElementById('existing-logo-container');
+        const customFileLabel = document.querySelector(`label[for="{{ form.logo.id_for_label }}"]`);
+
+        logoInput.addEventListener('change', function () {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    logoPreview.src = e.target.result;
+                    logoPreviewContainer.style.display = 'block';
+                    if (existingLogoContainer) {
+                        existingLogoContainer.style.display = 'none';
+                    }
+                }
+                reader.readAsDataURL(file);
+                customFileLabel.textContent = file.name;
+            } else {
+                logoPreview.src = '#';
+                logoPreviewContainer.style.display = 'none';
+                if (existingLogoContainer) {
+                    existingLogoContainer.style.display = 'block';
+                }
+                customFileLabel.textContent = 'Choose file';
+            }
+        });
+
+        // Show current logo if available
+        {% if form.instance.logo and form.instance.logo.url %}
+        if (existingLogoContainer) {
+            existingLogoContainer.style.display = 'block';
+        }
+        {% endif %}
     });
 </script>
 

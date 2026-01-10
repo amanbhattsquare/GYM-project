@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}GYM Profile{% endblock title %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="page-header-section">
+        <div class="row align-items-center">
+            <div class="col-md-2 text-center">
+                <img src="{% if gym.logo %}{{ gym.logo.url }}{% else %}{% static 'images/default_logo.png' %}{% endif %}" alt="logo" class="rounded-circle" style="width: 120px; height: 120px;">
+            </div>
+            <div class="col-md-10">
+                <h1 class="display-4">{{ gym.name }}</h1>
+                <p class="lead">{{ gym.slogan }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <!-- Left Column -->
+        <div class="col-lg-4">
+            <!-- Contact Info -->
+            <div class="card shadow-custom mb-4">
+                <div class="card-body">
+                    <h4 class="card-title"><i class="fas fa-address-book text-primary"></i> Contact Info</h4>
+                    <p><strong>Contact:</strong> {{ gym.contact_number }}</p>
+                    <p><strong>Email:</strong> {{ gym.official_email }}</p>
+                    <p><strong>Address:</strong> {{ gym.address }}, {{ gym.city }}, {{ gym.state }} - {{ gym.pin_code }}</p>
+                </div>
+            </div>
+
+            <!-- Legal Info -->
+            <div class="card shadow-custom mb-4">
+                <div class="card-body">
+                    <h4 class="card-title"><i class="fas fa-balance-scale text-primary"></i> Legal & Business</h4>
+                    <p><span class="badge badge-light">Legal Name:</span> {{ gym.legal_name }}</p>
+                    <p><span class="badge badge-light">Business Type:</span> {{ gym.business_type }}</p>
+                    <p><span class="badge badge-light">GST:</span> {{ gym.gst_number }}</p>
+                    <p><span class="badge badge-light">PAN:</span> {{ gym.pan_number }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="col-lg-8">
+            <!-- About Us -->
+            <div class="card shadow-custom mb-4">
+                <div class="card-body">
+                    <h4 class="card-title"><i class="fas fa-info-circle text-primary"></i> About Us</h4>
+                    <p>{{ gym.who_we_are }}</p>
+                </div>
+            </div>
+
+            <!-- Mission & Vision -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card shadow-custom mb-4">
+                        <div class="card-body">
+                            <h4 class="card-title"><i class="fas fa-bullseye text-primary"></i> Our Mission</h4>
+                            <p>{{ gym.mission|default:"To empower individuals to achieve their fitness goals." }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card shadow-custom mb-4">
+                        <div class="card-body">
+                            <h4 class="card-title"><i class="fas fa-eye text-primary"></i> Our Vision</h4>
+                            <p>{{ gym.vision|default:"To be a leading fitness center known for its community and results." }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Business Stats -->
+            <div class="card shadow-custom mb-4">
+                <div class="card-body">
+                    <h4 class="card-title"><i class="fas fa-chart-line text-primary"></i> Business Overview</h4>
+                    <div class="row text-center">
+                        <div class="col-md-4">
+                            <div class="stats-card bg-primary text-white">
+                                <div class="card-body">
+                                    <div class="stats-icon">
+                                        <i class="fas fa-users"></i>
+                                    </div>
+                                    <h4>150+</h4>
+                                    <p>Active Members</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stats-card bg-success text-white">
+                                <div class="card-body">
+                                    <div class="stats-icon">
+                                        <i class="fas fa-user-shield"></i>
+                                    </div>
+                                    <h4>10+</h4>
+                                    <p>Certified Trainers</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stats-card bg-info text-white">
+                                <div class="card-body">
+                                    <div class="stats-icon">
+                                        <i class="fas fa-calendar-alt"></i>
+                                    </div>
+                                    <h4>5</h4>
+                                    <p>Years in Business</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Button -->
+    <div class="text-center mt-4">
+        <a href="{% url 'settings:general_settings' %}" class="btn btn-gradient-primary btn-lg">Update Profile</a>
+        <p class="mt-2 text-muted">Last updated: {{ gym.updated_at|date:"F d, Y H:i" }}</p>
+    </div>
+</div>
+{% endblock content %}
