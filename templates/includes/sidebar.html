@@ -238,7 +238,7 @@
       </a>
       <div class="collapse {% if request.resolver_match.namespace == 'settings' %}show{% endif %}" id="settings">
         <ul class="nav flex-column sub-menu">
-          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'general_settings' %}active{% endif %}" href="{% url 'settings:general_settings' %}">General Settings</a></li>
+          <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'gym_profile' %}active{% endif %}" href="{% url 'settings:gym_profile' %}">Gym Profile</a></li>
           <li class="nav-item"><a class="nav-link {% if request.resolver_match.url_name == 'payment_setting' %}active{% endif %}" href="{% url 'settings:payment_setting' %}">Payment Settings</a></li>
         </ul>
       </div>

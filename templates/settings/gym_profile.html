@@ -19,108 +19,96 @@
     </div>
 
     <div class="row mt-4">
-        <!-- Left Column -->
-        <div class="col-lg-4">
-            <!-- Contact Info -->
+        <div class="col-lg-12">
             <div class="card shadow-custom mb-4">
                 <div class="card-body">
-                    <h4 class="card-title"><i class="fas fa-address-book text-primary"></i> Contact Info</h4>
-                    <p><strong>Contact:</strong> {{ gym.contact_number }}</p>
-                    <p><strong>Email:</strong> {{ gym.official_email }}</p>
-                    <p><strong>Address:</strong> {{ gym.address }}, {{ gym.city }}, {{ gym.state }} - {{ gym.pin_code }}</p>
-                </div>
-            </div>
-
-            <!-- Legal Info -->
-            <div class="card shadow-custom mb-4">
-                <div class="card-body">
-                    <h4 class="card-title"><i class="fas fa-balance-scale text-primary"></i> Legal & Business</h4>
-                    <p><span class="badge badge-light">Legal Name:</span> {{ gym.legal_name }}</p>
-                    <p><span class="badge badge-light">Business Type:</span> {{ gym.business_type }}</p>
-                    <p><span class="badge badge-light">GST:</span> {{ gym.gst_number }}</p>
-                    <p><span class="badge badge-light">PAN:</span> {{ gym.pan_number }}</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Right Column -->
-        <div class="col-lg-8">
-            <!-- About Us -->
-            <div class="card shadow-custom mb-4">
-                <div class="card-body">
-                    <h4 class="card-title"><i class="fas fa-info-circle text-primary"></i> About Us</h4>
-                    <p>{{ gym.who_we_are }}</p>
-                </div>
-            </div>
-
-            <!-- Mission & Vision -->
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="card shadow-custom mb-4">
-                        <div class="card-body">
-                            <h4 class="card-title"><i class="fas fa-bullseye text-primary"></i> Our Mission</h4>
-                            <p>{{ gym.mission|default:"To empower individuals to achieve their fitness goals." }}</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="card shadow-custom mb-4">
-                        <div class="card-body">
-                            <h4 class="card-title"><i class="fas fa-eye text-primary"></i> Our Vision</h4>
-                            <p>{{ gym.vision|default:"To be a leading fitness center known for its community and results." }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Business Stats -->
-            <div class="card shadow-custom mb-4">
-                <div class="card-body">
-                    <h4 class="card-title"><i class="fas fa-chart-line text-primary"></i> Business Overview</h4>
-                    <div class="row text-center">
-                        <div class="col-md-4">
-                            <div class="stats-card bg-primary text-white">
-                                <div class="card-body">
-                                    <div class="stats-icon">
-                                        <i class="fas fa-users"></i>
-                                    </div>
-                                    <h4>150+</h4>
-                                    <p>Active Members</p>
-                                </div>
+                    <fieldset class="border p-4 rounded mb-4">
+                        <legend class="w-auto px-2 h5">Personal Info</legend>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Gym Name:</strong> {{ gym.name }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Slogan:</strong> {{ gym.slogan }}</p>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <div class="stats-card bg-success text-white">
-                                <div class="card-body">
-                                    <div class="stats-icon">
-                                        <i class="fas fa-user-shield"></i>
-                                    </div>
-                                    <h4>10+</h4>
-                                    <p>Certified Trainers</p>
-                                </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <p><strong>Pincode:</strong> {{ gym.pincode }}</p>
+                            </div>
+                            <div class="col-md-4">
+                                <p><strong>Address:</strong> {{ gym.address }}</p>
+                            </div>
+                            <div class="col-md-4">
+                                <p><strong>Area:</strong> {{ gym.area }}</p>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <div class="stats-card bg-info text-white">
-                                <div class="card-body">
-                                    <div class="stats-icon">
-                                        <i class="fas fa-calendar-alt"></i>
-                                    </div>
-                                    <h4>5</h4>
-                                    <p>Years in Business</p>
-                                </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <p><strong>City:</strong> {{ gym.city }}</p>
+                            </div>
+                            <div class="col-md-4">
+                                <p><strong>State:</strong> {{ gym.state }}</p>
                             </div>
                         </div>
-                    </div>
+                    </fieldset>
+
+                    <fieldset class="border p-4 rounded mb-4">
+                        <legend class="w-auto px-2 h5">Contact Information</legend>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Phone:</strong> {{ gym.phone }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Landline:</strong> {{ gym.landline }}</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Email:</strong> {{ gym.email }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Website:</strong> {{ gym.website }}</p>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <fieldset class="border p-4 rounded mb-4">
+                        <legend class="w-auto px-2 h5">GST Information</legend>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <p><strong>GST Enabled:</strong> {% if gym.gst_enabled %}Yes{% else %}No{% endif %}</p>
+                            </div>
+                            <div class="col-md-4">
+                                <p><strong>GST Rate:</strong> {{ gym.gst_rate }}%</p>
+                            </div>
+                            <div class="col-md-4">
+                                <p><strong>GST Number:</strong> {{ gym.gst_number }}</p>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <fieldset class="border p-4 rounded mb-4">
+                        <legend class="w-auto px-2 h5">Other Information</legend>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <p><strong>Gym ID Prefix:</strong> {{ gym.gym_id_prefix }}</p>
+                            </div>
+                            <div class="col-md-8">
+                                <p><strong>Note:</strong> {{ gym.note }}</p>
+                            </div>
+                        </div>
+                    </fieldset>
                 </div>
+                 <!-- Action Button -->
+    <div class="text-center mt-1 mb-4">
+        <a href="{% url 'settings:general_settings' %}" class="btn btn-primary btn-sm">Update Profile</a>
+        {% comment %} <p class="mt-2 text-muted">Last updated: {{ gym.updated_at|date:"F d, Y H:i" }}</p> {% endcomment %}
+    </div>
             </div>
         </div>
     </div>
 
-    <!-- Action Button -->
-    <div class="text-center mt-4">
-        <a href="{% url 'settings:general_settings' %}" class="btn btn-gradient-primary btn-lg">Update Profile</a>
-        <p class="mt-2 text-muted">Last updated: {{ gym.updated_at|date:"F d, Y H:i" }}</p>
-    </div>
+   
 </div>
 {% endblock content %}
