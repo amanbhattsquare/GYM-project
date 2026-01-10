@@ -39,12 +39,21 @@ def enquiry_list(request):
     
     # Search functionality
     query = request.GET.get('q')
+    date_from = request.GET.get('date_from')
+    date_to = request.GET.get('date_to')
+
     if query:
         enquiry_list = enquiry_list.filter(
             Q(name__icontains=query) |
             Q(mobile_number__icontains=query) |
             Q(email__icontains=query)
         ).distinct()
+
+    if date_from:
+        enquiry_list = enquiry_list.filter(enquiry_date__gte=date_from)
+
+    if date_to:
+        enquiry_list = enquiry_list.filter(enquiry_date__lte=date_to)
 
     # Pagination
     paginator = Paginator(enquiry_list, 10)  # Show 10 enquiries per page

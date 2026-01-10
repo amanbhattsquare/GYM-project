@@ -28,9 +28,45 @@
             </a>
         </div>
         <div class="card-body">
-            {% csrf_token %}
-            <!-- Search form -->
-            {% include 'includes/search_form.html' %}
+            <div class="row mb-4">
+                <div class="col-12">
+                    <form method="get" action="{% url 'member_list' %}">
+                        <div class="p-3 bg-light rounded border">
+                            <div class="row g-3 align-items-end">
+                                <div class="col-md-3">
+                                    <label for="search" class="form-label">Search Member</label>
+                                    <input type="text" name="q" id="search" class="form-control" placeholder="ID, name, email, phone..." value="{{ request.GET.q }}">
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="status_filter" class="form-label">Status</label>
+                                    <select name="status_filter" id="status_filter" class="form-control">
+                                        <option value="">All</option>
+                                        <option value="active" {% if request.GET.status_filter == 'active' %}selected{% endif %}>Active</option>
+                                        <option value="expired" {% if request.GET.status_filter == 'expired' %}selected{% endif %}>Expired</option>
+                                        <option value="freezed" {% if request.GET.status_filter == 'freezed' %}selected{% endif %}>Freezed</option>
+                                        <option value="no_membership" {% if request.GET.status_filter == 'no_membership' %}selected{% endif %}>No Membership</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="date_from" class="form-label">From</label>
+                                    <input type="date" name="date_from" id="date_from" class="form-control" value="{{ request.GET.date_from }}">
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="date_to" class="form-label">To</label>
+                                    <input type="date" name="date_to" id="date_to" class="form-control" value="{{ request.GET.date_to }}">
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="btn-group w-100">
+                                        <button type="submit" class="btn btn-primary"><i class="mdi mdi-filter-variant"></i></button>
+                                        <a href="{% url 'member_list' %}" class="btn btn-secondary"><i class="mdi mdi-reload"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
             <div class="table-responsive">
                 <table class="table table-hover table-sm table-stack-on-mobile">
                     <thead>

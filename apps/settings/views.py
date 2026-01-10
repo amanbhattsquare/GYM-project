@@ -29,7 +29,7 @@ class generalsetting(TemplateView):
         if form.is_valid():
             form.save()
             messages.success(request, 'General settings saved successfully.')
-            return redirect('settings:general_settings')
+            return redirect('settings:gym_profile')
 
         context = self.get_context_data(**kwargs)
         context['form'] = form

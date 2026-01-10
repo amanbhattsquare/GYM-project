@@ -40,17 +40,24 @@ class Member(models.Model):
         """
         if not self.member_id:
             year = timezone.now().strftime("%y")
-
-            # Count existing members for this gym in this year
             prefix = f"{self.gym.gym_id_prefix}-MEM-{year}-"
-            count = Member.objects.filter(
+
+            # Find the latest member_id for this gym and year
+            latest_member = Member.objects.filter(
                 gym=self.gym,
                 member_id__startswith=prefix
-            ).count() + 1
+            ).order_by('-member_id').first()
 
+            if latest_member:
+                # Extract the numeric part and increment it
+                last_id = int(latest_member.member_id.split('-')[-1])
+                new_id = last_id + 1
+            else:
+                # First member of the year
+                new_id = 1
+            
             # 6-digit sequence number
-            counter = str(count).zfill(6)
-
+            counter = str(new_id).zfill(6)
             self.member_id = f"{prefix}{counter}"
 
         super().save(*args, **kwargs)

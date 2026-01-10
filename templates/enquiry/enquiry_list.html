@@ -26,12 +26,33 @@
             </a>
         </div>
         <div class="card-body">
-            {% csrf_token %}
-            <!-- Search form -->
-            {% include 'includes/search_form.html' %}
+            <div class="row mb-4 bg-light p-1 rounded">
+                <div class="col-md-4">
+                    <label for="search" class="form-label text-small">Search Enquiry</label>
+                    {% include 'includes/search_form.html' %}
+                </div>
+                <div class="col-md-8">
+                    <form method="get" class="row g-3 align-items-end">
+                        <div class="col-md-5">
+                            <label for="date_from" class="form-label text-small">From</label>
+                            <input type="date" name="date_from" id="date_from" value="{{ request.GET.date_from }}" class="form-control">
+                        </div>
+                        <div class="col-md-5">
+                            <label for="date_to" class="form-label text-small">To</label>
+                            <input type="date" name="date_to" id="date_to" value="{{ request.GET.date_to }}" class="form-control">
+                        </div>
+                        <div class="col-md-2">
+                            <div class="btn-group" role="group">
+                                <button type="submit" class="btn btn-primary"><i class="mdi mdi-filter-variant"></i></button>
+                                <a href="{% url 'enquiry_list' %}" class="btn btn-outline-secondary" title="Clear Filters"><i class="mdi mdi-reload"></i></a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
 
             <div class="table-responsive">
-               <table class="table table-hover table-sm table-stack-on-mobile">
+                <table class="table table-hover table-sm table-stack-on-mobile">
                     <thead>
                         <tr>
                             <th class="font-weight-semibold py-2">#</th>
