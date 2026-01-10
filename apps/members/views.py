@@ -179,12 +179,36 @@ def member_list(request):
     gym = getattr(request, 'gym', None)
     member_list = Member.objects.filter(gym=gym).order_by('-id')
     query = request.GET.get('q')
+    status_filter = request.GET.get('status_filter')
+    date_from = request.GET.get('date_from')
+    date_to = request.GET.get('date_to')
+
     if query:
         member_list = member_list.filter(
             Q(first_name__icontains=query) |
             Q(last_name__icontains=query) |
             Q(email__icontains=query) |
-            Q(mobile_number__icontains=query)
+            Q(mobile_number__icontains=query) |
+            Q(member_id__icontains=query)
+        ).distinct()
+
+    if status_filter:
+        if status_filter == 'active':
+            member_list = member_list.filter(membership_history__status='active').distinct()
+        elif status_filter == 'expired':
+            member_list = member_list.filter(membership_history__status='expired').distinct()
+        elif status_filter == 'freezed':
+            member_list = member_list.filter(membership_history__status='freezed').distinct()
+        elif status_filter == 'no_membership':
+            member_list = member_list.filter(membership_history__isnull=True)
+
+    if date_from and date_to:
+        member_list = member_list.filter(
+            membership_history__membership_start_date__gte=date_from,
+            membership_history__membership_start_date__lte=date_to
+            # we can use it if we want to filter members by their membership history creation date
+            # membership_history__created_at__date__gte=date_from,
+            # membership_history__created_at__date__lte=date_to
         ).distinct()
 
     for member in member_list:
@@ -197,6 +221,18 @@ def member_list(request):
         member.total_due = membership_due_amount + pt_due_amount
         latest_history = member.membership_history.filter(gym=gym).order_by('-id').first()
         member.latest_membership_history = latest_history
+
+        if member.current_status == 'Freezed':
+            member.status_display = 'Frozen'
+        elif latest_history:
+            if latest_history.get_end_date() and latest_history.get_end_date() < timezone.now().date() and latest_history.status == 'active':
+                latest_history.status = 'inactive'
+                latest_history.save()
+                member.status_display = 'Expired'
+            else:
+                member.status_display = latest_history.get_status_display()
+        else:
+            member.status_display = 'No Membership'
 
     paginator = Paginator(member_list, 10)  # Show 10 members per page.
 
