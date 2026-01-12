@@ -1,31 +1,54 @@
-{% extends 'base.html' %}
-
-{% block content %}
-<div class="col-lg-12 px-0">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0">View Subadmins</h4>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Username</th>
-                                    <th>Email</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {# Add rows for sub-admins here #}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+{%extends 'base.html' %}
+{% load static %}
+{%block content %}
+<div class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">Sub-Admins</h3>
+        <div class="card-tools">
+            <a href="{% url 'add_gym_subadmin' %}" class="btn btn-primary">Add Sub-Admin</a>
         </div>
+      </div>
+      <div class="card-body">
+        <h4 class="card-title">View Sub-Admins</h4>
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th> Photo </th>
+                <th> Name </th>
+                <th> Username </th>
+                <th> Email </th>
+                <th> Phone </th>
+                <th> Role </th>
+                <th> Actions </th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for sub_admin in sub_admins %}
+              <tr>
+                <td class="py-1">
+                  {% if sub_admin.photo %}
+                  <img src="{{ sub_admin.photo.url }}" alt="image" />
+                  {% else %}
+                  <img src="https://via.placeholder.com/40" alt="image" />
+                  {% endif %}
+                </td>
+                <td> {{ sub_admin.user.get_full_name }} </td>
+                <td> {{ sub_admin.user.username }} </td>
+                <td> {{ sub_admin.user.email }} </td>
+                <td> {{ sub_admin.phone_number }} </td>
+                <td> {{ sub_admin.get_role_display }} </td>
+                <td>
+                  <a href="{% url 'edit_subadmin' sub_admin.id %}" class="btn btn-primary btn-sm">Edit</a>
+                  <a href="{% url 'delete_subadmin' sub_admin.id %}" class="btn btn-danger btn-sm">Delete</a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
-</div>
+  </div>
 {% endblock %}

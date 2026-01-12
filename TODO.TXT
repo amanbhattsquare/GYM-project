@@ -101,3 +101,13 @@ In the member's profile, you will find an option to change their membership stat
 In members phone numbers add this validation if number are under 10 then show errer  - done
 
 
+
+\
+
+
+
+create subadmin page , here gym admin can create sub admins,
+ and also give access role bas . phle sub admin ki personal info uske baad user name and password,
+  uske baad sabhi pages show honge jitne apps bane huye and uske aage usnke pages show honge phle 
+  sabhi check honge agar main chahu to uncheck kar du to vo page vo sb admin access nhi kar payega. 
+make it indrustry ready . do it one by one , sbse phle html pags ka kaam karo
