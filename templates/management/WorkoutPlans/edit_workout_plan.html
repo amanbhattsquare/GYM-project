@@ -27,7 +27,8 @@
             <h4 class="mb-0">Edit Workout Plan</h4>
         </div>
         <div class="card-body">
-            <form method="post" class="needs-validation" novalidate>
+            <form method="post" class="needs-validation" novalidate enctype="multipart/form-data">
+                {{ form.media }}
                 {% csrf_token %}
                 <div class="row">
                     <div class="col-md-6 mb-3">
@@ -44,6 +45,19 @@
                         <label for="id_duration_minutes" class="form-label">Duration (minutes)</label>
                         {{ form.duration_minutes }}
                     </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="id_created_by" class="form-label">Created By</label>
+                        {{ form.created_by }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="id_image" class="form-label">Image</label>
+                        {{ form.image }}
+                        {% if form.instance.image %}
+                            <img src="{{ form.instance.image.url }}" alt="{{ form.instance.name }}" style="max-width: 200px; margin-top: 10px;">
+                        {% endif %}
+                    </div>
                 </div>
                 <div class="mb-3">
                     <label for="id_description" class="form-label">Description</label>
@@ -58,5 +72,5 @@
     </div>
     <div>
 
-        
+
  {% endblock %}

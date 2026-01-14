@@ -33,11 +33,12 @@
                     <thead>
                         <tr>
                             <th class="font-weight-semibold py-2">#</th>
+                            <th class="font-weight-semibold py-2">Image</th>
                             <th class="font-weight-semibold py-2">Name</th>
                             <th class="font-weight-semibold py-2">Target</th>
                             <th class="font-weight-semibold py-2">Daily Calories</th>
                             <th class="font-weight-semibold py-2">Duration (Weeks)</th>
-                            <th class="font-weight-semibold py-2">Description</th>
+                            <th class="font-weight-semibold py-2">Created By</th>
                             <th class="font-weight-semibold py-2">Actions</th>
                         </tr>
                     </thead>
@@ -45,12 +46,29 @@
                         {% for plan in plans %}
                         <tr>
                             <td data-label="Sr. No">{{ forloop.counter0|add:plans.start_index }}</td>
+                            <td data-label="Image">
+                                {% if plan.image and plan.image.url %}
+                                <img src="{{ plan.image.url }}" alt="{{ plan.name }}" class="img-thumbnail" style="width: 50px; height: 50px;">
+                                {% else %}
+                                No Image
+                                {% endif %}
+                            </td>
                             <td data-label="Name">{{ plan.name }}</td>
                             <td data-label="Target">{{ plan.get_target_display }}</td>
                             <td data-label="Daily Calories">{{ plan.daily_calories }}</td>
                             <td data-label="Duration (Weeks)">{{ plan.duration_weeks }}</td>
-                            <td data-label="Description">{{ plan.description }}</td>
+                            <td data-label="Created By">{{ plan.created_by }}</td>
                             <td data-label="Actions">
+                                <a href="#" class="btn btn-info btn-sm view-plan-btn" data-toggle="modal" data-target="#viewPlanModal"
+                                    data-name="{{ plan.name }}"
+                                    data-target-display="{{ plan.get_target_display }}"
+                                    data-daily-calories="{{ plan.daily_calories }}"
+                                    data-duration-weeks="{{ plan.duration_weeks }}"
+                                    data-created-by="{{ plan.created_by }}"
+                                    data-image-url="{% if plan.image and plan.image.url %}{{ plan.image.url }}{% else %}{% endif %}"
+                                    data-plan-id="{{ plan.pk }}">
+                                    <i class="mdi mdi-eye-outline"></i>
+                                </a>
                                 <a href="{% url 'edit_diet_plan' plan.pk %}" class="btn btn-primary btn-sm"> <i class="mdi mdi-pencil-outline"></i></a>
                                 <a href="#" class="btn btn-danger btn-sm" onclick="confirmDelete('{{ plan.pk }}', '{{ plan.name }}', '{% url 'delete_diet_plan' plan.pk %}')"> <i class="mdi mdi-delete-outline"></i></a>
                             </td>
@@ -58,6 +76,12 @@
                         {% endfor %}
                     </tbody>
                 </table>
+            </div>
+
+            <div id="descriptions-container" style="display: none;">
+                {% for plan in plans %}
+                <div id="desc-{{ plan.pk }}">{{ plan.description|safe }}</div>
+                {% endfor %}
             </div>
 
             <!-- Pagination -->
@@ -79,7 +103,8 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form method="post" class="mb-4">
+                <form method="post" id="dietPlanForm" enctype="multipart/form-data">
+                    {{ form.media }}
                     {% csrf_token %}
                     <div class="form-group">
                         <label for="id_name">Name</label>
@@ -97,14 +122,173 @@
                         <label for="id_duration_weeks">Duration (Weeks)</label>
                         {{ form.duration_weeks }}
                     </div>
+                    
+                    <div class="form-group">
+                        <label for="id_image">Image</label>
+                        {{ form.image }}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_created_by">Created By</label>
+                        {{ form.created_by }}
+                    </div>
+
                     <div class="form-group">
                         <label for="id_description">Description</label>
                         {{ form.description }}
                     </div>
-                    <button type="submit" class="btn btn-primary">Create Plan</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="viewPlanModal" tabindex="-1" role="dialog" aria-labelledby="viewPlanModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content" style="border-radius: 15px;">
+            <div class="modal-header" style="background-color: #f1f1f1; border-bottom: none;">
+                <h5 class="modal-title" id="viewPlanModalLabel">Diet Plan Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="print-content" style="background-image: url('https://www.transparenttextures.com/patterns/light-paper-fibers.png');">
+                <div class="text-center mb-4">
+                    <img id="planImage" src="" alt="Diet Plan Image" class="img-fluid rounded shadow-sm" style="max-height: 300px; border: 5px solid white; display: none;">
+                </div>
+                <h3 id="planName" class="text-center mb-4 font-weight-bold text-primary"></h3>
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-md-6">
+                                <p><i class="mdi mdi-bullseye-arrow mr-2"></i><strong>Target:</strong> <span id="planTarget"></span></p>
+                                <p><i class="mdi mdi-fire mr-2"></i><strong>Daily Calories:</strong> <span id="planDailyCalories"></span></p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><i class="mdi mdi-calendar-clock mr-2"></i><strong>Duration (Weeks):</strong> <span id="planDuration"></span></p>
+                                <p><i class="mdi mdi-account-edit mr-2"></i><strong>Created By:</strong> <span id="planCreatedBy"></span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card shadow-sm">
+                    <div class="card-header bg-white">
+                        <h5><i class="mdi mdi-text-subject mr-2"></i>Description</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="planDescription" class="p-3"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="border-top: none;">
+                <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success" onclick="printDietPlan()">
+                    <i class="mdi mdi-printer"></i> Print/Save as PDF
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<style>
+    @media print {
+        body * {
+            visibility: hidden;
+        }
+        #print-content, #print-content * {
+            visibility: visible;
+        }
+        #print-content {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+        }
+        .modal-footer {
+            display: none;
+        }
+        #planImage {
+            max-width: 100% !important;
+        }
+    }
+</style>
+<script>
+    $(document).ready(function () {
+        $('#viewPlanModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var name = button.data('name');
+            var target = button.data('target-display');
+            var dailyCalories = button.data('daily-calories');
+            var duration = button.data('duration-weeks');
+            var createdBy = button.data('created-by');
+            var imageUrl = button.data('image-url');
+            var planId = button.data('plan-id');
+            
+            var description = $('#desc-' + planId).html() || "";
+
+            var modal = $(this);
+            modal.find('#planName').text(name);
+            modal.find('#planTarget').text(target);
+            modal.find('#planDailyCalories').text(dailyCalories);
+            modal.find('#planDuration').text(duration);
+            modal.find('#planDescription').html(description);
+            modal.find('#planCreatedBy').text(createdBy);
+            
+            if (imageUrl) {
+                modal.find('#planImage').attr('src', imageUrl).show();
+            } else {
+                modal.find('#planImage').hide();
+            }
+        });
+    });
+
+    function printDietPlan() {
+        const printContent = document.getElementById('print-content').innerHTML;
+        const printWindow = window.open('', '', 'height=800,width=800');
+        
+        printWindow.document.write('<html><head><title>Diet Plan</title>');
+        printWindow.document.write('<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" type="text/css" />');
+        printWindow.document.write(`
+            <style>
+                body {
+                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                    -webkit-print-color-adjust: exact !important;
+                    print-color-adjust: exact !important;
+                }
+                .card {
+                    border: none;
+                }
+                #planImage {
+                    border: 5px solid white;
+                    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+                }
+                .card-header h5 {
+                    font-weight: bold;
+                }
+                p i {
+                    color: #007bff;
+                }
+            </style>
+        `);
+        printWindow.document.write('</head><body><div class="container-fluid">');
+        printWindow.document.write(printContent);
+        printWindow.document.write('</div></body></html>');
+        
+        printWindow.document.close();
+        printWindow.focus();
+        
+        setTimeout(function () {
+            printWindow.print();
+            printWindow.close();
+        }, 500);
+    }
+
+    function confirmDelete(planId, planName, url) {
+        if (confirm(`Are you sure you want to delete the diet plan "${planName}"?`)) {
+            window.location.href = url;
+        }
+    }
+</script>
 {% endblock %}

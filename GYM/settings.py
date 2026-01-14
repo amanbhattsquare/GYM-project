@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    'ckeditor',
     'apps.dashboard',
     'apps.members',
     'apps.enquiry',
@@ -54,6 +55,7 @@ INSTALLED_APPS = [
     'apps.events',
     'apps.inventory',
     'apps.login',
+    
 ]
 
 MIDDLEWARE = [

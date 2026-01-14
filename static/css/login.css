@@ -1,7 +1,10 @@
 
 body {
-    background-color: #f2f2f2;
+    /* background-color: #f2f2f2; */
     font-family: 'Rubik', sans-serif;
+}
+.login .content-wrapper {
+    background-color: #b2e2ee69 !important;
 }
 
 .auth .brand-logo {

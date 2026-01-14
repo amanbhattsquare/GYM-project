@@ -30,6 +30,8 @@ class MembershipPlan(models.Model):
         return self.title
     
 
+from ckeditor.fields import RichTextField
+
 class DietPlan(models.Model):
     gym = models.ForeignKey(Gym, on_delete=models.CASCADE, null=True)
     TARGET_CHOICES = [
@@ -43,7 +45,9 @@ class DietPlan(models.Model):
     target = models.CharField(max_length=20, choices=TARGET_CHOICES, default='weight_loss')
     daily_calories = models.PositiveIntegerField(default=0)
     duration_weeks = models.PositiveIntegerField(default=0)
-    description = models.TextField(blank=True)
+    description = RichTextField(blank=True)
+    image = models.ImageField(upload_to='diet_plans/', blank=True, null=True)
+    created_by = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -57,9 +61,11 @@ class WorkoutPlan(models.Model):
     ]
 
     name = models.CharField(max_length=100)
-    description = models.TextField(blank=True)
+    description = RichTextField(blank=True)
     duration_minutes = models.PositiveIntegerField(default=30)
     difficulty = models.CharField(max_length=20, choices=DIFFICULTY_CHOICES, default='beginner')
+    image = models.ImageField(upload_to='workout_plans/', blank=True, null=True)
+    created_by = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
         return self.name
