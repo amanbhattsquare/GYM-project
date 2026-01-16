@@ -64,6 +64,12 @@
                     <a href="{% url 'assign_pt_trainer' member.id %}" class="btn btn-sm btn-danger mr-2" data-toggle="tooltip" title="Assign Personal Trainer">
                         <i class="mdi mdi-account-plus"></i>
                     </a>
+                    <a href="{% url 'assign_diet_plan' member.id %}" class="btn btn-sm btn-info mr-2" data-toggle="tooltip" title="Assign Diet Plan">
+                        <i class="mdi mdi-food"></i>
+                    </a>
+                    <a href="{% url 'assign_workout_plan' member.id %}" class="btn btn-sm btn-warning mr-2" data-toggle="tooltip" title="Assign Workout Plan">
+                        <i class="mdi mdi-dumbbell"></i>
+                    </a>
                     <a href="{% url 'billing:pay_due_payment' member.id %}" class="btn btn-sm btn-info mr-2" data-toggle="tooltip" title="Submit Due Payment">
                         <i class="mdi mdi-currency-usd"></i> 
                     </a>
@@ -185,6 +191,12 @@
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" id="invoices-tab" data-toggle="tab" href="#invoices" role="tab" aria-controls="invoices" aria-selected="false">Invoice/ Payment History</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="diet-plan-tab" data-toggle="tab" href="#diet-plan" role="tab" aria-controls="diet-plan" aria-selected="false">Diet Plan</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="workout-plan-tab" data-toggle="tab" href="#workout-plan" role="tab" aria-controls="workout-plan" aria-selected="false">Workout Plan</a>
                                 </li>
                             </ul>
                             <div class="tab-content" id="myTabContent">
@@ -522,6 +534,64 @@
 
                                     </div>
                                 </div>
+                                <div class="tab-pane fade" id="diet-plan" role="tabpanel" aria-labelledby="diet-plan-tab">
+                                    <div class="py-3">
+                                        <h4>Assigned Diet Plans</h4>
+                                        {% if assigned_diet_plans %}
+                                            <div class="table-responsive">
+                                                <table class="table table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Plan Name</th>
+                                                            <th>Target</th>
+                                                            <th>Assigned On</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {% for assigned_plan in assigned_diet_plans %}
+                                                            <tr>
+                                                                <td>{{ assigned_plan.diet_plan.name }}</td>
+                                                                <td>{{ assigned_plan.diet_plan.get_target_display }}</td>
+                                                                <td>{{ assigned_plan.assigned_at|date:"d-m-Y" }}</td>
+                                                            </tr>
+                                                        {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        {% else %}
+                                            <p class="text-muted">No diet plan assigned yet.</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="workout-plan" role="tabpanel" aria-labelledby="workout-plan-tab">
+                                    <div class="py-3">
+                                        <h4>Assigned Workout Plans</h4>
+                                        {% if assigned_workout_plans %}
+                                            <div class="table-responsive">
+                                                <table class="table table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Plan Name</th>
+                                                            <th>Difficulty</th>
+                                                            <th>Assigned On</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {% for assigned_plan in assigned_workout_plans %}
+                                                            <tr>
+                                                                <td>{{ assigned_plan.workout_plan.name }}</td>
+                                                                <td>{{ assigned_plan.workout_plan.get_difficulty_display }}</td>
+                                                                <td>{{ assigned_plan.assigned_at|date:"d-m-Y" }}</td>
+                                                            </tr>
+                                                        {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        {% else %}
+                                            <p class="text-muted">No workout plan assigned yet.</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -541,3 +611,21 @@
 </div>
 
 {% endblock %}
+
+<script>
+    function confirmDeletePlan(planId, planTitle, url) {
+        Swal.fire({
+            title: 'Are you sure?',
+            html: `You are about to delete the plan: <strong>${planTitle}</strong>. This action cannot be undone.`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = url;
+            }
+        });
+    }
+</script>

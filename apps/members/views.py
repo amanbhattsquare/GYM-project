@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import MemberForm, MedicalHistoryForm, EmergencyContactForm, MembershipHistoryForm, PersonalTrainerForm
-from .models import Member, MedicalHistory, EmergencyContact, MembershipHistory, PersonalTrainer, MembershipFreeze
-from apps.management.models import MembershipPlan
+from .forms import MemberForm, MedicalHistoryForm, EmergencyContactForm, MembershipHistoryForm, PersonalTrainerForm, AssignDietPlanForm, AssignWorkoutPlanForm
+from .models import Member, MedicalHistory, EmergencyContact, MembershipHistory, PersonalTrainer, MembershipFreeze, AssignDietPlan, AssignWorkoutPlan
+from apps.management.models import MembershipPlan, DietPlan, WorkoutPlan
 from apps.trainers.models import Trainer
 from apps.billing.models import Payment
 from django.forms import modelformset_factory
@@ -17,6 +17,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.utils import timezone
 from decimal import Decimal, ROUND_HALF_UP
+
 
 
 @never_cache
@@ -103,6 +104,9 @@ def member_profile(request, member_id):
 
     total_due_amount = membership_due_amount + pt_due_amount
 
+    assigned_diet_plans = AssignDietPlan.objects.filter(member=member).order_by('-assigned_at')
+    assigned_workout_plans = AssignWorkoutPlan.objects.filter(member=member).order_by('-assigned_at')
+
     return render(request, 'members/member_profile.html', {
         'member': member, 
         'membership_histories': membership_histories,
@@ -111,7 +115,9 @@ def member_profile(request, member_id):
         'due_amount': total_due_amount,
         'pt_invoices': pt_member,
         'payments': payments,
-        'membership_plan': latest_membership.plan if latest_membership else None
+        'membership_plan': latest_membership.plan if latest_membership else None,
+        'assigned_diet_plans': assigned_diet_plans,
+        'assigned_workout_plans': assigned_workout_plans,
     })
 
 
@@ -386,3 +392,41 @@ def freeze_membership(request, membership_id):
         return redirect('member_profile', member_id=membership.member.id)
     
     return redirect('member_profile', member_id=membership.member.id)
+
+
+@login_required(login_url='login')
+def assign_diet_plan(request, member_id):
+    gym = getattr(request, 'gym', None)
+    member = get_object_or_404(Member, id=member_id, gym=gym)
+    
+    if request.method == 'POST':
+        form = AssignDietPlanForm(request.POST, gym=gym)
+        if form.is_valid():
+            assign_diet_plan = form.save(commit=False)
+            assign_diet_plan.member = member
+            assign_diet_plan.save()
+            messages.success(request, f'Diet plan assigned to {member.name}.')
+            return redirect('member_profile', member_id=member.id)
+    else:
+        form = AssignDietPlanForm(gym=gym)
+    
+    return render(request, 'members/assign_diet_plan.html', {'member': member, 'form': form})
+
+
+@login_required(login_url='login')
+def assign_workout_plan(request, member_id):
+    gym = getattr(request, 'gym', None)
+    member = get_object_or_404(Member, id=member_id, gym=gym)
+    
+    if request.method == 'POST':
+        form = AssignWorkoutPlanForm(request.POST, gym=gym)
+        if form.is_valid():
+            assign_workout_plan = form.save(commit=False)
+            assign_workout_plan.member = member
+            assign_workout_plan.save()
+            messages.success(request, f'Workout plan assigned to {member.name}.')
+            return redirect('member_profile', member_id=member.id)
+    else:
+        form = AssignWorkoutPlanForm(gym=gym)
+    
+    return render(request, 'members/assign_workout_plan.html', {'member': member, 'form': form})
