@@ -61,11 +61,11 @@ class WorkoutPlan(models.Model):
     ]
 
     name = models.CharField(max_length=100)
-    description = RichTextField(blank=True)
     duration_minutes = models.PositiveIntegerField(default=30)
     difficulty = models.CharField(max_length=20, choices=DIFFICULTY_CHOICES, default='beginner')
     image = models.ImageField(upload_to='workout_plans/', blank=True, null=True)
     created_by = models.CharField(max_length=100, blank=True, null=True)
+    description = RichTextField(blank=True)
 
     def __str__(self):
         return self.name
