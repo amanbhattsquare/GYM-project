@@ -290,5 +290,21 @@
             window.location.href = url;
         }
     }
+    
+    $(document).ready(function() {
+    var triggerElement;
+
+    // Store the triggering element when the modal is shown
+    $('#createPlanModal, #viewPlanModal').on('show.bs.modal', function(event) {
+        triggerElement = $(event.relatedTarget);
+    });
+
+    // When the modal is hidden, return focus to the triggering element
+    $('#createPlanModal, #viewPlanModal').on('hidden.bs.modal', function() {
+        if (triggerElement) {
+            triggerElement.focus();
+        }
+    });
+});
 </script>
 {% endblock %}

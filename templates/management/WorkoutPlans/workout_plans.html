@@ -2,221 +2,208 @@
 {% load form_tags %}
 
 {% block content %}
-{% load static %}
+  {% load static %}
 
-<!-- Compact Breadcrumb Navigation -->
-<nav aria-label="breadcrumb" class="custom-breadcrumb mb-3">
+  <!-- Compact Breadcrumb Navigation -->
+  <nav aria-label="breadcrumb" class="custom-breadcrumb mb-3">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item">
-            <a href="{% url 'dashboard' %}" class="text-decoration-none">
-                <i class="mdi mdi-home-outline mdi-18px"></i> Dashboard
-            </a>
-        </li>
-        <li class="breadcrumb-item active" aria-current="page">
-            <i class="mdi mdi-weight-lifter mdi-18px"></i> Workout Plans
-        </li>
+      <li class="breadcrumb-item">
+        <a href="{% url 'dashboard' %}" class="text-decoration-none"><i class="mdi mdi-home-outline mdi-18px"></i> Dashboard</a>
+      </li>
+      <li class="breadcrumb-item active" aria-current="page">
+        <i class="mdi mdi-weight-lifter mdi-18px"></i> Workout Plans
+      </li>
     </ol>
-</nav>
+  </nav>
 
-<div class="col-lg-12 px-0">
+  <div class="col-lg-12 px-0">
     <div class="card">
-        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-            <h4 class="mb-0">Workout Plan List</h4>
-            <a href="#" class="btn btn-light btn-sm" data-toggle="modal" data-target="#addPlanModal">
-                <i class="mdi mdi-plus"></i> Add Plan
-            </a>
-        </div>
-        <div class="card-body">
-            <!-- Search form -->
-            {% include 'includes/search_form.html' %}
+      <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">Workout Plan List</h4>
+        <a href="#" class="btn btn-light btn-sm" data-toggle="modal" data-target="#addPlanModal"><i class="mdi mdi-plus"></i> Add Plan</a>
+      </div>
+      <div class="card-body">
+        <!-- Search form -->
+        {% include 'includes/search_form.html' %}
 
-            <div class="table-responsive">
-                <table class="table table-hover table-sm table-stack-on-mobile">
-                    <thead>
-                        <tr>
-                            <th class="font-weight-semibold py-2">#</th>
-                            <th class="font-weight-semibold py-2">Image</th>
-                            <th class="font-weight-semibold py-2">Name</th>
-                            <th class="font-weight-semibold py-2">Duration (Minutes)</th>
-                            <th class="font-weight-semibold py-2">Difficulty</th>
-                            <th class="font-weight-semibold py-2">Created By</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for plan in plans %}
-                        <tr data-pk="{{ plan.pk }}">
-                            <td data-label="SR. No.">{{ forloop.counter0|add:plans.start_index }}</td>
-                            <td data-label="Image">
-                                {% if plan.image and plan.image.url %}
-                                <img src="{{ plan.image.url }}" alt="{{ plan.name }}"
-                                    style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;">
-                                {% else %}
-                                No Image
-                                {% endif %}
-                            </td>
-                            <td data-label="Name">{{ plan.name }}</td>
-                            <td data-label="Duration">{{ plan.duration_minutes }}</td>
-                            <td data-label="Difficulty">{{ plan.get_difficulty_display }}</td>
-                            <td data-label="Created By">{{ plan.created_by|default:"N/A" }}</td>
-                            <td data-label="Actions">
-                                <a href="#" class="btn btn-info btn-sm" onclick="openViewModal('{{ plan.pk }}')">
-                                    <i class="mdi mdi-eye-outline"></i>
-                                </a>
-                                <a href="{% url 'edit_workout_plan' plan.pk %}" class="btn btn-primary btn-sm">
-                                    <i class="mdi mdi-pencil-outline"></i>
-                                </a>
-                                <a href="#" class="btn btn-danger btn-sm"
-                                    onclick="confirmDelete('{{ plan.pk }}', '{{ plan.name }}', '{% url 'delete_workout_plan' plan.pk %}')">
-                                    <i class="mdi mdi-delete-outline"></i>
-                                </a>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Pagination -->
-            {% if plans.has_other_pages %}
-            {% include 'includes/pagination.html' with page_obj=plans %}
-            {% endif %}
+        <div class="table-responsive">
+          <table class="table table-hover table-sm table-stack-on-mobile">
+            <thead>
+              <tr>
+                <th class="font-weight-semibold py-2">#</th>
+                <th class="font-weight-semibold py-2">Image</th>
+                <th class="font-weight-semibold py-2">Name</th>
+                <th class="font-weight-semibold py-2">Duration (Minutes)</th>
+                <th class="font-weight-semibold py-2">Difficulty</th>
+                <th class="font-weight-semibold py-2">Created By</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for plan in plans %}
+                <tr data-pk="{{ plan.pk }}">
+                  <td data-label="SR. No.">{{ forloop.counter0|add:plans.start_index }}</td>
+                  <td data-label="Image">
+                    {% if plan.image and plan.image.url %}
+                      <img src="{{ plan.image.url }}" alt="{{ plan.name }}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;" />
+                    {% else %}
+                      No Image
+                    {% endif %}
+                  </td>
+                  <td data-label="Name">{{ plan.name }}</td>
+                  <td data-label="Duration">{{ plan.duration_minutes }}</td>
+                  <td data-label="Difficulty">{{ plan.get_difficulty_display }}</td>
+                  <td data-label="Created By">{{ plan.created_by|default:'N/A' }}</td>
+                  <td data-label="Actions">
+                    <a href="#" class="btn btn-info btn-sm" onclick="openViewModal('{{ plan.pk }}')"><i class="mdi mdi-eye-outline"></i></a>
+                    <a href="{% url 'edit_workout_plan' plan.pk %}" class="btn btn-primary btn-sm"><i class="mdi mdi-pencil-outline"></i></a>
+                    <a href="#" class="btn btn-danger btn-sm" onclick="confirmDelete('{{ plan.pk }}', '{{ plan.name }}', '{% url 'delete_workout_plan' plan.pk %}')"><i class="mdi mdi-delete-outline"></i></a>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
         </div>
+
+        <!-- Pagination -->
+        {% if plans.has_other_pages %}
+          {% include 'includes/pagination.html' with page_obj=plans %}
+        {% endif %}
+      </div>
     </div>
-</div>
+  </div>
 
-<!-- Add Plan Modal -->
-<div class="modal fade" id="addPlanModal" tabindex="-1" role="dialog" aria-labelledby="addPlanModalLabel"
-    aria-hidden="true">
+  <!-- Add Plan Modal -->
+  <div class="modal fade" id="addPlanModal" tabindex="-1" role="dialog" aria-labelledby="addPlanModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addPlanModal">Add New Workout Plan</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form method="post" action="{% url 'workout_plans' %}" enctype="multipart/form-data">
-                    {{ form.media }}
-                    {% csrf_token %}
-                    {% for field in form %}
-                    <div class="form-group">
-                        {{ field.label_tag }}
-                        {{ field|attr:"class:form-control" }}
-                        {% if field.errors %}
-                        <div class="invalid-feedback d-block">
-                            {% for error in field.errors %}
-                            <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                        {% endif %}
-                    </div>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addPlanModal">Add New Workout Plan</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        </div>
+        <div class="modal-body">
+          <form method="post" action="{% url 'workout_plans' %}" enctype="multipart/form-data">
+            {{ form.media }}
+            {% csrf_token %}
+            {% for field in form %}
+              <div class="form-group">
+                {{ field.label_tag }}
+                {{ field|attr:'class:form-control' }}
+                {% if field.errors %}
+                  <div class="invalid-feedback d-block">
+                    {% for error in field.errors %}
+                      <span>{{ error }}</span>
                     {% endfor %}
-                    <button type="submit" class="btn btn-primary">Add Plan</button>
-                </form>
-            </div>
+                  </div>
+                {% endif %}
+              </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary">Add Plan</button>
+          </form>
         </div>
+      </div>
     </div>
-</div>
+  </div>
 
-<!-- View Plan Modal -->
-<div class="modal fade" id="viewPlanModal" tabindex="-1" role="dialog" aria-labelledby="viewPlanModalLabel" aria-hidden="true">
+  <!-- View Plan Modal -->
+  <div class="modal fade" id="viewPlanModal" tabindex="-1" role="dialog" aria-labelledby="viewPlanModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content" style="border-radius: 15px;">
-            <div class="modal-header" style="background-color: #f1f1f1; border-bottom: none;">
-                <h5 class="modal-title" id="viewPlanModalLabel">Workout Plan Details</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body" id="print-content" style="background-image: url('https://www.transparenttextures.com/patterns/light-paper-fibers.png');">
-                <div class="text-center mb-4">
-                    <img id="planImage" src="" alt="Workout Plan Image" class="img-fluid rounded shadow-sm" style="max-height: 300px; border: 5px solid white; display: none;">
-                </div>
-                <h3 id="planName" class="text-center mb-4 font-weight-bold text-primary"></h3>
-                <div class="card shadow-sm mb-4">
-                    <div class="card-body">
-                        <div class="row text-center">
-                            <div class="col-md-4">
-                                <p><i class="mdi mdi-clock-outline mr-2"></i><strong>Duration:</strong> <span id="planDuration"></span> minutes</p>
-                            </div>
-                            <div class="col-md-4">
-                                <p><i class="mdi mdi-speedometer mr-2"></i><strong>Difficulty:</strong> <span id="planDifficulty"></span></p>
-                            </div>
-                            <div class="col-md-4">
-                                <p><i class="mdi mdi-account-edit mr-2"></i><strong>Created By:</strong> <span id="planCreatedBy"></span></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card shadow-sm">
-                    <div class="card-header bg-white">
-                        <h5><i class="mdi mdi-text-subject mr-2"></i>Description</h5>
-                    </div>
-                    <div class="card-body">
-                        <div id="planDescription" class="p-3"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer" style="border-top: none;">
-                <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-success" onclick="printWorkoutPlan()">
-                    <i class="mdi mdi-printer"></i> Print/Save as PDF
-                </button>
-            </div>
+      <div class="modal-content" style="border-radius: 15px;">
+        <div class="modal-header" style="background-color: #f1f1f1; border-bottom: none;">
+          <h5 class="modal-title" id="viewPlanModalLabel">Workout Plan Details</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         </div>
+        <div class="modal-body" id="print-content" style="background-image: url('https://www.transparenttextures.com/patterns/light-paper-fibers.png');">
+          <div class="text-center mb-4">
+            <img id="planImage" src="" alt="Workout Plan Image" class="img-fluid rounded shadow-sm" style="max-height: 300px; border: 5px solid white; display: none;" />
+          </div>
+          <h3 id="planName" class="text-center mb-4 font-weight-bold text-primary"></h3>
+          <div class="card shadow-sm mb-4">
+            <div class="card-body">
+              <div class="row text-center">
+                <div class="col-md-4">
+                  <p>
+                    <i class="mdi mdi-clock-outline mr-2"></i><strong>Duration:</strong> <span id="planDuration"></span> minutes
+                  </p>
+                </div>
+                <div class="col-md-4">
+                  <p>
+                    <i class="mdi mdi-speedometer mr-2"></i><strong>Difficulty:</strong> <span id="planDifficulty"></span>
+                  </p>
+                </div>
+                <div class="col-md-4">
+                  <p>
+                    <i class="mdi mdi-account-edit mr-2"></i><strong>Created By:</strong> <span id="planCreatedBy"></span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card shadow-sm">
+            <div class="card-header bg-white">
+              <h5><i class="mdi mdi-text-subject mr-2"></i>Description</h5>
+            </div>
+            <div class="card-body">
+              <div id="planDescription" class="p-3"></div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer" style="border-top: none;">
+          <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-success" onclick="printWorkoutPlan()"><i class="mdi mdi-printer"></i> Print/Save as PDF</button>
+        </div>
+      </div>
     </div>
-</div>
+  </div>
 
-<!-- Hidden container for plan descriptions -->
-{% for plan in plans %}
-<div id="plan-description-{{ plan.pk }}" style="display: none;">{{ plan.description|safe }}</div>
-{% endfor %}
+  <!-- Hidden container for plan descriptions -->
+  {% for plan in plans %}
+    <div id="plan-description-{{ plan.pk }}" style="display: none;">{{ plan.description|safe }}</div>
+  {% endfor %}
 
-<script>
+  <script>
     function openViewModal(planId) {
-        const plan = {
-            id: planId,
-            name: document.querySelector(`tr[data-pk='${planId}'] [data-label='Name']`).innerText,
-            duration: document.querySelector(`tr[data-pk='${planId}'] [data-label='Duration']`).innerText,
-            difficulty: document.querySelector(`tr[data-pk='${planId}'] [data-label='Difficulty']`).innerText,
-            createdBy: document.querySelector(`tr[data-pk='${planId}'] [data-label='Created By']`).innerText,
-            image: document.querySelector(`tr[data-pk='${planId}'] [data-label='Image'] img`)?.src,
-            description: document.getElementById(`plan-description-${planId}`).innerHTML
-        };
-
-        document.getElementById('planName').innerText = plan.name;
-        document.getElementById('planDuration').innerText = plan.duration;
-        document.getElementById('planDifficulty').innerText = plan.difficulty;
-        document.getElementById('planCreatedBy').innerText = plan.createdBy;
-        document.getElementById('planDescription').innerHTML = plan.description || 'No description available.';
-
-        const planImage = document.getElementById('planImage');
-        if (plan.image) {
-            planImage.src = plan.image;
-            planImage.style.display = 'block';
-        } else {
-            planImage.style.display = 'none';
-        }
-
-        $('#viewPlanModal').modal('show');
+      const plan = {
+        id: planId,
+        name: document.querySelector(`tr[data-pk='${planId}'] [data-label='Name']`).innerText,
+        duration: document.querySelector(`tr[data-pk='${planId}'] [data-label='Duration']`).innerText,
+        difficulty: document.querySelector(`tr[data-pk='${planId}'] [data-label='Difficulty']`).innerText,
+        createdBy: document.querySelector(`tr[data-pk='${planId}'] [data-label='Created By']`).innerText,
+        image: document.querySelector(`tr[data-pk='${planId}'] [data-label='Image'] img`)?.src,
+        description: document.getElementById(`plan-description-${planId}`).innerHTML
+      }
+    
+      document.getElementById('planName').innerText = plan.name
+      document.getElementById('planDuration').innerText = plan.duration
+      document.getElementById('planDifficulty').innerText = plan.difficulty
+      document.getElementById('planCreatedBy').innerText = plan.createdBy
+      document.getElementById('planDescription').innerHTML = plan.description || 'No description available.'
+    
+      const planImage = document.getElementById('planImage')
+      if (plan.image) {
+        planImage.src = plan.image
+        planImage.style.display = 'block'
+      } else {
+        planImage.style.display = 'none'
+      }
+    
+      $('#viewPlanModal').modal('show')
     }
-
+    
     function printWorkoutPlan() {
-        const printContent = document.getElementById('print-content').innerHTML;
-        const printWindow = window.open('', '', 'height=800,width=800');
-        printWindow.document.write('<html><head><title>Workout Plan</title>');
-        // Add bootstrap for styling
-        printWindow.document.write('<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">');
-        printWindow.document.write('<style> body { font-family: Arial, sans-serif; padding: 20px; } .text-center { text-align: center; } .mb-4 { margin-bottom: 1.5rem; } .font-weight-bold { font-weight: 700; } .text-primary { color: #007bff; } .card { border: 1px solid #ddd; } .shadow-sm { box-shadow: 0 .125rem .25rem rgba(0,0,0,.075); } .card-body { padding: 1.25rem; } .row { display: flex; flex-wrap: wrap; margin-right: -15px; margin-left: -15px; } .col-md-4 { position: relative; width: 100%; padding-right: 15px; padding-left: 15px; flex: 0 0 33.333333%; max-width: 33.333333%; } .img-fluid { max-width: 100%; height: auto; } .rounded { border-radius: .25rem; } #planImage { max-height: 300px; border: 5px solid white; } .p-3 { padding: 1rem; } .mdi { display: inline-block; font: normal normal normal 24px/1 "Material Design Icons"; font-size: inherit; text-rendering: auto; line-height: inherit; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; } .mdi-clock-outline::before { content: "\\F015A"; } .mdi-speedometer::before { content: "\\F04D9"; } .mdi-account-edit::before { content: "\\F0009"; } .mdi-text-subject::before { content: "\\F051E"; } </style>');
-        printWindow.document.write('</head><body>');
-        printWindow.document.write(printContent);
-        printWindow.document.write('</body></html>');
-        printWindow.document.close();
-        setTimeout(() => {
-            printWindow.print();
-        }, 500);
+      const printContent = document.getElementById('print-content').innerHTML
+      const printWindow = window.open('', '', 'height=800,width=800')
+      printWindow.document.write('<html><head><title>Workout Plan</title>')
+      // Add bootstrap for styling
+      printWindow.document.write('<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">')
+      printWindow.document.write('<style> body { font-family: Arial, sans-serif; padding: 20px; } .text-center { text-align: center; } .mb-4 { margin-bottom: 1.5rem; } .font-weight-bold { font-weight: 700; } .text-primary { color: #007bff; } .card { border: 1px solid #ddd; } .shadow-sm { box-shadow: 0 .125rem .25rem rgba(0,0,0,.075); } .card-body { padding: 1.25rem; } .row { display: flex; flex-wrap: wrap; margin-right: -15px; margin-left: -15px; } .col-md-4 { position: relative; width: 100%; padding-right: 15px; padding-left: 15px; flex: 0 0 33.333333%; max-width: 33.333333%; } .img-fluid { max-width: 100%; height: auto; } .rounded { border-radius: .25rem; } #planImage { max-height: 300px; border: 5px solid white; } .p-3 { padding: 1rem; } .mdi { display: inline-block; font: normal normal normal 24px/1 "Material Design Icons"; font-size: inherit; text-rendering: auto; line-height: inherit; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; } .mdi-clock-outline::before { content: "\\F015A"; } .mdi-speedometer::before { content: "\\F04D9"; } .mdi-account-edit::before { content: "\\F0009"; } .mdi-text-subject::before { content: "\\F051E"; } </style>')
+      printWindow.document.write('</head><body>')
+      printWindow.document.write(printContent)
+      printWindow.document.write('</body></html>')
+      printWindow.document.close()
+      setTimeout(() => {
+        printWindow.print()
+      }, 500)
     }
-</script>
+  </script>
 {% endblock %}
