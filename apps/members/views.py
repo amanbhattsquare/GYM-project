@@ -430,3 +430,23 @@ def assign_workout_plan(request, member_id):
         form = AssignWorkoutPlanForm(gym=gym)
     
     return render(request, 'members/assign_workout_plan.html', {'member': member, 'form': form})
+
+@login_required
+@require_POST
+def delete_assigned_diet_plan(request, assigned_plan_id):
+    assigned_plan = get_object_or_404(AssignDietPlan, id=assigned_plan_id)
+    try:
+        assigned_plan.delete()
+        return JsonResponse({'status': 'success', 'message': 'Assigned diet plan has been deleted.'})
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+
+@login_required
+@require_POST
+def delete_assigned_workout_plan(request, assigned_plan_id):
+    assigned_plan = get_object_or_404(AssignWorkoutPlan, id=assigned_plan_id)
+    try:
+        assigned_plan.delete()
+        return JsonResponse({'status': 'success', 'message': 'Assigned workout plan has been deleted.'})
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)

@@ -545,6 +545,7 @@
                                                             <th>Plan Name</th>
                                                             <th>Target</th>
                                                             <th>Assigned On</th>
+                                                            <th>Action</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -553,6 +554,11 @@
                                                                 <td>{{ assigned_plan.diet_plan.name }}</td>
                                                                 <td>{{ assigned_plan.diet_plan.get_target_display }}</td>
                                                                 <td>{{ assigned_plan.assigned_at|date:"d-m-Y" }}</td>
+                                                                <td>
+                                                                    <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete('{{ assigned_plan.id }}', '{{ assigned_plan.diet_plan.name }}', '{% url 'delete_assigned_diet_plan' assigned_plan.id %}')" data-toggle="tooltip" title="Delete">
+                                                                        <i class="mdi mdi-delete-outline"></i>
+                                                                    </button>
+                                                                </td>
                                                             </tr>
                                                         {% endfor %}
                                                     </tbody>
@@ -571,17 +577,25 @@
                                                 <table class="table table-striped">
                                                     <thead>
                                                         <tr>
+                                                            <th>#</th>
                                                             <th>Plan Name</th>
                                                             <th>Difficulty</th>
                                                             <th>Assigned On</th>
+                                                            <th>Action</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
                                                         {% for assigned_plan in assigned_workout_plans %}
                                                             <tr>
-                                                                <td>{{ assigned_plan.workout_plan.name }}</td>
-                                                                <td>{{ assigned_plan.workout_plan.get_difficulty_display }}</td>
-                                                                <td>{{ assigned_plan.assigned_at|date:"d-m-Y" }}</td>
+                                                                <td data-label="SR. No.">{{ forloop.counter0 }}</td>
+                                                                <td data-label="Plan Name">{{ assigned_plan.workout_plan.name }}</td>
+                                                                <td data-label="Difficulty">{{ assigned_plan.workout_plan.get_difficulty_display }}</td>
+                                                                <td data-label="Assigned On">{{ assigned_plan.assigned_at|date:"d-m-Y" }}</td>
+                                                                <td data-label="Action">
+                                                                    <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete('{{ assigned_plan.id }}', '{{ assigned_plan.workout_plan.name }}', '{% url 'delete_assigned_workout_plan' assigned_plan.id %}')" data-toggle="tooltip" title="Delete">
+                                                                        <i class="mdi mdi-delete-outline"></i>
+                                                                    </button>
+                                                               </td>
                                                             </tr>
                                                         {% endfor %}
                                                     </tbody>
@@ -611,21 +625,3 @@
 </div>
 
 {% endblock %}
-
-<script>
-    function confirmDeletePlan(planId, planTitle, url) {
-        Swal.fire({
-            title: 'Are you sure?',
-            html: `You are about to delete the plan: <strong>${planTitle}</strong>. This action cannot be undone.`,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = url;
-            }
-        });
-    }
-</script>
