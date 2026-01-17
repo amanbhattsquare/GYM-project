@@ -37,6 +37,14 @@ class TenantMiddleware:
 
         try:
             gym = Gym.objects.get(id=gym_id)
+            if gym.is_frozen:
+                # Logout the user
+                from django.contrib.auth import logout
+                logout(request)
+                # Add a message
+                from django.contrib import messages
+                messages.error(request, 'Your gym has been frozen. Please contact support.')
+                return redirect(login_url)
             request.gym = gym
         except Gym.DoesNotExist:
             return redirect(login_url)

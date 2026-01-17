@@ -23,6 +23,7 @@ class Gym(models.Model):
     gst_enabled = models.BooleanField(default=False)
     gst_rate = models.PositiveIntegerField(default=0, blank=True, null=True)
     note = models.TextField(blank=True, null=True)
+    is_frozen = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
 @receiver(pre_save, sender=Gym)

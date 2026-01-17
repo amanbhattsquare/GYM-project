@@ -76,7 +76,7 @@ def delete_membership_plan(request, pk):
 def diet_plans(request):
     gym = getattr(request, 'gym', None)
     if request.method == 'POST':
-        form = DietPlanForm(request.POST)
+        form = DietPlanForm(request.POST, request.FILES)
         if form.is_valid():
             plan = form.save(commit=False)
             plan.gym = gym
@@ -111,7 +111,7 @@ def edit_diet_plan(request, pk):
     gym = getattr(request, 'gym', None)
     plan = get_object_or_404(DietPlan, pk=pk, gym=gym)
     if request.method == 'POST':
-        form = DietPlanForm(request.POST, instance=plan)
+        form = DietPlanForm(request.POST, request.FILES, instance=plan)
         if form.is_valid():
             form.save()
             messages.success(request, 'Diet plan updated successfully.')
@@ -140,7 +140,7 @@ def delete_diet_plan(request, pk):
 def workout_plans(request):
     gym = getattr(request, 'gym', None)
     if request.method == 'POST':
-        form = WorkoutPlanForm(request.POST)
+        form = WorkoutPlanForm(request.POST, request.FILES)
         if form.is_valid():
             plan = form.save(commit=False)
             plan.gym = gym
@@ -173,7 +173,7 @@ def edit_workout_plan(request, pk):
     gym = getattr(request, 'gym', None)
     plan = get_object_or_404(WorkoutPlan, pk=pk, gym=gym)
     if request.method == 'POST':
-        form = WorkoutPlanForm(request.POST, instance=plan)
+        form = WorkoutPlanForm(request.POST, request.FILES, instance=plan)
         if form.is_valid():
             form.save()
             messages.success(request, 'Workout plan updated successfully.')

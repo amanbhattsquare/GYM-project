@@ -1,7 +1,6 @@
-from datetime import date
 from django import forms
-from apps.management.models import MembershipPlan
-from .models import Member, MedicalHistory, EmergencyContact, MembershipHistory, PersonalTrainer
+from .models import Member, MedicalHistory, EmergencyContact, MembershipHistory, PersonalTrainer, AssignDietPlan, AssignWorkoutPlan
+from apps.management.models import MembershipPlan, DietPlan, WorkoutPlan
 from apps.trainers.models import Trainer
 import re
 
@@ -124,6 +123,7 @@ class MembershipHistoryForm(forms.ModelForm):
         if gym:
             self.fields['plan'].queryset = MembershipPlan.objects.filter(gym=gym)
 
+
 class PersonalTrainerForm(forms.ModelForm):
     class Meta:
         model = PersonalTrainer
@@ -145,3 +145,27 @@ class PersonalTrainerForm(forms.ModelForm):
         super(PersonalTrainerForm, self).__init__(*args, **kwargs)
         if gym:
             self.fields['trainer'].queryset = Trainer.objects.filter(gym=gym)
+
+
+class AssignDietPlanForm(forms.ModelForm):
+    class Meta:
+        model = AssignDietPlan
+        fields = ['diet_plan']
+
+    def __init__(self, *args, **kwargs):
+        gym = kwargs.pop('gym', None)
+        super().__init__(*args, **kwargs)
+        if gym:
+            self.fields['diet_plan'].queryset = DietPlan.objects.filter(gym=gym)
+
+
+class AssignWorkoutPlanForm(forms.ModelForm):
+    class Meta:
+        model = AssignWorkoutPlan
+        fields = ['workout_plan']
+
+    def __init__(self, *args, **kwargs):
+        gym = kwargs.pop('gym', None)
+        super().__init__(*args, **kwargs)
+        if gym:
+            self.fields['workout_plan'].queryset = WorkoutPlan.objects.filter(gym=gym)

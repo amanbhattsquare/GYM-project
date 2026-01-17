@@ -12,5 +12,8 @@ urlpatterns = [
     path('assign-pt-trainer/<int:member_id>/', views.assign_pt_trainer, name='assign_pt_trainer'),
     path('membership/freeze/<int:membership_id>/', views.freeze_membership, name='freeze_membership'),
     path('membership/unfreeze/<int:membership_id>/', views.unfreeze_membership, name='unfreeze_membership'),
-
+    path('assign-diet-plan/<int:member_id>/', views.assign_diet_plan, name='assign_diet_plan'),
+    path('assign-workout-plan/<int:member_id>/', views.assign_workout_plan, name='assign_workout_plan'),
+    path('delete-assigned-diet-plan/<int:assigned_plan_id>/', views.delete_assigned_diet_plan, name='delete_assigned_diet_plan'),
+    path('delete-assigned-workout-plan/<int:assigned_plan_id>/', views.delete_assigned_workout_plan, name='delete_assigned_workout_plan'),
 ]

@@ -59,7 +59,11 @@
                                             alt="{{ gym.name }}">
                                     </td>
                                     <td data-label="Name">
-                                        <strong><a href="{% url 'superadmin:gym_profile' gym.id %}" class="text-decoration-none">{{ gym.name }}</a></strong><br>
+                                        <strong><a href="{% url 'superadmin:gym_profile' gym.id %}" class="text-decoration-none">{{ gym.name }}</a></strong>
+                                        {% if gym.is_frozen %}
+                                            <span class="badge badge-danger">Frozen</span>
+                                        {% endif %}
+                                        <br>
                                         <small class="text-muted">#{{ gym.gym_id }}</small>
                                     </td>
                                     <td data-label="Slogan">{{ gym.slogan }}</td>

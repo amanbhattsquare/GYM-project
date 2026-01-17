@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SquareFit |  Gym Management Software</title>
+    <title>SquareFit | Gym Management Software</title>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css" />
@@ -49,671 +49,717 @@
         .testimonial-card:hover {
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
-
-       
     </style>
 </head>
 
 <body>
-  <!-- Navigation -->
-<nav class="navbar bg-base-100 shadow-md sticky top-0 z-50 border-b border-base-200">
-  <div class="navbar max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-    <!-- Left: Logo -->
-    <div class="flex-none">
-      <a href="/" class="btn btn-ghost text-xl font-bold text-dark normal-case gap-2">
-        <img src="{% static 'images/SFLogo.png' %}" class="h-12 w-auto">
-        SquareFit
-      </a>
+
+
+
+    <!-- Navigation -->
+    <nav class="navbar bg-base-100 shadow-md sticky top-0 z-50 border-b border-base-200">
+        <div class="navbar max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            <!-- Left: Logo -->
+            <div class="flex-none">
+                <a href="/" class="btn btn-ghost text-xl font-bold  normal-case gap-2">
+                    <img src="{% static 'images/SFLogo.png' %}" class="h-12 w-auto ">
+                    SquareFit
+                </a>
+            </div>
+
+            <!-- Center: Desktop Menu -->
+            <div class="flex-1 hidden lg:flex justify-center">
+                <ul class="menu menu-horizontal px-1 gap-2 text-sm font-medium">
+                    <li><a href="#features" class="rounded-lg hover:bg-primary hover:text-white">Features</a></li>
+                    <li><a href="#pricing" class="rounded-lg hover:bg-primary hover:text-white">Pricing</a></li>
+                    <li><a href="#testimonials" class="rounded-lg hover:bg-primary hover:text-white">Testimonials</a>
+                    </li>
+                    <li><a href="#faq" class="rounded-lg hover:bg-primary hover:text-white">FAQ</a></li>
+                    <li><a href="#contact" class="rounded-lg hover:bg-primary hover:text-white">Contact</a></li>
+                </ul>
+            </div>
+
+            <!-- Right: Actions (Login + CTA) -->
+            <div class="flex-none flex items-center gap-3">
+
+                <!-- Login Button (Visible on larger screens) -->
+                <a href="{% url 'login' %}" class="btn btn-sm btn-secondary hidden sm:flex gap-2">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Login
+                </a>
+
+                <!-- Get Started CTA -->
+                <a href="#pricing" class="btn btn-primary btn-sm gap-2 shadow-lg">
+                    <i class="fas fa-rocket"></i>
+                    <span class="hidden sm:inline">Get Started</span>
+                    {% comment %} <span class="sm:hidden">Start</span> {% endcomment %}
+                </a>
+
+
+                <!-- Theme Toggle (Desktop) -->
+                <label class="swap swap-rotate">
+                    <!-- this hidden checkbox controls the state -->
+                    <input type="checkbox" class="theme-controller" value="aqua" />
+
+                    <!-- sun icon -->
+                    <svg class="swap-off h-6 w-6 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path
+                            d="M5.64,17l-.71.71a1,1,0,0,0,0,1.41,1,1,0,0,0,1.41,0l.71-.71A1,1,0,0,0,5.64,17ZM5,12a1,1,0,0,0-1-1H3a1,1,0,0,0,0,2H4A1,1,0,0,0,5,12Zm7-7a1,1,0,0,0,1-1V3a1,1,0,0,0-2,0V4A1,1,0,0,0,12,5ZM5.64,7.05a1,1,0,0,0,.7.29,1,1,0,0,0,.71-.29,1,1,0,0,0,0-1.41l-.71-.71A1,1,0,0,0,4.93,6.34Zm12,.29a1,1,0,0,0,.7-.29l.71-.71a1,1,0,1,0-1.41-1.41L17,5.64a1,1,0,0,0,0,1.41A1,1,0,0,0,17.66,7.34ZM21,11H20a1,1,0,0,0,0,2h1a1,1,0,0,0,0-2Zm-9,8a1,1,0,0,0-1,1v1a1,1,0,0,0,2,0V20A1,1,0,0,0,12,19ZM18.36,17A1,1,0,0,0,17,18.36l.71.71a1,1,0,0,0,1.41,0,1,1,0,0,0,0-1.41ZM12,6.5A5.5,5.5,0,1,0,17.5,12,5.51,5.51,0,0,0,12,6.5Zm0,9A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z" />
+                    </svg>
+
+                    <!-- moon icon -->
+                    <svg class="swap-on h-5  w-5 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path
+                            d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z" />
+                    </svg>
+                </label> 
+
+                <!-- Mobile Menu Toggle -->
+                <label for="mobile-drawer" class="btn btn-square btn-ghost lg:hidden">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        class="inline-block w-6 h-6 stroke-current">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </label>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Drawer Menu (Hidden by default) -->
+    <input type="checkbox" id="mobile-drawer" class="drawer-toggle" />
+    <div class="drawer-side z-50">
+        <label for="mobile-drawer" class="drawer-overlay"></label>
+        <ul class="menu p-6 w-80 h-full bg-base-100 text-base-content shadow-2xl">
+            <!-- Mobile Logo + Close -->
+            <div class="flex justify-between items-center mb-8">
+                <a href="/" class="btn btn-ghost text-xl font-bold text-dark normal-case gap-2">
+                    <img src="{% static 'images/SFLogo.png' %}" class="h-12 w-auto">
+                    SquareFit
+                </a>
+                <label for="mobile-drawer" class="btn btn-circle btn-ghost">
+                    <i class="fas fa-times text-xl"></i>
+                </label>
+            </div>
+
+            <!-- Mobile Menu Items -->
+            <li><a href="#features" class="text-lg py-3">Features</a></li>
+            <li><a href="#pricing" class="text-lg py-3">Pricing</a></li>
+            <li><a href="#testimonials" class="text-lg py-3">Testimonials</a></li>
+            <li><a href="#faq" class="text-lg py-3">FAQ</a></li>
+            <li><a href="#contact" class="text-lg py-3">Contact</a></li>
+
+            <div class="divider"></div>
+
+
+
+            <!-- Mobile Buttons -->
+            <li>
+                <a href="{% url 'login' %}" class="btn btn-secondary text-lg">
+                    <i class="fas fa-sign-in-alt mr-2"></i> Login
+                </a>
+            </li>
+
+        </ul>
     </div>
 
-    <!-- Center: Desktop Menu -->
-    <div class="flex-1 hidden lg:flex justify-center">
-      <ul class="menu menu-horizontal px-1 gap-2 text-sm font-medium">
-        <li><a href="#features" class="rounded-lg hover:bg-primary hover:text-white">Features</a></li>
-        <li><a href="#pricing" class="rounded-lg hover:bg-primary hover:text-white">Pricing</a></li>
-        <li><a href="#testimonials" class="rounded-lg hover:bg-primary hover:text-white">Testimonials</a></li>
-        <li><a href="#faq" class="rounded-lg hover:bg-primary hover:text-white">FAQ</a></li>
-        <li><a href="#contact" class="rounded-lg hover:bg-primary hover:text-white">Contact</a></li>
-      </ul>
-    </div>
 
-    <!-- Right: Actions (Login + CTA) -->
-    <div class="flex-none flex items-center gap-3">
+    <!-- Hero Section – New Premium Indigo-Cyan Color Palette -->
+    <section
+        class="relative overflow-hidden bg-gradient-to-br from-indigo-300  to-cyan-500 py-10 lg:py-10">
+        <div class="absolute inset-0 bg-black/20"></div>
+        <div class="absolute -top-40 -right-40 w-96 h-96 bg-secondary/30 rounded-full blur-3xl"></div>
+        <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-primary/40 rounded-full blur-3xl"></div>
 
-      <!-- Login Button (Visible on larger screens) -->
-      <a href="{% url 'login' %}" class="btn btn-sm btn-secondary hidden sm:flex gap-2">
-        <i class="fas fa-sign-in-alt"></i>
-        Login
-      </a>
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="grid lg:grid-cols-2 gap-12 xl:gap-20 items-center">
 
-      <!-- Get Started CTA -->
-      <a href="#pricing" class="btn btn-primary btn-sm gap-2 shadow-lg">
-        <i class="fas fa-rocket"></i>
-        <span class="hidden sm:inline">Get Started</span>
-        {% comment %} <span class="sm:hidden">Start</span> {% endcomment %}
-      </a>
-      
-
-      <!-- Theme Toggle (Desktop) -->
-      <label class="toggle toggle-sm text-base-content hidden sm:flex items-center cursor-pointer">
-        <input type="checkbox" value="synthwave" class="theme-controller" />
-        <svg class="swap-off fill-current w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5.64,17l-.71.71a1,1,0,0,0,0,1.41,1,1,0,0,0,1.41,0l.71-.71A1,1,0,0,0,5.64,17ZM5,12a1,1,0,0,0-1-1H3a1,1,0,0,0,0,2H4A1,1,0,0,0,5,12Zm7-7a1,1,0,0,0,1-1V3a1,1,0,0,0-2,0V4A1,1,0,0,0,12,5ZM5.64,7.05a1,1,0,0,0,.7.29,1,1,0,0,0,.71-.29l.71-.71a1,1,0,0,0-1.41-1.41l-.71.71A1,1,0,0,0,5.64,7.05ZM18.36,17A1,1,0,0,0,17,18.36l.71.71a1,1,0,0,0,1.41,0,1,1,0,0,0,0-1.41ZM20,12a1,1,0,0,0-1-1H18a1,1,0,0,0,0,2h1A1,1,0,0,0,20,12ZM17,5.64a1,1,0,0,0,.71-.29l.71-.71a1,1,0,1,0-1.41-1.41l-.71.71a1,1,0,0,0,0,1.41A1,1,0,0,0,17,5.64ZM12,15a3,3,0,1,0,3-3A3,3,0,0,0,12,15Zm0,2a5,5,0,1,0,5-5A5,5,0,0,0,12,17Z"/></svg>
-        <svg class="swap-on fill-current w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22,8.2,8.2,0,0,1,15.92,17.2,8.15,8.15,0,0,1,12.14,19.69Z"/></svg>
-      </label>
-
-      <!-- Mobile Menu Toggle -->
-      <label for="mobile-drawer" class="btn btn-square btn-ghost lg:hidden">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-             class="inline-block w-6 h-6 stroke-current">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M4 6h16M4 12h16M4 18h16"></path>
-        </svg>
-      </label>
-    </div>
-  </div>
-</nav>
-
-<!-- Mobile Drawer Menu (Hidden by default) -->
-<input type="checkbox" id="mobile-drawer" class="drawer-toggle" />
-<div class="drawer-side z-50">
-  <label for="mobile-drawer" class="drawer-overlay"></label>
-  <ul class="menu p-6 w-80 h-full bg-base-100 text-base-content shadow-2xl">
-    <!-- Mobile Logo + Close -->
-    <div class="flex justify-between items-center mb-8">
-      <a href="/" class="btn btn-ghost text-xl font-bold text-dark normal-case gap-2">
-        <img src="{% static 'images/SFLogo.png' %}" class="h-12 w-auto">
-        SquareFit
-      </a>
-      <label for="mobile-drawer" class="btn btn-circle btn-ghost">
-        <i class="fas fa-times text-xl"></i>
-      </label>
-    </div>
-
-    <!-- Mobile Menu Items -->
-    <li><a href="#features" class="text-lg py-3">Features</a></li>
-    <li><a href="#pricing" class="text-lg py-3">Pricing</a></li>
-    <li><a href="#testimonials" class="text-lg py-3">Testimonials</a></li>
-    <li><a href="#faq" class="text-lg py-3">FAQ</a></li>
-    <li><a href="#contact" class="text-lg py-3">Contact</a></li>
-
-    <div class="divider"></div>
-
-    <!-- Theme Toggle (Mobile) -->
-    <li class="flex flex-row justify-between items-center">
-      <span class="text-lg">Theme</span>
-      <label class="toggle toggle-primary text-base-content items-center cursor-pointer">
-        <input type="checkbox" value="synthwave" class="theme-controller" />
-        <svg class="swap-off fill-current w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5.64,17l-.71.71a1,1,0,0,0,0,1.41,1,1,0,0,0,1.41,0l.71-.71A1,1,0,0,0,5.64,17ZM5,12a1,1,0,0,0-1-1H3a1,1,0,0,0,0,2H4A1,1,0,0,0,5,12Zm7-7a1,1,0,0,0,1-1V3a1,1,0,0,0-2,0V4A1,1,0,0,0,12,5ZM5.64,7.05a1,1,0,0,0,.7.29,1,1,0,0,0,.71-.29l.71-.71a1,1,0,0,0-1.41-1.41l-.71.71A1,1,0,0,0,5.64,7.05ZM18.36,17A1,1,0,0,0,17,18.36l.71.71a1,1,0,0,0,1.41,0,1,1,0,0,0,0-1.41ZM20,12a1,1,0,0,0-1-1H18a1,1,0,0,0,0,2h1A1,1,0,0,0,20,12ZM17,5.64a1,1,0,0,0,.71-.29l.71-.71a1,1,0,1,0-1.41-1.41l-.71.71a1,1,0,0,0,0,1.41A1,1,0,0,0,17,5.64ZM12,15a3,3,0,1,0,3-3A3,3,0,0,0,12,15Zm0,2a5,5,0,1,0,5-5A5,5,0,0,0,12,17Z"/></svg>
-        <svg class="swap-on fill-current w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22,8.2,8.2,0,0,1,15.92,17.2,8.15,8.15,0,0,1,12.14,19.69Z"/></svg>
-      </label>
-    </li>
-
-    <!-- Mobile Buttons -->
-    <li>
-      <a href="{% url 'login' %}" class="btn btn-secondary text-lg">
-        <i class="fas fa-sign-in-alt mr-2"></i> Login
-      </a>
-    </li>
-    
-  </ul>
-</div>
-
-
-<!-- Hero Section – New Premium Indigo-Cyan Color Palette -->
-<section class="relative overflow-hidden bg-gradient-to-br from-indigo-600 via-indigo-500 to-cyan-500 py-24 lg:py-10"> 
-  <div class="absolute inset-0 bg-black/20"></div>
-  <div class="absolute -top-40 -right-40 w-96 h-96 bg-secondary/30 rounded-full blur-3xl"></div>
-  <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-primary/40 rounded-full blur-3xl"></div>
-
-  <div class="container mx-auto px-6 relative z-10">
-    <div class="grid lg:grid-cols-2 gap-12 xl:gap-20 items-center">
-
-      <!-- Left: Content -->
-      <div class="text-center lg:text-left">
-        <!-- Badge -->
-        <div class="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 text-sm font-medium mb-6">
-          <span class="flex h-2 w-2 rounded-full bg-green-400"></span>
-          Trusted by 2,500+ gyms worldwide
-        </div>
-
-        <!-- Main Heading -->
-        <h1 class="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black text-white leading-tight mb-6">
-          Run Your Gym Like a <span class="text-secondary">Pro</span>
-        </h1>
-
-        <!-- Subheading -->
-        <p class="text-xl lg:text-2xl text-white/90 font-light mb-10 max-w-2xl">
-          The #1 all-in-one gym management platform. Handle members, classes, payments, check-ins, and reporting — all in one beautiful dashboard.
-        </p>
-
-        <!-- CTA Buttons -->
-        <div class="flex flex-col sm:flex-row gap-5 mb-10 justify-center lg:justify-start">
-          <a href="#pricing" class="btn btn-lg btn-secondary shadow-2xl hover:shadow-secondary/50 transform hover:-translate-y-1 transition-all duration-300 text-lg font-bold">
-            Start 30-Day Free Trial
-            <i class="fas fa-arrow-right ml-2"></i>
-          </a>
-          <a href="#demo" class="btn btn-lg btn-outline border-white text-white hover:bg-white hover:text-primary shadow-xl text-lg">
-            Watch Demo
-            <i class="fas fa-play-circle ml-2"></i>
-          </a>
-        </div>
-
-        <!-- Trust Signals -->
-        <div class="flex flex-col sm:flex-row items-center gap-6 text-white/90">
-          <div class="flex -space-x-3">
-            <img class="w-12 h-12 rounded-full ring-4 ring-white/30" src="https://i.pravatar.cc/100?img=1" alt="gym owner">
-            <img class="w-12 h-12 rounded-full ring-4 ring-white/30" src="https://i.pravatar.cc/100?img=2" alt="gym owner">
-            <img class="w-12 h-12 rounded-full ring-4 ring-white/30" src="https://i.pravatar.cc/100?img=3" alt="gym owner">
-            <div class="w-12 h-12 rounded-full bg-white/20 backdrop-blur ring-4 ring-white/30 flex items-center justify-center text-sm font-bold">
-              +2.5k
-            </div>
-          </div>
-          <div class="text-left">
-            <div class="flex items-center gap-2 mb-1">
-              <div class="rating rating-sm">
-                {% for i in "12345" %}
-                <input type="radio" name="rating-hero" class="mask mask-star-2 bg-yellow-400" {% if forloop.counter == 5 %}checked{% endif %} disabled />
-                {% endfor %}
-              </div>
-              <span class="font-bold text-lg">4.9/5</span>
-            </div>
-            <p class="text-sm opacity-90">From 2,500+ happy gym owners</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Right: Visual Mockup -->
-      <div class="relative flex justify-center lg:justify-end">
-        <!--  Dashboard Image -->
-        <div class="relative mockup-browser border border-base-300 shadow-2xl w-full max-w-lg bg-base-100">
-           <img src="{% static 'images/hero_img.jpg' %}" alt="SquareFit Dashboard" class="w-full rounded-b-lg">
-        </div>
-
-        <!-- Floating Elements -->
-        <div class="absolute -top-6 -left-10 bg-success/20 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg animate-pulse">
-          +89% retention rate
-        </div>
-        <div class="absolute -bottom-8 -right-10 bg-secondary/20 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg">
-          No credit card required
-        </div>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-   <!-- Stats Section -->
-<section class="py-10 bg-gradient-to-br from-base-200 to-basWhat Gym Owners Saye-300">
-    <div class="container mx-auto px-4 lg:px-8">
-        <!-- Section Header -->
-        <div class="text-center max-w-3xl mx-auto mb-16">
-            <h2 class="text-4xl lg:text-3xl font-bold mb-6">
-                Powering the Future of 
-                <span class="text-secondary bg-clip-text ">
-                    Fitness Excellence
-                </span>
-            </h2>
-            <p class="text-lg text-base-content/70 max-w-2xl mx-auto">
-                Trusted by forward-thinking gyms and fitness studios worldwide to transform operations and elevate member experiences
-            </p>
-        </div>
-
-        <!-- Stats Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-            <!-- Card 1 -->
-            <div class="card bg-base-100 shadow-2xl hover:shadow-primary/20 transition-all duration-300 hover:-translate-y-2 border border-base-300">
-                <div class="card-body p-8 text-center">
-                    <div class="mb-6">
-                        <div class="avatar bg-primary/10 p-4 rounded-2xl inline-flex">
-                            <i class="fas fa-users text-4xl text-primary"></i>
-                        </div>
+                <!-- Left: Content -->
+                <div class="text-center lg:text-left">
+                    <!-- Badge -->
+                    <div
+                        class="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 text-sm font-medium mb-6">
+                        <span class="flex h-2 w-2 rounded-full bg-green-400"></span>
+                        Trusted by 200+ gyms worldwide
                     </div>
-                    <h3 class="card-title text-2xl font-bold mb-2 justify-center">500K+</h3>
-                    <p class="text-lg font-semibold mb-2">Active Members</p>
-                    <p class="text-base-content/60 text-sm">Across 2,500+ premier fitness facilities</p>
-                    <div class="mt-6 pt-6 border-t border-base-300">
-                        <div class="flex items-center justify-center gap-2 text-sm">
-                            <span class="loading loading-ring loading-xs text-primary"></span>
-                            <span class="text-base-content/70">Real-time tracking</span>
+
+                    <!-- Main Heading -->
+                    <h1 class="text-2xl sm:text-4xl lg:text-4xl xl:text-5xl font-black text-white leading-tight mb-0">
+                        Dominate Your Gym Business Like a <span class="text-secondary">Market Leader</span>
+                        
+                    </h1>
+
+                    <!-- Subheading -->
+                    <p class="text-xl lg:text-xl text-white/90 font-light mb-10 max-w-2xl">
+                        Stop juggling tools and spreadsheets. Run your entire gym operation from one powerful platform —
+                        members,
+                        billing, classes, check-ins, staff, and real-time reports — all built to grow revenue and reduce
+                        chaos.
+                    </p>
+
+
+                    <!-- CTA Buttons -->
+                    <div class="flex flex-col sm:flex-row gap-5 mb-10 justify-center lg:justify-start">
+                        <a href="#pricing"
+                            class="btn btn-lg btn-secondary shadow-2xl hover:shadow-secondary/50 transform hover:-translate-y-1 transition-all duration-300 text-lg font-bold">
+                            Start 30-Day Free Trial
+                            <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                        <a href="#demo"
+                            class="btn btn-lg btn-outline border-white text-white hover:bg-white hover:text-primary shadow-xl text-lg">
+                            Watch Demo
+                            <i class="fas fa-play-circle ml-2"></i>
+                        </a>
+                    </div>
+
+                    <!-- Trust Signals -->
+                    <div class="flex flex-col sm:flex-row items-center gap-6 text-white/90">
+                        <div class="flex -space-x-3">
+                            <img class="w-10 h-10 rounded-full ring-4 ring-white/30"
+                                src="https://i.pravatar.cc/100?img=1" alt="gym owner">
+                            <img class="w-10 h-10 rounded-full ring-4 ring-white/30"
+                                src="https://i.pravatar.cc/100?img=2" alt="gym owner">
+                            <img class="w-10 h-10 rounded-full ring-4 ring-white/30"
+                                src="https://i.pravatar.cc/100?img=3" alt="gym owner">
+                            <div
+                                class="w-10 h-10 rounded-full bg-white/20 backdrop-blur ring-4 ring-white/30 flex items-center justify-center text-sm font-bold">
+                                +150
+                            </div>
+                        </div>
+                        <div class="text-left">
+                            <div class="flex items-center gap-2 mb-1">
+                                <div class="rating rating-sm">
+
+                                </div>
+                                <span class="font-bold text-lg">4.9/5</span>
+                            </div>
+                            <p class="text-sm opacity-90">From 200+ happy gym owners</p>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Card 2 -->
-            <div class="card bg-base-100 shadow-2xl hover:shadow-secondary/20 transition-all duration-300 hover:-translate-y-2 border border-base-300">
-                <div class="card-body p-8 text-center">
-                    <div class="mb-6">
-                        <div class="avatar bg-secondary/10 p-4 rounded-2xl inline-flex">
-                            <i class="fas fa-dumbbell text-4xl text-secondary"></i>
-                        </div>
+                <!-- Right: Visual Mockup -->
+                <div class="relative flex justify-center lg:justify-end">
+                    <!--  Dashboard Image -->
+                    <div class="relative mockup-browser border border-base-300 shadow-2xl w-full max-w-lg bg-base-100">
+                        <img src="{% static 'images/hero_img.jpg' %}" alt="SquareFit Dashboard "
+                            class="w-full rounded-b-lg">
                     </div>
-                    <h3 class="card-title text-2xl font-bold mb-2 justify-center">1.2M+</h3>
-                    <p class="text-lg font-semibold mb-2">Monthly Classes</p>
-                    <p class="text-base-content/60 text-sm">Scheduled with 99.8% accuracy rate</p>
-                    <div class="mt-6 pt-6 border-t border-base-300">
-                        <div class="flex items-center justify-center gap-2 text-sm">
-                            <span class="loading loading-ring loading-xs text-secondary"></span>
-                            <span class="text-base-content/70">Automated scheduling</span>
-                        </div>
+
+                    <!-- Floating Elements -->
+                    <div
+                        class="absolute -top-6 -left-10 bg-success/20 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg animate-pulse">
+                        +89% retention rate
+                    </div>
+                    <div
+                        class="absolute -bottom-8 -right-10 bg-secondary/20 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg">
+                        No credit card required
                     </div>
                 </div>
-            </div>
+                
 
-            <!-- Card 3 -->
-            <div class="card bg-base-100 shadow-2xl hover:shadow-accent/20 transition-all duration-300 hover:-translate-y-2 border border-base-300">
-                <div class="card-body p-8 text-center">
-                    <div class="mb-6">
-                        <div class="avatar bg-accent/10 p-4 rounded-2xl inline-flex">
-                            <i class="fas fa-wallet text-4xl text-accent"></i>
-                        </div>
-                    </div>
-                    <h3 class="card-title text-2xl font-bold mb-2 justify-center">$85M+</h3>
-                    <p class="text-lg font-semibold mb-2">Revenue Processed</p>
-                    <p class="text-base-content/60 text-sm">Year-to-date with 40% YoY growth</p>
-                    <div class="mt-6 pt-6 border-t border-base-300">
-                        <div class="flex items-center justify-center gap-2 text-sm">
-                            <span class="loading loading-ring loading-xs text-accent"></span>
-                            <span class="text-base-content/70">Secure payments</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card 4 -->
-            <div class="card bg-base-100 shadow-2xl hover:shadow-primary/20 transition-all duration-300 hover:-translate-y-2 border border-base-300">
-                <div class="card-body p-8 text-center">
-                    <div class="mb-6">
-                        <div class="avatar bg-primary/10 p-4 rounded-2xl inline-flex">
-                            <i class="fas fa-clock text-4xl text-primary"></i>
-                        </div>
-                    </div>
-                    <h3 class="card-title text-2xl font-bold mb-2 justify-center">15+ hrs</h3>
-                    <p class="text-lg font-semibold mb-2">Weekly Time Saved</p>
-                    <p class="text-base-content/60 text-sm">Per facility on administrative tasks</p>
-                    <div class="mt-6 pt-6 border-t border-base-300">
-                        <div class="flex items-center justify-center gap-2 text-sm">
-                            <span class="loading loading-ring loading-xs text-primary"></span>
-                            <span class="text-base-content/70">AI-powered automation</span>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
+    </section>
 
-        <!-- Trust Badges -->
-        <div class="mt-20 pt-10 border-t border-base-300">
-            <div class="text-center mb-8">
-                <p class="text-base-content/70 font-medium mb-6">Trusted by industry leaders</p>
-                <div class="flex flex-wrap justify-center items-center gap-8 lg:gap-12 opacity-80">
-                    <div class="badge badge-lg badge-outline badge-primary px-6 py-3 font-semibold">
-                        <i class="fas fa-award mr-2"></i>GQ Top 100 Gyms
-                    </div>
-                    <div class="badge badge-lg badge-outline badge-secondary px-6 py-3 font-semibold">
-                        <i class="fas fa-shield-alt mr-2"></i>SOC 2 Certified
-                    </div>
-                    <div class="badge badge-lg badge-outline badge-accent px-6 py-3 font-semibold">
-                        <i class="fas fa-trophy mr-2"></i>FitnessTech Award 2024
-                    </div>
-                </div>
-            </div>
-
-            <!-- CTA -->
-            <div class="text-center mt-12">
-                <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <button class="btn btn-primary btn-lg gap-2">
-                        <i class="fas fa-chart-line"></i>
-                        View Case Studies
-                    </button>
-                    <button class="btn btn-outline btn-lg gap-2">
-                        <i class="fas fa-calendar-check"></i>
-                        Book a Demo
-                    </button>
-                </div>
-                <p class="text-sm text-base-content/60 mt-6">
-                    Join 2,500+ fitness businesses transforming their operations
+    <!-- Stats Section -->
+    <section class="py-10 bg-gradient-to-br from-base-200 to-basWhat Gym Owners Saye-300">
+        <div class="container mx-auto px-4 lg:px-8">
+            <!-- Section Header -->
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-4xl lg:text-3xl font-bold mb-6">
+                    Powering the Future of
+                    <span class="text-secondary bg-clip-text ">
+                        Fitness Excellence
+                    </span>
+                </h2>
+                <p class="text-lg text-base-content/70 max-w-2xl mx-auto">
+                    Trusted by forward-thinking gyms and fitness studios worldwide to transform operations and elevate
+                    member experiences
                 </p>
             </div>
+
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+                <!-- Card 1 -->
+                <div
+                    class="card bg-base-100 shadow-2xl hover:shadow-primary/20 transition-all duration-300 hover:-translate-y-2 border border-base-300">
+                    <div class="card-body p-8 text-center">
+                        <div class="mb-6">
+                            <div class="avatar bg-primary/10 p-4 rounded-2xl inline-flex">
+                                <i class="fas fa-users text-4xl text-primary"></i>
+                            </div>
+                        </div>
+                        <h3 class="card-title text-2xl font-bold mb-2 justify-center">500K+</h3>
+                        <p class="text-lg font-semibold mb-2">Active Members</p>
+                        <p class="text-base-content/60 text-sm">Across 2,500+ premier fitness facilities</p>
+                        <div class="mt-6 pt-6 border-t border-base-300">
+                            <div class="flex items-center justify-center gap-2 text-sm">
+                                <span class="loading loading-ring loading-xs text-primary"></span>
+                                <span class="text-base-content/70">Real-time tracking</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div
+                    class="card bg-base-100 shadow-2xl hover:shadow-secondary/20 transition-all duration-300 hover:-translate-y-2 border border-base-300">
+                    <div class="card-body p-8 text-center">
+                        <div class="mb-6">
+                            <div class="avatar bg-secondary/10 p-4 rounded-2xl inline-flex">
+                                <i class="fas fa-dumbbell text-4xl text-secondary"></i>
+                            </div>
+                        </div>
+                        <h3 class="card-title text-2xl font-bold mb-2 justify-center">1.2M+</h3>
+                        <p class="text-lg font-semibold mb-2">Monthly Classes</p>
+                        <p class="text-base-content/60 text-sm">Scheduled with 99.8% accuracy rate</p>
+                        <div class="mt-6 pt-6 border-t border-base-300">
+                            <div class="flex items-center justify-center gap-2 text-sm">
+                                <span class="loading loading-ring loading-xs text-secondary"></span>
+                                <span class="text-base-content/70">Automated scheduling</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div
+                    class="card bg-base-100 shadow-2xl hover:shadow-accent/20 transition-all duration-300 hover:-translate-y-2 border border-base-300">
+                    <div class="card-body p-8 text-center">
+                        <div class="mb-6">
+                            <div class="avatar bg-accent/10 p-4 rounded-2xl inline-flex">
+                                <i class="fas fa-wallet text-4xl text-accent"></i>
+                            </div>
+                        </div>
+                        <h3 class="card-title text-2xl font-bold mb-2 justify-center">$85M+</h3>
+                        <p class="text-lg font-semibold mb-2">Revenue Processed</p>
+                        <p class="text-base-content/60 text-sm">Year-to-date with 40% YoY growth</p>
+                        <div class="mt-6 pt-6 border-t border-base-300">
+                            <div class="flex items-center justify-center gap-2 text-sm">
+                                <span class="loading loading-ring loading-xs text-accent"></span>
+                                <span class="text-base-content/70">Secure payments</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div
+                    class="card bg-base-100 shadow-2xl hover:shadow-primary/20 transition-all duration-300 hover:-translate-y-2 border border-base-300">
+                    <div class="card-body p-8 text-center">
+                        <div class="mb-6">
+                            <div class="avatar bg-primary/10 p-4 rounded-2xl inline-flex">
+                                <i class="fas fa-clock text-4xl text-primary"></i>
+                            </div>
+                        </div>
+                        <h3 class="card-title text-2xl font-bold mb-2 justify-center">15+ hrs</h3>
+                        <p class="text-lg font-semibold mb-2">Weekly Time Saved</p>
+                        <p class="text-base-content/60 text-sm">Per facility on administrative tasks</p>
+                        <div class="mt-6 pt-6 border-t border-base-300">
+                            <div class="flex items-center justify-center gap-2 text-sm">
+                                <span class="loading loading-ring loading-xs text-primary"></span>
+                                <span class="text-base-content/70">AI-powered automation</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Trust Badges -->
+            <div class="mt-20 pt-10 border-t border-base-300">
+                <div class="text-center mb-8">
+                    <p class="text-base-content/70 font-medium mb-6">Trusted by industry leaders</p>
+                    <div class="flex flex-wrap justify-center items-center gap-8 lg:gap-12 opacity-80">
+                        <div class="badge badge-lg badge-outline badge-primary px-6 py-3 font-semibold">
+                            <i class="fas fa-award mr-2"></i>GQ Top 100 Gyms
+                        </div>
+                        <div class="badge badge-lg badge-outline badge-secondary px-6 py-3 font-semibold">
+                            <i class="fas fa-shield-alt mr-2"></i>SOC 2 Certified
+                        </div>
+                        <div class="badge badge-lg badge-outline badge-accent px-6 py-3 font-semibold">
+                            <i class="fas fa-trophy mr-2"></i>FitnessTech Award 2024
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CTA -->
+                <div class="text-center mt-12">
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <button class="btn btn-primary btn-lg gap-2">
+                            <i class="fas fa-chart-line"></i>
+                            View Case Studies
+                        </button>
+                        <button class="btn btn-outline btn-lg gap-2">
+                            <i class="fas fa-calendar-check"></i>
+                            Book a Demo
+                        </button>
+                    </div>
+                    <p class="text-sm text-base-content/60 mt-6">
+                        Join 2,500+ fitness businesses transforming their operations
+                    </p>
+                </div>
+            </div>
         </div>
-    </div>
-</section>
+    </section>
     <!-- Features Section -->
-<section id="features" class="py-10 bg-gradient-to-b from-base-100 to-base-50">
-    <div class="container mx-auto px-4 lg:px-8">
-        <!-- Section Header -->
-        <div class="text-center max-w-4xl mx-auto mb-20">
-            <div class="badge badge-lg badge-outline badge-primary mb-6 px-6 py-3">
-                <i class="fas fa-bolt mr-2"></i>All-in-One Platform
+    <section id="features" class="py-10 bg-gradient-to-b from-base-100 to-base-50">
+        <div class="container mx-auto px-4 lg:px-8">
+            <!-- Section Header -->
+            <div class="text-center max-w-4xl mx-auto mb-20">
+                <div class="badge badge-lg badge-outline badge-primary mb-6 px-6 py-3">
+                    <i class="fas fa-bolt mr-2"></i>All-in-One Platform
+                </div>
+                <h2 class="text-5xl lg:text-3xl font-bold mb-6">
+                    The Complete Operating System
+                    <span class="text-secondary bg-clip-text ">
+                        for Modern Gyms
+                    </span>
+                </h2>
+                <p class="text-xl text-base-content/70 max-w-3xl mx-auto">
+                    SquareFit combines all the tools you need into one seamless platform—eliminating complexity,
+                    reducing costs, and driving growth.
+                </p>
             </div>
-            <h2 class="text-5xl lg:text-3xl font-bold mb-6">
-                The Complete Operating System
-                <span class="text-secondary bg-clip-text ">
-                    for Modern Gyms
-                </span>
-            </h2>
-            <p class="text-xl text-base-content/70 max-w-3xl mx-auto">
-                SquareFit combines all the tools you need into one seamless platform—eliminating complexity, reducing costs, and driving growth.
-            </p>
-        </div>
 
-        <!-- Features Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
-            <!-- Feature 1 - Enhanced -->
-            <div class="group card bg-base-100 shadow-2xl hover:shadow-3xl border border-base-300 transition-all duration-500 hover:-translate-y-3">
-                <div class="card-body p-8">
-                    <div class="mb-6">
-                        <div class="avatar bg-gradient-to-br from-primary/20 to-primary/5 p-4 rounded-2xl inline-flex">
-                            <i class="fas fa-id-card text-3xl text-primary"></i>
-                        </div>
-                    </div>
-                    <h3 class="card-title text-2xl font-bold mb-3">Intelligent Member Management</h3>
-                    <p class="text-base-content/70 mb-6">
-                        Complete CRM with smart segmentation, automated check-ins, and predictive retention tools. Track every member journey from prospect to loyal client.
-                    </p>
-                    
-                    <!-- Feature Highlights -->
-                    <div class="space-y-3 mb-6">
-                        <div class="flex items-center gap-3">
-                            <div class="badge badge-sm badge-primary badge-outline">
-                                <i class="fas fa-check text-xs"></i>
+            <!-- Features Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
+                <!-- Feature 1 - Enhanced -->
+                <div
+                    class="group card bg-base-100 shadow-2xl hover:shadow-3xl border border-base-300 transition-all duration-500 hover:-translate-y-3">
+                    <div class="card-body p-8">
+                        <div class="mb-6">
+                            <div
+                                class="avatar bg-gradient-to-br from-primary/20 to-primary/5 p-4 rounded-2xl inline-flex">
+                                <i class="fas fa-id-card text-3xl text-primary"></i>
                             </div>
-                            <span class="text-sm">Automated billing & renewals</span>
                         </div>
-                        <div class="flex items-center gap-3">
-                            <div class="badge badge-sm badge-primary badge-outline">
-                                <i class="fas fa-check text-xs"></i>
+                        <h3 class="card-title text-2xl font-bold mb-3">Intelligent Member Management</h3>
+                        <p class="text-base-content/70 mb-6">
+                            Complete CRM with smart segmentation, automated check-ins, and predictive retention tools.
+                            Track every member journey from prospect to loyal client.
+                        </p>
+
+                        <!-- Feature Highlights -->
+                        <div class="space-y-3 mb-6">
+                            <div class="flex items-center gap-3">
+                                <div class="badge badge-sm badge-primary badge-outline">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                                <span class="text-sm">Automated billing & renewals</span>
                             </div>
-                            <span class="text-sm">Biometric check-in system</span>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <div class="badge badge-sm badge-primary badge-outline">
-                                <i class="fas fa-check text-xs"></i>
+                            <div class="flex items-center gap-3">
+                                <div class="badge badge-sm badge-primary badge-outline">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                                <span class="text-sm">Biometric check-in system</span>
                             </div>
-                            <span class="text-sm">AI-powered retention scoring</span>
+                            <div class="flex items-center gap-3">
+                                <div class="badge badge-sm badge-primary badge-outline">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                                <span class="text-sm">AI-powered retention scoring</span>
+                            </div>
                         </div>
-                    </div>
-                    
-                    <!-- CTA -->
-                    <div class="card-actions mt-auto">
-                        <button class="btn btn-link btn-sm gap-2 text-primary no-underline p-0">
-                            Learn more
-                            <i class="fas fa-arrow-right group-hover:translate-x-2 transition-transform"></i>
-                        </button>
+
+                        <!-- CTA -->
+                        <div class="card-actions mt-auto">
+                            <button class="btn btn-link btn-sm gap-2 text-primary no-underline p-0">
+                                Learn more
+                                <i class="fas fa-arrow-right group-hover:translate-x-2 transition-transform"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Feature 2 - Enhanced -->
-            <div class="group card bg-base-100 shadow-2xl hover:shadow-3xl border border-base-300 transition-all duration-500 hover:-translate-y-3">
-                <div class="card-body p-8">
-                    <div class="mb-6">
-                        <div class="avatar bg-gradient-to-br from-secondary/20 to-secondary/5 p-4 rounded-2xl inline-flex">
-                            <i class="fas fa-calendar-alt text-3xl text-secondary"></i>
-                        </div>
-                    </div>
-                    <h3 class="card-title text-2xl font-bold mb-3">Dynamic Class & Staff Scheduling</h3>
-                    <p class="text-base-content/70 mb-6">
-                        Smart scheduling engine that optimizes class times, instructor assignments, and resource allocation based on historical data and demand patterns.
-                    </p>
-                    
-                    <!-- Feature Highlights -->
-                    <div class="space-y-3 mb-6">
-                        <div class="flex items-center gap-3">
-                            <div class="badge badge-sm badge-secondary badge-outline">
-                                <i class="fas fa-check text-xs"></i>
+                <!-- Feature 2 - Enhanced -->
+                <div
+                    class="group card bg-base-100 shadow-2xl hover:shadow-3xl border border-base-300 transition-all duration-500 hover:-translate-y-3">
+                    <div class="card-body p-8">
+                        <div class="mb-6">
+                            <div
+                                class="avatar bg-gradient-to-br from-secondary/20 to-secondary/5 p-4 rounded-2xl inline-flex">
+                                <i class="fas fa-calendar-alt text-3xl text-secondary"></i>
                             </div>
-                            <span class="text-sm">AI-powered capacity optimization</span>
                         </div>
-                        <div class="flex items-center gap-3">
-                            <div class="badge badge-sm badge-secondary badge-outline">
-                                <i class="fas fa-check text-xs"></i>
+                        <h3 class="card-title text-2xl font-bold mb-3">Dynamic Class & Staff Scheduling</h3>
+                        <p class="text-base-content/70 mb-6">
+                            Smart scheduling engine that optimizes class times, instructor assignments, and resource
+                            allocation based on historical data and demand patterns.
+                        </p>
+
+                        <!-- Feature Highlights -->
+                        <div class="space-y-3 mb-6">
+                            <div class="flex items-center gap-3">
+                                <div class="badge badge-sm badge-secondary badge-outline">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                                <span class="text-sm">AI-powered capacity optimization</span>
                             </div>
-                            <span class="text-sm">Automated waitlist management</span>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <div class="badge badge-sm badge-secondary badge-outline">
-                                <i class="fas fa-check text-xs"></i>
+                            <div class="flex items-center gap-3">
+                                <div class="badge badge-sm badge-secondary badge-outline">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                                <span class="text-sm">Automated waitlist management</span>
                             </div>
-                            <span class="text-sm">Staff availability matching</span>
+                            <div class="flex items-center gap-3">
+                                <div class="badge badge-sm badge-secondary badge-outline">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                                <span class="text-sm">Staff availability matching</span>
+                            </div>
                         </div>
-                    </div>
-                    
-                    <!-- CTA -->
-                    <div class="card-actions mt-auto">
-                        <button class="btn btn-link btn-sm gap-2 text-secondary no-underline p-0">
-                            Explore features
-                            <i class="fas fa-arrow-right group-hover:translate-x-2 transition-transform"></i>
-                        </button>
+
+                        <!-- CTA -->
+                        <div class="card-actions mt-auto">
+                            <button class="btn btn-link btn-sm gap-2 text-secondary no-underline p-0">
+                                Explore features
+                                <i class="fas fa-arrow-right group-hover:translate-x-2 transition-transform"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Feature 3 - Enhanced -->
-            <div class="group card bg-base-100 shadow-2xl hover:shadow-3xl border border-base-300 transition-all duration-500 hover:-translate-y-3">
-                <div class="card-body p-8">
-                    <div class="mb-6">
-                        <div class="avatar bg-gradient-to-br from-accent/20 to-accent/5 p-4 rounded-2xl inline-flex">
-                            <i class="fas fa-chart-pie text-3xl text-accent"></i>
-                        </div>
-                    </div>
-                    <h3 class="card-title text-2xl font-bold mb-3">Business Intelligence Suite</h3>
-                    <p class="text-base-content/70 mb-6">
-                        Real-time dashboards and predictive analytics that turn data into actionable insights for revenue growth and operational efficiency.
-                    </p>
-                    
-                    <!-- Feature Highlights -->
-                    <div class="space-y-3 mb-6">
-                        <div class="flex items-center gap-3">
-                            <div class="badge badge-sm badge-accent badge-outline">
-                                <i class="fas fa-check text-xs"></i>
+                <!-- Feature 3 - Enhanced -->
+                <div
+                    class="group card bg-base-100 shadow-2xl hover:shadow-3xl border border-base-300 transition-all duration-500 hover:-translate-y-3">
+                    <div class="card-body p-8">
+                        <div class="mb-6">
+                            <div
+                                class="avatar bg-gradient-to-br from-accent/20 to-accent/5 p-4 rounded-2xl inline-flex">
+                                <i class="fas fa-chart-pie text-3xl text-accent"></i>
                             </div>
-                            <span class="text-sm">Revenue forecasting models</span>
                         </div>
-                        <div class="flex items-center gap-3">
-                            <div class="badge badge-sm badge-accent badge-outline">
-                                <i class="fas fa-check text-xs"></i>
+                        <h3 class="card-title text-2xl font-bold mb-3">Business Intelligence Suite</h3>
+                        <p class="text-base-content/70 mb-6">
+                            Real-time dashboards and predictive analytics that turn data into actionable insights for
+                            revenue growth and operational efficiency.
+                        </p>
+
+                        <!-- Feature Highlights -->
+                        <div class="space-y-3 mb-6">
+                            <div class="flex items-center gap-3">
+                                <div class="badge badge-sm badge-accent badge-outline">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                                <span class="text-sm">Revenue forecasting models</span>
                             </div>
-                            <span class="text-sm">Member lifetime value tracking</span>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <div class="badge badge-sm badge-accent badge-outline">
-                                <i class="fas fa-check text-xs"></i>
+                            <div class="flex items-center gap-3">
+                                <div class="badge badge-sm badge-accent badge-outline">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                                <span class="text-sm">Member lifetime value tracking</span>
                             </div>
-                            <span class="text-sm">KPI dashboards & alerts</span>
+                            <div class="flex items-center gap-3">
+                                <div class="badge badge-sm badge-accent badge-outline">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                                <span class="text-sm">KPI dashboards & alerts</span>
+                            </div>
                         </div>
-                    </div>
-                    
-                    <!-- CTA -->
-                    <div class="card-actions mt-auto">
-                        <button class="btn btn-link btn-sm gap-2 text-accent no-underline p-0">
-                            View analytics
-                            <i class="fas fa-arrow-right group-hover:translate-x-2 transition-transform"></i>
-                        </button>
+
+                        <!-- CTA -->
+                        <div class="card-actions mt-auto">
+                            <button class="btn btn-link btn-sm gap-2 text-accent no-underline p-0">
+                                View analytics
+                                <i class="fas fa-arrow-right group-hover:translate-x-2 transition-transform"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Feature 4 - Enhanced -->
-            <div class="group card bg-base-100 shadow-2xl hover:shadow-3xl border border-base-300 transition-all duration-500 hover:-translate-y-3">
-                <div class="card-body p-8">
-                    <div class="mb-6">
-                        <div class="avatar bg-gradient-to-br from-primary/20 to-primary/5 p-4 rounded-2xl inline-flex">
-                            <i class="fas fa-credit-card text-3xl text-primary"></i>
-                        </div>
-                    </div>
-                    <h3 class="card-title text-2xl font-bold mb-3">Enterprise Payment Platform</h3>
-                    <p class="text-base-content/70 mb-6">
-                        Secure, PCI-compliant payment processing with automated revenue recognition, advanced reconciliation, and multi-location support.
-                    </p>
-                    
-                    <!-- Feature Highlights -->
-                    <div class="space-y-3 mb-6">
-                        <div class="flex items-center gap-3">
-                            <div class="badge badge-sm badge-primary badge-outline">
-                                <i class="fas fa-check text-xs"></i>
+                <!-- Feature 4 - Enhanced -->
+                <div
+                    class="group card bg-base-100 shadow-2xl hover:shadow-3xl border border-base-300 transition-all duration-500 hover:-translate-y-3">
+                    <div class="card-body p-8">
+                        <div class="mb-6">
+                            <div
+                                class="avatar bg-gradient-to-br from-primary/20 to-primary/5 p-4 rounded-2xl inline-flex">
+                                <i class="fas fa-credit-card text-3xl text-primary"></i>
                             </div>
-                            <span class="text-sm">Smart recurring billing engine</span>
                         </div>
-                        <div class="flex items-center gap-3">
-                            <div class="badge badge-sm badge-primary badge-outline">
-                                <i class="fas fa-check text-xs"></i>
+                        <h3 class="card-title text-2xl font-bold mb-3">Enterprise Payment Platform</h3>
+                        <p class="text-base-content/70 mb-6">
+                            Secure, PCI-compliant payment processing with automated revenue recognition, advanced
+                            reconciliation, and multi-location support.
+                        </p>
+
+                        <!-- Feature Highlights -->
+                        <div class="space-y-3 mb-6">
+                            <div class="flex items-center gap-3">
+                                <div class="badge badge-sm badge-primary badge-outline">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                                <span class="text-sm">Smart recurring billing engine</span>
                             </div>
-                            <span class="text-sm">Global multi-currency support</span>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <div class="badge badge-sm badge-primary badge-outline">
-                                <i class="fas fa-check text-xs"></i>
+                            <div class="flex items-center gap-3">
+                                <div class="badge badge-sm badge-primary badge-outline">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                                <span class="text-sm">Global multi-currency support</span>
                             </div>
-                            <span class="text-sm">Auto-failed payment recovery</span>
+                            <div class="flex items-center gap-3">
+                                <div class="badge badge-sm badge-primary badge-outline">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                                <span class="text-sm">Auto-failed payment recovery</span>
+                            </div>
                         </div>
-                    </div>
-                    
-                    <!-- CTA -->
-                    <div class="card-actions mt-auto">
-                        <button class="btn btn-link btn-sm gap-2 text-primary no-underline p-0">
-                            See pricing
-                            <i class="fas fa-arrow-right group-hover:translate-x-2 transition-transform"></i>
-                        </button>
+
+                        <!-- CTA -->
+                        <div class="card-actions mt-auto">
+                            <button class="btn btn-link btn-sm gap-2 text-primary no-underline p-0">
+                                See pricing
+                                <i class="fas fa-arrow-right group-hover:translate-x-2 transition-transform"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Feature 5 - Enhanced -->
-            <div class="group card bg-base-100 shadow-2xl hover:shadow-3xl border border-base-300 transition-all duration-500 hover:-translate-y-3">
-                <div class="card-body p-8">
-                    <div class="mb-6">
-                        <div class="avatar bg-gradient-to-br from-secondary/20 to-secondary/5 p-4 rounded-2xl inline-flex">
-                            <i class="fas fa-mobile-alt text-3xl text-secondary"></i>
-                        </div>
-                    </div>
-                    <h3 class="card-title text-2xl font-bold mb-3">Native Mobile Experience</h3>
-                    <p class="text-base-content/70 mb-6">
-                        Dedicated iOS and Android apps for members and staff, featuring push notifications, in-app messaging, and offline functionality.
-                    </p>
-                    
-                    <!-- Feature Highlights -->
-                    <div class="space-y-3 mb-6">
-                        <div class="flex items-center gap-3">
-                            <div class="badge badge-sm badge-secondary badge-outline">
-                                <i class="fas fa-check text-xs"></i>
+                <!-- Feature 5 - Enhanced -->
+                <div
+                    class="group card bg-base-100 shadow-2xl hover:shadow-3xl border border-base-300 transition-all duration-500 hover:-translate-y-3">
+                    <div class="card-body p-8">
+                        <div class="mb-6">
+                            <div
+                                class="avatar bg-gradient-to-br from-secondary/20 to-secondary/5 p-4 rounded-2xl inline-flex">
+                                <i class="fas fa-mobile-alt text-3xl text-secondary"></i>
                             </div>
-                            <span class="text-sm">QR code member check-in</span>
                         </div>
-                        <div class="flex items-center gap-3">
-                            <div class="badge badge-sm badge-secondary badge-outline">
-                                <i class="fas fa-check text-xs"></i>
+                        <h3 class="card-title text-2xl font-bold mb-3">Native Mobile Experience</h3>
+                        <p class="text-base-content/70 mb-6">
+                            Dedicated iOS and Android apps for members and staff, featuring push notifications, in-app
+                            messaging, and offline functionality.
+                        </p>
+
+                        <!-- Feature Highlights -->
+                        <div class="space-y-3 mb-6">
+                            <div class="flex items-center gap-3">
+                                <div class="badge badge-sm badge-secondary badge-outline">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                                <span class="text-sm">QR code member check-in</span>
                             </div>
-                            <span class="text-sm">One-tap class booking</span>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <div class="badge badge-sm badge-secondary badge-outline">
-                                <i class="fas fa-check text-xs"></i>
+                            <div class="flex items-center gap-3">
+                                <div class="badge badge-sm badge-secondary badge-outline">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                                <span class="text-sm">One-tap class booking</span>
                             </div>
-                            <span class="text-sm">Real-time push notifications</span>
+                            <div class="flex items-center gap-3">
+                                <div class="badge badge-sm badge-secondary badge-outline">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                                <span class="text-sm">Real-time push notifications</span>
+                            </div>
                         </div>
-                    </div>
-                    
-                    <!-- CTA -->
-                    <div class="card-actions mt-auto">
-                        <button class="btn btn-link btn-sm gap-2 text-secondary no-underline p-0">
-                            Download apps
-                            <i class="fas fa-arrow-right group-hover:translate-x-2 transition-transform"></i>
-                        </button>
+
+                        <!-- CTA -->
+                        <div class="card-actions mt-auto">
+                            <button class="btn btn-link btn-sm gap-2 text-secondary no-underline p-0">
+                                Download apps
+                                <i class="fas fa-arrow-right group-hover:translate-x-2 transition-transform"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Feature 6 - Enhanced -->
-            <div class="group card bg-base-100 shadow-2xl hover:shadow-3xl border border-base-300 transition-all duration-500 hover:-translate-y-3">
-                <div class="card-body p-8">
-                    <div class="mb-6">
-                        <div class="avatar bg-gradient-to-br from-accent/20 to-accent/5 p-4 rounded-2xl inline-flex">
-                            <i class="fas fa-headset text-3xl text-accent"></i>
-                        </div>
-                    </div>
-                    <h3 class="card-title text-2xl font-bold mb-3">Dedicated Success Team</h3>
-                    <p class="text-base-content/70 mb-6">
-                        White-glove onboarding, dedicated account management, and 24/7 technical support to ensure your success with SquareFit.
-                    </p>
-                    
-                    <!-- Feature Highlights -->
-                    <div class="space-y-3 mb-6">
-                        <div class="flex items-center gap-3">
-                            <div class="badge badge-sm badge-accent badge-outline">
-                                <i class="fas fa-check text-xs"></i>
+                <!-- Feature 6 - Enhanced -->
+                <div
+                    class="group card bg-base-100 shadow-2xl hover:shadow-3xl border border-base-300 transition-all duration-500 hover:-translate-y-3">
+                    <div class="card-body p-8">
+                        <div class="mb-6">
+                            <div
+                                class="avatar bg-gradient-to-br from-accent/20 to-accent/5 p-4 rounded-2xl inline-flex">
+                                <i class="fas fa-headset text-3xl text-accent"></i>
                             </div>
-                            <span class="text-sm">Personalized implementation</span>
                         </div>
-                        <div class="flex items-center gap-3">
-                            <div class="badge badge-sm badge-accent badge-outline">
-                                <i class="fas fa-check text-xs"></i>
-                            </div>
-                            <span class="text-sm">24/7 live chat & phone</span>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <div class="badge badge-sm badge-accent badge-outline">
-                                <i class="fas fa-check text-xs"></i>
-                            </div>
-                            <span class="text-sm">Quarterly business reviews</span>
-                        </div>
-                    </div>
-                    
-                    <!-- CTA -->
-                    <div class="card-actions mt-auto">
-                        <button class="btn btn-link btn-sm gap-2 text-accent no-underline p-0">
-                            Contact support
-                            <i class="fas fa-arrow-right group-hover:translate-x-2 transition-transform"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
+                        <h3 class="card-title text-2xl font-bold mb-3">Dedicated Success Team</h3>
+                        <p class="text-base-content/70 mb-6">
+                            White-glove onboarding, dedicated account management, and 24/7 technical support to ensure
+                            your success with SquareFit.
+                        </p>
 
-        <!-- Enterprise Features Banner -->
-        <div class="mt-20">
-            <div class="card bg-gradient-to-r from-primary/10 to-secondary/10 border border-primary/20">
-                <div class="card-body p-8">
-                    <div class="flex flex-col lg:flex-row items-center justify-between gap-6">
-                        <div>
-                            <div class="badge badge-lg badge-primary mb-4">
-                                <i class="fas fa-crown mr-2"></i>Enterprise Tier
+                        <!-- Feature Highlights -->
+                        <div class="space-y-3 mb-6">
+                            <div class="flex items-center gap-3">
+                                <div class="badge badge-sm badge-accent badge-outline">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                                <span class="text-sm">Personalized implementation</span>
                             </div>
-                            <h3 class="text-2xl font-bold mb-2">Ready for Multi-Location & Franchise Operations</h3>
-                            <p class="text-base-content/70">
-                                Advanced features for large-scale operations including centralized reporting, franchise management, and custom API access.
-                            </p>
+                            <div class="flex items-center gap-3">
+                                <div class="badge badge-sm badge-accent badge-outline">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                                <span class="text-sm">24/7 live chat & phone</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="badge badge-sm badge-accent badge-outline">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                                <span class="text-sm">Quarterly business reviews</span>
+                            </div>
                         </div>
-                        <div>
-                            <button class="btn btn-primary btn-lg gap-2">
-                                <i class="fas fa-building"></i>
-                                Enterprise Solutions
+
+                        <!-- CTA -->
+                        <div class="card-actions mt-auto">
+                            <button class="btn btn-link btn-sm gap-2 text-accent no-underline p-0">
+                                Contact support
+                                <i class="fas fa-arrow-right group-hover:translate-x-2 transition-transform"></i>
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <!-- Enterprise Features Banner -->
+            <div class="mt-20">
+                <div class="card bg-gradient-to-r from-primary/10 to-secondary/10 border border-primary/20">
+                    <div class="card-body p-8">
+                        <div class="flex flex-col lg:flex-row items-center justify-between gap-6">
+                            <div>
+                                <div class="badge badge-lg badge-primary mb-4">
+                                    <i class="fas fa-crown mr-2"></i>Enterprise Tier
+                                </div>
+                                <h3 class="text-2xl font-bold mb-2">Ready for Multi-Location & Franchise Operations</h3>
+                                <p class="text-base-content/70">
+                                    Advanced features for large-scale operations including centralized reporting,
+                                    franchise management, and custom API access.
+                                </p>
+                            </div>
+                            <div>
+                                <button class="btn btn-primary btn-lg gap-2">
+                                    <i class="fas fa-building"></i>
+                                    Enterprise Solutions
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-</section>
+    </section>
 
     <!-- Pricing Section -->
     <section id="pricing" class="py-10 bg-base-200">
         <div class="container mx-auto px-4">
             <div class="text-center max-w-4xl mx-auto mb-20">
-            <div class="badge badge-lg badge-outline badge-primary mb-6 px-6 py-3">
-                <i class="fas fa-bolt mr-2"></i>Pricing Plans
-            </div>
-            <h2 class="text-5xl lg:text-3xl font-bold mb-6">
-                Simple, Transparent Pricing
-                <span class="text-secondary bg-clip-text ">
-                    for Every Gym Size
-                </span>
-            </h2>
-            <p class="text-xl text-base-content/70 max-w-3xl mx-auto">
-              Choose the plan that fits your gym's needs. All plans
+                <div class="badge badge-lg badge-outline badge-primary mb-6 px-6 py-3">
+                    <i class="fas fa-bolt mr-2"></i>Pricing Plans
+                </div>
+                <h2 class="text-5xl lg:text-3xl font-bold mb-6">
+                    Simple, Transparent Pricing
+                    <span class="text-secondary bg-clip-text ">
+                        for Every Gym Size
+                    </span>
+                </h2>
+                <p class="text-xl text-base-content/70 max-w-3xl mx-auto">
+                    Choose the plan that fits your gym's needs. All plans
                     include a 30-day free trial.</p>
-        </div>
+            </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
                 <!-- Starter Plan -->
@@ -837,21 +883,21 @@
     <!-- Testimonials -->
     <section id="testimonials" class="py-10 bg-base-100">
         <div class="container mx-auto px-4">
-           
+
             <div class="text-center max-w-4xl mx-auto mb-20">
-            <div class="badge badge-lg badge-outline badge-primary mb-6 px-6 py-3">
-                <i class="fas fa-bolt mr-2"></i>Testimonials
-            </div>
-            <h2 class="text-5xl lg:text-3xl font-bold mb-6">
-                What Gym Owners Say
-                <span class="text-secondary bg-clip-text ">
-                    about SquareFit
-                </span>
-            </h2>
-            <p class="text-xl text-base-content/70 max-w-3xl mx-auto">
-               Join thousands of gym owners who have transformed
+                <div class="badge badge-lg badge-outline badge-primary mb-6 px-6 py-3">
+                    <i class="fas fa-bolt mr-2"></i>Testimonials
+                </div>
+                <h2 class="text-5xl lg:text-3xl font-bold mb-6">
+                    What Gym Owners Say
+                    <span class="text-secondary bg-clip-text ">
+                        about SquareFit
+                    </span>
+                </h2>
+                <p class="text-xl text-base-content/70 max-w-3xl mx-auto">
+                    Join thousands of gym owners who have transformed
                     their business with SquareFit.</p>
-        </div>
+            </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <!-- Testimonial 1 -->
@@ -868,7 +914,8 @@
                                 <p class="text-sm text-gray-600">Owner, Peak Fitness</p>
                             </div>
                         </div>
-                        <p>"SquareFit cut our administrative time in half. The member management system is intuitive, and
+                        <p>"SquareFit cut our administrative time in half. The member management system is intuitive,
+                            and
                             our members love the mobile app for booking classes."</p>
                         <div class="rating rating-sm mt-4">
                             <input type="radio" name="rating-1" class="mask mask-star-2 bg-orange-400" checked />
@@ -935,57 +982,35 @@
         </div>
     </section>
 
-  <!-- FAQ Section -->
-<section id="faq" class="py-10 md:py-10 bg-base-100">
-    <div class="container mx-auto px-4 lg:px-8">
-        <!-- Section Header -->
-        <div class="text-center max-w-4xl mx-auto mb-12 md:mb-16">
-            <div class="badge badge-lg badge-primary badge-outline mb-4 px-4 py-3">
-                <i class="fas fa-question-circle mr-2"></i>FAQs
+    <!-- FAQ Section -->
+    <section id="faq" class="py-10 md:py-10 bg-base-100">
+        <div class="container mx-auto px-4 lg:px-8">
+            <!-- Section Header -->
+            <div class="text-center max-w-4xl mx-auto mb-12 md:mb-16">
+                <div class="badge badge-lg badge-primary badge-outline mb-4 px-4 py-3">
+                    <i class="fas fa-question-circle mr-2"></i>FAQs
+                </div>
+                <h2 class="text-3xl md:text-3xl lg:text-3xl font-bold mb-4">
+                    Enterprise Implementation<span class="text-secondary"> Insights & Answers </span>
+                </h2>
+                <p class="text-lg md:text-xl text-base-content/70 max-w-3xl mx-auto">
+                    Get answers to common questions about SquareFit
+                </p>
             </div>
-            <h2 class="text-3xl md:text-3xl lg:text-3xl font-bold mb-4">
-                Everything You Need to Know
-            </h2>
-            <p class="text-lg md:text-xl text-base-content/70 max-w-3xl mx-auto">
-                Get answers to common questions about SquareFit
-            </p>
-        </div>
-
-        <!-- FAQ Categories -->
-        <div class="flex flex-wrap justify-center gap-2 md:gap-3 mb-8 md:mb-10">
-            <button class="btn btn-xs md:btn-sm btn-primary gap-1 md:gap-2">
-                <i class="fas fa-rocket text-xs md:text-sm"></i>
-                <span class="text-xs md:text-sm">Getting Started</span>
-            </button>
-            <button class="btn btn-xs md:btn-sm btn-outline btn-primary gap-1 md:gap-2">
-                <i class="fas fa-credit-card text-xs md:text-sm"></i>
-                <span class="text-xs md:text-sm">Billing</span>
-            </button>
-            <button class="btn btn-xs md:btn-sm btn-outline btn-primary gap-1 md:gap-2">
-                <i class="fas fa-cogs text-xs md:text-sm"></i>
-                <span class="text-xs md:text-sm">Features</span>
-            </button>
-            <button class="btn btn-xs md:btn-sm btn-outline btn-primary gap-1 md:gap-2">
-                <i class="fas fa-building text-xs md:text-sm"></i>
-                <span class="text-xs md:text-sm">Enterprise</span>
-            </button>
-            <button class="btn btn-xs md:btn-sm btn-outline btn-primary gap-1 md:gap-2">
-                <i class="fas fa-shield-alt text-xs md:text-sm"></i>
-                <span class="text-xs md:text-sm">Security</span>
-            </button>
         </div>
 
         <!-- FAQ Accordions -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-8 md:mb-12">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-8 md:mb-12" id="faq-accordion-container">
             <!-- Question 1 -->
-            <div class="collapse collapse-arrow bg-base-200 border border-base-300">
-                <input type="radio" name="faq-accordion" />
+            <div class="collapse collapse-arrow bg-base-200 border border-base-300 faq-item" data-category="enterprise">
+                <input type="checkbox" name="faq-accordion-1" />
                 <div class="collapse-title text-lg font-semibold">
                     How does the 30-day enterprise trial work?
                 </div>
                 <div class="collapse-content">
                     <p class="text-base-content/80">
-                        Our free trial gives you full access to all premium features for 30 days, including API access, white-label branding, and priority support. No credit card is required to start.
+                        Our free trial gives you full access to all premium features for 30 days, including API access,
+                        white-label branding, and priority support. No credit card is required to start.
                     </p>
                     <div class="mt-4 p-3 bg-primary/10 rounded-lg">
                         <div class="flex items-center gap-2 text-sm font-semibold text-primary mb-1">
@@ -993,21 +1018,23 @@
                             Pro Tip
                         </div>
                         <p class="text-sm text-base-content/70">
-                            Most customers complete implementation within 14 days and see measurable ROI before their trial ends.
+                            Most customers complete implementation within 14 days and see measurable ROI before their
+                            trial ends.
                         </p>
                     </div>
                 </div>
             </div>
 
             <!-- Question 2 -->
-            <div class="collapse collapse-arrow bg-base-200 border border-base-300">
-                <input type="radio" name="faq-accordion" />
+            <div class="collapse collapse-arrow bg-base-200 border border-base-300 faq-item" data-category="billing">
+                <input type="checkbox" name="faq-accordion-2" />
                 <div class="collapse-title text-lg font-semibold">
                     Can I upgrade or downgrade my plan?
                 </div>
                 <div class="collapse-content">
                     <p class="text-base-content/80 mb-3">
-                        Yes, you can change plans at any time. Upgrades take effect immediately with pro-rated billing. Downgrades apply at your next billing cycle.
+                        Yes, you can change plans at any time. Upgrades take effect immediately with pro-rated billing.
+                        Downgrades apply at your next billing cycle.
                     </p>
                     <div class="space-y-2 mt-4">
                         <div class="flex items-center gap-2">
@@ -1025,14 +1052,15 @@
             </div>
 
             <!-- Question 3 -->
-            <div class="collapse collapse-arrow bg-base-200 border border-base-300">
-                <input type="radio" name="faq-accordion" />
+            <div class="collapse collapse-arrow bg-base-200 border border-base-300 faq-item" data-category="features">
+                <input type="checkbox" name="faq-accordion-3" />
                 <div class="collapse-title text-lg font-semibold">
                     Is there a white-label mobile app?
                 </div>
                 <div class="collapse-content">
                     <p class="text-base-content/80 mb-4">
-                        Yes, all Enterprise plans include a fully branded mobile app (iOS & Android) with your logo, colors, and custom push notifications.
+                        Yes, all Enterprise plans include a fully branded mobile app (iOS & Android) with your logo,
+                        colors, and custom push notifications.
                     </p>
                     <div class="flex flex-wrap gap-2">
                         <span class="badge badge-sm badge-primary">QR Check-in</span>
@@ -1044,14 +1072,15 @@
             </div>
 
             <!-- Question 4 -->
-            <div class="collapse collapse-arrow bg-base-200 border border-base-300">
-                <input type="radio" name="faq-accordion" />
+            <div class="collapse collapse-arrow bg-base-200 border border-base-300 faq-item" data-category="enterprise">
+                <input type="checkbox" name="faq-accordion-4" />
                 <div class="collapse-title text-lg font-semibold">
                     Do you support multi-location franchises?
                 </div>
                 <div class="collapse-content">
                     <p class="text-base-content/80 mb-4">
-                        Yes, our Enterprise plan includes comprehensive multi-location management with centralized reporting and franchise owner dashboards.
+                        Yes, our Enterprise plan includes comprehensive multi-location management with centralized
+                        reporting and franchise owner dashboards.
                     </p>
                     <div class="stats stats-vertical lg:stats-horizontal bg-base-100 shadow mt-4">
                         <div class="stat">
@@ -1067,14 +1096,15 @@
             </div>
 
             <!-- Question 5 -->
-            <div class="collapse collapse-arrow bg-base-200 border border-base-300">
-                <input type="radio" name="faq-accordion" />
+            <div class="collapse collapse-arrow bg-base-200 border border-base-300 faq-item" data-category="security">
+                <input type="checkbox" name="faq-accordion-5" />
                 <div class="collapse-title text-lg font-semibold">
                     Is my data secure and compliant?
                 </div>
                 <div class="collapse-content">
                     <p class="text-base-content/80 mb-4">
-                        SquareFit is SOC 2 Type II certified, GDPR compliant, and follows PCI DSS standards with 256-bit encryption.
+                        SquareFit is SOC 2 Type II certified, GDPR compliant, and follows PCI DSS standards with 256-bit
+                        encryption.
                     </p>
                     <div class="flex flex-wrap gap-2 mt-4">
                         <div class="badge badge-outline">
@@ -1091,14 +1121,16 @@
             </div>
 
             <!-- Question 6 -->
-            <div class="collapse collapse-arrow bg-base-200 border border-base-300">
-                <input type="radio" name="faq-accordion" />
+            <div class="collapse collapse-arrow bg-base-200 border border-base-300 faq-item"
+                data-category="getting-started">
+                <input type="checkbox" name="faq-accordion-6" />
                 <div class="collapse-title text-lg font-semibold">
                     What support is included?
                 </div>
                 <div class="collapse-content">
                     <p class="text-base-content/80 mb-4">
-                        All plans include 24/7 chat support. Enterprise plans add dedicated account management and phone support.
+                        All plans include 24/7 chat support. Enterprise plans add dedicated account management and phone
+                        support.
                     </p>
                     <div class="space-y-2 mt-4">
                         <div class="flex items-center justify-between">
@@ -1147,7 +1179,8 @@
                 Our customer success team has an average response time of under 15 minutes.
             </p>
             <div class="flex flex-col sm:flex-row gap-3 justify-center">
-                <button class="btn btn-primary btn-md">
+                <button class="btn btn-primary btn-md"
+                    onclick="document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });">
                     <i class="fas fa-calendar-check"></i>
                     Schedule Demo
                 </button>
@@ -1157,280 +1190,263 @@
                 </button>
             </div>
         </div>
-    </div>
-</section>
-
-<!-- Contact Us Section -->
-<section id="contact" class="py-10 md:py-10 bg-base-200">
-    <div class="container mx-auto px-4 lg:px-8">
-        <!-- Section Header -->
-        <div class="text-center max-w-3xl mx-auto mb-12 md:mb-16 background">
-            <div class="badge badge-lg badge-primary mb-4 px-4 py-3">
-                <i class="fas fa-headset mr-2"></i>Get in Touch
-            </div>
-            <h2 class="text-3xl md:text-3xl font-bold mb-4">
-                Let's Transform Your Fitness Business
-            </h2>
-            <p class="text-lg md:text-xl text-base-content/70">
-                Have questions? Ready to get started? Our team is here to help you succeed.
-            </p>
         </div>
+    </section>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-12">
-            <!-- Contact Information -->
-            <div class="space-y-6 md:space-y-8 bg-base-100 p-8 rounded-2xl shadow-lg">
-                <div>
-                    <h3 class="text-xl md:text-2xl font-bold mb-4">Contact Information</h3>
-                    <p class="text-base-content/70 mb-6">
-                        Reach out to our dedicated support team. We're here to help you streamline your gym operations.
-                    </p>
+
+    <!-- Contact Us Section -->
+    <section id="contact" class="py-10 md:py-10 bg-base-200">
+        <div class="container mx-auto px-4 lg:px-8">
+            <!-- Section Header -->
+            <div class="text-center max-w-3xl mx-auto mb-12 md:mb-16 background">
+                <div class="badge badge-lg badge-primary mb-4 px-4 py-3">
+                    <i class="fas fa-headset mr-2"></i>Get in Touch
                 </div>
-
-                <!-- Contact Cards -->
-                <div class="space-y-4 md:space-y-6">
-                    <!-- Phone -->
-                    <div class="flex items-start gap-3 md:gap-4">
-                        <div class="avatar bg-primary/10 p-2 md:p-3 rounded-lg">
-                            <i class="fas fa-phone text-primary"></i>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-base md:text-lg mb-1">Call Us</h4>
-                            <p class="text-base-content/70 mb-1">+91 98765 43210</p>
-                            <p class="text-xs md:text-sm text-base-content/60">Mon-Fri, 9AM-6PM IST</p>
-                        </div>
-                    </div>
-
-                    <!-- Email -->
-                    <div class="flex items-start gap-3 md:gap-4">
-                        <div class="avatar bg-secondary/10 p-2 md:p-3 rounded-lg">
-                            <i class="fas fa-envelope text-secondary"></i>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-base md:text-lg mb-1">Email Us</h4>
-                            <p class="text-base-content/70 mb-1">support@squarefit.com</p>
-                            <p class="text-xs md:text-sm text-base-content/60">Response within 4 hours</p>
-                        </div>
-                    </div>
-
-                    <!-- WhatsApp -->
-                    <div class="flex items-start gap-3 md:gap-4">
-                        <div class="avatar bg-success/10 p-2 md:p-3 rounded-lg">
-                            <i class="fab fa-whatsapp text-success"></i>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-base md:text-lg mb-1">WhatsApp</h4>
-                            <p class="text-base-content/70 mb-1">+91 98765 43210</p>
-                            <p class="text-xs md:text-sm text-base-content/60">Quick chat support</p>
-                        </div>
-                    </div>
-
-                    <!-- Office -->
-                    <div class="flex items-start gap-3 md:gap-4">
-                        <div class="avatar bg-accent/10 p-2 md:p-3 rounded-lg">
-                            <i class="fas fa-map-marker-alt text-accent"></i>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-base md:text-lg mb-1">Visit Our Office</h4>
-                            <p class="text-sm text-base-content/70">
-                                Bhatt Square HQ, Vishesh Khand<br>
-                                      Lucknow<br>
-                                Uttar Pradesh 226010, India
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                
+                <h2 class="text-3xl md:text-3xl font-bold mb-4">
+                    Let's Transform Your <span class="text-secondary"> Fitness Business </span>
+                </h2>
+                <p class="text-lg md:text-xl text-base-content/70">
+                    Have questions? Ready to get started? Our team is here to help you succeed.
+                </p>
             </div>
 
-            <!-- Contact Form -->
-            <div class="lg:col-span-2">
-                <div class="card bg-base-100 shadow-xl border border-base-300">
-                    <div class="card-body p-6 md:p-8">
-                        <h3 class="text-xl md:text-2xl font-bold mb-2">Send Us a Message</h3>
-                        <p class="text-base-content/70 mb-6">Fill out the form below and we'll get back to you within 24 hours.</p>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-12">
+                <!-- Contact Information -->
+                <div class="space-y-6 md:space-y-8 bg-base-100 p-8 rounded-2xl shadow-lg">
+                    <div>
+                        <h3 class="text-xl md:text-2xl font-bold mb-4">Contact Information</h3>
+                        <p class="text-base-content/70 mb-6">
+                            Reach out to our dedicated support team. We're here to help you streamline your gym
+                            operations.
+                        </p>
+                    </div>
 
-                        <form id="contactForm" class="space-y-4">
-                            <!-- Personal Information -->
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div class="form-control">
-                                    <label class="label">
-                                        <span class="label-text font-medium">First Name <span class="text-error">*</span></span>
-                                    </label>
-                                    <input type="text" 
-                                           name="first_name"
-                                           placeholder="Enter your first name" 
-                                           class="input input-bordered w-full" 
-                                           required />
-                                </div>
-                                
-                                <div class="form-control">
-                                    <label class="label">
-                                        <span class="label-text font-medium">Last Name <span class="text-error">*</span></span>
-                                    </label>
-                                    <input type="text" 
-                                           name="last_name"
-                                           placeholder="Enter your last name" 
-                                           class="input input-bordered w-full" 
-                                           required />
-                                </div>
+                    <!-- Contact Cards -->
+                    <div class="space-y-4 md:space-y-6">
+                        <!-- Phone -->
+                        <div class="flex items-start gap-3 md:gap-4">
+                            <div class="avatar bg-primary/10 p-2 md:p-3 rounded-lg">
+                                <i class="fas fa-phone text-primary"></i>
                             </div>
+                            <div>
+                                <h4 class="font-bold text-base md:text-lg mb-1">Call Us</h4>
+                                <p class="text-base-content/70 mb-1">+91 98765 43210</p>
+                                <p class="text-xs md:text-sm text-base-content/60">Mon-Fri, 9AM-6PM IST</p>
+                            </div>
+                        </div>
 
-                            <!-- Contact Details -->
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div class="form-control">
-                                    <label class="label">
-                                        <span class="label-text font-medium">Email <span class="text-error">*</span></span>
-                                    </label>
-                                    <input type="email" 
-                                           name="email"
-                                           placeholder="your.email@example.com" 
-                                           class="input input-bordered w-full" 
-                                           required />
-                                </div>
-                                
-                                <div class="form-control">
-                                    <label class="label">
-                                        <span class="label-text font-medium">Phone <span class="text-error">*</span></span>
-                                    </label>
-                                    <input type="tel" 
-                                           name="phone"
-                                           placeholder="+91 98765 43210" 
-                                           class="input input-bordered w-full" 
-                                           required />
-                                </div>
+                        <!-- Email -->
+                        <div class="flex items-start gap-3 md:gap-4">
+                            <div class="avatar bg-secondary/10 p-2 md:p-3 rounded-lg">
+                                <i class="fas fa-envelope text-secondary"></i>
                             </div>
+                            <div>
+                                <h4 class="font-bold text-base md:text-lg mb-1">Email Us</h4>
+                                <p class="text-base-content/70 mb-1">support@squarefit.com</p>
+                                <p class="text-xs md:text-sm text-base-content/60">Response within 4 hours</p>
+                            </div>
+                        </div>
 
-                            <!-- Business Information -->
-                            <div class="form-control">
-                                <label class="label">
-                                    <span class="label-text font-medium">Business/Gym Name <span class="text-error">*</span></span>
-                                </label>
-                                <input type="text" 
-                                       name="business_name"
-                                       placeholder="Enter your business name" 
-                                       class="input input-bordered w-full" 
-                                       required />
+                        <!-- Office -->
+                        <div class="flex items-start gap-3 md:gap-4">
+                            <div class="avatar bg-accent/10 p-2 md:p-3 rounded-lg">
+                                <i class="fas fa-map-marker-alt text-accent"></i>
                             </div>
-                   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <!-- Inquiry Type -->
-                            <div class="form-control">
-                                <label class="label">
-                                    <span class="label-text font-medium">What can we help you with? <span class="text-error">*</span></span>
-                                </label>
-                                <select name="inquiry_type" class="select select-bordered w-full" required>
-                                    <option disabled selected>Select an option</option>
-                                    <option value="demo">Schedule a Demo</option>
-                                    <option value="pricing">Pricing Inquiry</option>
-                                    <option value="support">Technical Support</option>
-                                    <option value="partnership">Partnership Opportunity</option>
-                                    <option value="other">Other Inquiry</option>
-                                </select>
-                            </div>
-
-
-                              <!-- How did you hear about us -->
-                            <div class="form-control">
-                                <label class="label">
-                                    <span class="label-text font-medium">How did you hear about us?</span>
-                                </label>
-                                <select name="referral_source" class="select select-bordered w-full">
-                                    <option disabled selected>Select an option</option>
-                                    <option value="search">Google Search</option>
-                                    <option value="social">Social Media</option>
-                                    <option value="referral">Friend/Colleague Referral</option>
-                                    <option value="ad">Online Advertisement</option>
-                                    <option value="event">Industry Event</option>
-                                    <option value="other">Other</option>
-                                </select>
-                            </div>
-                            </div>
-
-                            <!-- Message -->
-                            <div class="form-control">
-                                <label class="label">
-                                    <span class="label-text font-medium">Your Message <span class="text-error">*</span></span>
-                                </label>
-                                <textarea name="message" 
-                                          class="textarea textarea-bordered w-full h-32" 
-                                          placeholder="Tell us about your requirements, challenges, or questions..."
-                                          required></textarea>
-                            </div>
-
-                          
-                            <!-- Submit Button -->
-                            <div class="form-control mt-6">
-                                <button type="submit" class="btn btn-primary btn-lg w-full">
-                                    <i class="fas fa-paper-plane"></i>
-                                    Send Message
-                                </button>
-                                <p class="text-center text-xs md:text-sm text-base-content/60 mt-3">
-                                    We respect your privacy and will never share your information
+                            <div>
+                                <h4 class="font-bold text-base md:text-lg mb-1">Visit Our Office</h4>
+                                <p class="text-sm text-base-content/70">
+                                    Bhatt Square HQ, Vishesh Khand<br>
+                                    Lucknow<br>
+                                    Uttar Pradesh 226010, India
                                 </p>
                             </div>
-                        </form>
+                        </div>
+                    </div>
 
-                        <!-- Success Message -->
-                        <div id="contactSuccess" class="hidden alert alert-success mt-4">
-                            <i class="fas fa-check-circle"></i>
-                            <div>
-                                <h3 class="font-bold">Message Sent Successfully!</h3>
-                                <div class="text-xs">Thank you for contacting us. We'll get back to you within 24 hours.</div>
+
+                </div>
+
+                <!-- Contact Form -->
+                <div class="lg:col-span-2">
+                    <div class="card bg-base-100 shadow-xl border border-base-300">
+                        <div class="card-body p-6 md:p-8">
+                            <h3 class="text-xl md:text-2xl font-bold mb-2">Send Us a Message</h3>
+                            <p class="text-base-content/70 mb-6">Fill out the form below and we'll get back to you
+                                within 24 hours.</p>
+
+                            <form id="contactForm" class="space-y-4">
+                                <!-- Personal Information -->
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="form-control">
+                                        <label class="label">
+                                            <span class="label-text font-medium">First Name <span
+                                                    class="text-error">*</span></span>
+                                        </label>
+                                        <input type="text" name="first_name" placeholder="Enter your first name"
+                                            class="input input-bordered w-full" required />
+                                    </div>
+
+                                    <div class="form-control">
+                                        <label class="label">
+                                            <span class="label-text font-medium">Last Name <span
+                                                    class="text-error">*</span></span>
+                                        </label>
+                                        <input type="text" name="last_name" placeholder="Enter your last name"
+                                            class="input input-bordered w-full" required />
+                                    </div>
+                                </div>
+
+                                <!-- Contact Details -->
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="form-control">
+                                        <label class="label">
+                                            <span class="label-text font-medium">Email <span
+                                                    class="text-error">*</span></span>
+                                        </label>
+                                        <input type="email" name="email" placeholder="your.email@example.com"
+                                            class="input input-bordered w-full" required />
+                                    </div>
+
+                                    <div class="form-control">
+                                        <label class="label">
+                                            <span class="label-text font-medium">Phone <span
+                                                    class="text-error">*</span></span>
+                                        </label>
+                                        <input type="tel" name="phone" placeholder="+91 98765 43210"
+                                            class="input input-bordered w-full" required />
+                                    </div>
+                                </div>
+
+                                <!-- Business Information -->
+                                <div class="form-control">
+                                    <label class="label">
+                                        <span class="label-text font-medium">Business/Gym Name <span
+                                                class="text-error">*</span></span>
+                                    </label>
+                                    <input type="text" name="business_name" placeholder="Enter your business name"
+                                        class="input input-bordered w-full" required />
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <!-- Inquiry Type -->
+                                    <div class="form-control">
+                                        <label class="label">
+                                            <span class="label-text font-medium">What can we help you with? <span
+                                                    class="text-error">*</span></span>
+                                        </label>
+                                        <select name="inquiry_type" class="select select-bordered w-full" required>
+                                            <option disabled selected>Select an option</option>
+                                            <option value="demo">Schedule a Demo</option>
+                                            <option value="pricing">Pricing Inquiry</option>
+                                            <option value="support">Technical Support</option>
+                                            <option value="partnership">Partnership Opportunity</option>
+                                            <option value="other">Other Inquiry</option>
+                                        </select>
+                                    </div>
+
+
+                                    <!-- How did you hear about us -->
+                                    <div class="form-control">
+                                        <label class="label">
+                                            <span class="label-text font-medium">How did you hear about us?</span>
+                                        </label>
+                                        <select name="referral_source" class="select select-bordered w-full">
+                                            <option disabled selected>Select an option</option>
+                                            <option value="search">Google Search</option>
+                                            <option value="social">Social Media</option>
+                                            <option value="referral">Friend/Colleague Referral</option>
+                                            <option value="ad">Online Advertisement</option>
+                                            <option value="event">Industry Event</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Message -->
+                                <div class="form-control">
+                                    <label class="label">
+                                        <span class="label-text font-medium">Your Message <span
+                                                class="text-error">*</span></span>
+                                    </label>
+                                    <textarea name="message" class="textarea textarea-bordered w-full h-32"
+                                        placeholder="Tell us about your requirements, challenges, or questions..."
+                                        required></textarea>
+                                </div>
+
+
+                                <!-- Submit Button -->
+                                <div class="form-control mt-6">
+                                    <button type="submit" class="btn btn-primary btn-lg w-full">
+                                        <i class="fas fa-paper-plane"></i>
+                                        Send Message
+                                    </button>
+                                    <p class="text-center text-xs md:text-sm text-base-content/60 mt-3">
+                                        We respect your privacy and will never share your information
+                                    </p>
+                                </div>
+                            </form>
+
+                            <!-- Success Message -->
+                            <div id="contactSuccess" class="hidden alert alert-success mt-4">
+                                <i class="fas fa-check-circle"></i>
+                                <div>
+                                    <h3 class="font-bold">Message Sent Successfully!</h3>
+                                    <div class="text-xs">Thank you for contacting us. We'll get back to you within 24
+                                        hours.</div>
+                                </div>
+                            </div>
+
+                            <!-- Error Message -->
+                            <div id="contactError" class="hidden alert alert-error mt-4">
+                                <i class="fas fa-exclamation-circle"></i>
+                                <div>
+                                    <h3 class="font-bold">Oops! Something went wrong</h3>
+                                    <div class="text-xs">Please try again or contact us directly via phone/email.</div>
+                                </div>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Error Message -->
-                        <div id="contactError" class="hidden alert alert-error mt-4">
-                            <i class="fas fa-exclamation-circle"></i>
-                            <div>
-                                <h3 class="font-bold">Oops! Something went wrong</h3>
-                                <div class="text-xs">Please try again or contact us directly via phone/email.</div>
-                            </div>
+                    <!-- Trust Badges -->
+                    <div class="flex flex-wrap justify-center gap-2 md:gap-4 mt-6">
+                        <div class="badge badge-outline badge-sm md:badge-md">
+                            <i class="fas fa-shield-alt mr-1"></i>100% Secure
+                        </div>
+                        <div class="badge badge-outline badge-sm md:badge-md">
+                            <i class="fas fa-clock mr-1"></i>24-Hour Response
+                        </div>
+                        <div class="badge badge-outline badge-sm md:badge-md">
+                            <i class="fas fa-headset mr-1"></i>Dedicated Support
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Trust Badges -->
-                <div class="flex flex-wrap justify-center gap-2 md:gap-4 mt-6">
-                    <div class="badge badge-outline badge-sm md:badge-md">
-                        <i class="fas fa-shield-alt mr-1"></i>100% Secure
-                    </div>
-                    <div class="badge badge-outline badge-sm md:badge-md">
-                        <i class="fas fa-clock mr-1"></i>24-Hour Response
-                    </div>
-                    <div class="badge badge-outline badge-sm md:badge-md">
-                        <i class="fas fa-headset mr-1"></i>Dedicated Support
+            <!-- FAQ Quick Links -->
+            <div class="mt-12 md:mt-16 pt-8 md:pt-12 border-t border-base-300">
+                <div class="text-center">
+                    <h3 class="text-lg md:text-xl font-bold mb-4">Common Questions</h3>
+                    <div class="flex flex-wrap justify-center gap-2 md:gap-4">
+                        <a href="#faq" class="btn btn-ghost btn-xs md:btn-sm gap-1 md:gap-2">
+                            <i class="fas fa-question-circle text-xs md:text-sm"></i>
+                            <span class="text-xs md:text-sm">Implementation Timeline</span>
+                        </a>
+                        <a href="#faq" class="btn btn-ghost btn-xs md:btn-sm gap-1 md:gap-2">
+                            <i class="fas fa-question-circle text-xs md:text-sm"></i>
+                            <span class="text-xs md:text-sm">Data Migration</span>
+                        </a>
+                        <a href="#faq" class="btn btn-ghost btn-xs md:btn-sm gap-1 md:gap-2">
+                            <i class="fas fa-question-circle text-xs md:text-sm"></i>
+                            <span class="text-xs md:text-sm">Training & Support</span>
+                        </a>
+                        <a href="#faq" class="btn btn-ghost btn-xs md:btn-sm gap-1 md:gap-2">
+                            <i class="fas fa-question-circle text-xs md:text-sm"></i>
+                            <span class="text-xs md:text-sm">Custom Requirements</span>
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- FAQ Quick Links -->
-        <div class="mt-12 md:mt-16 pt-8 md:pt-12 border-t border-base-300">
-            <div class="text-center">
-                <h3 class="text-lg md:text-xl font-bold mb-4">Common Questions</h3>
-                <div class="flex flex-wrap justify-center gap-2 md:gap-4">
-                    <a href="#faq" class="btn btn-ghost btn-xs md:btn-sm gap-1 md:gap-2">
-                        <i class="fas fa-question-circle text-xs md:text-sm"></i>
-                        <span class="text-xs md:text-sm">Implementation Timeline</span>
-                    </a>
-                    <a href="#faq" class="btn btn-ghost btn-xs md:btn-sm gap-1 md:gap-2">
-                        <i class="fas fa-question-circle text-xs md:text-sm"></i>
-                        <span class="text-xs md:text-sm">Data Migration</span>
-                    </a>
-                    <a href="#faq" class="btn btn-ghost btn-xs md:btn-sm gap-1 md:gap-2">
-                        <i class="fas fa-question-circle text-xs md:text-sm"></i>
-                        <span class="text-xs md:text-sm">Training & Support</span>
-                    </a>
-                    <a href="#faq" class="btn btn-ghost btn-xs md:btn-sm gap-1 md:gap-2">
-                        <i class="fas fa-question-circle text-xs md:text-sm"></i>
-                        <span class="text-xs md:text-sm">Custom Requirements</span>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+    </section>
 
 
     <!-- Footer -->
@@ -1441,18 +1457,19 @@
                 <!-- Brand + Description -->
                 <div class="lg:col-span-2">
                     <a href="/" class="flex items-center gap-3 text-2xl font-bold text-dark mb-6">
-                         <img src="{% static 'images/SFLogo.png' %}" class="h-12 w-auto">
+                        <img src="{% static 'images/SFLogo.png' %}" class="h-12 w-auto">
                         SquareFit
                     </a>
-                   
+
                     <p class="text-base-content/70 max-w-xs leading-relaxed">
                         India’s fastest-growing gym & fitness studio management software. Member check-in, billing,
                         class booking, trainer app – in one place.
                     </p>
-                     <div class="flex items-center gap-2 text-sm text-base-content/50">
-                       <span>Powered by</span>
-                           <a href="https://bhattsquare.com/" target="_blank" rel="noopener noreferrer" class="hover:text-secondary font-medium">BhattSquare </a>
-                      </div>
+                    <div class="flex items-center gap-2 text-sm text-base-content/50">
+                        <span>Powered by</span>
+                        <a href="https://bhattsquare.com/" target="_blank" rel="noopener noreferrer"
+                            class="hover:text-secondary font-medium">BhattSquare </a>
+                    </div>
 
                     <!-- Social Icons -->
                     <div class="flex gap-3 mt-6">
@@ -1481,7 +1498,6 @@
                     <ul class="space-y-3 text-base-content/70">
                         <li><a href="#" class="link link-hover">Features</a></li>
                         <li><a href="#" class="link link-hover">Pricing</a></li>
-                        <li><a href="#" class="link link-hover">Mobile App</a></li>
                         <li><a href="#" class="link link-hover">Integrations</a></li>
                         <li><a href="#" class="link link-hover">Free Demo</a></li>
                     </ul>
@@ -1511,9 +1527,12 @@
             </div>
 
             <!-- Bottom Line -->
-            <div class="mt-12 pt-8 border-t border-base-300 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-base-content/60">
+            <div
+                class="mt-12 pt-8 border-t border-base-300 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-base-content/60">
                 <div>
-                   <p class="text-center md:text-left">&copy; {% now "Y" %} SquareFit <a href="{%url 'superadmin_login'%}"><i class="fas fa-shield-heart"></i> </a>. All rights reserved. </p>
+                    <p class="text-center md:text-left">&copy; {% now "Y" %} SquareFit <a
+                            href="{%url 'superadmin_login'%}"><i class="fas fa-shield-heart"></i> </a>. All rights
+                        reserved. </p>
                 </div>
                 <div class="flex gap-6">
                     <a href="#" class="link link-hover">Privacy Policy</a>
@@ -1523,6 +1542,72 @@
             </div>
         </div>
     </footer>
+
+
+
+
+
+    <!-- Back to Top Button -->
+    <button id="back-to-top" class="fixed bottom-5 right-5 btn btn-primary btn-circle hidden">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const categoryContainer = document.getElementById('faq-categories');
+            const faqItems = document.querySelectorAll('#faq-accordion-container .faq-item');
+            const backToTopBtn = document.getElementById('back-to-top');
+
+            function filterFAQs() {
+                const selectedCategory = categoryContainer.querySelector('.btn-primary').dataset.filter;
+
+                faqItems.forEach(item => {
+                    const category = item.dataset.category;
+                    const categoryMatch = selectedCategory === 'all' || category === selectedCategory;
+
+                    if (categoryMatch) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            }
+
+            if (categoryContainer) {
+                const categories = categoryContainer.querySelectorAll('button');
+                categoryContainer.addEventListener('click', (e) => {
+                    const button = e.target.closest('button');
+                    if (!button) return;
+
+                    categories.forEach(cat => {
+                        cat.classList.remove('btn-primary');
+                        cat.classList.add('btn-outline');
+                    });
+                    button.classList.add('btn-primary');
+                    button.classList.remove('btn-outline');
+
+                    filterFAQs();
+                });
+            }
+
+            // Back to Top functionality
+            if (backToTopBtn) {
+                window.addEventListener('scroll', () => {
+                    if (window.scrollY > 300) {
+                        backToTopBtn.classList.remove('hidden');
+                    } else {
+                        backToTopBtn.classList.add('hidden');
+                    }
+                });
+
+                backToTopBtn.addEventListener('click', () => {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            }
+        });
+    </script>
+
 
     <script>
         // Simple script for smooth scrolling
@@ -1552,75 +1637,75 @@
         });
     </script>
 
-  <script>
-    // Form submission with loading state
-    document.getElementById('contactForm')?.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const submitBtn = this.querySelector('button[type="submit"]');
-        const originalText = submitBtn.innerHTML;
-        const successMsg = document.getElementById('contactSuccess');
-        const errorMsg = document.getElementById('contactError');
-        
-        // Show loading state
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
-        submitBtn.disabled = true;
-        
-        // Reset previous messages
-        successMsg?.classList.add('hidden');
-        errorMsg?.classList.add('hidden');
-        
-        // Simulate API call (replace with actual API call)
-        setTimeout(() => {
-            // For demo, always show success
-            if (successMsg) {
-                successMsg.classList.remove('hidden');
-            }
-            
-            // Reset form
-            this.reset();
-            
-            // Reset button
-            submitBtn.innerHTML = originalText;
-            submitBtn.disabled = false;
-            
-            // Hide success message after 5 seconds
-            setTimeout(() => {
-                successMsg?.classList.add('hidden');
-            }, 5000);
-            
-        }, 1500);
-    });
+    <script>
+        // Form submission with loading state
+        document.getElementById('contactForm')?.addEventListener('submit', function (e) {
+            e.preventDefault();
 
-    // FAQ category filtering
-    document.querySelectorAll('#faq .flex-wrap button').forEach(button => {
-        button.addEventListener('click', function() {
-            // Update active state
-            document.querySelectorAll('#faq .flex-wrap button').forEach(btn => {
-                btn.classList.remove('btn-primary');
-                btn.classList.add('btn-outline', 'btn-primary');
-            });
-            this.classList.remove('btn-outline');
-            this.classList.add('btn-primary');
-            
-            // Show notification
-            const category = this.textContent.trim();
-            const notification = document.createElement('div');
-            notification.className = 'toast toast-top toast-center';
-            notification.innerHTML = `
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            const successMsg = document.getElementById('contactSuccess');
+            const errorMsg = document.getElementById('contactError');
+
+            // Show loading state
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+            submitBtn.disabled = true;
+
+            // Reset previous messages
+            successMsg?.classList.add('hidden');
+            errorMsg?.classList.add('hidden');
+
+            // Simulate API call (replace with actual API call)
+            setTimeout(() => {
+                // For demo, always show success
+                if (successMsg) {
+                    successMsg.classList.remove('hidden');
+                }
+
+                // Reset form
+                this.reset();
+
+                // Reset button
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+
+                // Hide success message after 5 seconds
+                setTimeout(() => {
+                    successMsg?.classList.add('hidden');
+                }, 5000);
+
+            }, 1500);
+        });
+
+        // FAQ category filtering
+        document.querySelectorAll('#faq .flex-wrap button').forEach(button => {
+            button.addEventListener('click', function () {
+                // Update active state
+                document.querySelectorAll('#faq .flex-wrap button').forEach(btn => {
+                    btn.classList.remove('btn-primary');
+                    btn.classList.add('btn-outline', 'btn-primary');
+                });
+                this.classList.remove('btn-outline');
+                this.classList.add('btn-primary');
+
+                // Show notification
+                const category = this.textContent.trim();
+                const notification = document.createElement('div');
+                notification.className = 'toast toast-top toast-center';
+                notification.innerHTML = `
                 <div class="alert alert-info alert-sm">
                     <span>Showing FAQs for: ${category}</span>
                 </div>
             `;
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                notification.remove();
-            }, 2000);
+                document.body.appendChild(notification);
+
+                setTimeout(() => {
+                    notification.remove();
+                }, 2000);
+            });
         });
-    });
-</script>
-    
+    </script>
+
 </body>
 
 </html>

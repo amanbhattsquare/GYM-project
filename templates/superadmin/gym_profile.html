@@ -39,8 +39,8 @@
                                 <i class="mdi mdi-tag-plus"></i> 
                             </a>
                             
-                            <a href="#" class="btn btn-sm btn-dark" data-toggle="tooltip" title="Freeze gym account">
-                                <i class="mdi mdi-account-lock"></i>  
+                            <a href="{% url 'superadmin:toggle_gym_freeze' gym.id %}" class="btn btn-sm {% if gym.is_frozen %}btn-success{% else %}btn-dark{% endif %}" data-toggle="tooltip" title="{% if gym.is_frozen %}Unfreeze gym account{% else %}Freeze gym account{% endif %}">
+                                <i class="mdi {% if gym.is_frozen %}mdi-account-check{% else %}mdi-account-lock{% endif %}"></i>  
                             </a>
                         </div>
                     </div>
@@ -123,6 +123,18 @@
                                             <div class="card">
                                                 <div class="card-body">
                                                     <h5 class="card-title">Personal Information</h5>
+                                                    <div class="row mb-3">
+                                                        <div class="col-sm-3">
+                                                            <h6 class="mb-0">Status</h6>
+                                                        </div>
+                                                        <div class="col-sm-9 text-dark">
+                                                            {% if gym.is_frozen %}
+                                                                <span class="badge badge-danger">Frozen</span>
+                                                            {% else %}
+                                                                <span class="badge badge-success">Active</span>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
                                                     <div class="row mb-3">
                                                         <div class="col-sm-3">
                                                             <h6 class="mb-0">Gym Name</h6>

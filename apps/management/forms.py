@@ -1,15 +1,18 @@
 from django import forms
 from .models import DietPlan, MembershipPlan, WorkoutPlan
+from ckeditor.widgets import CKEditorWidget
 
 class WorkoutPlanForm(forms.ModelForm):
+    description = forms.CharField(widget=CKEditorWidget())
     class Meta:
         model = WorkoutPlan
         exclude = ['gym']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your name'}),
-            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Enter your description'}),
             'duration_minutes': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter your duration in minutes'}),
             'difficulty': forms.Select(attrs={'class': 'form-control', 'placeholder': 'Select your difficulty'}),
+            'image': forms.FileInput(attrs={'class': 'form-control'}),
+            'created_by': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter creator name'}),
         }
 
 
@@ -27,6 +30,7 @@ class MembershipPlanForm(forms.ModelForm):
         }
 
 class DietPlanForm(forms.ModelForm):
+    description = forms.CharField(widget=CKEditorWidget())
     class Meta:
         model = DietPlan
         exclude = ['gym']
@@ -35,5 +39,6 @@ class DietPlanForm(forms.ModelForm):
             'target': forms.Select(attrs={'class': 'form-control', 'placeholder': 'Select your target'}),
             'daily_calories': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter your daily calories'}),
             'duration_weeks': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter your duration in weeks'}),
-            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Enter your description'}),
+            'image': forms.FileInput(attrs={'class': 'form-control'}),
+            'created_by': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter creator name'}),
         }

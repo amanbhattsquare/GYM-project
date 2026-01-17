@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import MemberForm, MedicalHistoryForm, EmergencyContactForm, MembershipHistoryForm, PersonalTrainerForm
-from .models import Member, MedicalHistory, EmergencyContact, MembershipHistory, PersonalTrainer, MembershipFreeze
-from apps.management.models import MembershipPlan
+from .forms import MemberForm, MedicalHistoryForm, EmergencyContactForm, MembershipHistoryForm, PersonalTrainerForm, AssignDietPlanForm, AssignWorkoutPlanForm
+from .models import Member, MedicalHistory, EmergencyContact, MembershipHistory, PersonalTrainer, MembershipFreeze, AssignDietPlan, AssignWorkoutPlan
+from apps.management.models import MembershipPlan, DietPlan, WorkoutPlan
 from apps.trainers.models import Trainer
 from apps.billing.models import Payment
 from django.forms import modelformset_factory
@@ -17,6 +17,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.utils import timezone
 from decimal import Decimal, ROUND_HALF_UP
+
 
 
 @never_cache
@@ -103,6 +104,9 @@ def member_profile(request, member_id):
 
     total_due_amount = membership_due_amount + pt_due_amount
 
+    assigned_diet_plans = AssignDietPlan.objects.filter(member=member).order_by('-assigned_at')
+    assigned_workout_plans = AssignWorkoutPlan.objects.filter(member=member).order_by('-assigned_at')
+
     return render(request, 'members/member_profile.html', {
         'member': member, 
         'membership_histories': membership_histories,
@@ -111,7 +115,9 @@ def member_profile(request, member_id):
         'due_amount': total_due_amount,
         'pt_invoices': pt_member,
         'payments': payments,
-        'membership_plan': latest_membership.plan if latest_membership else None
+        'membership_plan': latest_membership.plan if latest_membership else None,
+        'assigned_diet_plans': assigned_diet_plans,
+        'assigned_workout_plans': assigned_workout_plans,
     })
 
 
@@ -179,12 +185,36 @@ def member_list(request):
     gym = getattr(request, 'gym', None)
     member_list = Member.objects.filter(gym=gym).order_by('-id')
     query = request.GET.get('q')
+    status_filter = request.GET.get('status_filter')
+    date_from = request.GET.get('date_from')
+    date_to = request.GET.get('date_to')
+
     if query:
         member_list = member_list.filter(
             Q(first_name__icontains=query) |
             Q(last_name__icontains=query) |
             Q(email__icontains=query) |
-            Q(mobile_number__icontains=query)
+            Q(mobile_number__icontains=query) |
+            Q(member_id__icontains=query)
+        ).distinct()
+
+    if status_filter:
+        if status_filter == 'active':
+            member_list = member_list.filter(membership_history__status='active').distinct()
+        elif status_filter == 'expired':
+            member_list = member_list.filter(membership_history__status='expired').distinct()
+        elif status_filter == 'freezed':
+            member_list = member_list.filter(membership_history__status='freezed').distinct()
+        elif status_filter == 'no_membership':
+            member_list = member_list.filter(membership_history__isnull=True)
+
+    if date_from and date_to:
+        member_list = member_list.filter(
+            membership_history__membership_start_date__gte=date_from,
+            membership_history__membership_start_date__lte=date_to
+            # we can use it if we want to filter members by their membership history creation date
+            # membership_history__created_at__date__gte=date_from,
+            # membership_history__created_at__date__lte=date_to
         ).distinct()
 
     for member in member_list:
@@ -197,6 +227,18 @@ def member_list(request):
         member.total_due = membership_due_amount + pt_due_amount
         latest_history = member.membership_history.filter(gym=gym).order_by('-id').first()
         member.latest_membership_history = latest_history
+
+        if member.current_status == 'Freezed':
+            member.status_display = 'Frozen'
+        elif latest_history:
+            if latest_history.get_end_date() and latest_history.get_end_date() < timezone.now().date() and latest_history.status == 'active':
+                latest_history.status = 'inactive'
+                latest_history.save()
+                member.status_display = 'Expired'
+            else:
+                member.status_display = latest_history.get_status_display()
+        else:
+            member.status_display = 'No Membership'
 
     paginator = Paginator(member_list, 10)  # Show 10 members per page.
 
@@ -350,3 +392,61 @@ def freeze_membership(request, membership_id):
         return redirect('member_profile', member_id=membership.member.id)
     
     return redirect('member_profile', member_id=membership.member.id)
+
+
+@login_required(login_url='login')
+def assign_diet_plan(request, member_id):
+    gym = getattr(request, 'gym', None)
+    member = get_object_or_404(Member, id=member_id, gym=gym)
+    
+    if request.method == 'POST':
+        form = AssignDietPlanForm(request.POST, gym=gym)
+        if form.is_valid():
+            assign_diet_plan = form.save(commit=False)
+            assign_diet_plan.member = member
+            assign_diet_plan.save()
+            messages.success(request, f'Diet plan assigned to {member.name}.')
+            return redirect('member_profile', member_id=member.id)
+    else:
+        form = AssignDietPlanForm(gym=gym)
+    
+    return render(request, 'members/assign_diet_plan.html', {'member': member, 'form': form})
+
+
+@login_required(login_url='login')
+def assign_workout_plan(request, member_id):
+    gym = getattr(request, 'gym', None)
+    member = get_object_or_404(Member, id=member_id, gym=gym)
+    
+    if request.method == 'POST':
+        form = AssignWorkoutPlanForm(request.POST, gym=gym)
+        if form.is_valid():
+            assign_workout_plan = form.save(commit=False)
+            assign_workout_plan.member = member
+            assign_workout_plan.save()
+            messages.success(request, f'Workout plan assigned to {member.name}.')
+            return redirect('member_profile', member_id=member.id)
+    else:
+        form = AssignWorkoutPlanForm(gym=gym)
+    
+    return render(request, 'members/assign_workout_plan.html', {'member': member, 'form': form})
+
+@login_required
+@require_POST
+def delete_assigned_diet_plan(request, assigned_plan_id):
+    assigned_plan = get_object_or_404(AssignDietPlan, id=assigned_plan_id)
+    try:
+        assigned_plan.delete()
+        return JsonResponse({'status': 'success', 'message': 'Assigned diet plan has been deleted.'})
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+
+@login_required
+@require_POST
+def delete_assigned_workout_plan(request, assigned_plan_id):
+    assigned_plan = get_object_or_404(AssignWorkoutPlan, id=assigned_plan_id)
+    try:
+        assigned_plan.delete()
+        return JsonResponse({'status': 'success', 'message': 'Assigned workout plan has been deleted.'})
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)

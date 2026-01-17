@@ -1,0 +1,211 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Invoice - {{ subscription.gym.name }}</title>
+    <style>
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        background-color: #f8f9fa;
+      }
+      .invoice-container {
+        width: 210mm;
+        min-height: 297mm;
+        margin: 0 auto;
+        background: white;
+        padding: 20mm;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      .invoice-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        border-bottom: 2px solid #1a237e;
+        padding-bottom: 20px;
+        margin-bottom: 20px;
+      }
+      .gym-brand {
+        display: flex;
+        align-items: center;
+      }
+      .gym-brand img {
+        width: 80px;
+        height: 80px;
+        margin-right: 20px;
+      }
+      .gym-name {
+        font-size: 28px;
+        font-weight: 700;
+        color: #1a237e;
+      }
+      .invoice-title h1 {
+        font-size: 48px;
+        font-weight: 300;
+        text-align: right;
+        color: #1a237e;
+      }
+      .invoice-details {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 30px;
+      }
+      .billing-info,
+      .invoice-info {
+        width: 48%;
+      }
+      .info-label {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 5px;
+      }
+      .info-value {
+        font-size: 16px;
+        font-weight: 500;
+      }
+      .items-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 30px;
+      }
+      .items-table th,
+      .items-table td {
+        padding: 15px;
+        border-bottom: 1px solid #eee;
+      }
+      .items-table th {
+        background-color: #f1f3f9;
+        text-align: left;
+        font-weight: 600;
+        color: #444;
+      }
+      .amount {
+        text-align: right;
+      }
+      .invoice-summary {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 30px;
+      }
+      .summary-table {
+        width: 50%;
+      }
+      .summary-table td {
+        padding: 10px 15px;
+      }
+      .summary-label {
+        text-align: right;
+      }
+      .summary-value {
+        text-align: right;
+        font-weight: 700;
+      }
+      .total-row td {
+        border-top: 2px solid #1a237e;
+        font-size: 18px;
+        color: #1a237e;
+      }
+      .invoice-footer {
+        text-align: center;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+        font-size: 12px;
+        color: #777;
+      }
+      @media print {
+        body {
+          background: none;
+        }
+        .invoice-container {
+          box-shadow: none;
+          margin: 0;
+          padding: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="invoice-container">
+      <div class="invoice-header">
+        <div class="gym-brand">
+          <img src="{% static 'images/BhattSqureLogo.jpeg' %}" alt="Brand Logo" />
+          <div>
+            <div class="gym-name">Bhatt Square Pvt. Ltd.</div>
+            <div>Bhatt Square HQ, Vishesh Khand <br> Lucknow Uttar Pradesh 226010, India</div>
+            <div>Email: bhathsquare1@gmail.com | Phone: +91 9205983996</div>
+          </div>
+        </div>
+        <div class="invoice-title">
+          <h1>INVOICE</h1>
+        </div>
+      </div>
+
+      <div class="invoice-details">
+        <div class="billing-info">
+          <div class="info-label">Billed To</div>
+          <div class="info-value">{{ subscription.gym.name }}</div>
+          <div class="info-value">{{ subscription.gym.address }}, {{ subscription.gym.city }}</div>
+          <div class="info-value">{{ subscription.gym.state }} - {{ subscription.gym.pincode }}</div>
+          <div class="info-value">Phone: {{ subscription.gym.phone }}</div>
+        </div>
+        <div class="invoice-info">
+          <div class="info-label">Invoice Number</div>
+          <div class="info-value">INV-{{ subscription.id|stringformat:'05d' }}</div>
+          <div class="info-label">Invoice Date</div>
+          <div class="info-value">{% now "F d, Y" %}</div>
+        </div>
+      </div>
+
+      <table class="items-table">
+        <thead>
+          <tr>
+            <th>Description</th>
+            <th>Payment Mode</th>
+            <th class="amount">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div>{{ subscription.subscription.name }}</div>
+              <div style="font-size: 12px; color: #666;">Gym membership subscription</div>
+            </td>
+            <td> {{ subscription.payment_mode }}</td>
+            <td class="amount">₹{{ subscription.subscription.price }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="invoice-summary">
+        <table class="summary-table">
+         
+          <tr>
+            <td class="summary-label">Discount</td>
+            <td class="summary-value">-₹{{ subscription.discount }}</td>
+          </tr>
+          <tr>
+            <tr>
+            <td class="summary-label">Total</td>
+            <td class="summary-value">₹{{ subscription.total_amount }}</td>
+          </tr>
+          <tr>
+
+            <td class="summary-label">Amount Paid</td>
+            <td class="summary-value">₹{{ subscription.paid_amount }}</td>
+          </tr>
+          <tr class="total-row">
+            <td class="summary-label">Balance Due</td>
+            <td class="summary-value">₹{{ subscription.due_amount }}</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="invoice-footer">
+        <p>Thank you for your business!</p>
+        <p>This is a computer-generated invoice and does not require a signature.</p>
+      </div>
+    </div>
+  </body>
+</html>

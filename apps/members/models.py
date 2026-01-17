@@ -3,6 +3,10 @@ from datetime import timedelta
 from django.utils import timezone
 from apps.trainers.models import Trainer
 from apps.superadmin.models import Gym
+from apps.management.models import DietPlan, WorkoutPlan
+
+from ckeditor.fields import RichTextField
+from apps.management.models import DietPlan, WorkoutPlan
 
 
 class Member(models.Model):
@@ -40,17 +44,24 @@ class Member(models.Model):
         """
         if not self.member_id:
             year = timezone.now().strftime("%y")
-
-            # Count existing members for this gym in this year
             prefix = f"{self.gym.gym_id_prefix}-MEM-{year}-"
-            count = Member.objects.filter(
+
+            # Find the latest member_id for this gym and year
+            latest_member = Member.objects.filter(
                 gym=self.gym,
                 member_id__startswith=prefix
-            ).count() + 1
+            ).order_by('-member_id').first()
 
+            if latest_member:
+                # Extract the numeric part and increment it
+                last_id = int(latest_member.member_id.split('-')[-1])
+                new_id = last_id + 1
+            else:
+                # First member of the year
+                new_id = 1
+            
             # 6-digit sequence number
-            counter = str(count).zfill(6)
-
+            counter = str(new_id).zfill(6)
             self.member_id = f"{prefix}{counter}"
 
         super().save(*args, **kwargs)
@@ -215,3 +226,52 @@ class MembershipFreeze(models.Model):
         if self.unfreeze_date:
             return (self.unfreeze_date - self.freeze_date).days
         return (timezone.now().date() - self.freeze_date).days
+
+
+class AssignDietPlan(models.Model):
+    member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name='assigned_diet_plans')
+    diet_plan = models.ForeignKey(DietPlan, on_delete=models.CASCADE, related_name='assignments')
+    assigned_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-assigned_at']
+
+    def __str__(self):
+        return f'{self.member.name} - {self.diet_plan.name}'
+
+
+class AssignWorkoutPlan(models.Model):
+    member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name='assigned_workout_plans')
+    workout_plan = models.ForeignKey(WorkoutPlan, on_delete=models.CASCADE, related_name='assignments')
+    assigned_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-assigned_at']
+
+    def __str__(self):
+        return f'{self.member.name} - {self.workout_plan.name}'
+    
+
+
+class AssignDietPlan(models.Model):
+    member = models.ForeignKey('members.Member', on_delete=models.CASCADE, related_name='assigned_diet_plans')
+    diet_plan = models.ForeignKey(DietPlan, on_delete=models.CASCADE, related_name='assignments')
+    assigned_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-assigned_at']
+
+    def __str__(self):
+        return f'{self.member.name} - {self.diet_plan.name}'
+
+
+class AssignWorkoutPlan(models.Model):
+    member = models.ForeignKey('members.Member', on_delete=models.CASCADE, related_name='assigned_workout_plans')
+    workout_plan = models.ForeignKey(WorkoutPlan, on_delete=models.CASCADE, related_name='assignments')
+    assigned_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-assigned_at']
+
+    def __str__(self):
+        return f'{self.member.name} - {self.workout_plan.name}'
