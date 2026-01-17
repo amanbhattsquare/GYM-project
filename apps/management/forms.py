@@ -1,7 +1,9 @@
 from django import forms
 from .models import DietPlan, MembershipPlan, WorkoutPlan
+from ckeditor.widgets import CKEditorWidget
 
 class WorkoutPlanForm(forms.ModelForm):
+    description = forms.CharField(widget=CKEditorWidget())
     class Meta:
         model = WorkoutPlan
         exclude = ['gym']
@@ -28,6 +30,7 @@ class MembershipPlanForm(forms.ModelForm):
         }
 
 class DietPlanForm(forms.ModelForm):
+    description = forms.CharField(widget=CKEditorWidget())
     class Meta:
         model = DietPlan
         exclude = ['gym']
