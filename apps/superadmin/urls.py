@@ -1,6 +1,8 @@
 from django.urls import path
 from . import views
 
+app_name = 'superadmin'
+
 urlpatterns = [
     path('add_gym/', views.add_gym, name='add_gym'),
     path('', views.dashboard, name='dashboard'),
@@ -19,4 +21,5 @@ urlpatterns = [
     path('billing_history/', views.billing_history, name='billing_history'),
     path('submit_due/', views.submit_due, name='submit_due'),
     path('get_due_amount/<int:gym_id>/', views.get_due_amount, name='get_due_amount'),
+    path('invoice/<int:subscription_id>/', views.invoice_view, name='invoice'),
 ]

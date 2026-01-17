@@ -1,4 +1,5 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.utils import timezone
+from django.shortcuts import render,redirect, get_object_or_404, redirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.models import User
 from .forms import GymForm, GymAdminForm, SubscriptionPlanForm
@@ -15,6 +16,15 @@ from apps.billing.models import Payment
 from decimal import Decimal
 from datetime import date, datetime, timedelta
 from django.contrib import messages
+from django.shortcuts import render, get_object_or_404
+from .models import GymSubscription
+
+def invoice_view(request, subscription_id):
+    subscription = get_object_or_404(
+        GymSubscription.objects.select_related('gym', 'subscription'),
+        id=subscription_id
+    )
+    return render(request, 'superadmin/invoice.html', {'subscription': subscription})
 
 @login_required
 @superadmin_required
@@ -104,27 +114,32 @@ def create_gym_admin(request, gym_id):
 def gym_list(request):
     query = request.GET.get('q')
     if query:
-        gyms = Gym.objects.filter(
+        gyms_list = Gym.objects.filter(
             Q(name__icontains=query) |
             Q(gym_id__icontains=query) |
-            Q(address__icontains=query) |
-            Q(admin_name__icontains=query)
+            Q(address__icontains=query)
         ).distinct()
     else:
-        gyms = Gym.objects.all()
+        gyms_list = Gym.objects.all()
 
-    for gym in gyms:
+    for gym in gyms_list:
         admin = GymAdmin.objects.filter(gym=gym).first()
-        if admin:
-            gym.has_admin = True
-            gym.admin_name = f"{admin.user.first_name} {admin.user.last_name}".strip() or admin.user.username
-            gym.admin_username = admin.user.username
-        else:
-            gym.has_admin = False
-            gym.admin_name = "N/A"
-            gym.admin_username = "N/A"
+        gym.has_admin = bool(admin)
+        gym.admin_name = f"{admin.user.first_name} {admin.user.last_name}".strip() or admin.user.username if admin else "N/A"
+        gym.admin_username = admin.user.username if admin else "N/A"
 
-    paginator = Paginator(gyms, 10)  # Show 10 gyms per page
+        # Get active subscription
+        active_subscription = GymSubscription.objects.filter(gym=gym, end_date__gte=timezone.now().date()).first()
+        if active_subscription:
+            gym.active_plan = active_subscription.subscription.name
+            gym.total_paid = active_subscription.paid_amount
+            gym.due_amount = active_subscription.due_amount
+        else:
+            gym.active_plan = "No Active Plan"
+            gym.total_paid = 0
+            gym.due_amount = 0
+
+    paginator = Paginator(gyms_list, 10)  # Show 10 gyms per page
     page = request.GET.get('page')
     gyms = paginator.get_page(page)
 
@@ -421,6 +436,9 @@ def submit_due(request):
         admin_name=F('gymadmin__name'),
         contact_no=F('phone'),
     )
+
+    for gym in gyms_with_due:
+        gym.latest_subscription = GymSubscription.objects.filter(gym=gym).latest('start_date')
 
     query = request.GET.get('q')
     if query:
