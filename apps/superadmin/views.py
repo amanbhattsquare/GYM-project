@@ -18,6 +18,15 @@ from django.contrib import messages
 
 @login_required
 @superadmin_required
+def toggle_gym_freeze(request, gym_id):
+    gym = get_object_or_404(Gym, pk=gym_id)
+    gym.is_frozen = not gym.is_frozen
+    gym.save()
+    messages.success(request, f"Gym '{gym.name}' has been {'frozen' if gym.is_frozen else 'unfrozen'}.")
+    return redirect('superadmin:gym_profile', gym_id=gym.id)
+
+@login_required
+@superadmin_required
 def dashboard(request):
     total_gyms = Gym.objects.count()
     total_members = Member.objects.count()
