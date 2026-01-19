@@ -3,6 +3,7 @@ from .models import Member, MedicalHistory, EmergencyContact, MembershipHistory,
 from apps.management.models import MembershipPlan, DietPlan, WorkoutPlan
 from apps.trainers.models import Trainer
 import re
+from datetime import date
 
 class MemberForm(forms.ModelForm):
     class Meta:
