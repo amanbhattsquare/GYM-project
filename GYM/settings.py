@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-q_2uz@czn8zn!aks2)zxc3v4z28h4=3&ge1e6ex5afr&^e#-t3
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["fitness.nextgenapplications.com","127.0.0.1","localhost","*"]
 
 
 # Application definition
@@ -105,10 +105,10 @@ DATABASES = {
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'GYM_DB',
+#         'NAME': 'gymdb',
 #         'USER': 'postgres',
-#         'PASSWORD': 'DBAdmin@#12',
-#         'HOST': 'localhost',
+#         'PASSWORD': 'Admin@Squarefit12',
+#         'HOST': '93.127.206.42',    
 #         'PORT': '5432',
 #     }
 # }

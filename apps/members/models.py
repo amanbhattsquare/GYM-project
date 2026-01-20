@@ -252,26 +252,3 @@ class AssignWorkoutPlan(models.Model):
         return f'{self.member.name} - {self.workout_plan.name}'
     
 
-
-class AssignDietPlan(models.Model):
-    member = models.ForeignKey('members.Member', on_delete=models.CASCADE, related_name='assigned_diet_plans')
-    diet_plan = models.ForeignKey(DietPlan, on_delete=models.CASCADE, related_name='assignments')
-    assigned_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        ordering = ['-assigned_at']
-
-    def __str__(self):
-        return f'{self.member.name} - {self.diet_plan.name}'
-
-
-class AssignWorkoutPlan(models.Model):
-    member = models.ForeignKey('members.Member', on_delete=models.CASCADE, related_name='assigned_workout_plans')
-    workout_plan = models.ForeignKey(WorkoutPlan, on_delete=models.CASCADE, related_name='assignments')
-    assigned_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        ordering = ['-assigned_at']
-
-    def __str__(self):
-        return f'{self.member.name} - {self.workout_plan.name}'
