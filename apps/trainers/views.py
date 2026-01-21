@@ -95,5 +95,5 @@ def toggle_trainer_status(request, trainer_id):
     trainer = get_object_or_404(Trainer, id=trainer_id, gym=gym)
     trainer.is_active = not trainer.is_active
     trainer.save()
-    messages.success(request, f'Trainer {trainer.name} has been marked as {'Active' if trainer.is_active else 'Inactive'}.')
+    messages.success(request, f"Trainer {trainer.name} has been marked as {'Active' if trainer.is_active else 'Inactive'}.")
     return redirect('trainer_list')

@@ -108,7 +108,7 @@ DATABASES = {
 #         'NAME': 'gymdb',
 #         'USER': 'postgres',
 #         'PASSWORD': 'Admin@Squarefit12',
-#         'HOST': '93.127.206.42',    
+#         'HOST': 'localhost',    
 #         'PORT': '5432',
 #     }
 # }
