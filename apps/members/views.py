@@ -293,11 +293,29 @@ def assign_membership_plan(request, member_id):
             plan_fee = history.plan.offer_price
             registration_fee = form.cleaned_data.get('registration_fee', 0) or 0
             discount = form.cleaned_data.get('discount', 0) or 0
-            total_amount = plan_fee + registration_fee - discount
-            gst_rate = gym.gst_rate if gym.gst_enabled else 0
-            gst_amount = (plan_fee * gst_rate) / 100
-            total_amount = plan_fee + gst_amount
-            history.total_amount = Decimal(total_amount).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+            
+            # Calculate the subtotal before GST
+            subtotal = plan_fee + registration_fee - discount
+            
+            # Calculate GST if enabled
+            gst_amount = Decimal(0)
+            sgst = Decimal(0)
+            cgst = Decimal(0)
+            
+            if gym.gst_enabled:
+                gst_rate = gym.gst_rate
+                gst_amount = (subtotal * gst_rate) / 100
+                sgst = gst_amount / 2
+                cgst = gst_amount / 2
+
+            # Calculate the final total amount
+            total_amount = subtotal + gst_amount
+            
+            # Save the values to the history instance
+            history.sgst = sgst.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+            history.cgst = cgst.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+            history.gst_amount = gst_amount.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+            history.total_amount = total_amount.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
 
             history.save()
 

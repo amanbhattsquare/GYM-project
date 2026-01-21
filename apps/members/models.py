@@ -132,6 +132,9 @@ class MembershipHistory(models.Model):
     membership_start_date = models.DateField()
     add_on_days = models.IntegerField(default=0)
     discount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    sgst = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    cgst = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    gst_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
     paid_amount = models.DecimalField(max_digits=10, decimal_places=2)
     payment_mode = models.CharField(max_length=50,
@@ -250,5 +253,3 @@ class AssignWorkoutPlan(models.Model):
 
     def __str__(self):
         return f'{self.member.name} - {self.workout_plan.name}'
-    
-
