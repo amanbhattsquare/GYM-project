@@ -10,6 +10,13 @@ from apps.management.models import DietPlan, WorkoutPlan
 
 
 class Member(models.Model):
+    IDENTITY_TYPE_CHOICES = [
+        ('Aadhar Card', 'Aadhar Card'),
+        ('PAN Card', 'PAN Card'),
+        ('Driving License', 'Driving License'),
+        ('Passport', 'Passport'),
+        ('Other', 'Other'),
+    ]
     gym = models.ForeignKey(Gym, on_delete=models.CASCADE, null=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
@@ -26,7 +33,7 @@ class Member(models.Model):
     pincode = models.CharField(max_length=10, null=True, blank=True)
     profession = models.CharField(max_length=100, null=True, blank=True)
     sign = models.ImageField(upload_to='signs/', blank=True, null=True)
-    identity_type = models.CharField(max_length=50, null=True, blank=True)
+    identity_type = models.CharField(max_length=50, choices=IDENTITY_TYPE_CHOICES, null=True, blank=True)
     identity_no = models.CharField(max_length=50, null=True, blank=True)
     identity_document_image = models.ImageField(upload_to='identity_docs/', blank=True, null=True)
 

@@ -11,6 +11,7 @@ class MembershipPlan(models.Model):
         ('2_months', '2 Months'),
         ('3_months', '3 Months'),
         ('6_months', '6 Months'),
+        ('9_months', '9 Months'),
         ('1_year', '1 Year'),
     ]
 
