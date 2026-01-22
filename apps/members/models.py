@@ -167,12 +167,16 @@ class MembershipHistory(models.Model):
     def due_amount(self):
         return self.total_amount - self.paid_amount
 
+    @property
+    def total_add_on_days(self):
+        return self.add_on_days + self.plan.add_on_days
+
     def get_end_date(self):
         duration_parts = self.plan.duration.split('_')
         duration_value = int(duration_parts[0])
         duration_unit = duration_parts[1]
 
-        total_add_on_days = self.add_on_days + self.plan.add_on_days
+        total_add_on_days = self.total_add_on_days
 
         if duration_unit in ['day', 'days']:
             base_end_date = self.membership_start_date + timedelta(days=duration_value + total_add_on_days)

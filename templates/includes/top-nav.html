@@ -34,9 +34,22 @@
         </div>
       </li>
       <li class="nav-item">
-        <a class="nav-link " href="#" data-bs-toggle="modal" data-bs-target="#imagePreviewModal" onclick="showImage('{{ payment_settings.qr_code.url }}')">
-            <i class="mdi mdi-qrcode-scan text-dark"></i> 
-        </a>
+       {% if payment_settings.qr_code %}
+<a class="nav-link"
+   href="#"
+   data-bs-toggle="modal"
+   data-bs-target="#imagePreviewModal"
+   onclick="showImage('{{ payment_settings.qr_code.url }}')">
+    <i class="mdi mdi-qrcode-scan text-dark"></i>
+</a>
+{% else %}
+<a class="nav-link"
+   href="#"
+   onclick="alert('QR code not uploaded yet'); return false;">
+    <i class="mdi mdi-qrcode-scan text-muted"></i>
+</a>
+{% endif %}
+
       </li>
       <li class="nav-item dropdown">
         <a class="nav-link count-indicator dropdown-toggle" id="notificationDropdown" href="#" data-toggle="dropdown">
