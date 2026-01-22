@@ -34,10 +34,8 @@
                         <tr>
                             <th class="font-weight-semibold py-2">#</th>
                             <th class="font-weight-semibold py-2">Image</th>
-                            <th class="font-weight-semibold py-2">Name</th>
                             <th class="font-weight-semibold py-2">Target</th>
-                            <th class="font-weight-semibold py-2">Daily Calories</th>
-                            <th class="font-weight-semibold py-2">Duration (Weeks)</th>
+                            <th class="font-weight-semibold py-2">Duration (Days)</th>
                             <th class="font-weight-semibold py-2">Created By</th>
                             <th class="font-weight-semibold py-2">Actions</th>
                         </tr>
@@ -55,15 +53,13 @@
                             </td>
                             <td data-label="Name">{{ plan.name }}</td>
                             <td data-label="Target">{{ plan.get_target_display }}</td>
-                            <td data-label="Daily Calories">{{ plan.daily_calories }}</td>
-                            <td data-label="Duration (Weeks)">{{ plan.duration_weeks }}</td>
+                            <td data-label="Duration (Days)">{{ plan.duration_days }}</td>
                             <td data-label="Created By">{{ plan.created_by }}</td>
                             <td data-label="Actions">
                                 <a href="#" class="btn btn-info btn-sm view-plan-btn" data-toggle="modal" data-target="#viewPlanModal"
                                     data-name="{{ plan.name }}"
                                     data-target-display="{{ plan.get_target_display }}"
-                                    data-daily-calories="{{ plan.daily_calories }}"
-                                    data-duration-weeks="{{ plan.duration_weeks }}"
+                                    data-duration-days="{{ plan.duration_days }}"
                                     data-created-by="{{ plan.created_by }}"
                                     data-image-url="{% if plan.image and plan.image.url %}{{ plan.image.url }}{% else %}{% endif %}"
                                     data-plan-id="{{ plan.pk }}">
@@ -115,14 +111,9 @@
                         {{ form.target }}
                     </div>
                     <div class="form-group">
-                        <label for="id_daily_calories">Daily Calories</label>
-                        {{ form.daily_calories }}
+                        <label for="id_duration_days">Duration (Days)</label>
+                        {{ form.duration_days }}
                     </div>
-                    <div class="form-group">
-                        <label for="id_duration_weeks">Duration (Weeks)</label>
-                        {{ form.duration_weeks }}
-                    </div>
-                    
                     <div class="form-group">
                         <label for="id_image">Image</label>
                         {{ form.image }}
@@ -154,29 +145,18 @@
             </div>
             <div class="modal-body" id="print-content" style="background-image: url('https://www.transparenttextures.com/patterns/light-paper-fibers.png');">
                 <div class="text-center mb-4">
-                    <img id="planImage" src="" alt="Diet Plan Image" class="img-fluid rounded shadow-sm" style="max-height: 300px; border: 5px solid white; display: none;">
+                    <img id="planImage" src="" alt="Diet Plan Image" class="img-fluid rounded-circle" style="width: 150px; height: 150px; object-fit: cover; border: 5px solid white; box-shadow: 0 0 15px rgba(0,0,0,0.2);">
                 </div>
-                <h3 id="planName" class="text-center mb-4 font-weight-bold text-primary"></h3>
-                <div class="card shadow-sm mb-4">
-                    <div class="card-body">
-                        <div class="row text-center">
-                            <div class="col-md-6">
-                                <p><i class="mdi mdi-bullseye-arrow mr-2"></i><strong>Target:</strong> <span id="planTarget"></span></p>
-                                <p><i class="mdi mdi-fire mr-2"></i><strong>Daily Calories:</strong> <span id="planDailyCalories"></span></p>
-                            </div>
-                            <div class="col-md-6">
-                                <p><i class="mdi mdi-calendar-clock mr-2"></i><strong>Duration (Weeks):</strong> <span id="planDuration"></span></p>
-                                <p><i class="mdi mdi-account-edit mr-2"></i><strong>Created By:</strong> <span id="planCreatedBy"></span></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card shadow-sm">
-                    <div class="card-header bg-white">
-                        <h5><i class="mdi mdi-text-subject mr-2"></i>Description</h5>
+                <div class="card">
+                    <div class="card-header bg-primary text-white text-center">
+                        <h5 class="mb-0" id="planName"></h5>
                     </div>
                     <div class="card-body">
-                        <div id="planDescription" class="p-3"></div>
+                        <p class="mb-2"><i class="mdi mdi-bullseye-arrow"></i> <strong>Target:</strong> <span id="planTarget"></span></p>
+                        <p class="mb-2"><i class="mdi mdi-calendar-clock"></i> <strong>Duration:</strong> <span id="planDuration"></span> days</p>
+                        <p class="mb-2"><i class="mdi mdi-account-edit"></i> <strong>Created By:</strong> <span id="planCreatedBy"></span></p>
+                        <hr>
+                        <div id="planDescription" class="mt-3"></div>
                     </div>
                 </div>
             </div>
@@ -217,22 +197,18 @@
 <script>
     $(document).ready(function () {
         $('#viewPlanModal').on('show.bs.modal', function (event) {
+            // Populate the modal with data from the button
             var button = $(event.relatedTarget);
-            var name = button.data('name');
-            var target = button.data('target-display');
-            var dailyCalories = button.data('daily-calories');
-            var duration = button.data('duration-weeks');
-            var createdBy = button.data('created-by');
-            var imageUrl = button.data('image-url');
-            var planId = button.data('plan-id');
-            
-            var description = $('#desc-' + planId).html() || "";
-
             var modal = $(this);
-            modal.find('#planName').text(name);
-            modal.find('#planTarget').text(target);
-            modal.find('#planDailyCalories').text(dailyCalories);
-            modal.find('#planDuration').text(duration);
+
+            modal.find('#planName').text(button.data('name'));
+            modal.find('#planTarget').text(button.data('target-display'));
+            modal.find('#planDuration').text(button.data('duration-days'));
+            modal.find('#planCreatedBy').text(button.data('created-by'));
+            
+            var planId = button.data('plan-id');
+            var descriptionHtml = $('#desc-' + planId).html();
+
             modal.find('#planDescription').html(description);
             modal.find('#planCreatedBy').text(createdBy);
             

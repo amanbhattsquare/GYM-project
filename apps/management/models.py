@@ -44,8 +44,7 @@ class DietPlan(models.Model):
 
     name = models.CharField(max_length=100)
     target = models.CharField(max_length=20, choices=TARGET_CHOICES, default='weight_loss')
-    daily_calories = models.PositiveIntegerField(default=0)
-    duration_weeks = models.PositiveIntegerField(default=0)
+    duration_days = models.PositiveIntegerField(default=0)
     description = RichTextField(blank=True)
     image = models.ImageField(upload_to='diet_plans/', blank=True, null=True)
     created_by = models.CharField(max_length=100, blank=True, null=True)
@@ -62,7 +61,7 @@ class WorkoutPlan(models.Model):
     ]
 
     name = models.CharField(max_length=100)
-    duration_minutes = models.PositiveIntegerField(default=30)
+    duration_days = models.PositiveIntegerField(default=30)
     difficulty = models.CharField(max_length=20, choices=DIFFICULTY_CHOICES, default='beginner')
     image = models.ImageField(upload_to='workout_plans/', blank=True, null=True)
     created_by = models.CharField(max_length=100, blank=True, null=True)

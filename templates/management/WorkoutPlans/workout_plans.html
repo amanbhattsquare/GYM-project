@@ -33,8 +33,7 @@
                 <th class="font-weight-semibold py-2">#</th>
                 <th class="font-weight-semibold py-2">Image</th>
                 <th class="font-weight-semibold py-2">Name</th>
-                <th class="font-weight-semibold py-2">Duration (Minutes)</th>
-                <th class="font-weight-semibold py-2">Difficulty</th>
+                <th class="font-weight-semibold py-2">Duration (Days)</th>
                 <th class="font-weight-semibold py-2">Created By</th>
                 <th>Actions</th>
               </tr>
@@ -51,7 +50,7 @@
                     {% endif %}
                   </td>
                   <td data-label="Name">{{ plan.name }}</td>
-                  <td data-label="Duration">{{ plan.duration_minutes }}</td>
+                  <td data-label="Duration">{{ plan.duration_days }}</td>
                   <td data-label="Difficulty">{{ plan.get_difficulty_display }}</td>
                   <td data-label="Created By">{{ plan.created_by|default:'N/A' }}</td>
                   <td data-label="Actions">
@@ -121,20 +120,12 @@
           <div class="card shadow-sm mb-4">
             <div class="card-body">
               <div class="row text-center">
-                <div class="col-md-4">
-                  <p>
-                    <i class="mdi mdi-clock-outline mr-2"></i><strong>Duration:</strong> <span id="planDuration"></span> minutes
-                  </p>
+                <div class="col-md-6">
+                  <p><i class="mdi mdi-calendar-clock mr-2"></i><strong>Duration (Days):</strong> <span id="planDuration"></span></p>
+                  <p><i class="mdi mdi-account-edit mr-2"></i><strong>Created By:</strong> <span id="planCreatedBy"></span></p>
                 </div>
-                <div class="col-md-4">
-                  <p>
-                    <i class="mdi mdi-speedometer mr-2"></i><strong>Difficulty:</strong> <span id="planDifficulty"></span>
-                  </p>
-                </div>
-                <div class="col-md-4">
-                  <p>
-                    <i class="mdi mdi-account-edit mr-2"></i><strong>Created By:</strong> <span id="planCreatedBy"></span>
-                  </p>
+                <div class="col-md-6">
+                  <p><i class="mdi mdi-trending-up mr-2"></i><strong>Difficulty:</strong> <span id="planDifficulty"></span></p>
                 </div>
               </div>
             </div>

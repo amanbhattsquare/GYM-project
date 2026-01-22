@@ -42,15 +42,20 @@
                 </div>
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label for="id_duration_minutes" class="form-label">Duration (minutes)</label>
-                        {{ form.duration_minutes }}
+                        <label for="id_duration_days" class="form-label">Duration (Days)</label>
+                        {{ form.duration_days }}
                     </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="id_difficulty" class="form-label">Difficulty</label>
+                        {{ form.difficulty }}
+                    </div>
+                </div>
+                <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="id_created_by" class="form-label">Created By</label>
                         {{ form.created_by }}
                     </div>
-                </div>
-                <div class="row">
+               
                     <div class="col-md-6 mb-3">
                         <label for="id_image" class="form-label">Image</label>
                         {{ form.image }}
