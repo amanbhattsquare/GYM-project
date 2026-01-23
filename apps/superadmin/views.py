@@ -216,16 +216,17 @@ def gym_profile(request, gym_id):
 @login_required
 @superadmin_required
 def reset_admin_password(request, admin_id):
-    gym_admin = get_object_or_404(GymAdmin, pk=admin_id)
-    if request.method == 'POST':
-        form = GymAdminForm(request.POST)
-        if form.is_valid():
-            user = gym_admin.user
-            password = form.cleaned_data['password']
-            user.set_password(password)
-            user.save()
-            return redirect('superadmin:gym_profile', gym_id=gym_admin.gym.id)
-    return redirect('superadmin:gym_profile', gym_id=gym_admin.gym.id)
+    admin = get_object_or_404(GymAdmin, id=admin_id)
+    user = admin.user
+    user.set_password('BTsquare@123')
+    user.save()
+    
+    # Mark the gym for password reset
+    admin.gym.password_reset_required = True
+    admin.gym.save()
+    
+    messages.success(request, f"Password for {user.username} has been reset successfully.")
+    return redirect('superadmin:gym_profile', gym_id=admin.gym.id)
 
 
 @login_required

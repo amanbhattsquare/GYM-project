@@ -67,6 +67,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'GYM.tenant_middleware.TenantMiddleware',
+    'apps.login.middleware.PasswordResetMiddleware',
 ]
 
 ROOT_URLCONF = 'GYM.urls'
