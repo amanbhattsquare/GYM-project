@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.models import User
 from django.utils import timezone
 from datetime import timedelta
-from apps.members.models import Member
+from apps.members.models import Member, MembershipHistory
 from django.http import JsonResponse
 from django.db.models.functions import TruncMonth
 from django.db.models import Count
@@ -12,6 +12,8 @@ from apps.superadmin.models import GymAdmin
 from django.db import models
 from apps.trainers.models import Trainer
 from apps.attendance.models import MemberAttendance, TrainerAttendance
+from apps.enquiry.models import Enquiry
+from apps.billing.models import Payment
 
 
 from django.contrib.auth.decorators import login_required
@@ -124,6 +126,31 @@ def dashboard(request):
     if absent_trainers_count < 0:
         absent_trainers_count = 0
 
+    # Enquiries
+    recent_enquiries = Enquiry.objects.filter(gym=gym).order_by('-enquiry_date')[:5]
+    total_enquiries = Enquiry.objects.filter(gym=gym).count()
+
+    # Dues
+    dues = MembershipHistory.objects.filter(gym=gym, paid_amount__lt=models.F('total_amount')).order_by('-membership_start_date')
+    total_dues = dues.count()
+    recent_dues = dues[:5]
+
+    # Recent Payments
+    recent_payments = Payment.objects.filter(member__gym=gym).order_by('-payment_date')[:10]
+    total_recent_payments = sum(payment.amount for payment in recent_payments)
+
+    # Birthday's
+    today = timezone.now().date()
+    today_birthdays = Member.objects.filter(gym=gym, date_of_birth__month=today.month, date_of_birth__day=today.day)
+    
+    # Upcoming Birthdays (next 7 days)
+    upcoming_birthdays_list = []
+    for i in range(1, 8):
+        future_date = today + timedelta(days=i)
+        birthdays_on_date = Member.objects.filter(gym=gym, date_of_birth__month=future_date.month, date_of_birth__day=future_date.day)
+        for member in birthdays_on_date:
+            upcoming_birthdays_list.append(member)
+
 
     context = {
         'total_members': total_members,
@@ -141,6 +168,14 @@ def dashboard(request):
         'present_trainers_count': present_trainers_count,
         'absent_members_count': absent_members_count,
         'absent_trainers_count': absent_trainers_count,
+        'recent_enquiries': recent_enquiries,
+        'total_enquiries': total_enquiries,
+        'recent_dues': recent_dues,
+        'total_dues': total_dues,
+        'recent_payments': recent_payments,
+        'total_recent_payments': total_recent_payments,
+        'today_birthdays': today_birthdays,
+        'upcoming_birthdays': upcoming_birthdays_list,
     }
     return render(request, "dashboard.html", context)
 

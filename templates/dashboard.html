@@ -393,7 +393,7 @@
         <!-- RECENT PAYMENTS & ENQUIRIES -->
         <div class="row">
             <!-- Recent Payments -->
-            <div class="col-xl-8 mb-4">
+            <div class="col-xl-6 mb-4">
                 <div class="card shadow-sm h-100">
                     <div class="card-body overflow-auto">
                         <div class="d-flex justify-content-between align-items-center mb-3">
@@ -407,7 +407,6 @@
                                     <th>Amount</th>
                                     <th>Mode</th>
                                     <th>Date</th>
-                                    <th>Status</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -417,15 +416,7 @@
                                     <td><strong>₹ {{ payment.amount|intcomma }}</strong></td>
                                     <td><span class="badge badge-secondary">{{ payment.payment_mode }}</span></td>
                                     <td>{{ payment.payment_date|date:"d M Y" }}</td>
-                                    <td>
-                                        {% if payment.status == 'completed' %}
-                                            <span class="badge badge-success">{{ payment.status }}</span>
-                                        {% elif payment.status == 'pending' %}
-                                            <span class="badge badge-warning">{{ payment.status }}</span>
-                                        {% else %}
-                                            <span class="badge badge-danger">{{ payment.status }}</span>
-                                        {% endif %}
-                                    </td>
+                                   
                                 </tr>
                                 {% empty %}
                                 <tr>
@@ -435,64 +426,197 @@
                             </tbody>
                         </table>
                         {% if recent_payments %}
-                        <a href="#" class="text-primary font-weight-bold">View all transactions</a>
+                       
+                        <div class="card-footer bg-light text-center">
+                        <a href="#" class="btn btn-sm btn-outline-primary">
+                            View all transactions<i class="fas fa-arrow-circle-right ml-1"></i>
+                        </a>
+                    </div>
                         {% endif %}
                     </div>
                 </div>
             </div>
 
-            <!-- Enquiries & Follow-ups -->
-            <div class="col-xl-4 mb-4">
+            <!-- Dues -->
+            <div class="col-xl-6 mb-4">
                 <div class="card shadow-sm h-100">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h5 class="mb-0">Enquiries & Follow-ups</h5>
-                            <span class="badge badge-info">{{ total_enquiries }}</span>
+                    <div class="card-header bg-light py-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0"><i class="fas fa-file-invoice-dollar mr-2"></i>Dues</h5>
+                            <span class="badge badge-danger badge-pill">{{ total_dues }}</span>
                         </div>
-                        <ul class="list-unstyled">
-                            {% for enquiry in recent_enquiries %}
-                            <li class="mb-3 p-2 border rounded">
-                                <div class="d-flex justify-content-between align-items-start">
-                                    <div>
-                                        <strong>{{ enquiry.name }}</strong>
-                                        <div class="small text-muted">{{ enquiry.source|default:"Walk-in" }} • {{ enquiry.created_at|date:"d M" }}</div>
-                                        <div class="mt-1">{{ enquiry.message|truncatechars:50 }}</div>
-                                    </div>
-                                    <div>
-                                        {% if enquiry.status == 'new' %}
-                                            <span class="badge badge-pill badge-success">New</span>
-                                        {% elif enquiry.status == 'follow_up' %}
-                                            <span class="badge badge-pill badge-warning">Follow-up</span>
-                                        {% elif enquiry.status == 'converted' %}
-                                            <span class="badge badge-pill badge-primary">Converted</span>
-                                        {% else %}
-                                            <span class="badge badge-pill badge-secondary">{{ enquiry.status }}</span>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                <div class="mt-2">
-                                    <small class="text-muted">
-                                        <i class="fas fa-phone mr-1"></i>{{ enquiry.phone|default:"No phone" }}
-                                        {% if enquiry.follow_up_date %}
-                                            • <i class="fas fa-calendar ml-2 mr-1"></i>Follow-up: {{ enquiry.follow_up_date|date:"d M" }}
-                                        {% endif %}
-                                    </small>
-                                </div>
-                            </li>
-                            {% empty %}
-                            <li class="text-center text-muted py-3">
-                                <i class="fas fa-inbox fa-lg mb-2"></i>
-                                <p class="mb-0">No recent enquiries</p>
-                            </li>
-                            {% endfor %}
-                        </ul>
-                        {% if recent_enquiries %}
-                        <a href="#" class="text-primary font-weight-bold">Manage all enquiries</a>
-                        {% endif %}
                     </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th scope="col" class="pl-4">Member</th>
+                                        <th scope="col">Due Date</th>
+                                        <th scope="col" class="text-right pr-4">Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for due in recent_dues %}
+                                    <tr>
+                                        <td class="pl-4">
+                                            <div class="d-flex align-items-center">
+                                                
+                                                <div>
+                                                    <h6 class="mb-0">{{ due.member.name }}</h6>
+                                                    <small class="text-muted">{{ due.member.contact_number }}</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        
+                                        <td>{{ due.membership_start_date|date:"d M, Y" }}</td>
+                                        <td class="text-right pr-4">
+                                            <span class="text-danger font-weight-bold">₹{{ due.due_amount }}</span>
+                                        </td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="4">
+                                            <div class="text-center text-muted py-4">
+                                                <i class="fas fa-check-circle fa-3x mb-3 text-success"></i>
+                                                <h6 class="mb-1">No Dues</h6>
+                                                <p class="small mb-0">All payments are settled.</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    {% if recent_dues %}
+                    <div class="card-footer bg-light text-center">
+                        <a href="{% url 'billing:invoices_list' %}" class="btn btn-sm btn-outline-primary">
+                            Manage All Dues <i class="fas fa-arrow-circle-right ml-1"></i>
+                        </a>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
+
+
         </div>
+
+        <div class='row'>
+            
+            
+             <!-- Enquiries & Follow-ups -->
+             <div class="col-lg-6 mb-4">
+                 <div class="card shadow-sm h-100">
+                     <div class="card-header bg-light py-3">
+                         <div class="d-flex justify-content-between align-items-center">
+                             <h5 class="mb-0"><i class="fas fa-headset mr-2"></i>Enquiries & Follow-ups</h5>
+                             <span class="badge badge-primary badge-pill">{{ total_enquiries }}</span>
+                         </div>
+                     </div>
+                     <div class="card-body p-0">
+                         <ul class="list-group list-group-flush">
+                             {% for enquiry in recent_enquiries %}
+                             <li class="list-group-item list-group-item-action">
+                                 <div class="d-flex w-100 justify-content-between">
+                                     <h6 class="mb-1">{{ enquiry.name }}</h6>
+                                     <small class="text-muted">{{ enquiry.enquiry_date|date:"d M, Y" }}</small>
+                                 </div>
+                                 <p class="mb-1 text-muted small">{{ enquiry.source|default:"Walk-in" }}</p>
+                                 <div class="d-flex justify-content-between align-items-center mt-2">
+                                     <div>
+                                         {% if enquiry.status == 'new' %}
+                                             <span class="badge badge-success">New</span>
+                                         {% elif enquiry.status == 'follow_up' %}
+                                             <span class="badge badge-warning">Follow-up</span>
+                                         {% elif enquiry.status == 'converted' %}
+                                             <span class="badge badge-info">Converted</span>
+                                         {% else %}
+                                             <span class="badge badge-secondary">{{ enquiry.status|title }}</span>
+                                         {% endif %}
+                                     </div>
+                                     <small class="text-muted">
+                                         {% if enquiry.follow_up_date %}
+                                             <i class="fas fa-calendar-alt mr-1"></i> {{ enquiry.follow_up_date|date:"d M" }}
+                                         {% endif %}
+                                     </small>
+                                 </div>
+                             </li>
+                             {% empty %}
+                             <li class="list-group-item">
+                                 <div class="text-center text-muted py-4">
+                                     <i class="fas fa-envelope-open-text fa-3x mb-3"></i>
+                                     <h6 class="mb-1">No Recent Enquiries</h6>
+                                     <p class="small mb-0">New enquiries will appear here.</p>
+                                 </div>
+                             </li>
+                             {% endfor %}
+                         </ul>
+                     </div>
+                     {% if recent_enquiries %}
+                     <div class="card-footer bg-light text-center">
+                         <a href="{% url 'enquiry_list' %}" class="btn btn-sm btn-outline-primary">
+                             Manage All Enquiries <i class="fas fa-arrow-circle-right ml-1"></i>
+                         </a>
+                     </div>
+                     {% endif %}
+                 </div>
+             </div>
+
+             <!--Today Birthday and Upcoming Birthdays Section-->
+             <div class="col-md-6">
+                 <div class="card shadow-sm mb-4">
+                     <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                         <h5 class="mb-0"><i class="fas fa-birthday-cake mr-2"></i>Today's Birthdays & Upcoming</h5>
+                         <span class="badge badge-light badge-pill">{{ today_birthdays|length }} Today, {{ upcoming_birthdays|length }} Upcoming</span>
+                     </div>
+                     <div class="card-body p-0">
+                         <ul class="list-group list-group-flush">
+                             {% for member in today_birthdays %}
+                             <li class="list-group-item list-group-item-action">
+                                 <div class="d-flex w-100 justify-content-between align-items-center">
+                                     <h6 class="mb-1">{{ member.name }}</h6>
+                                     <small class="text-muted">{{ member.birthday|date:"d M" }}</small>
+                                 </div>
+                                 <p class="mb-1 text-muted small">{{ member.email }}</p>
+                             </li>
+                             {% empty %}
+                             <li class="list-group-item">
+                                 <div class="text-center text-muted py-4">
+                                     <i class="fas fa-birthday-cake fa-3x mb-3"></i>
+                                     <h6 class="mb-1">No Birthdays Today</h6>
+                                     <p class="small mb-0">No birthdays to celebrate today.</p>
+                                 </div>
+                             </li>
+                             {% endfor %}
+                         </ul>
+                     </div>
+                 </div>
+
+                 <!-- Upcoming Birthdays -->
+                 {% if upcoming_birthdays %}
+                 <div class="card shadow-sm mb-4">
+                     <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                         <h5 class="mb-0"><i class="fas fa-calendar-alt mr-2"></i>Upcoming Birthdays</h5>
+                     </div>
+                     <div class="card-body p-0">
+                         <ul class="list-group list-group-flush">
+                             {% for member in upcoming_birthdays %}
+                             <li class="list-group-item list-group-item-action">
+                                 <div class="d-flex w-100 justify-content-between align-items-center">
+                                     <h6 class="mb-1">{{ member.name }}</h6>
+                                     <small>{{ member.birthday|date:"d M" }}</small>
+                                 </div>
+                                 {% if member.email %}
+                                 <p class="mb-1 text-muted small">{{ member.email }}</p>{% endif %}
+                             </li>{% endfor %}
+                         </ul>
+                     </div>
+                 </div>{% endif %}
+             </div>
+
+        </div>
+        
 
         <!-- QUICK ACTIONS BAR -->
         <div class="card shadow-sm mb-4">
