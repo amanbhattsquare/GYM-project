@@ -146,42 +146,62 @@
         <div class="row">
             <div class="col-xl-8 mb-4">
                 <div class="card shadow-sm h-100">
-                    <div class="card-body overflow-auto">
-                        <h5 class="mb-3">Today's Attendance ({{ today_attendance_count }} Members)</h5>
-                        <table class="table">
-                            <thead class="thead-light">
-                                <tr>
-                                    <th>Member</th>
-                                    <th>Check-in Time</th>
-                                    <th>Plan</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for attendance in todays_attendance %}
-                                <tr>
-                                    <td>{{ attendance.member.first_name }} {{ attendance.member.last_name }}</td>
-                                    <td>{{ attendance.check_in_time|time:"g:i A" }}</td>
-                                    <td><span class="badge badge-info">{{ attendance.member.latest_membership.plan.title|default:"No Plan" }}</span></td>
-                                    <td>
-                                        {% if attendance.member.is_active %}
-                                            <span class="badge badge-success">Active</span>
-                                        {% else %}
-                                            <span class="badge badge-danger">Expired</span>
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                                {% empty %}
-                                <tr>
-                                    <td colspan="4" class="text-center text-muted">No attendance recorded today</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                        {% if todays_attendance %}
-                        <a href="#" class="text-primary font-weight-bold">View all attendance</a>
-                        {% endif %}
+                    <div class="card-header bg-white border-0">
+                        <h5 class="mb-0">Today's Attendance</h5>
                     </div>
+                    <div class="card-body pt-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Role</th>
+                                        <th>Check-in Time</th>
+                                      
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for attendance in todays_attendance %}
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                              
+                                                <div>
+                                                    {% if attendance.member %}
+                                                        <h6 class="mb-0">{{ attendance.member.first_name }} {{ attendance.member.last_name }}</h6>
+                                                    {% elif attendance.trainer %}
+                                                        <h6 class="mb-0">{{ attendance.trainer.name }} </h6>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            {% if attendance.member %}
+                                                <span class="badge bg-light-info text-info">Member</span>
+                                            {% elif attendance.trainer %}
+                                                <span class="badge bg-light-warning text-warning">Trainer</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ attendance.check_in_time|time:"g:i A" }}</td>
+                                       
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="4" class="text-center text-muted py-4">
+                                            <i class="mdi mdi-account-off-outline mdi-24px"></i>
+                                            <p class="mb-0 mt-2">No attendance recorded today</p>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    {% if todays_attendance %}
+                    <div class="card-footer bg-white border-0 text-center">
+                        <a href="{% url 'attendance_report' %}" class="btn btn-outline-primary">View All Attendance</a>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
 
@@ -203,7 +223,7 @@
                                 <div class="col-6">
                                     <div class="bg-warning text-white p-2 rounded">
                                         <h5 class="mb-0">{{ absent_count }}</h5>
-                                        <small>Expected</small>
+                                        <small>Absent</small>
                                     </div>
                                 </div>
                             </div>
@@ -610,56 +630,7 @@ const memberGrowthChart = new Chart(ctx, {
     }
 });
 
-// Attendance doughnut chart with dynamic data
-const attendanceCtx = document.getElementById('attendance-chart').getContext('2d');
-const attendanceChart = new Chart(attendanceCtx, {
-    type: 'doughnut',
-    data: {
-        labels: ['Present', 'Expected'],
-        datasets: [{
-            label: 'Attendance',
-            data: [{{ present_count|default:"2" }}, {{ absent_count|default:"1" }}],
-            backgroundColor: [
-                'rgba(9, 155, 155, 0.95)',
-                'rgba(226, 168, 20, 0.87)',
-            ],
-            borderColor: [
-                'rgba(75, 192, 192, 1)',
-                'rgba(255, 206, 86, 1)',
-            ],
-            borderWidth: 2,
-            hoverOffset: 15
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: {
-                position: 'bottom',
-                labels: {
-                    font: {
-                        size: 12
-                    },
-                    padding: 20
-                }
-            },
-            tooltip: {
-                enabled: true,
-                callbacks: {
-                    label: function(context) {
-                        const label = context.label || '';
-                        const value = context.raw || 0;
-                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                        const percentage = Math.round((value / total) * 100);
-                        return `${label}: ${value} (${percentage}%)`;
-                    }
-                }
-            }
-        },
-        cutout: '70%'
-    }
-});
+
 
 // Send renewal reminders functionality
 document.getElementById('sendRemindersBtn')?.addEventListener('click', function() {
@@ -704,65 +675,52 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<style>
-/* Additional Custom Styles */
-.card {
-    border: 1px solid rgba(0, 0, 0, 0.075);
-}
+{% endblock %}
 
-.card-header {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.075);
-}
-
-.badge {
-    font-weight: 500;
-    font-size: 0.8em;
-}
-
-.table th {
-    font-weight: 600;
-    font-size: 0.9em;
-    text-transform: uppercase;
-    color: #6c757d;
-    border-top: none;
-}
-
-.table td {
-    vertical-align: middle;
-}
-
-.card.border-danger {
-    border-width: 2px;
-}
-
-.card.border-warning {
-    border-width: 2px;
-}
-
-.btn-block {
-    padding: 0.75rem 0;
-    font-weight: 500;
-}
-
-.chart-container {
-    position: relative;
-    height: 200px;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .page-header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    
-    .page-header > div:last-child {
-        margin-top: 1rem;
-    }
-    
-    .btn-block {
-        margin-bottom: 0.5rem;
-    }
-}
-</style>
+{% block extra_js %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Today's Attendance Chart
+        var attendanceCtx = document.getElementById('attendance-chart').getContext('2d');
+        var attendanceChart = new Chart(attendanceCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Members', 'Trainers'],
+                datasets: [
+                    {
+                        label: 'Present',
+                        data: [{{ present_members_count }}, {{ present_trainers_count }}],
+                        backgroundColor: 'rgba(40, 167, 69, 0.8)',
+                        borderColor: 'rgba(40, 167, 69, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Absent',
+                        data: [{{ absent_members_count }}, {{ absent_trainers_count }}],
+                        backgroundColor: 'rgba(255, 193, 7, 0.8)',
+                        borderColor: 'rgba(255, 193, 7, 1)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
 {% endblock %}

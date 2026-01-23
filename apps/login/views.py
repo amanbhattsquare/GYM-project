@@ -145,6 +145,8 @@ def password_reset_page(request):
             messages.error(request, 'Invalid current password.')
         elif new_password != confirm_password:
             messages.error(request, 'New passwords do not match.')
+        elif ' ' in new_password:
+            messages.error(request, 'Password cannot contain spaces.')
         else:
             user.set_password(new_password)
             user.save()

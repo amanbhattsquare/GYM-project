@@ -12,6 +12,7 @@ from django.db.models.functions import Coalesce
 from django.http import JsonResponse
 from django.core.serializers import serialize
 from django.views.decorators.http import require_POST
+from django.db import IntegrityError
 
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
@@ -32,10 +33,7 @@ def add_new_member(request):
         emergency_form = EmergencyContactForm(request.POST, prefix='emergency')
 
         if member_form.is_valid() and medical_formset.is_valid() and emergency_form.is_valid():
-            email = member_form.cleaned_data.get('email')
-            if email and Member.objects.filter(gym=gym, email=email).exists():
-                messages.error(request, 'A member with this email already exists.')
-            else:
+            try:
                 member = member_form.save(commit=False)
                 member.gym = gym
                 member.save()
@@ -58,6 +56,14 @@ def add_new_member(request):
                 emergency_contact.save()
                 messages.success(request, 'Member added successfully!')
                 return redirect('assign_membership_plan', member_id=member.id)
+            except IntegrityError as e:
+                if 'email' in str(e):
+                    member_form.add_error('email', 'A member with this email already exists.')
+                elif 'mobile_number' in str(e):
+                    member_form.add_error('mobile_number', 'A member with this mobile number already exists.')
+                else:
+                    messages.error(request, 'An unexpected error occurred. Please try again.')
+
         else:
             print("Member form errors:", member_form.errors)
             print("Medical formset errors:", medical_formset.errors)

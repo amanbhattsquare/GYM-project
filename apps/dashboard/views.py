@@ -10,6 +10,9 @@ from django.db.models.functions import TruncMonth
 from django.db.models import Count
 from apps.superadmin.models import GymAdmin
 from django.db import models
+from apps.trainers.models import Trainer
+from apps.attendance.models import MemberAttendance, TrainerAttendance
+
 
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
@@ -90,6 +93,37 @@ def dashboard(request):
     month_labels = [item['month'].strftime("%b") for item in new_members_data]
     new_member_counts = [item['count'] for item in new_members_data]
     active_member_counts = [item['count'] for item in active_members_data]
+    
+    # Attendance data
+    today_min = timezone.now().replace(hour=0, minute=0, second=0, microsecond=0)
+    today_max = timezone.now().replace(hour=23, minute=59, second=59, microsecond=999999)
+    
+    member_attendance = MemberAttendance.objects.filter(gym=gym, check_in_time__range=(today_min, today_max))
+    trainer_attendance = TrainerAttendance.objects.filter(gym=gym, check_in_time__range=(today_min, today_max))
+    
+    today_attendance_count = member_attendance.count() + trainer_attendance.count()
+    
+    # Combine and sort attendance
+    combined_attendance = sorted(
+        list(member_attendance) + list(trainer_attendance),
+        key=lambda x: x.check_in_time,
+        reverse=True
+    )[:10]
+    
+    # Attendance overview
+    present_members_count = member_attendance.count()
+    present_trainers_count = trainer_attendance.count()
+    
+    total_trainers = Trainer.objects.filter(gym=gym).count()
+    
+    absent_members_count = total_members - present_members_count
+    if absent_members_count < 0:
+        absent_members_count = 0
+
+    absent_trainers_count = total_trainers - present_trainers_count
+    if absent_trainers_count < 0:
+        absent_trainers_count = 0
+
 
     context = {
         'total_members': total_members,
@@ -101,6 +135,12 @@ def dashboard(request):
         'month_labels': month_labels,
         'new_member_counts': new_member_counts,
         'active_member_counts': active_member_counts,
+        'today_attendance_count': today_attendance_count,
+        'todays_attendance': combined_attendance,
+        'present_members_count': present_members_count,
+        'present_trainers_count': present_trainers_count,
+        'absent_members_count': absent_members_count,
+        'absent_trainers_count': absent_trainers_count,
     }
     return render(request, "dashboard.html", context)
 
