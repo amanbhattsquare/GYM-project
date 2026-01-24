@@ -11,6 +11,7 @@ from django.contrib.auth.decorators import login_required
 from apps.superadmin.models import GymAdmin
 from django.core.paginator import Paginator
 
+
 @login_required
 def business_report(request):
     try:

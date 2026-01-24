@@ -155,6 +155,7 @@ class MembershipHistory(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=10, choices=[('active', 'Active'), ('inactive', 'Inactive'), ('frozen', 'Frozen')],
                               default='active')
+    is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.member} - {self.plan}"
@@ -211,11 +212,12 @@ class PersonalTrainer(models.Model):
     transaction_id = models.CharField(max_length=100, blank=True, null=True)
     comment = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=10, choices=[('active', 'Active'), ('inactive', 'Inactive')],
-                              default='active')
+    status = models.CharField(max_length=10, choices=[('active', 'Active'), ('inactive', 'Inactive')], default='active')
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.member} - {self.trainer}"
+        return f"{self.member.first_name} {self.member.last_name} - {self.trainer.name}"
 
     def get_end_date(self):
         return self.pt_start_date + timedelta(days=30 * self.months)
@@ -243,24 +245,21 @@ class MembershipFreeze(models.Model):
 
 
 class AssignDietPlan(models.Model):
+    gym = models.ForeignKey(Gym, on_delete=models.CASCADE, null=True)
     member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name='assigned_diet_plans')
-    diet_plan = models.ForeignKey(DietPlan, on_delete=models.CASCADE, related_name='assignments')
+    diet_plan = models.ForeignKey(DietPlan, on_delete=models.CASCADE, null=True)
     assigned_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        ordering = ['-assigned_at']
 
     def __str__(self):
         return f'{self.member.name} - {self.diet_plan.name}'
 
 
 class AssignWorkoutPlan(models.Model):
+    gym = models.ForeignKey(Gym, on_delete=models.CASCADE, null=True)
     member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name='assigned_workout_plans')
-    workout_plan = models.ForeignKey(WorkoutPlan, on_delete=models.CASCADE, related_name='assignments')
+    workout_plan = models.ForeignKey(WorkoutPlan, on_delete=models.CASCADE, null=True)
     assigned_at = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
-        ordering = ['-assigned_at']
-
     def __str__(self):
+        return f"{self.member.first_name} {self.member.last_name} - {self.workout_plan.title}"
         return f'{self.member.name} - {self.workout_plan.name}'

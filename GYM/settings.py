@@ -157,7 +157,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 
-# REQUIRED for production (alwaysdata)
+# REQUIRED for production (VPS)
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 

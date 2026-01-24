@@ -86,7 +86,7 @@ def member_profile(request, member_id):
     
     # Fetch both active and frozen memberships
     membership_histories = MembershipHistory.objects.filter(
-        member=member, status__in=['active', 'frozen'], gym=gym
+        member=member, gym=gym
     ).order_by('-id')
     
     pt_member = PersonalTrainer.objects.select_related('trainer').filter(
