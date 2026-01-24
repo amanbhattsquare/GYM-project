@@ -332,7 +332,8 @@ def assign_membership_plan(request, member_id):
                     amount=history.paid_amount,
                     payment_mode=history.payment_mode,
                     transaction_id=history.transaction_id,
-                    comment=f"Initial payment for {history.plan.title}"
+                    comment=f"Initial payment for {history.plan.title}",
+                    membership_history=history
                 )
 
             member.membership_plan = history.plan
@@ -361,6 +362,17 @@ def assign_pt_trainer(request, member_id):
             pt_assignment.gym = gym # Assign gym to the instance
             pt_assignment.transaction_id = request.POST.get('transaction_id')
             pt_assignment.save()
+
+            if pt_assignment.paid_amount > 0:
+                Payment.objects.create(
+                    gym=gym,
+                    member=member,
+                    amount=pt_assignment.paid_amount,
+                    payment_mode=pt_assignment.payment_mode,
+                    transaction_id=pt_assignment.transaction_id,
+                    comment=f"Initial payment for Personal Trainer: {pt_assignment.trainer.name}",
+                    personal_trainer=pt_assignment
+                )
             messages.success(request, f'Personal Trainer "{pt_assignment.trainer.name}" assigned to {member.first_name} {member.last_name}.')
             return redirect('billing:pt_invoice', member_id=member.id, pt_invoice_id=pt_assignment.id)
     else:

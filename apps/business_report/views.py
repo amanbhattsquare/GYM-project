@@ -59,7 +59,7 @@ def business_report(request):
             'due': invoice.due_amount,
             'status': 'Paid' if invoice.due_amount <= 0 else 'Pending',
             'mode': invoice.payment_mode,
-            'type': 'New' if is_new_registration else 'Subscription',
+            'type': 'New' if is_new_registration else 'Renewal',
             'date': invoice.membership_start_date,
             'invoice_type': 'membership'
         })
@@ -74,7 +74,7 @@ def business_report(request):
             'due': invoice.due_amount,
             'status': 'Paid' if invoice.due_amount <= 0 else 'Pending',
             'mode': invoice.payment_mode,
-            'type': 'Personal Training',
+            'type': 'PT',
             'date': invoice.pt_start_date,
             'invoice_type': 'pt'
         })
