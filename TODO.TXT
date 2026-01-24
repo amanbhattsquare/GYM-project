@@ -111,3 +111,12 @@ create subadmin page , here gym admin can create sub admins,
   uske baad sabhi pages show honge jitne apps bane huye and uske aage usnke pages show honge phle 
   sabhi check honge agar main chahu to uncheck kar du to vo page vo sb admin access nhi kar payega. 
 make it indrustry ready . do it one by one , sbse phle html pags ka kaam karo
+
+
+
+
+
+"in Business Report page Latest Transactions me "Type" me "Due, Renuwal, new and PT". 
+ "Due"(jab koi member phle se bani hue invoice ka due submit kare) , 
+ "renewal"(jab koi member dovara plan le ya koi plan phle se chal rha tha vo exper ho gya uske baad usko dustra plan assign hua ho), "new"(jab kisi ko phle baar memebrhip plan assign kare)
+ and "PT"(personal trainening) aayege. make it profectional and industry ready​.

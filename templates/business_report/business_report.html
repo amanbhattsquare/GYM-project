@@ -183,7 +183,7 @@
                                     </td>
                                     <td data-label="date">{{ transaction.date|date:"d-m-Y" }}</td>
                                     <td data-label="Profile">
-                                        <img src="{% if transaction.member.profile_picture %}{{ transaction.member.profile_picture.url }}{% else %}{% static 'images/gym-guy.jpg' %}{% endif %}"
+                                        <img src="{% if transaction.member.profile_picture %}{{ transaction.member.profile_picture.url }}{% else %}{% static 'images/member_dp.jpg' %}{% endif %}"
                                             class="rounded-circle border" style="width: 40px; height: 40px; object-fit: cover;"
                                             alt="{{ transaction.member.name }}">
                                     </td>
