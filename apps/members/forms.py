@@ -49,10 +49,6 @@ class MemberForm(forms.ModelForm):
             'last_name',
             'mobile_number',
             'gender',
-            'address',
-            'state',
-            'city',
-            'pincode',
         ]
         for field in required_fields:
             self.fields[field].required = True

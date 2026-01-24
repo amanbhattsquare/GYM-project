@@ -322,7 +322,7 @@
                                                 <th>Member</th>
                                                 <th>Plan</th>
                                                 <th>Expiry Date</th>
-                                                <th>Days Left</th>
+                                                
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -347,23 +347,6 @@
                                                         <span class="text-warning">{{ member.latest_membership.get_end_date|date:"d M Y" }}</span>
                                                     {% else %}
                                                         <span class="text-muted">No membership</span>
-                                                    {% endif %}
-                                                </td>
-                                                <td>
-                                                    {% if member.latest_membership %}
-                                                        {% with days_left=member.latest_membership.days_until_expiry %}
-                                                            {% if days_left < 0 %}
-                                                                <span class="badge badge-danger">Overdue</span>
-                                                            {% elif days_left == 0 %}
-                                                                <span class="badge badge-warning">Today</span>
-                                                            {% elif days_left <= 7 %}
-                                                                <span class="badge badge-warning">{{ days_left }} days</span>
-                                                            {% else %}
-                                                                <span class="badge badge-success">{{ days_left }} days</span>
-                                                            {% endif %}
-                                                        {% endwith %}
-                                                    {% else %}
-                                                        <span class="text-muted">-</span>
                                                     {% endif %}
                                                 </td>
                                             </tr>
