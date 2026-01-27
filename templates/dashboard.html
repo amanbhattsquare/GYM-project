@@ -301,7 +301,7 @@
                             </div>
                             {% if expired_members %}
                             <div class="card-footer bg-light">
-                                <a href="#" class="btn btn-sm btn-outline-danger">Contact Expired Members</a>
+                                <a href="#" class="btn btn-sm btn-outline-danger">View All</a>
                             </div>
                             {% endif %}
                         </div>
@@ -364,7 +364,7 @@
                             </div>
                             {% if upcoming_expiries %}
                             <div class="card-footer bg-light">
-                                <a href="#" class="btn btn-sm btn-outline-warning">Send Renewal Reminders</a>
+                                <a href="#" class="btn btn-sm btn-outline-warning">View All </a>
                             </div>
                             {% endif %}
                         </div>
@@ -546,56 +546,82 @@
                  </div>
              </div>
 
-             <!--Today Birthday and Upcoming Birthdays Section-->
+             <!-- Today's and Upcoming Birthdays Section -->
              <div class="col-md-6">
                  <div class="card shadow-sm mb-4">
                      <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                         <h5 class="mb-0"><i class="fas fa-birthday-cake mr-2"></i>Today's Birthdays & Upcoming</h5>
+                         <h5 class="mb-0"><i class="fas fa-birthday-cake mr-2"></i>Today's & Upcoming Birthdays</h5>
                          <span class="badge badge-light badge-pill">{{ today_birthdays|length }} Today, {{ upcoming_birthdays|length }} Upcoming</span>
                      </div>
                      <div class="card-body p-0">
-                         <ul class="list-group list-group-flush">
-                             {% for member in today_birthdays %}
-                             <li class="list-group-item list-group-item-action">
-                                 <div class="d-flex w-100 justify-content-between align-items-center">
-                                     <h6 class="mb-1">{{ member.name }}</h6>
-                                     <small class="text-muted">{{ member.birthday|date:"d M" }}</small>
-                                 </div>
-                                 <p class="mb-1 text-muted small">{{ member.email }}</p>
-                             </li>
-                             {% empty %}
-                             <li class="list-group-item">
-                                 <div class="text-center text-muted py-4">
-                                     <i class="fas fa-birthday-cake fa-3x mb-3"></i>
-                                     <h6 class="mb-1">No Birthdays Today</h6>
-                                     <p class="small mb-0">No birthdays to celebrate today.</p>
-                                 </div>
-                             </li>
-                             {% endfor %}
-                         </ul>
+                         <div class="table-responsive">
+                             <table class="table table-hover mb-0">
+                                 <thead class="thead-light">
+                                     <tr>
+                                         <th>Member</th>
+                                         <th>Birthday</th>
+                                         <th>Actions</th>
+                                     </tr>
+                                 </thead>
+                                 <tbody>
+                                     {% for member in today_birthdays %}
+                                     <tr>
+                                         <td>
+                                             <strong>{{ member.name }}</strong>
+                                             <br>
+                                             <small class="text-muted">{{ member.email|default:'' }}</small>
+                                         </td>
+                                         <td>
+                                             <span class="badge bg-light-success text-success">Today!</span>
+                                             <br>
+                                             <small>{{ member.date_of_birth|date:"d M" }}</small>
+                                         </td>
+                                         <td>
+                                             <a href="https://wa.me/{{ member.mobile_number }}" target="_blank" class="btn btn-sm btn-success">
+                                                 <i class="fab fa-whatsapp"></i>
+                                             </a>
+                                             <a href="tel:{{ member.mobile_number }}" class="btn btn-sm btn-info">
+                                                 <i class="fas fa-phone"></i>
+                                             </a>
+                                         </td>
+                                     </tr>
+                                     {% endfor %}
+                                     {% for member in upcoming_birthdays %}
+                                     <tr>
+                                         <td>
+                                             <strong>{{ member.name }}</strong>
+                                             <br>
+                                             <small class="text-muted">{{ member.email|default:'' }}</small>
+                                         </td>
+                                         <td>
+                                             <span class="badge bg-light-warning text-warning">Upcoming</span>
+                                             <br>
+                                             <small>{{ member.date_of_birth|date:"d M" }}</small>
+                                         </td>
+                                         <td>
+                                             <a href="https://wa.me/{{ member.mobile_number }}" target="_blank" class="btn btn-sm btn-success">
+                                                 <i class="fab fa-whatsapp"></i>
+                                             </a>
+                                             <a href="tel:{{ member.mobile_number }}" class="btn btn-sm btn-info">
+                                                 <i class="fas fa-phone"></i>
+                                             </a>
+                                         </td>
+                                     </tr>
+                                     {% endfor %}
+                                     {% if not today_birthdays and not upcoming_birthdays %}
+                                     <tr>
+                                         <td colspan="3" class="text-center text-muted py-4">
+                                             <i class="fas fa-birthday-cake fa-3x mb-3"></i>
+                                             <h6 class="mb-1">No Birthdays Today or Upcoming</h6>
+                                             <p class="small mb-0">No birthdays to celebrate in the coming days.</p>
+                                         </td>
+                                     </tr>
+                                     {% endif %}
+                                 </tbody>
+                             </table>
+                         </div>
                      </div>
                  </div>
-
-                 <!-- Upcoming Birthdays -->
-                 {% if upcoming_birthdays %}
-                 <div class="card shadow-sm mb-4">
-                     <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
-                         <h5 class="mb-0"><i class="fas fa-calendar-alt mr-2"></i>Upcoming Birthdays</h5>
-                     </div>
-                     <div class="card-body p-0">
-                         <ul class="list-group list-group-flush">
-                             {% for member in upcoming_birthdays %}
-                             <li class="list-group-item list-group-item-action">
-                                 <div class="d-flex w-100 justify-content-between align-items-center">
-                                     <h6 class="mb-1">{{ member.name }}</h6>
-                                     <small>{{ member.birthday|date:"d M" }}</small>
-                                 </div>
-                                 {% if member.email %}
-                                 <p class="mb-1 text-muted small">{{ member.email }}</p>{% endif %}
-                             </li>{% endfor %}
-                         </ul>
-                     </div>
-                 </div>{% endif %}
              </div>
 
         </div>
