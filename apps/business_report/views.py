@@ -20,7 +20,6 @@ def business_report(request):
     except GymAdmin.DoesNotExist:
         return render(request, 'error.html', {'message': 'Gym admin not found.'})
 
-    # Time-based filters
     today = timezone.now().date()
     from_date_str = request.GET.get('from_date')
     to_date_str = request.GET.get('to_date')
@@ -32,115 +31,48 @@ def business_report(request):
         start_date = today.replace(day=1)
         end_date = today
 
-    # KPI Calculations
     total_income = Payment.objects.filter(member__gym=gym, payment_date__date__range=[start_date, end_date]).aggregate(Sum('amount'))['amount__sum'] or 0
     total_expense = Expense.objects.filter(gym=gym, date__range=[start_date, end_date]).aggregate(Sum('amount'))['amount__sum'] or 0
     gross_income = total_income - total_expense
 
-    membership_dues = MembershipHistory.objects.filter(member__gym=gym).annotate(due=F('total_amount') - F('paid_amount')).aggregate(total_due=Sum('due'))['total_due'] or 0
-    pt_dues = PersonalTrainer.objects.filter(member__gym=gym).annotate(due=F('total_amount') - F('paid_amount')).aggregate(total_due=Sum('due'))['total_due'] or 0
+    membership_dues = MembershipHistory.objects.filter(member__gym=gym, status='active').aggregate(total_due=Sum(F('total_amount') - F('paid_amount')))['total_due'] or 0
+    pt_dues = PersonalTrainer.objects.filter(member__gym=gym, status='active').aggregate(total_due=Sum(F('total_amount') - F('paid_amount')))['total_due'] or 0
     total_due = membership_dues + pt_dues
 
-    # Fetching latest transactions for the tables
-    latest_invoices = MembershipHistory.objects.filter(member__gym=gym, membership_start_date__range=[start_date, end_date]).order_by('-membership_start_date')
-    latest_pt_invoices = PersonalTrainer.objects.filter(member__gym=gym, pt_start_date__range=[start_date, end_date]).order_by('-pt_start_date')
-    latest_expenses = Expense.objects.filter(gym=gym, date__range=[start_date, end_date]).order_by('-date')[:10]
-    latest_payments = Payment.objects.filter(member__gym=gym, payment_date__date__range=[start_date, end_date]).order_by('-payment_date')
-
-    transactions = []
-    for invoice in latest_invoices:
-        is_new_registration = not MembershipHistory.objects.filter(member=invoice.member, pk__lt=invoice.pk).exists()
-        transactions.append({
-            'invoice': invoice,
-            'profile': invoice.member.profile_picture.url if invoice.member.profile_picture else None,
-            'member': invoice.member,
-            'amount': invoice.total_amount,
-            'paid': invoice.paid_amount,
-            'due': invoice.due_amount,
-            'status': 'Paid' if invoice.due_amount <= 0 else 'Pending',
-            'mode': invoice.payment_mode,
-            'type': 'New' if is_new_registration else 'Renewal',
-            'date': invoice.membership_start_date,
-            'invoice_type': 'membership'
-        })
-
-    for invoice in latest_pt_invoices:
-        transactions.append({
-            'invoice': invoice,
-            'profile': invoice.member.profile_picture.url if invoice.member.profile_picture else None,
-            'member': invoice.member,
-            'amount': invoice.total_amount,
-            'paid': invoice.paid_amount,
-            'due': invoice.due_amount,
-            'status': 'Paid' if invoice.due_amount <= 0 else 'Pending',
-            'mode': invoice.payment_mode,
-            'type': 'PT',
-            'date': invoice.pt_start_date,
-            'invoice_type': 'pt'
-        })
-
-    for payment in latest_payments:
-        if payment.membership_history:
-            invoice = payment.membership_history
-            transactions.append({
-                'invoice': invoice,
-                'profile': invoice.member.profile_picture.url if invoice.member.profile_picture else None,
-                'member': invoice.member,
-                'amount': invoice.total_amount,
-                'paid': payment.amount,
-                'due': invoice.due_amount,
-                'status': 'Paid',
-                'mode': payment.payment_mode,
-                'type': 'Due',
-                'date': payment.payment_date.date(),
-                'invoice_type': 'membership'
-            })
-        elif payment.personal_trainer:
-            invoice = payment.personal_trainer
-            transactions.append({
-                'invoice': invoice,
-                'profile': invoice.member.profile_picture.url if invoice.member.profile_picture else None,
-                'member': invoice.member,
-                'amount': invoice.total_amount,
-                'paid': payment.amount,
-                'due': invoice.due_amount,
-                'status': 'Paid',
-                'mode': payment.payment_mode,
-                'type': 'Due',
-                'date': payment.payment_date.date(),
-                'invoice_type': 'pt'
-            })
-        elif not MembershipHistory.objects.filter(member=payment.member, membership_start_date=payment.payment_date.date()).exists():
-            member = payment.member
-            membership_due = member.membership_history.filter(status='active', gym=gym).aggregate(
-                total=Sum(F('total_amount') - F('paid_amount'))
-            )['total'] or 0
-            pt_due = member.personal_trainer.filter(status='active', gym=gym).aggregate(
-                total=Sum(F('total_amount') - F('paid_amount'))
-            )['total'] or 0
-            total_due_after = membership_due + pt_due
-            total_due_before = total_due_after + payment.amount
-            transactions.append({
-                'invoice': None,
-                'profile': member.profile_picture.url if member.profile_picture else None,
-                'member': member,
-                'amount': total_due_before,
-                'paid': payment.amount,
-                'due': total_due_after,
-                'status': 'Completed',
-                'mode': payment.payment_mode,
-                'type': 'Due',
-                'date': payment.payment_date.date(),
-            })
+    payments = Payment.objects.filter(member__gym=gym, payment_date__date__range=[start_date, end_date]).select_related('member', 'membership_history', 'personal_trainer').order_by('-payment_date')
     
-    transactions.sort(key=lambda item: item['date'], reverse=True)
+    transactions = []
+    for p in payments:
+        trans_type = "Due"
+        invoice = p.membership_history or p.personal_trainer
+        
+        if p.personal_trainer:
+            trans_type = "PT"
+        elif p.membership_history:
+            is_first_payment = p.membership_history.payments.order_by('payment_date').first().id == p.id
+            if is_first_payment:
+                is_first_ever = not MembershipHistory.objects.filter(member=p.member, pk__lt=p.membership_history.pk).exists()
+                trans_type = "New" if is_first_ever else "Renewal"
+        
+        transactions.append({
+            'date': p.payment_date.date(),
+            'member': p.member,
+            'invoice': invoice,
+            'invoice_type': 'pt' if p.personal_trainer else 'membership' if p.membership_history else '',
+            'amount': invoice.total_amount if invoice else p.amount,
+            'paid': p.amount,
+            'due': invoice.due_amount if invoice else 0,
+            'status': 'Paid' if (invoice and invoice.due_amount <= 0) else 'Pending',
+            'mode': p.payment_mode,
+            'type': trans_type,
+        })
 
-    # Paginate the transactions
-    paginator = Paginator(transactions, 10)  # Show 10 transactions per page
+    paginator = Paginator(transactions, 10)
     page_number = request.GET.get('page')
     latest_transactions = paginator.get_page(page_number)
+    
+    latest_expenses = Expense.objects.filter(gym=gym, date__range=[start_date, end_date]).order_by('-date')[:10]
 
-    # Chart Data: Income vs. Expense for the last 6 months
     labels = []
     income_data = []
     expense_data = []
@@ -158,7 +90,6 @@ def business_report(request):
         monthly_expense = Expense.objects.filter(gym=gym, date__range=[month_start, month_end]).aggregate(Sum('amount'))['amount__sum'] or 0
         expense_data.append(float(monthly_expense))
 
-    # Chart Data: Expense breakdown for the current month
     expense_breakdown = (
         Expense.objects.filter(gym=gym, date__range=[start_date, end_date])
         .values('category')
