@@ -9,7 +9,7 @@ class WorkoutPlanForm(forms.ModelForm):
         exclude = ['gym']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your name'}),
-            'duration_minutes': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter your duration in minutes'}),
+            'duration_days': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter your duration in days'}),
             'difficulty': forms.Select(attrs={'class': 'form-control', 'placeholder': 'Select your difficulty'}),
             'image': forms.FileInput(attrs={'class': 'form-control'}),
             'created_by': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter creator name'}),
@@ -37,8 +37,7 @@ class DietPlanForm(forms.ModelForm):
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your name'}),
             'target': forms.Select(attrs={'class': 'form-control', 'placeholder': 'Select your target'}),
-            'daily_calories': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter your daily calories'}),
-            'duration_weeks': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter your duration in weeks'}),
+            'duration_days': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter your duration in days'}),
             'image': forms.FileInput(attrs={'class': 'form-control'}),
             'created_by': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter creator name'}),
         }

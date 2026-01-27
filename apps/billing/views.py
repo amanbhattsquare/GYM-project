@@ -181,20 +181,14 @@ def invoice(request, member_id, history_id):
     previous_invoice = member_invoices[current_invoice_index - 1] if current_invoice_index > 0 else None
     next_invoice = member_invoices[current_invoice_index + 1] if current_invoice_index < len(member_invoices) - 1 else None
 
-    sgst = 0
-    cgst = 0
+    sgst = history.sgst
+    cgst = history.cgst
+    gst_amount = history.gst_amount
+
     sgst_rate = 0
     cgst_rate = 0
     if gym.gst_enabled:
         gst_rate = gym.gst_rate
-        total_amount = history.total_amount
-        gst_amount = (total_amount * gst_rate) / 100
-        sgst = (gst_amount / 2)
-        cgst = (gst_amount / 2)
-
-        sgst = Decimal(sgst).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
-        cgst = Decimal(cgst).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
-
         sgst_rate = gst_rate / 2
         cgst_rate = gst_rate / 2
 
@@ -243,7 +237,7 @@ def invoices_list(request):
     sort_by = request.GET.get('sort', '-date')
 
     # Fetch membership invoices
-    membership_invoices = MembershipHistory.objects.select_related('member', 'plan').filter(status='active', gym=gym).annotate(
+    membership_invoices = MembershipHistory.objects.select_related('member', 'plan').filter(gym=gym, is_deleted=False).annotate(
         date=F('created_at'),
         type=Value('membership', output_field=models.CharField()),
         amount=F('total_amount'),
@@ -253,7 +247,7 @@ def invoices_list(request):
     ).values('invoice_id', 'date', 'type', 'amount', 'paid_amount', 'due_amount', 'member_id', 'member__member_id', 'member__first_name', 'member__last_name', 'plan_title')
 
     # Fetch personal training invoices
-    pt_invoices = PersonalTrainer.objects.select_related('member', 'trainer').filter(status='active', gym=gym).annotate(
+    pt_invoices = PersonalTrainer.objects.select_related('member', 'trainer').filter(gym=gym, is_deleted=False).annotate(
         date=F('created_at'),
         type=Value('pt', output_field=models.CharField()),
         amount=F('total_amount'),
@@ -310,7 +304,7 @@ def delete_invoice(request, invoice_type, invoice_id):
             else:
                 return JsonResponse({'status': 'error', 'message': 'Invalid invoice type.'}, status=400)
 
-            invoice.status = 'inactive'
+            invoice.is_deleted = True
             invoice.save()
             return JsonResponse({'status': 'success', 'message': 'Invoice moved to trash successfully.'})
         except Exception as e:
@@ -322,7 +316,7 @@ def delete_invoice(request, invoice_type, invoice_id):
 def trash_invoices(request):
     gym = getattr(request, 'gym', None)
     # Fetch inactive membership invoices
-    membership_invoices = MembershipHistory.objects.select_related('member', 'plan').filter(status='inactive', gym=gym).annotate(
+    membership_invoices = MembershipHistory.objects.select_related('member', 'plan').filter(gym=gym, is_deleted=True).annotate(
         date=F('created_at'),
         type=Value('membership', output_field=models.CharField()),
         amount=F('total_amount'),
@@ -332,7 +326,7 @@ def trash_invoices(request):
     ).values('invoice_id', 'date', 'type', 'amount', 'member_id', 'member__member_id', 'member__first_name', 'member__last_name', 'plan_title', 'due_amount')
 
     # Fetch inactive personal training invoices
-    pt_invoices = PersonalTrainer.objects.select_related('member', 'trainer').filter(status='inactive', gym=gym).annotate(
+    pt_invoices = PersonalTrainer.objects.select_related('member', 'trainer').filter(gym=gym, is_deleted=True).annotate(
         date=F('created_at'),
         type=Value('pt', output_field=models.CharField()),
         amount=F('total_amount'),
@@ -364,7 +358,7 @@ def restore_invoice(request, invoice_type, invoice_id):
         messages.error(request, 'Invalid invoice type.')
         return redirect('billing:trash_invoices')
 
-    invoice.status = 'active'
+    invoice.is_deleted = False
     invoice.save()
     messages.success(request, 'Invoice restored successfully.')
     return redirect('billing:trash_invoices')

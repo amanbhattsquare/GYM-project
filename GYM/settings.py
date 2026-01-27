@@ -67,6 +67,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'GYM.tenant_middleware.TenantMiddleware',
+    'apps.login.middleware.PasswordResetMiddleware',
 ]
 
 ROOT_URLCONF = 'GYM.urls'
@@ -108,7 +109,7 @@ DATABASES = {
 #         'NAME': 'gymdb',
 #         'USER': 'postgres',
 #         'PASSWORD': 'Admin@Squarefit12',
-#         'HOST': '93.127.206.42',    
+#         'HOST': 'localhost',    
 #         'PORT': '5432',
 #     }
 # }
@@ -156,7 +157,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 
-# REQUIRED for production (alwaysdata)
+# REQUIRED for production (VPS)
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 

@@ -9,4 +9,5 @@ urlpatterns = [
     path('view_subadmins/', views.view_subadmins, name='view_subadmins'),
     path('delete_subadmin/<int:sub_admin_id>/', views.delete_subadmin, name='delete_subadmin'),
     path('edit_subadmin/<int:sub_admin_id>/', views.edit_subadmin, name='edit_subadmin'),
+    path('password_reset/', views.password_reset_page, name='password_reset_page'),
 ]

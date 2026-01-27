@@ -13,8 +13,8 @@ class ExpenseForm(forms.ModelForm):
             'category': forms.Select(attrs={'class': 'form-control ', 'placeholder': 'Select category'}),        
             'amount': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter amount'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Enter description'}),
-            'vendor_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter vendor name'}),
-            'vendor_phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter vendor phone'}),
+            'vendor_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter vendor name', 'style': 'text-transform: capitalize;'}),
+            'vendor_phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter vendor phone', 'onkeypress': 'return event.charCode >= 48 && event.charCode <= 57'}),
             'vendor_bill_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter vendor bill number'}),
             'payment_mode': forms.Select(attrs={'class': 'form-control', 'placeholder': 'Select payment mode'}),
             'transaction_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter transaction ID'}),
@@ -33,9 +33,15 @@ class ExpenseForm(forms.ModelForm):
             raise ValidationError("Amount must be a positive number.")
         return amount
 
+    def clean_vendor_name(self):
+        vendor_name = self.cleaned_data.get('vendor_name')
+        if vendor_name:
+            return vendor_name.title()
+        return vendor_name
+
     def clean_vendor_phone(self):
         vendor_phone = self.cleaned_data.get('vendor_phone')
-        if vendor_phone and not re.match(r'^[0-9]\d{9}$', vendor_phone):
+        if vendor_phone and (not vendor_phone.isdigit() or len(vendor_phone) != 10):
             raise ValidationError("Enter a valid 10-digit mobile number.")
         return vendor_phone
 

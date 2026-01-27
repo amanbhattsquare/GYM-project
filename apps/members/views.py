@@ -12,6 +12,7 @@ from django.db.models.functions import Coalesce
 from django.http import JsonResponse
 from django.core.serializers import serialize
 from django.views.decorators.http import require_POST
+from django.db import IntegrityError
 
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
@@ -32,10 +33,7 @@ def add_new_member(request):
         emergency_form = EmergencyContactForm(request.POST, prefix='emergency')
 
         if member_form.is_valid() and medical_formset.is_valid() and emergency_form.is_valid():
-            email = member_form.cleaned_data.get('email')
-            if email and Member.objects.filter(gym=gym, email=email).exists():
-                messages.error(request, 'A member with this email already exists.')
-            else:
+            try:
                 member = member_form.save(commit=False)
                 member.gym = gym
                 member.save()
@@ -58,6 +56,14 @@ def add_new_member(request):
                 emergency_contact.save()
                 messages.success(request, 'Member added successfully!')
                 return redirect('assign_membership_plan', member_id=member.id)
+            except IntegrityError as e:
+                if 'email' in str(e):
+                    member_form.add_error('email', 'A member with this email already exists.')
+                elif 'mobile_number' in str(e):
+                    member_form.add_error('mobile_number', 'A member with this mobile number already exists.')
+                else:
+                    messages.error(request, 'An unexpected error occurred. Please try again.')
+
         else:
             print("Member form errors:", member_form.errors)
             print("Medical formset errors:", medical_formset.errors)
@@ -80,7 +86,7 @@ def member_profile(request, member_id):
     
     # Fetch both active and frozen memberships
     membership_histories = MembershipHistory.objects.filter(
-        member=member, status__in=['active', 'frozen'], gym=gym
+        member=member, gym=gym
     ).order_by('-id')
     
     pt_member = PersonalTrainer.objects.select_related('trainer').filter(
@@ -293,11 +299,29 @@ def assign_membership_plan(request, member_id):
             plan_fee = history.plan.offer_price
             registration_fee = form.cleaned_data.get('registration_fee', 0) or 0
             discount = form.cleaned_data.get('discount', 0) or 0
-            total_amount = plan_fee + registration_fee - discount
-            gst_rate = gym.gst_rate if gym.gst_enabled else 0
-            gst_amount = (plan_fee * gst_rate) / 100
-            total_amount = plan_fee + gst_amount
-            history.total_amount = Decimal(total_amount).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+            
+            # Calculate the subtotal before GST
+            subtotal = plan_fee + registration_fee - discount
+            
+            # Calculate GST if enabled
+            gst_amount = Decimal(0)
+            sgst = Decimal(0)
+            cgst = Decimal(0)
+            
+            if gym.gst_enabled:
+                gst_rate = gym.gst_rate
+                gst_amount = (subtotal * gst_rate) / 100
+                sgst = gst_amount / 2
+                cgst = gst_amount / 2
+
+            # Calculate the final total amount
+            total_amount = subtotal + gst_amount
+            
+            # Save the values to the history instance
+            history.sgst = sgst.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+            history.cgst = cgst.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+            history.gst_amount = gst_amount.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
+            history.total_amount = total_amount.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)
 
             history.save()
 
@@ -308,7 +332,8 @@ def assign_membership_plan(request, member_id):
                     amount=history.paid_amount,
                     payment_mode=history.payment_mode,
                     transaction_id=history.transaction_id,
-                    comment=f"Initial payment for {history.plan.title}"
+                    comment=f"Initial payment for {history.plan.title}",
+                    membership_history=history
                 )
 
             member.membership_plan = history.plan
@@ -337,6 +362,17 @@ def assign_pt_trainer(request, member_id):
             pt_assignment.gym = gym # Assign gym to the instance
             pt_assignment.transaction_id = request.POST.get('transaction_id')
             pt_assignment.save()
+
+            if pt_assignment.paid_amount > 0:
+                Payment.objects.create(
+                    gym=gym,
+                    member=member,
+                    amount=pt_assignment.paid_amount,
+                    payment_mode=pt_assignment.payment_mode,
+                    transaction_id=pt_assignment.transaction_id,
+                    comment=f"Initial payment for Personal Trainer: {pt_assignment.trainer.name}",
+                    personal_trainer=pt_assignment
+                )
             messages.success(request, f'Personal Trainer "{pt_assignment.trainer.name}" assigned to {member.first_name} {member.last_name}.')
             return redirect('billing:pt_invoice', member_id=member.id, pt_invoice_id=pt_assignment.id)
     else:

@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from apps.superadmin.models import GymAdmin
 from django.views.decorators.cache import never_cache
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User, Permission
 from django.contrib.contenttypes.models import ContentType
 from .models import SubAdmin, ROLE_CHOICES
@@ -130,6 +131,38 @@ def add_gym_subadmin(request):
         'ROLE_CHOICES': ROLE_CHOICES
     }
     return render(request, 'login/add_gym_subadmin.html', context)
+
+
+@login_required
+def password_reset_page(request):
+    if request.method == 'POST':
+        current_password = request.POST.get('current_password')
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+
+        user = request.user
+        if not user.check_password(current_password):
+            messages.error(request, 'Invalid current password.')
+        elif new_password != confirm_password:
+            messages.error(request, 'New passwords do not match.')
+        elif ' ' in new_password:
+            messages.error(request, 'Password cannot contain spaces.')
+        else:
+            user.set_password(new_password)
+            user.save()
+            
+            # This part might need adjustment based on your models
+            # Assuming a OneToOne or ForeignKey from User to GymAdmin
+            if hasattr(user, 'gymadmin'):
+                gym_admin = user.gymadmin
+                if hasattr(gym_admin, 'gym'):
+                    gym_admin.gym.password_reset_required = False
+                    gym_admin.gym.save()
+            
+            messages.success(request, 'Password updated successfully.')
+            return redirect('dashboard')
+            
+    return render(request, 'login/password_reset.html')
 
 def view_subadmins(request):
     gym_admin = GymAdmin.objects.get(user=request.user)

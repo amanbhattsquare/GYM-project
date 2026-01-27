@@ -9,6 +9,7 @@ from .forms import TrainerForm
 
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
+from django.db import IntegrityError
 
 
 
@@ -48,11 +49,14 @@ def add_trainer(request):
     if request.method == 'POST':
         form = TrainerForm(request.POST, request.FILES)
         if form.is_valid():
-            trainer = form.save(commit=False)
-            trainer.gym = gym
-            trainer.save()
-            messages.success(request, 'Trainer added successfully!')
-            return redirect('trainer_list')
+            try:
+                trainer = form.save(commit=False)
+                trainer.gym = gym
+                trainer.save()
+                messages.success(request, 'Trainer added successfully!')
+                return redirect('trainer_list')
+            except IntegrityError:
+                form.add_error('email', 'A trainer with this email already exists.')
     else:
         form = TrainerForm()
     return render(request, 'trainers/add_trainer.html', {'form': form})
@@ -95,5 +99,5 @@ def toggle_trainer_status(request, trainer_id):
     trainer = get_object_or_404(Trainer, id=trainer_id, gym=gym)
     trainer.is_active = not trainer.is_active
     trainer.save()
-    messages.success(request, f'Trainer {trainer.name} has been marked as {'Active' if trainer.is_active else 'Inactive'}.')
+    messages.success(request, f"Trainer {trainer.name} has been marked as {'Active' if trainer.is_active else 'Inactive'}.")
     return redirect('trainer_list')

@@ -65,7 +65,7 @@
                             <div class="h5 mb-0 font-weight-bold text-gray-800">₹ {{ total_income|floatformat:2 }}</div>
                         </div>
                         <div class="col-auto">
-                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                            <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
                         </div>
                     </div>
                 </div>
@@ -143,13 +143,13 @@
     </div>
 
     <!-- Tables -->
-    <div class="container-fluid">
-        <div class="col-lg-12">
+    
+        <div class="col-lg-12 px-0">
             <div class="card shadow-sm mb-4">
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">Latest Transactions</h6>
                 </div>
-                <div class="card-body">
+                <div class="card-body px-0">
                     <div class="table-responsive">
                         <table class="table table-hover table-sm table-stack-on-mobile" width="100%" cellspacing="0">
                             <thead>
@@ -169,8 +169,8 @@
                             <tbody>
                                 {% for transaction in latest_transactions %}
                                 <tr>
-                                    <td>{{ forloop.counter }}</td>
-                                    <td>
+                                    <td data-label="S.No.">{{ forloop.counter }}</td>
+                                    <td data-label="Invoice ID">
                                         {% if transaction.invoice %}
                                             {% if transaction.invoice_type == 'membership' %}
                                                 <a href="{% url 'billing:invoice' transaction.member.id transaction.invoice.id %}">#{{ transaction.invoice.id }}</a>
@@ -181,23 +181,23 @@
                                             N/A
                                         {% endif %}
                                     </td>
-                                    <td>{{ transaction.date|date:"d-m-Y" }}</td>
+                                    <td data-label="date">{{ transaction.date|date:"d-m-Y" }}</td>
                                     <td data-label="Profile">
-                                        <img src="{% if transaction.member.profile_picture %}{{ transaction.member.profile_picture.url }}{% else %}{% static 'images/member_DP.jpg' %}{% endif %}"
+                                        <img src="{% if transaction.member.profile_picture %}{{ transaction.member.profile_picture.url }}{% else %}{% static 'images/member_dp.jpg' %}{% endif %}"
                                             class="rounded-circle border" style="width: 40px; height: 40px; object-fit: cover;"
                                             alt="{{ transaction.member.name }}">
                                     </td>
-                                    <td>
+                                    <td data-label="Profile">
                                         <a href="{% url 'member_profile' transaction.member.id %}" class="text-decoration-none">
                                             <strong>{{ transaction.member.name }}</strong>
                                         </a>
                                         <br>
                                         <small class="text-muted">#{{ transaction.member.member_id }}</small>
                                     </td>
-                                    <td>₹ {{ transaction.amount|floatformat:2 }}</td>
-                                    <td>₹ {{ transaction.paid|floatformat:2 }}</td>
-                                    <td>₹ {{ transaction.due|floatformat:2 }}</td>
-                                    <td>
+                                    <td data-label="Amount">₹ {{ transaction.amount|floatformat:2 }}</td>
+                                    <td data-label="Paid">₹ {{ transaction.paid|floatformat:2 }}</td>
+                                    <td data-label="Due">₹ {{ transaction.due|floatformat:2 }}</td>
+                                    <td data-label="Mode">
                                         <span class="badge badge-{% if transaction.status == 'Paid' or transaction.status == 'Completed' %}success{% else %}warning{% endif %}">
                                             {{ transaction.status }}
                                         </span> / {{ transaction.mode|default:'N/A' }}
@@ -218,14 +218,14 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-12"> 
+        <div class="col-lg-12 px-0"> 
             <div class="card shadow-sm mb-4">
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-danger">Latest Expenses</h6>
                 </div>
-                <div class="card-body">
+                <div class="card-body px-0">
                     <div class="table-responsive">
-                        <table class="table table-bordered" width="100%" cellspacing="0">
+                        <table class="table table-hover table-sm table-stack-on-mobile" width="100%" cellspacing="0">
                             <thead>
                                 <tr>
                                     <th>#</th>
@@ -238,11 +238,11 @@
                             <tbody>
                                 {% for expense in latest_expenses|slice:":10" %}
                                 <tr>
-                                    <td>{{ forloop.counter }}</td>
-                                    <td>{{ expense.date|date:"Y-m-d" }}</td>
-                                    <td>{{ expense.get_category_display }}</td>
-                                    <td>₹ {{ expense.amount|floatformat:2 }}</td>
-                                    <td>{{ expense.description|truncatechars:30 }}</td>
+                                    <td data-label="Sr. NO.">{{ forloop.counter }}</td>
+                                    <td data-label="Date">{{ expense.date|date:"Y-m-d" }}</td>
+                                    <td data-label="Category">{{ expense.get_category_display }}</td>
+                                    <td data-label="Amount">₹ {{ expense.amount|floatformat:2 }}</td>
+                                    <td data-label="Description">{{ expense.description|truncatechars:30 }}</td>
                                 </tr>
                                 {% empty %}
                                 <tr>
@@ -258,7 +258,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    
 </div>
 </div>
 

@@ -62,6 +62,12 @@ class GymAdminForm(forms.ModelForm):
             raise forms.ValidationError("A user with that email already exists.")
         return email
 
+    def clean_password(self):
+        password = self.cleaned_data.get('password')
+        if password and ' ' in password:
+            raise forms.ValidationError("Password cannot contain spaces.")
+        return password
+
     def clean(self):
         cleaned_data = super().clean()
         password = cleaned_data.get("password")

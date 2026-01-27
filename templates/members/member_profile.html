@@ -577,7 +577,7 @@
                                                 <table class="table table-striped">
                                                     <thead>
                                                         <tr>
-                                                            <th>#</th>
+                                                            
                                                             <th>Plan Name</th>
                                                             <th>Difficulty</th>
                                                             <th>Assigned On</th>
@@ -587,7 +587,7 @@
                                                     <tbody>
                                                         {% for assigned_plan in assigned_workout_plans %}
                                                             <tr>
-                                                                <td data-label="SR. No.">{{ forloop.counter0 }}</td>
+                                                               
                                                                 <td data-label="Plan Name">{{ assigned_plan.workout_plan.name }}</td>
                                                                 <td data-label="Difficulty">{{ assigned_plan.workout_plan.get_difficulty_display }}</td>
                                                                 <td data-label="Assigned On">{{ assigned_plan.assigned_at|date:"d-m-Y" }}</td>

@@ -15,9 +15,9 @@ class MemberForm(forms.ModelForm):
             'identity_document_image'
         ]
         widgets = {
-            'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your first name'}),
-            'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your last name'}),
-            'mobile_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your mobile number', 'maxlength': '10'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your first name', 'style': 'text-transform: capitalize;'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your last name', 'style': 'text-transform: capitalize;'}),
+            'mobile_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your mobile number', 'onkeypress': 'return event.charCode >= 48 && event.charCode <= 57'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Enter your email'}),
             'age': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter your age'}),
             'gender': forms.Select(attrs={'class': 'form-control', 'placeholder': 'Select your gender'}),
@@ -30,7 +30,7 @@ class MemberForm(forms.ModelForm):
             'pincode': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your pincode'}),
             'profession': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your profession'}),
             'sign': forms.FileInput(attrs={'class': 'form-control'}),
-            'identity_type': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your identity type'}),
+            'identity_type': forms.Select(attrs={'class': 'form-control'}),
             'identity_no': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your identity number'}),
             'identity_document_image': forms.FileInput(attrs={'class': 'form-control'}),
         }
@@ -49,16 +49,26 @@ class MemberForm(forms.ModelForm):
             'last_name',
             'mobile_number',
             'gender',
-            'age',
         ]
-
         for field in required_fields:
             self.fields[field].required = True
             self.fields[field].label = f"{self.fields[field].label} *"
 
+    def clean_first_name(self):
+        first_name = self.cleaned_data.get('first_name')
+        if first_name:
+            return first_name.title()
+        return first_name
+
+    def clean_last_name(self):
+        last_name = self.cleaned_data.get('last_name')
+        if last_name:
+            return last_name.title()
+        return last_name
+
     def clean_mobile_number(self):
         mobile_number = self.cleaned_data.get('mobile_number')
-        if not re.match(r'^[0-9]\d{9}$', mobile_number):
+        if mobile_number and (not mobile_number.isdigit() or len(mobile_number) != 10):
             raise forms.ValidationError("Enter a valid 10-digit mobile number.")
         return mobile_number
 
@@ -91,8 +101,8 @@ class EmergencyContactForm(forms.ModelForm):
         model = EmergencyContact
         fields = ['name', 'mobile', 'relation']
         widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your name'}),
-            'mobile': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your mobile number'}),
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your name' , 'style': 'text-transform: capitalize;'}),
+            'mobile': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your mobile number' , 'onkeypress': 'return event.charCode >= 48 && event.charCode <= 57'}),
             'relation': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your relation'}),
         }
     def __init__(self, *args, **kwargs):

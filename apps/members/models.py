@@ -10,6 +10,13 @@ from apps.management.models import DietPlan, WorkoutPlan
 
 
 class Member(models.Model):
+    IDENTITY_TYPE_CHOICES = [
+        ('Aadhar Card', 'Aadhar Card'),
+        ('PAN Card', 'PAN Card'),
+        ('Driving License', 'Driving License'),
+        ('Passport', 'Passport'),
+        ('Other', 'Other'),
+    ]
     gym = models.ForeignKey(Gym, on_delete=models.CASCADE, null=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
@@ -26,7 +33,7 @@ class Member(models.Model):
     pincode = models.CharField(max_length=10, null=True, blank=True)
     profession = models.CharField(max_length=100, null=True, blank=True)
     sign = models.ImageField(upload_to='signs/', blank=True, null=True)
-    identity_type = models.CharField(max_length=50, null=True, blank=True)
+    identity_type = models.CharField(max_length=50, choices=IDENTITY_TYPE_CHOICES, null=True, blank=True)
     identity_no = models.CharField(max_length=50, null=True, blank=True)
     identity_document_image = models.ImageField(upload_to='identity_docs/', blank=True, null=True)
 
@@ -132,6 +139,9 @@ class MembershipHistory(models.Model):
     membership_start_date = models.DateField()
     add_on_days = models.IntegerField(default=0)
     discount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    sgst = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    cgst = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    gst_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
     paid_amount = models.DecimalField(max_digits=10, decimal_places=2)
     payment_mode = models.CharField(max_length=50,
@@ -145,6 +155,7 @@ class MembershipHistory(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=10, choices=[('active', 'Active'), ('inactive', 'Inactive'), ('frozen', 'Frozen')],
                               default='active')
+    is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.member} - {self.plan}"
@@ -157,12 +168,16 @@ class MembershipHistory(models.Model):
     def due_amount(self):
         return self.total_amount - self.paid_amount
 
+    @property
+    def total_add_on_days(self):
+        return self.add_on_days + self.plan.add_on_days
+
     def get_end_date(self):
         duration_parts = self.plan.duration.split('_')
         duration_value = int(duration_parts[0])
         duration_unit = duration_parts[1]
 
-        total_add_on_days = self.add_on_days + self.plan.add_on_days
+        total_add_on_days = self.total_add_on_days
 
         if duration_unit in ['day', 'days']:
             base_end_date = self.membership_start_date + timedelta(days=duration_value + total_add_on_days)
@@ -197,11 +212,12 @@ class PersonalTrainer(models.Model):
     transaction_id = models.CharField(max_length=100, blank=True, null=True)
     comment = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=10, choices=[('active', 'Active'), ('inactive', 'Inactive')],
-                              default='active')
+    status = models.CharField(max_length=10, choices=[('active', 'Active'), ('inactive', 'Inactive')], default='active')
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.member} - {self.trainer}"
+        return f"{self.member.first_name} {self.member.last_name} - {self.trainer.name}"
 
     def get_end_date(self):
         return self.pt_start_date + timedelta(days=30 * self.months)
@@ -229,26 +245,21 @@ class MembershipFreeze(models.Model):
 
 
 class AssignDietPlan(models.Model):
+    gym = models.ForeignKey(Gym, on_delete=models.CASCADE, null=True)
     member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name='assigned_diet_plans')
-    diet_plan = models.ForeignKey(DietPlan, on_delete=models.CASCADE, related_name='assignments')
+    diet_plan = models.ForeignKey(DietPlan, on_delete=models.CASCADE, null=True)
     assigned_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        ordering = ['-assigned_at']
 
     def __str__(self):
         return f'{self.member.name} - {self.diet_plan.name}'
 
 
 class AssignWorkoutPlan(models.Model):
+    gym = models.ForeignKey(Gym, on_delete=models.CASCADE, null=True)
     member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name='assigned_workout_plans')
-    workout_plan = models.ForeignKey(WorkoutPlan, on_delete=models.CASCADE, related_name='assignments')
+    workout_plan = models.ForeignKey(WorkoutPlan, on_delete=models.CASCADE, null=True)
     assigned_at = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
-        ordering = ['-assigned_at']
-
     def __str__(self):
+        return f"{self.member.first_name} {self.member.last_name} - {self.workout_plan.title}"
         return f'{self.member.name} - {self.workout_plan.name}'
-    
-
